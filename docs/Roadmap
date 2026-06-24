@@ -1,0 +1,149 @@
+# Nocturis — Roadmap por Sprint (13 semanas)
+
+Plataforma de triagem e direcionamento jurídico que conecta clientes a
+advogados das áreas cível e trabalhista. Cada sprint = 1 semana. Itens
+marcados com 🔴 são bloqueadores (precisam estar prontos pro sprint seguinte).
+
+**Stack base (definida na monografia):** Front-end em React, back-end em
+Node.js, autenticação via Firebase Authentication, banco de dados Firebase
+Firestore, comunicação Front↔Back via REST/JSON.
+
+**Estrutura de repo atual:** `backend/` `database/` `docs/` `frontend/`
+`.gitignore` `README.md` — está tudo vazio, este roadmap é o que vai preencher
+cada pasta.
+
+---
+
+## Sprint 1 — Setup
+- 🔴 Organizar o monorepo: `frontend/` (React + Vite), `backend/` (Node.js +
+  Express), `database/` (regras e schema do Firestore), `docs/` (specs,
+  decisões de arquitetura)
+- 🔴 Projeto Firebase criado (Auth + Firestore) — ambiente de
+  desenvolvimento separado do de produção
+- 🔴 Backend Node.js rodando localmente, conectado ao Firestore
+- 🔴 Frontend React rodando localmente
+- 🔴 CI básico (lint + build em PR via GitHub Actions)
+- Decidir definitivamente: Firebase Firestore vs. MySQL (a monografia deixa
+  isso em aberto — recomendo travar Firestore agora pra não perder tempo de
+  sprint mais pra frente)
+- Decidir: hospedagem (Firebase Hosting + Cloud Functions, Vercel, ou
+  Render/Railway pro backend Node)
+
+## Sprint 2 — Modelagem de dados + Auth backend
+- 🔴 Coleções do Firestore definidas: `usuarios`, `advogados`, `currículos`,
+  `triagens`, `denuncias`
+- 🔴 Regras de segurança do Firestore (cada papel só lê/escreve o que pode)
+- 🔴 Integração do backend com Firebase Admin SDK
+- 🔴 Endpoints: `POST /auth/register`, `POST /auth/login`, validação de
+  papel (cliente / advogado / administrador) — RNF002
+- 🔴 Middleware de verificação de token JWT do Firebase em rotas protegidas
+- Endpoint: `GET /me`
+
+## Sprint 3 — Frontend: autenticação, tema e layout
+- 🔴 Telas: Login, Cadastro (com seleção de papel), Recuperação de senha
+- 🔴 Rotas protegidas por papel (cliente, advogado, admin)
+- 🔴 Tema visual aplicado (paleta marrom/amarelo da identidade do Nocturis,
+  tipografia, componentes base)
+- 🔴 Layout responsivo base (header, navegação, footer) — RNF006
+- Componentes reutilizáveis: `NocturisButton`, `NocturisInput`,
+  `NocturisCard`
+
+## Sprint 4 — Cadastro de cliente e advogado
+- 🔴 RF001: cadastro/consulta/atualização de dados do cliente (nome, e-mail,
+  telefone)
+- 🔴 RF002: cadastro/consulta/atualização de dados do advogado (área de
+  atuação, número da OAB, localização, contatos)
+- 🔴 RNF004: validação de número da OAB no cadastro (sem isso, advogado não
+  é aprovado)
+- 🔴 Validações de formulário (e-mail, telefone, campos obrigatórios) —
+  mitigação do risco R006
+
+## Sprint 5 — Currículo profissional do advogado
+- 🔴 RF003: cadastro/consulta/atualização de currículo (formação acadêmica,
+  especializações, cursos, experiências profissionais)
+- 🔴 Tela de edição de currículo no painel do advogado
+- 🔴 Visualização prévia de como o currículo aparece pro cliente
+
+## Sprint 6 — Motor de triagem jurídica
+- 🔴 RF004: formulário de triagem (perguntas + descrição livre da situação)
+- 🔴 RF005: lógica de classificação cível x trabalhista (regras/palavras-chave
+  validadas com casos reais — mitigação do risco R003)
+- 🔴 Endpoint `POST /triagem` salvando o resultado em `triagens`
+- 🔴 RNF003: resposta da triagem em até 5 segundos — testar com carga
+  simulada
+- Testes com diferentes cenários jurídicos pra validar a precisão da
+  classificação
+
+## Sprint 7 — Direcionamento e busca de advogados
+- 🔴 RF006: filtro automático de advogados por especialidade jurídica
+  identificada + localização do usuário
+- 🔴 RF007: endpoint que retorna a lista de advogados compatíveis
+- 🔴 Tela de resultados pós-triagem (lista de advogados recomendados)
+- 🔴 Paginação/ordenação dos resultados
+
+## Sprint 8 — Perfil detalhado do advogado e contato
+- 🔴 RF008 e RF009: tela de perfil completo do advogado (dados profissionais
+  + currículo)
+- 🔴 RF010: botões de contato direto (WhatsApp, e-mail) a partir do perfil
+- 🔴 Layout do card de advogado na listagem (foto, especialidade, avaliação
+  visual, botão "ver perfil")
+
+## Sprint 9 — Sistema de denúncias
+- 🔴 RF011: tela e endpoint pra cliente/advogado registrar denúncia sobre
+  atendimento feito fora da plataforma
+- 🔴 RF012: backend processa e armazena denúncias vinculadas a usuário/caso
+- 🔴 Notificação interna pro admin quando uma denúncia nova chega
+
+## Sprint 10 — Painel administrativo
+- 🔴 Área restrita pro papel "administrador"
+- 🔴 RF012: listagem e análise de denúncias recebidas
+- 🔴 RF013 e RF014: suspender/remover advogados e clientes que violem as
+  regras da plataforma
+- 🔴 Log de ações administrativas (auditoria básica)
+
+## Sprint 11 — Segurança e desempenho
+- 🔴 RNF005: criptografia de dados sensíveis (sobretudo dados pessoais e de
+  denúncias) — mitigação do risco R001
+- 🔴 Revisão das regras do Firestore (permissões por papel, sem brechas)
+- 🔴 Backups periódicos do Firestore configurados — mitigação do risco R002
+- 🔴 Testes de carga simples no endpoint de triagem e de busca
+- 🔴 RNF008: testes de compatibilidade (Chrome, Firefox, Edge, Android, iOS)
+
+## Sprint 12 — Polimento e testes com usuários
+- 🔴 RNF001: testes de usabilidade com pessoas sem conhecimento jurídico —
+  mitigação do risco R005
+- 🔴 Ajustes de UX a partir do feedback coletado
+- 🔴 Estados de carregamento, erro e vazio em todas as telas
+- 🔴 Revisão geral de copy e consistência visual
+- 🔴 RNF006: ajustes finais de responsividade (mobile, tablet, desktop)
+
+## Sprint 13 — Deploy e lançamento
+- 🔴 Deploy do backend em produção
+- 🔴 Deploy do frontend (Firebase Hosting/Vercel)
+- 🔴 Domínio próprio registrado e configurado
+- 🔴 RNF007: monitoramento de disponibilidade 24/7 (uptime monitor)
+- 🔴 Documentação final em `docs/` (arquitetura, como rodar localmente, como
+  contribuir)
+- Preparar material de apoio/tutoriais básicos pra cliente e advogado
+
+---
+
+## O que pode atrasar (e como mitigar)
+
+- **Classificação cível x trabalhista errando casos de borda**: validar a
+  lógica de triagem com casos reais e feedback de advogados antes de travar
+  o Sprint 6. Plano B: manter a classificação como sugestão, deixando o
+  usuário confirmar a área antes de buscar advogados.
+- **Custos do Firebase escalando**: Firestore e Authentication têm camada
+  gratuita, mas leitura/escrita e armazenamento crescem com o número de
+  usuários — monitorar uso desde o Sprint 2.
+- **Validação de OAB sem fonte oficial automatizada**: se não houver uma API
+  pública confiável da OAB, a validação pode precisar ser manual no início
+  (aprovação pelo admin), adiando a automação completa do RNF004.
+- **Poucos advogados cadastrados no lançamento (problema de massa crítica)**:
+  como o sistema depende de ter advogados o suficiente pra cobrir
+  cível/trabalhista por região, vale recrutar advogados parceiros (ex.:
+  recém-formados, como já identificado na pesquisa) antes do Sprint 13.
+- **Conformidade com normas da OAB (Provimento 205/2021)**: revisar textos,
+  prints e formas de divulgação dos advogados na plataforma antes do
+  lançamento, pra evitar problemas com publicidade da advocacia.
