@@ -1,0 +1,26 @@
+[
+  {
+    "nome": "Ana Beatriz Souza",
+    "oab": { "numero": "123456", "uf": "SP" },
+    "areasAtuacao": ["civel"],
+    "localizacao": { "cidade": "São Paulo", "uf": "SP" },
+    "contatos": { "whatsapp": "5511999990001", "email": "ana.souza@example.com" },
+    "verificado": false
+  },
+  {
+    "nome": "Carlos Eduardo Lima",
+    "oab": { "numero": "234567", "uf": "SP" },
+    "areasAtuacao": ["trabalhista"],
+    "localizacao": { "cidade": "Guarulhos", "uf": "SP" },
+    "contatos": { "whatsapp": "5511999990002", "email": "carlos.lima@example.com" },
+    "verificado": false
+  },
+  {
+    "nome": "Fernanda Torres",
+    "oab": { "numero": "345678", "uf": "SP" },
+    "areasAtuacao": ["civel", "trabalhista"],
+    "localizacao": { "cidade": "São Paulo", "uf": "SP" },
+    "contatos": { "whatsapp": "5511999990003", "email": "fernanda.torres@example.com" },
+    "verificado": false
+  }
+]

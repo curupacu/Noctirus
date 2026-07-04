@@ -1,0 +1,62 @@
+# CLAUDE.md
+
+Guia para trabalhar no repositório do **Nocturis** — advocacia virtual com triagem e
+direcionamento jurídico (cível e trabalhista). Projeto da Aggrem, TCC do curso Técnico
+em Desenvolvimento de Sistemas (ETEC de Heliópolis). Ver `docs/ROADMAP.md` para o plano
+completo de sprints, modelo de dados e decisões de arquitetura.
+
+## Stack travada
+
+- **Frontend**: React + Vite + React Router (`frontend/`). Identidade visual própria da
+  Nocturis (coruja, tons marrom/amarelo) — não confundir com a marca Aggrem (roxo).
+- **Backend**: Node.js + Express (`backend/`), usando o Firebase Admin SDK. Concentra
+  tudo que é sensível: chamada de IA, validação de OAB, custom claims, operações de admin.
+- **Auth**: Firebase Authentication + custom claims (papéis: `cliente`, `advogado`, `admin`).
+- **Banco**: Cloud Firestore — **não MySQL**, apesar do que documentação antiga possa dizer.
+- **IA de triagem** (Fase 2): Google Gemini Flash-Lite, chamado só pelo backend, com
+  fallback por regras se falhar ou passar de 5s.
+- Dois projetos Firebase: `nocturis-dev` (desenvolvimento) e `nocturis-prod` (produção).
+  Sem emulador local — o backend aponta direto para o projeto `nocturis-dev` na nuvem.
+
+## Estrutura do repositório
+
+```
+frontend/            React (Vite) — telas, componentes, design system Nocturis
+  src/
+    features/         auth, triagem, advogados, denuncias, admin
+    components/        UI reutilizável (botão, input, card...)
+    lib/               cliente Firebase, hooks, helpers
+    routes/
+backend/              Node.js + Express — API, IA, validações, admin
+  src/
+    routes/            endpoints REST
+    services/          triagem/Gemini, OAB, matching
+    middlewares/        verificação de token, papéis
+    lib/               firebase-admin
+database/             Firestore: regras, índices, seed e docs do modelo
+  firestore.rules
+  firestore.indexes.json
+  seed/                scripts pra popular advogados fictícios
+docs/                 ROADMAP.md e demais documentos
+```
+
+## Convenções
+
+- **Branches**: `main` protegida (deploy só em marco) · `develop` (integração) ·
+  `feature/<nome>` por tarefa → PR → preview → merge na `develop`.
+- **Commits**: `tipo: descrição` (ex.: `feat: triagem com Gemini`, `fix: validação da OAB`).
+- **Segurança**: papéis vêm de custom claims (nunca de campo público no Firestore); as
+  security rules negam tudo por padrão e liberam por papel.
+- **Node**: versão fixada em `.nvmrc` (22 LTS). Rode `nvm use` antes de trabalhar no repo.
+
+## Rodando localmente
+
+Na raiz: `npm run dev` sobe frontend e backend juntos (via `concurrently`).
+
+## Escopo do MVP (Fase 1)
+
+Cadastro/login por papel, perfil + currículo do advogado, contato direto (WhatsApp/e-mail),
+triagem por perguntas guiadas + matching por área/localização, tudo responsivo e com
+advogados de exemplo (seed) para demonstração. Denúncias e painel admin ficam para depois
+da 1ª apresentação. Triagem + matching é o núcleo inegociável — ver detalhes em
+`docs/ROADMAP.md`.

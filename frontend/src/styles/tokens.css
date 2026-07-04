@@ -1,0 +1,60 @@
+/* Design tokens da Nocturis — paleta marrom/amarelo (coruja). Não confundir com o roxo da Aggrem. */
+:root {
+  /* Cor — marrom (base) */
+  --color-brown-900: #2b1a12;
+  --color-brown-700: #4e2f1e;
+  --color-brown-500: #7a4a2d;
+  --color-brown-300: #a97c56;
+  --color-brown-100: #f2e4d7;
+
+  /* Cor — amarelo (destaque) */
+  --color-yellow-700: #b9800f;
+  --color-yellow-500: #e0a526;
+  --color-yellow-300: #f3c968;
+  --color-yellow-100: #fbe8bf;
+
+  /* Semânticas */
+  --color-bg: #fffaf3;
+  --color-surface: #ffffff;
+  --color-text: var(--color-brown-900);
+  --color-text-muted: var(--color-brown-500);
+  --color-border: var(--color-brown-100);
+  --color-primary: var(--color-yellow-500);
+  --color-primary-hover: var(--color-yellow-700);
+  --color-primary-text: var(--color-brown-900);
+  --color-danger: #b3401d;
+  --color-focus-ring: var(--color-yellow-700);
+
+  /* Tipografia */
+  --font-heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --font-body: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 2rem;
+  --line-height-base: 1.5;
+
+  /* Espaçamento e forma */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #1c130c;
+    --color-surface: #2b1d13;
+    --color-text: var(--color-yellow-100);
+    --color-text-muted: var(--color-yellow-300);
+    --color-border: var(--color-brown-700);
+    --color-primary: var(--color-yellow-500);
+    --color-primary-hover: var(--color-yellow-300);
+    --color-primary-text: var(--color-brown-900);
+    --color-focus-ring: var(--color-yellow-300);
+  }
+}

@@ -1,0 +1,35 @@
+@import "./styles/tokens.css";
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+h1,
+h2 {
+  font-family: var(--font-heading);
+  color: var(--color-text);
+}
+
+.showcase {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.showcase-group {
+  display: flex;
+  gap: var(--space-md);
+  align-items: flex-end;
+}

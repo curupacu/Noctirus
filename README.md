@@ -3,7 +3,7 @@
 ## Tecnologias
 - React
 - Node.js
-- MySQL
+- Cloud Firestore
 
 ## Integrantes
 - Guilherme Reche
