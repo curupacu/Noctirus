@@ -61,6 +61,18 @@ Na raiz: `npm run dev` sobe frontend e backend juntos (via `concurrently`).
 - **Sprint 1 (fundação)** concluído: scaffold de frontend/backend, rotas, design system,
   Firebase (Auth + Firestore) configurado, deploy inicial no ar. Falta só CI de preview
   automático por PR (não bloqueia o Sprint 2).
+- **Sprints 2–4 (auth, currículo/perfil, matching)** concluídos e no ar: cadastro/login por
+  papel + custom claims, security rules por papel, OAB validada por formato/unicidade
+  (verificação real fica manual pelo admin — sem API gratuita disponível, ver
+  `docs/ROADMAP.md`), admin criado via `database/seed/criar-admin.js` (sem cadastro
+  público), CRUD de currículo, perfil público do advogado com contato (WhatsApp/e-mail),
+  listagem de advogados com filtro por área/localização. UI propositalmente simples, sem
+  foto/bio/upload de PDF (ficou pra quando o Blaze for ativado — ver decisão registrada).
+  `frontend/.env.production` fixa a `VITE_API_URL` pro backend do Render no build de
+  produção (o `.env` normal aponta pro backend local).
+- **`nocturis-prod` ainda não existe de verdade** — o `.firebaserc` já tem o alias, mas hoje
+  tanto dev quanto o "deploy no ar" apontam pro mesmo projeto `nocturis-web`. Criar o projeto
+  de produção separado é decisão pendente.
 
 ## Escopo do MVP (Fase 1)
 
