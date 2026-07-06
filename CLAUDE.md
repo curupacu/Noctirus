@@ -53,6 +53,15 @@ docs/                 ROADMAP.md e demais documentos
 
 Na raiz: `npm run dev` sobe frontend e backend juntos (via `concurrently`).
 
+## Status do deploy
+
+- **Frontend (Firebase Hosting, projeto `nocturis-web`):** https://nocturis-web.web.app
+- **Backend (Render):** https://noctirus-backend.onrender.com — health check em `/health`.
+  Free tier: dorme após inatividade, primeira requisição pode demorar ~30-60s.
+- **Sprint 1 (fundação)** concluído: scaffold de frontend/backend, rotas, design system,
+  Firebase (Auth + Firestore) configurado, deploy inicial no ar. Falta só CI de preview
+  automático por PR (não bloqueia o Sprint 2).
+
 ## Escopo do MVP (Fase 1)
 
 Cadastro/login por papel, perfil + currículo do advogado, contato direto (WhatsApp/e-mail),
