@@ -5,7 +5,13 @@
     "areasAtuacao": ["civel"],
     "localizacao": { "cidade": "São Paulo", "uf": "SP" },
     "contatos": { "whatsapp": "5511999990001", "email": "ana.souza@example.com" },
-    "verificado": false
+    "verificado": false,
+    "curriculo": {
+      "formacao": ["Direito - USP (2010)"],
+      "especializacoes": ["Direito Civil"],
+      "cursos": ["Contratos e Responsabilidade Civil"],
+      "experiencias": ["10 anos atuando em direito de família e sucessões"]
+    }
   },
   {
     "nome": "Carlos Eduardo Lima",
@@ -13,7 +19,13 @@
     "areasAtuacao": ["trabalhista"],
     "localizacao": { "cidade": "Guarulhos", "uf": "SP" },
     "contatos": { "whatsapp": "5511999990002", "email": "carlos.lima@example.com" },
-    "verificado": false
+    "verificado": false,
+    "curriculo": {
+      "formacao": ["Direito - Mackenzie (2012)"],
+      "especializacoes": ["Direito do Trabalho"],
+      "cursos": ["Reforma Trabalhista na Prática"],
+      "experiencias": ["8 anos em escritório especializado em causas trabalhistas"]
+    }
   },
   {
     "nome": "Fernanda Torres",
@@ -21,6 +33,40 @@
     "areasAtuacao": ["civel", "trabalhista"],
     "localizacao": { "cidade": "São Paulo", "uf": "SP" },
     "contatos": { "whatsapp": "5511999990003", "email": "fernanda.torres@example.com" },
-    "verificado": false
+    "verificado": false,
+    "curriculo": {
+      "formacao": ["Direito - PUC-SP (2008)"],
+      "especializacoes": ["Direito Civil", "Direito do Trabalho"],
+      "cursos": ["Mediação e Arbitragem"],
+      "experiencias": ["Escritório próprio há 12 anos"]
+    }
+  },
+  {
+    "nome": "Rafael Andrade",
+    "oab": { "numero": "456789", "uf": "RJ" },
+    "areasAtuacao": ["trabalhista"],
+    "localizacao": { "cidade": "Rio de Janeiro", "uf": "RJ" },
+    "contatos": { "whatsapp": "5521999990004", "email": "rafael.andrade@example.com" },
+    "verificado": false,
+    "curriculo": {
+      "formacao": ["Direito - UERJ (2014)"],
+      "especializacoes": ["Direito do Trabalho"],
+      "cursos": ["Direito Sindical"],
+      "experiencias": ["6 anos representando trabalhadores em ações trabalhistas"]
+    }
+  },
+  {
+    "nome": "Juliana Prado",
+    "oab": { "numero": "567890", "uf": "PR" },
+    "areasAtuacao": ["civel"],
+    "localizacao": { "cidade": "Curitiba", "uf": "PR" },
+    "contatos": { "whatsapp": "5541999990005", "email": "juliana.prado@example.com" },
+    "verificado": false,
+    "curriculo": {
+      "formacao": ["Direito - UFPR (2011)"],
+      "especializacoes": ["Direito Civil", "Direito do Consumidor"],
+      "cursos": ["Contratos Digitais"],
+      "experiencias": ["9 anos atuando em causas cíveis e de consumidor"]
+    }
   }
 ]

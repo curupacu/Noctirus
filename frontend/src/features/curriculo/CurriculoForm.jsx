@@ -74,7 +74,6 @@ export function CurriculoForm({ uid }) {
           <textarea
             id={chave}
             rows={4}
-            cols={50}
             value={valores[chave]}
             onChange={(e) => setValores((v) => ({ ...v, [chave]: e.target.value }))}
           />
