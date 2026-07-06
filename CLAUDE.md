@@ -15,8 +15,8 @@ completo de sprints, modelo de dados e decisões de arquitetura.
 - **Banco**: Cloud Firestore — **não MySQL**, apesar do que documentação antiga possa dizer.
 - **IA de triagem** (Fase 2): Google Gemini Flash-Lite, chamado só pelo backend, com
   fallback por regras se falhar ou passar de 5s.
-- Dois projetos Firebase: `nocturis-dev` (desenvolvimento) e `nocturis-prod` (produção).
-  Sem emulador local — o backend aponta direto para o projeto `nocturis-dev` na nuvem.
+- Dois projetos Firebase: `nocturis-web` (desenvolvimento) e `nocturis-prod` (produção).
+  Sem emulador local — o backend aponta direto para o projeto `nocturis-web` na nuvem.
 
 ## Estrutura do repositório
 

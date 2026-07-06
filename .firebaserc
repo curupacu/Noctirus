@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "nocturis-web",
+    "dev": "nocturis-web",
+    "prod": "nocturis-prod"
+  }
+}
