@@ -3,23 +3,37 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     // Nega tudo por padrão (RNF005). Papéis vêm de custom claims, nunca de campo público.
+    // Na prática, toda leitura/escrita de dados sensíveis passa pelo backend (Admin SDK,
+    // que ignora estas rules) — elas ficam como segunda camada de defesa caso o front
+    // algum dia leia/escreva Firestore direto.
     match /{document=**} {
       allow read, write: if false;
     }
 
+    function papel() {
+      return request.auth.token.role;
+    }
+
+    function dono(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
     match /users/{uid} {
       allow read: if request.auth != null;
-      allow write: if request.auth != null && request.auth.uid == uid;
+      allow create: if dono(uid);
+      // Edição não pode trocar o papel — isso só acontece via custom claim, pelo backend.
+      allow update: if dono(uid) && request.resource.data.role == resource.data.role;
     }
 
     match /advogados/{uid} {
       allow read: if true;
-      allow write: if request.auth != null && request.auth.uid == uid;
+      // Admin também pode escrever (aprovação manual da OAB via campo "verificado").
+      allow write: if (dono(uid) && papel() == "advogado") || papel() == "admin";
     }
 
     match /curriculos/{uid} {
       allow read: if true;
-      allow write: if request.auth != null && request.auth.uid == uid;
+      allow write: if dono(uid) && papel() == "advogado";
     }
   }
 }
