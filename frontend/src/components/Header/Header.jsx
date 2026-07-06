@@ -26,6 +26,8 @@ export function Header() {
     >
       <Link to="/">Nocturis</Link>
 
+      <Link to="/advogados">Advogados</Link>
+
       {loading ? null : user ? (
         <nav style={{ display: "flex", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
           <span>

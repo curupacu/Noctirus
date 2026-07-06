@@ -1,6 +1,8 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Header } from "../components/Header/Header";
 import { AdminAdvogadosPage } from "../features/admin/AdminAdvogadosPage";
+import { AdvogadoPublicoPage } from "../features/advogados/AdvogadoPublicoPage";
+import { AdvogadosListPage } from "../features/advogados/AdvogadosListPage";
 import { CadastroPage } from "../features/auth/CadastroPage";
 import { LoginPage } from "../features/auth/LoginPage";
 import { RotaProtegida } from "../features/auth/RotaProtegida";
@@ -16,6 +18,8 @@ export function AppRouter() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/cadastro" element={<CadastroPage />} />
+        <Route path="/advogados" element={<AdvogadosListPage />} />
+        <Route path="/advogados/:uid" element={<AdvogadoPublicoPage />} />
         <Route
           path="/painel"
           element={

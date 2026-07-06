@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
 import { useAuth } from "../auth/AuthContext";
+import { CurriculoForm } from "../curriculo/CurriculoForm";
 import { api } from "../../lib/api";
 
 export function PerfilPage() {
@@ -103,6 +104,15 @@ export function PerfilPage() {
           <Input label="UF" id="uf" value={uf} onChange={(e) => setUf(e.target.value)} maxLength={2} />
           <Button type="submit">Salvar dados de advogado</Button>
         </form>
+      )}
+
+      {role === "advogado" && (
+        <>
+          <CurriculoForm uid={user.uid} />
+          <p>
+            <Link to={`/advogados/${user.uid}`}>Ver meu perfil público</Link>
+          </p>
+        </>
       )}
 
       {role === "admin" && (
