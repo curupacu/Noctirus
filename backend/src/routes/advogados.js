@@ -16,6 +16,23 @@ advogadosRouter.get(
   },
 );
 
+// Lista pública de advogados (visualização simples; filtro por área/localização fica pro
+// matching da Sprint 4).
+advogadosRouter.get("/advogados", async (_req, res) => {
+  const snapshot = await db.collection("advogados").get();
+  const advogados = await Promise.all(
+    snapshot.docs.map(async (doc) => {
+      const usuarioDoc = await db.collection("users").doc(doc.id).get();
+      return {
+        uid: doc.id,
+        nome: usuarioDoc.exists ? usuarioDoc.data().nome : null,
+        ...doc.data(),
+      };
+    }),
+  );
+  res.json(advogados);
+});
+
 advogadosRouter.get("/advogados/:uid", async (req, res) => {
   const { uid } = req.params;
   const [advogadoDoc, usuarioDoc] = await Promise.all([

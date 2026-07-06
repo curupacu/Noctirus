@@ -3,6 +3,7 @@ import cors from "cors";
 import express from "express";
 import { advogadosRouter } from "./routes/advogados.js";
 import { authRouter } from "./routes/auth.js";
+import { curriculosRouter } from "./routes/curriculos.js";
 import { healthRouter } from "./routes/health.js";
 import { usersRouter } from "./routes/users.js";
 
@@ -14,6 +15,7 @@ app.use(healthRouter);
 app.use(authRouter);
 app.use(usersRouter);
 app.use(advogadosRouter);
+app.use(curriculosRouter);
 
 const port = process.env.PORT || 3001;
 
