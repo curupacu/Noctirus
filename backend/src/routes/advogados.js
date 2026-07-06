@@ -16,11 +16,14 @@ advogadosRouter.get(
   },
 );
 
-// Lista pública de advogados (visualização simples; filtro por área/localização fica pro
-// matching da Sprint 4).
-advogadosRouter.get("/advogados", async (_req, res) => {
+// Lista pública de advogados, com filtro opcional por área e localização (matching —
+// RF006/RF007). Filtragem em memória (dataset pequeno no MVP), sem precisar de índice
+// composto no Firestore.
+advogadosRouter.get("/advogados", async (req, res) => {
+  const { area, cidade, uf } = req.query;
+
   const snapshot = await db.collection("advogados").get();
-  const advogados = await Promise.all(
+  let advogados = await Promise.all(
     snapshot.docs.map(async (doc) => {
       const usuarioDoc = await db.collection("users").doc(doc.id).get();
       return {
@@ -30,6 +33,21 @@ advogadosRouter.get("/advogados", async (_req, res) => {
       };
     }),
   );
+
+  if (area) {
+    advogados = advogados.filter((adv) => adv.areasAtuacao?.includes(area));
+  }
+  if (uf) {
+    advogados = advogados.filter(
+      (adv) => adv.localizacao?.uf?.toUpperCase() === String(uf).toUpperCase(),
+    );
+  }
+  if (cidade) {
+    advogados = advogados.filter((adv) =>
+      adv.localizacao?.cidade?.toLowerCase().includes(String(cidade).toLowerCase()),
+    );
+  }
+
   res.json(advogados);
 });
 

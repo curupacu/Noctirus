@@ -1,34 +1,80 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Button } from "../../components/Button/Button";
+import { Input } from "../../components/Input/Input";
 import { api } from "../../lib/api";
 
 export function AdvogadosListPage() {
+  const [area, setArea] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [uf, setUf] = useState("");
   const [advogados, setAdvogados] = useState(null);
   const [erro, setErro] = useState(null);
 
+  function buscar(e) {
+    e?.preventDefault();
+    const params = new URLSearchParams();
+    if (area) params.set("area", area);
+    if (cidade) params.set("cidade", cidade);
+    if (uf) params.set("uf", uf);
+
+    const query = params.toString();
+    api
+      .get(`/advogados${query ? `?${query}` : ""}`)
+      .then(setAdvogados)
+      .catch((err) => setErro(err.message));
+  }
+
   useEffect(() => {
-    api.get("/advogados").then(setAdvogados).catch((err) => setErro(err.message));
+    buscar();
   }, []);
 
-  if (erro) return <p role="alert">{erro}</p>;
-  if (!advogados) return <p>Carregando...</p>;
+  function limpar() {
+    setArea("");
+    setCidade("");
+    setUf("");
+    api.get("/advogados").then(setAdvogados).catch((err) => setErro(err.message));
+  }
 
   return (
     <main>
       <h1>Advogados</h1>
-      <p>
-        Lista simples pra teste — sem filtro por área/localização ainda (isso é o matching,
-        que vem depois).
-      </p>
-      <ul>
-        {advogados.map((adv) => (
-          <li key={adv.uid}>
-            <Link to={`/advogados/${adv.uid}`}>{adv.nome || adv.uid}</Link> —{" "}
-            {adv.areasAtuacao?.join(", ") || "sem área"} —{" "}
-            {adv.verificado ? "OAB verificada" : "OAB em análise"}
-          </li>
-        ))}
-      </ul>
+
+      <form onSubmit={buscar}>
+        <label htmlFor="area">Área</label>
+        <br />
+        <select id="area" value={area} onChange={(e) => setArea(e.target.value)}>
+          <option value="">Todas</option>
+          <option value="civel">Cível</option>
+          <option value="trabalhista">Trabalhista</option>
+        </select>
+
+        <Input label="Cidade" id="cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} />
+        <Input label="UF" id="uf" value={uf} onChange={(e) => setUf(e.target.value)} maxLength={2} />
+
+        <Button type="submit">Filtrar</Button>
+        <Button type="button" variant="secondary" onClick={limpar}>
+          Limpar filtros
+        </Button>
+      </form>
+
+      {erro && <p role="alert">{erro}</p>}
+      {!advogados && !erro && <p>Carregando...</p>}
+
+      {advogados && advogados.length === 0 && <p>Nenhum advogado encontrado com esses filtros.</p>}
+
+      {advogados && advogados.length > 0 && (
+        <ul>
+          {advogados.map((adv) => (
+            <li key={adv.uid}>
+              <Link to={`/advogados/${adv.uid}`}>{adv.nome || adv.uid}</Link> —{" "}
+              {adv.areasAtuacao?.join(", ") || "sem área"} —{" "}
+              {adv.localizacao?.cidade}/{adv.localizacao?.uf} —{" "}
+              {adv.verificado ? "OAB verificada" : "OAB em análise"}
+            </li>
+          ))}
+        </ul>
+      )}
     </main>
   );
 }
