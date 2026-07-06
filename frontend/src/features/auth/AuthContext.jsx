@@ -35,7 +35,11 @@ export function AuthProvider({ children }) {
   }
 
   async function login(email, senha) {
-    await signInWithEmailAndPassword(auth, email, senha);
+    const credencial = await signInWithEmailAndPassword(auth, email, senha);
+    const tokenResult = await credencial.user.getIdTokenResult();
+    const roleLogado = tokenResult.claims.role || null;
+    setRole(roleLogado);
+    return roleLogado;
   }
 
   async function logout() {

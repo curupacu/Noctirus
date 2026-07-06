@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
 import { useAuth } from "./AuthContext";
+import { rotaInicial } from "./rotaInicial";
 
 export function LoginPage() {
   const { login } = useAuth();
@@ -18,8 +19,8 @@ export function LoginPage() {
     setErro(null);
     setEnviando(true);
     try {
-      await login(email, senha);
-      navigate("/perfil");
+      const roleLogado = await login(email, senha);
+      navigate(rotaInicial(roleLogado));
     } catch {
       setErro("E-mail ou senha inválidos");
     } finally {
