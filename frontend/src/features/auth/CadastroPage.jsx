@@ -4,6 +4,7 @@ import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
 import { api } from "../../lib/api";
 import { useAuth } from "./AuthContext";
+import { rotaInicial } from "./rotaInicial";
 
 const AREAS = ["civel", "trabalhista"];
 
@@ -54,8 +55,8 @@ export function CadastroPage() {
           : {}),
       });
 
-      await atualizarRole();
-      navigate("/perfil");
+      const roleLogado = await atualizarRole();
+      navigate(rotaInicial(roleLogado));
     } catch (err) {
       if (usuarioCriado) {
         await usuarioCriado.delete().catch(() => {});

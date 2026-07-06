@@ -6,7 +6,7 @@ import { useAuth } from "../auth/AuthContext";
 import { api } from "../../lib/api";
 
 export function PerfilPage() {
-  const { user, role, logout } = useAuth();
+  const { user, role } = useAuth();
 
   const [dadosUsuario, setDadosUsuario] = useState(null);
   const [advogado, setAdvogado] = useState(null);
@@ -112,10 +112,6 @@ export function PerfilPage() {
       )}
 
       {mensagem && <p role="status">{mensagem}</p>}
-
-      <Button variant="secondary" onClick={logout}>
-        Sair
-      </Button>
     </main>
   );
 }
