@@ -22,6 +22,7 @@ export function PainelPage() {
       </p>
 
       {erro && <p role="alert">Erro ao confirmar login: {erro}</p>}
+      {!usuario && !erro && <p>Carregando...</p>}
 
       {usuario && (
         <ul>
