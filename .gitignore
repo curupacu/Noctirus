@@ -4,9 +4,15 @@ node_modules/
 # Arquivos de ambiente
 .env
 
+# Credenciais do Firebase Admin SDK
+backend/service-account.json
+
 # Build
 dist/
 build/
+
+# Cache local do Firebase CLI
+.firebase/
 
 # Logs
 npm-debug.log
