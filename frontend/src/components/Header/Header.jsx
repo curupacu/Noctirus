@@ -34,6 +34,12 @@ export function Header() {
             Logado como <strong>{user.email}</strong> ({role || "sem papel definido"})
           </span>
           <Link to={rotaInicial(role)}>Início</Link>
+          {role === "cliente" && (
+            <>
+              <Link to="/triagem">Fazer triagem</Link>
+              <Link to="/minhas-triagens">Minhas triagens</Link>
+            </>
+          )}
           <Link to="/perfil">Meu perfil</Link>
           <button type="button" onClick={handleLogout}>
             Sair

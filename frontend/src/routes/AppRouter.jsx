@@ -8,6 +8,9 @@ import { LoginPage } from "../features/auth/LoginPage";
 import { RotaProtegida } from "../features/auth/RotaProtegida";
 import { PainelPage } from "../features/painel/PainelPage";
 import { PerfilPage } from "../features/perfil/PerfilPage";
+import { MinhasTriagensPage } from "../features/triagem/MinhasTriagensPage";
+import { ResultadoPage } from "../features/triagem/ResultadoPage";
+import { TriagemPage } from "../features/triagem/TriagemPage";
 import { HomePage } from "./HomePage";
 
 export function AppRouter() {
@@ -33,6 +36,30 @@ export function AppRouter() {
           element={
             <RotaProtegida>
               <PerfilPage />
+            </RotaProtegida>
+          }
+        />
+        <Route
+          path="/triagem"
+          element={
+            <RotaProtegida papeis={["cliente"]}>
+              <TriagemPage />
+            </RotaProtegida>
+          }
+        />
+        <Route
+          path="/triagem/:id"
+          element={
+            <RotaProtegida papeis={["cliente"]}>
+              <ResultadoPage />
+            </RotaProtegida>
+          }
+        />
+        <Route
+          path="/minhas-triagens"
+          element={
+            <RotaProtegida papeis={["cliente"]}>
+              <MinhasTriagensPage />
             </RotaProtegida>
           }
         />

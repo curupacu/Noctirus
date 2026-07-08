@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { db } from "../lib/firebase-admin.js";
 import { requireRole, verificarToken } from "../middlewares/auth.js";
+import { buscarAdvogadosCompativeis } from "../services/matching.js";
 
 export const advogadosRouter = Router();
 
@@ -21,33 +22,7 @@ advogadosRouter.get(
 // composto no Firestore.
 advogadosRouter.get("/advogados", async (req, res) => {
   const { area, cidade, uf } = req.query;
-
-  const snapshot = await db.collection("advogados").get();
-  let advogados = await Promise.all(
-    snapshot.docs.map(async (doc) => {
-      const usuarioDoc = await db.collection("users").doc(doc.id).get();
-      return {
-        uid: doc.id,
-        nome: usuarioDoc.exists ? usuarioDoc.data().nome : null,
-        ...doc.data(),
-      };
-    }),
-  );
-
-  if (area) {
-    advogados = advogados.filter((adv) => adv.areasAtuacao?.includes(area));
-  }
-  if (uf) {
-    advogados = advogados.filter(
-      (adv) => adv.localizacao?.uf?.toUpperCase() === String(uf).toUpperCase(),
-    );
-  }
-  if (cidade) {
-    advogados = advogados.filter((adv) =>
-      adv.localizacao?.cidade?.toLowerCase().includes(String(cidade).toLowerCase()),
-    );
-  }
-
+  const advogados = await buscarAdvogadosCompativeis({ area, cidade, uf });
   res.json(advogados);
 });
 

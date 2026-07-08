@@ -35,5 +35,12 @@ service cloud.firestore {
       allow read: if true;
       allow write: if dono(uid) && papel() == "advogado";
     }
+
+    // Triagem só é criada/lida pelo backend (classificação por IA/regras + matching);
+    // aqui fica só como segunda camada, liberando leitura pro próprio cliente dono.
+    match /triagens/{id} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.clienteId;
+      allow write: if false;
+    }
   }
 }
