@@ -4,7 +4,7 @@ import { Button } from "../../components/Button/Button";
 import { api } from "../../lib/api";
 
 export function TriagemPage() {
-  const [perguntas, setPerguntas] = useState(null);
+  const [arvore, setArvore] = useState(null);
   const [respostas, setRespostas] = useState({});
   const [descricao, setDescricao] = useState("");
   const [enviando, setEnviando] = useState(false);
@@ -12,11 +12,17 @@ export function TriagemPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    api
-      .get("/triagem/perguntas")
-      .then((dados) => setPerguntas(dados.perguntas))
-      .catch((err) => setErro(err.message));
+    api.get("/triagem/perguntas").then(setArvore).catch((err) => setErro(err.message));
   }, []);
+
+  function escolherSituacao(valor) {
+    // Muda a área muda qual é a segunda pergunta — descarta a resposta anterior dela.
+    setRespostas({ situacao: valor });
+  }
+
+  function responderSegundaEtapa(perguntaId, valor) {
+    setRespostas((r) => ({ ...r, [perguntaId]: valor }));
+  }
 
   async function enviar(e) {
     e.preventDefault();
@@ -38,7 +44,9 @@ export function TriagemPage() {
     }
   }
 
-  if (!perguntas && !erro) return <p>Carregando...</p>;
+  if (!arvore && !erro) return <p>Carregando...</p>;
+
+  const perguntaSegundaEtapa = arvore && arvore.segundaEtapa[respostas.situacao];
 
   return (
     <main>
@@ -49,26 +57,43 @@ export function TriagemPage() {
       </p>
 
       <form onSubmit={enviar}>
-        {perguntas?.map((pergunta) => (
-          <div key={pergunta.id}>
-            <label htmlFor={pergunta.id}>{pergunta.pergunta}</label>
+        {arvore && (
+          <div>
+            <label htmlFor={arvore.principal.id}>{arvore.principal.pergunta}</label>
             <br />
             <select
-              id={pergunta.id}
-              value={respostas[pergunta.id] || ""}
-              onChange={(e) =>
-                setRespostas((r) => ({ ...r, [pergunta.id]: e.target.value }))
-              }
+              id={arvore.principal.id}
+              value={respostas.situacao || ""}
+              onChange={(e) => escolherSituacao(e.target.value)}
             >
               <option value="">Selecione...</option>
-              {pergunta.opcoes.map((opcao) => (
+              {arvore.principal.opcoes.map((opcao) => (
                 <option key={opcao.valor} value={opcao.valor}>
                   {opcao.label}
                 </option>
               ))}
             </select>
           </div>
-        ))}
+        )}
+
+        {perguntaSegundaEtapa && (
+          <div>
+            <label htmlFor={perguntaSegundaEtapa.id}>{perguntaSegundaEtapa.pergunta}</label>
+            <br />
+            <select
+              id={perguntaSegundaEtapa.id}
+              value={respostas[perguntaSegundaEtapa.id] || ""}
+              onChange={(e) => responderSegundaEtapa(perguntaSegundaEtapa.id, e.target.value)}
+            >
+              <option value="">Selecione...</option>
+              {perguntaSegundaEtapa.opcoes.map((opcao) => (
+                <option key={opcao.valor} value={opcao.valor}>
+                  {opcao.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         <div>
           <label htmlFor="descricao">Descreva seu caso</label>
