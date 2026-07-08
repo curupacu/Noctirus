@@ -196,7 +196,7 @@ export function classificarPorRegras({ respostas = {}, descricao = "" }) {
 const MODELO_GEMINI = process.env.GEMINI_MODEL || "gemini-2.5-flash-lite";
 const TIMEOUT_MS = 5000;
 const CONFIANCA_MINIMA = 0.5;
-const TODAS_CATEGORIAS = Object.values(CATEGORIAS_POR_AREA).flatMap((lista) => lista.map((c) => c.valor));
+export const TODAS_CATEGORIAS = Object.values(CATEGORIAS_POR_AREA).flatMap((lista) => lista.map((c) => c.valor));
 
 let cliente = null;
 function clienteGemini() {

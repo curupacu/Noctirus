@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
@@ -23,14 +23,37 @@ export function CadastroPage() {
   const [uf, setUf] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [areasAtuacao, setAreasAtuacao] = useState([]);
+  const [categoriasPorArea, setCategoriasPorArea] = useState(null);
+  const [especialidades, setEspecialidades] = useState([]);
   const [erro, setErro] = useState(null);
   const [enviando, setEnviando] = useState(false);
+
+  useEffect(() => {
+    api.get("/triagem/perguntas").then((dados) => setCategoriasPorArea(dados.categorias));
+  }, []);
 
   function alternarArea(area) {
     setAreasAtuacao((atual) =>
       atual.includes(area) ? atual.filter((a) => a !== area) : [...atual, area],
     );
   }
+
+  function alternarEspecialidade(valor) {
+    setEspecialidades((atual) =>
+      atual.includes(valor) ? atual.filter((e) => e !== valor) : [...atual, valor],
+    );
+  }
+
+  const especialidadesDisponiveis = (categoriasPorArea
+    ? areasAtuacao.flatMap((area) => categoriasPorArea[area] || [])
+    : []
+  ).filter((c, i, lista) => lista.findIndex((c2) => c2.valor === c.valor) === i);
+
+  useEffect(() => {
+    const valoresDisponiveis = especialidadesDisponiveis.map((c) => c.valor);
+    setEspecialidades((atual) => atual.filter((e) => valoresDisponiveis.includes(e)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [areasAtuacao, categoriasPorArea]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -49,6 +72,7 @@ export function CadastroPage() {
           ? {
               oab: { numero: oabNumero, uf: oabUf },
               areasAtuacao,
+              especialidades,
               localizacao: { cidade, uf },
               whatsapp,
             }
@@ -151,6 +175,24 @@ export function CadastroPage() {
                 </label>
               ))}
             </fieldset>
+
+            {especialidadesDisponiveis.length > 0 && (
+              <fieldset>
+                <legend>Especialidades (opcional)</legend>
+                <p>Ajuda o cliente a ver se você atende o assunto específico do caso dele.</p>
+                {especialidadesDisponiveis.map((c) => (
+                  <label key={c.valor}>
+                    <input
+                      type="checkbox"
+                      checked={especialidades.includes(c.valor)}
+                      onChange={() => alternarEspecialidade(c.valor)}
+                    />
+                    {c.label}
+                  </label>
+                ))}
+              </fieldset>
+            )}
+
             <Input label="Cidade" id="cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} />
             <Input label="UF" id="uf" value={uf} onChange={(e) => setUf(e.target.value)} maxLength={2} />
             <Input

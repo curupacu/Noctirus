@@ -16,6 +16,8 @@ export function PerfilPage() {
   const [whatsapp, setWhatsapp] = useState("");
   const [cidade, setCidade] = useState("");
   const [uf, setUf] = useState("");
+  const [categoriasPorArea, setCategoriasPorArea] = useState(null);
+  const [especialidades, setEspecialidades] = useState([]);
   const [mensagem, setMensagem] = useState(null);
   const [carregando, setCarregando] = useState(true);
 
@@ -27,16 +29,32 @@ export function PerfilPage() {
       setTelefone(usuario.telefone || "");
 
       if (role === "advogado") {
-        const dadosAdvogado = await api.get(`/advogados/${user.uid}`);
+        const [dadosAdvogado, perguntas] = await Promise.all([
+          api.get(`/advogados/${user.uid}`),
+          api.get("/triagem/perguntas"),
+        ]);
         setAdvogado(dadosAdvogado);
         setWhatsapp(dadosAdvogado.contatos?.whatsapp || "");
         setCidade(dadosAdvogado.localizacao?.cidade || "");
         setUf(dadosAdvogado.localizacao?.uf || "");
+        setEspecialidades(dadosAdvogado.especialidades || []);
+        setCategoriasPorArea(perguntas.categorias);
       }
       setCarregando(false);
     }
     if (user && role) carregar();
   }, [user, role]);
+
+  function alternarEspecialidade(valor) {
+    setEspecialidades((atual) =>
+      atual.includes(valor) ? atual.filter((e) => e !== valor) : [...atual, valor],
+    );
+  }
+
+  const especialidadesDisponiveis = (categoriasPorArea && advogado
+    ? (advogado.areasAtuacao || []).flatMap((area) => categoriasPorArea[area] || [])
+    : []
+  ).filter((c, i, lista) => lista.findIndex((c2) => c2.valor === c.valor) === i);
 
   async function salvarUsuario(e) {
     e.preventDefault();
@@ -56,6 +74,7 @@ export function PerfilPage() {
       await api.put(`/advogados/${user.uid}`, {
         whatsapp,
         localizacao: { cidade, uf },
+        especialidades,
       });
       setMensagem("Dados salvos.");
     } catch (err) {
@@ -102,6 +121,24 @@ export function PerfilPage() {
           />
           <Input label="Cidade" id="cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} />
           <Input label="UF" id="uf" value={uf} onChange={(e) => setUf(e.target.value)} maxLength={2} />
+
+          {especialidadesDisponiveis.length > 0 && (
+            <fieldset>
+              <legend>Especialidades</legend>
+              <p>Ajuda o cliente a ver se você atende o assunto específico do caso dele.</p>
+              {especialidadesDisponiveis.map((c) => (
+                <label key={c.valor}>
+                  <input
+                    type="checkbox"
+                    checked={especialidades.includes(c.valor)}
+                    onChange={() => alternarEspecialidade(c.valor)}
+                  />
+                  {c.label}
+                </label>
+              ))}
+            </fieldset>
+          )}
+
           <Button type="submit">Salvar dados de advogado</Button>
         </form>
       )}
