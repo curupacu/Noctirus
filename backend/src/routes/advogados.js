@@ -2,6 +2,7 @@ import { Router } from "express";
 import { db } from "../lib/firebase-admin.js";
 import { requireRole, verificarToken } from "../middlewares/auth.js";
 import { buscarAdvogadosCompativeis } from "../services/matching.js";
+import { TODAS_CATEGORIAS } from "../services/triagem.js";
 
 export const advogadosRouter = Router();
 
@@ -54,9 +55,12 @@ advogadosRouter.put(
       return res.status(403).json({ erro: "Só é possível editar o próprio perfil" });
     }
 
-    const { areasAtuacao, localizacao, whatsapp } = req.body;
+    const { areasAtuacao, especialidades, localizacao, whatsapp } = req.body;
     const campos = {};
     if (areasAtuacao !== undefined) campos.areasAtuacao = areasAtuacao;
+    if (especialidades !== undefined) {
+      campos.especialidades = especialidades.filter((e) => TODAS_CATEGORIAS.includes(e));
+    }
     if (localizacao !== undefined) campos.localizacao = localizacao;
     if (whatsapp !== undefined) campos["contatos.whatsapp"] = whatsapp;
 

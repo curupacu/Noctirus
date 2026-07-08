@@ -23,16 +23,19 @@ export function AdvogadoPublicoPage() {
   const { uid } = useParams();
   const [advogado, setAdvogado] = useState(null);
   const [curriculo, setCurriculo] = useState(null);
+  const [catalogoCategorias, setCatalogoCategorias] = useState(null);
   const [erro, setErro] = useState(null);
 
   useEffect(() => {
     Promise.all([
       api.get(`/advogados/${uid}`),
       api.get(`/curriculos/${uid}`).catch(() => null),
+      api.get("/triagem/perguntas"),
     ])
-      .then(([dadosAdvogado, dadosCurriculo]) => {
+      .then(([dadosAdvogado, dadosCurriculo, perguntas]) => {
         setAdvogado(dadosAdvogado);
         setCurriculo(dadosCurriculo);
+        setCatalogoCategorias(perguntas.categorias);
       })
       .catch((err) => setErro(err.message));
   }, [uid]);
@@ -42,6 +45,10 @@ export function AdvogadoPublicoPage() {
 
   const whatsapp = advogado.contatos?.whatsapp;
   const email = advogado.contatos?.email;
+  const rotulosEspecialidades = (advogado.especialidades || []).map((valor) => {
+    const todas = Object.values(catalogoCategorias || {}).flat();
+    return todas.find((c) => c.valor === valor)?.label || valor;
+  });
 
   return (
     <main>
@@ -51,6 +58,9 @@ export function AdvogadoPublicoPage() {
         {advogado.verificado ? "verificada" : "em análise"}
       </p>
       <p>Áreas de atuação: {advogado.areasAtuacao?.join(", ") || "não informado"}</p>
+      {rotulosEspecialidades.length > 0 && (
+        <p>Especialidades: {rotulosEspecialidades.join(", ")}</p>
+      )}
       <p>
         Localização: {advogado.localizacao?.cidade || "?"}/{advogado.localizacao?.uf || "?"}
       </p>
