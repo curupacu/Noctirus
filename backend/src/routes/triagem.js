@@ -2,12 +2,21 @@ import { Router } from "express";
 import { db } from "../lib/firebase-admin.js";
 import { requireRole, verificarToken } from "../middlewares/auth.js";
 import { buscarAdvogadosCompativeis } from "../services/matching.js";
-import { classificar, PERGUNTAS_GUIADAS } from "../services/triagem.js";
+import {
+  CATEGORIAS_POR_AREA,
+  classificar,
+  PERGUNTA_PRINCIPAL,
+  PERGUNTAS_SEGUNDA_ETAPA,
+} from "../services/triagem.js";
 
 export const triagemRouter = Router();
 
 triagemRouter.get("/triagem/perguntas", (_req, res) => {
-  res.json({ perguntas: PERGUNTAS_GUIADAS });
+  res.json({
+    principal: PERGUNTA_PRINCIPAL,
+    segundaEtapa: PERGUNTAS_SEGUNDA_ETAPA,
+    categorias: CATEGORIAS_POR_AREA,
+  });
 });
 
 // Triagem é sempre vinculada ao cliente logado (clienteId) — o mesmo cliente pode
@@ -33,6 +42,7 @@ triagemRouter.post(
       respostas: respostas || {},
       descricao,
       areaClassificada: resultado.areaClassificada,
+      categorias: resultado.categorias || [],
       tipoAdvogadoSugerido: resultado.tipoAdvogadoSugerido,
       origem: resultado.origem,
       justificativa: resultado.justificativa || null,
