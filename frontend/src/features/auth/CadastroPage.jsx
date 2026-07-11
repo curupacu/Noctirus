@@ -95,7 +95,7 @@ export function CadastroPage() {
     <main>
       <h1>Criar conta</h1>
 
-      <form onSubmit={handleSubmit}>
+      <form className="card stack" onSubmit={handleSubmit}>
         <fieldset>
           <legend>Você é:</legend>
           <label>
@@ -147,21 +147,24 @@ export function CadastroPage() {
 
         {role === "advogado" && (
           <>
-            <Input
-              label="Número da OAB"
-              id="oabNumero"
-              value={oabNumero}
-              onChange={(e) => setOabNumero(e.target.value)}
-              required
-            />
-            <Input
-              label="UF da OAB"
-              id="oabUf"
-              value={oabUf}
-              onChange={(e) => setOabUf(e.target.value)}
-              maxLength={2}
-              required
-            />
+            <div className="row">
+              <Input
+                label="Número da OAB"
+                id="oabNumero"
+                value={oabNumero}
+                onChange={(e) => setOabNumero(e.target.value)}
+                required
+              />
+              <Input
+                label="UF da OAB"
+                id="oabUf"
+                value={oabUf}
+                onChange={(e) => setOabUf(e.target.value)}
+                maxLength={2}
+                required
+              />
+            </div>
+
             <fieldset>
               <legend>Áreas de atuação</legend>
               {AREAS.map((area) => (
@@ -179,7 +182,9 @@ export function CadastroPage() {
             {especialidadesDisponiveis.length > 0 && (
               <fieldset>
                 <legend>Especialidades (opcional)</legend>
-                <p>Ajuda o cliente a ver se você atende o assunto específico do caso dele.</p>
+                <p className="text-muted">
+                  Ajuda o cliente a ver se você atende o assunto específico do caso dele.
+                </p>
                 {especialidadesDisponiveis.map((c) => (
                   <label key={c.valor}>
                     <input
@@ -193,15 +198,17 @@ export function CadastroPage() {
               </fieldset>
             )}
 
-            <Input label="Cidade" id="cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} />
-            <Input label="UF" id="uf" value={uf} onChange={(e) => setUf(e.target.value)} maxLength={2} />
+            <div className="row">
+              <Input label="Cidade" id="cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} />
+              <Input label="UF" id="uf" value={uf} onChange={(e) => setUf(e.target.value)} maxLength={2} />
+            </div>
             <Input
               label="WhatsApp"
               id="whatsapp"
               value={whatsapp}
               onChange={(e) => setWhatsapp(e.target.value)}
             />
-            <p>
+            <p className="text-muted">
               Sua OAB fica em análise até a aprovação manual do admin — hoje não existe API
               gratuita da OAB pra verificar isso automaticamente.
             </p>

@@ -7,13 +7,13 @@ function ListaOuVazio({ titulo, itens }) {
     <section>
       <h3>{titulo}</h3>
       {itens && itens.length > 0 ? (
-        <ul>
+        <ul className="list-plain">
           {itens.map((item, i) => (
             <li key={i}>{item}</li>
           ))}
         </ul>
       ) : (
-        <p>Nada cadastrado ainda.</p>
+        <p className="text-muted">Nada cadastrado ainda.</p>
       )}
     </section>
   );
@@ -53,40 +53,62 @@ export function AdvogadoPublicoPage() {
   return (
     <main>
       <h1>{advogado.nome}</h1>
-      <p>
-        OAB {advogado.oab?.numero}/{advogado.oab?.uf} —{" "}
-        {advogado.verificado ? "verificada" : "em análise"}
-      </p>
-      <p>Áreas de atuação: {advogado.areasAtuacao?.join(", ") || "não informado"}</p>
-      {rotulosEspecialidades.length > 0 && (
-        <p>Especialidades: {rotulosEspecialidades.join(", ")}</p>
-      )}
-      <p>
-        Localização: {advogado.localizacao?.cidade || "?"}/{advogado.localizacao?.uf || "?"}
-      </p>
 
-      <section>
+      <section className="card">
+        <p>
+          <span className="badge">
+            {advogado.verificado ? "OAB verificada" : "OAB em análise"}
+          </span>
+        </p>
+        <p className="text-muted">
+          OAB {advogado.oab?.numero}/{advogado.oab?.uf}
+        </p>
+        <p>Áreas de atuação: {advogado.areasAtuacao?.join(", ") || "não informado"}</p>
+
+        {rotulosEspecialidades.length > 0 && (
+          <ul className="chip-list">
+            {rotulosEspecialidades.map((rotulo) => (
+              <li key={rotulo} className="chip">
+                {rotulo}
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <p className="text-muted">
+          Localização: {advogado.localizacao?.cidade || "?"}/{advogado.localizacao?.uf || "?"}
+        </p>
+      </section>
+
+      <section className="card">
         <h2>Contato</h2>
-        {whatsapp && (
-          <p>
-            <a href={`https://wa.me/${whatsapp}`} target="_blank" rel="noreferrer">
+        <div className="actions">
+          {whatsapp && (
+            <a
+              className="button button--primary"
+              href={`https://wa.me/${whatsapp}`}
+              target="_blank"
+              rel="noreferrer"
+            >
               Falar no WhatsApp
             </a>
-          </p>
-        )}
-        {email && (
-          <p>
-            <a href={`mailto:${email}`}>Enviar e-mail</a>
-          </p>
-        )}
+          )}
+          {email && (
+            <a className="button button--secondary" href={`mailto:${email}`}>
+              Enviar e-mail
+            </a>
+          )}
+        </div>
         {!whatsapp && !email && <p>Nenhum contato cadastrado.</p>}
       </section>
 
-      <h2>Currículo</h2>
-      <ListaOuVazio titulo="Formação" itens={curriculo?.formacao} />
-      <ListaOuVazio titulo="Especializações" itens={curriculo?.especializacoes} />
-      <ListaOuVazio titulo="Cursos" itens={curriculo?.cursos} />
-      <ListaOuVazio titulo="Experiências" itens={curriculo?.experiencias} />
+      <section className="card">
+        <h2>Currículo</h2>
+        <ListaOuVazio titulo="Formação" itens={curriculo?.formacao} />
+        <ListaOuVazio titulo="Especializações" itens={curriculo?.especializacoes} />
+        <ListaOuVazio titulo="Cursos" itens={curriculo?.cursos} />
+        <ListaOuVazio titulo="Experiências" itens={curriculo?.experiencias} />
+      </section>
     </main>
   );
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
+import { Select } from "../../components/Select/Select";
 import { api } from "../../lib/api";
 
 const LABEL_AREA = {
@@ -51,64 +52,71 @@ export function ResultadoPage() {
     <main>
       <h1>Resultado da triagem</h1>
 
-      <p>
-        <strong>Área:</strong>{" "}
-        {LABEL_AREA[resultado.areaClassificada] || resultado.areaClassificada}
-      </p>
-      <p>
-        <strong>Recomendação:</strong> {resultado.tipoAdvogadoSugerido}
-      </p>
-      <p style={{ fontSize: "0.85rem", color: "#666" }}>
-        Classificação por {resultado.origem === "ia" ? "IA" : "regras"}
-        {resultado.justificativa ? ` — ${resultado.justificativa}` : ""}
-      </p>
+      <section className="card">
+        <span className="badge">
+          {resultado.origem === "ia" ? "Classificado por IA" : "Classificado por regras"}
+        </span>
+        <p>
+          <strong>Área:</strong> {LABEL_AREA[resultado.areaClassificada] || resultado.areaClassificada}
+        </p>
+        <p>
+          <strong>Recomendação:</strong> {resultado.tipoAdvogadoSugerido}
+        </p>
+        {resultado.justificativa && <p className="text-muted">{resultado.justificativa}</p>}
+      </section>
 
       {opcoesDaArea.length > 0 && (
-        <div>
-          <strong>Categorias identificadas no seu caso:</strong>
-          <p>Se alguma não fizer sentido, remova. Se faltou algo, adicione.</p>
-          <ul>
-            {categorias.length === 0 && <li>Nenhuma categoria selecionada.</li>}
+        <section className="card">
+          <h2>Categorias identificadas no seu caso</h2>
+          <p className="text-muted">Se alguma não fizer sentido, remova. Se faltou algo, adicione.</p>
+
+          <ul className="chip-list">
+            {categorias.length === 0 && <li className="text-muted">Nenhuma categoria selecionada.</li>}
             {categorias.map((valor) => (
-              <li key={valor}>
-                {rotuloCategoria(valor)}{" "}
-                <button type="button" onClick={() => removerCategoria(valor)}>
-                  remover
+              <li key={valor} className="chip">
+                {rotuloCategoria(valor)}
+                <button
+                  type="button"
+                  onClick={() => removerCategoria(valor)}
+                  aria-label={`Remover ${rotuloCategoria(valor)}`}
+                >
+                  ✕
                 </button>
               </li>
             ))}
           </ul>
 
           {disponiveisParaAdicionar.length > 0 && (
-            <>
-              <label htmlFor="adicionar-categoria">Adicionar categoria</label>
-              <br />
-              <select
-                id="adicionar-categoria"
-                value=""
-                onChange={(e) => adicionarCategoria(e.target.value)}
-              >
-                <option value="">Selecione...</option>
-                {disponiveisParaAdicionar.map((c) => (
-                  <option key={c.valor} value={c.valor}>
-                    {c.label}
-                  </option>
-                ))}
-              </select>
-            </>
+            <Select
+              label="Adicionar categoria"
+              id="adicionar-categoria"
+              value=""
+              onChange={(e) => adicionarCategoria(e.target.value)}
+            >
+              <option value="">Selecione...</option>
+              {disponiveisParaAdicionar.map((c) => (
+                <option key={c.valor} value={c.valor}>
+                  {c.label}
+                </option>
+              ))}
+            </Select>
           )}
-        </div>
+        </section>
       )}
 
       <h2>Advogados compatíveis</h2>
       {resultado.advogados.length === 0 && <p>Nenhum advogado compatível encontrado ainda.</p>}
       {resultado.advogados.length > 0 && (
-        <ul>
+        <ul className="list-plain">
           {resultado.advogados.map((adv) => (
-            <li key={adv.uid}>
-              <Link to={`/advogados/${adv.uid}`}>{adv.nome || adv.uid}</Link> —{" "}
-              {adv.areasAtuacao?.join(", ") || "sem área"} —{" "}
-              {adv.localizacao?.cidade}/{adv.localizacao?.uf}
+            <li key={adv.uid} className="card">
+              <Link to={`/advogados/${adv.uid}`}>
+                <strong>{adv.nome || adv.uid}</strong>
+              </Link>
+              <p className="text-muted">
+                {adv.areasAtuacao?.join(", ") || "sem área"} — {adv.localizacao?.cidade}/
+                {adv.localizacao?.uf}
+              </p>
             </li>
           ))}
         </ul>

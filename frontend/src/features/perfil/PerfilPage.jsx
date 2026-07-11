@@ -89,16 +89,20 @@ export function PerfilPage() {
   return (
     <main>
       <h1>Meu perfil</h1>
-      <p>Papel: {dadosUsuario.role}</p>
+      <p>
+        <span className="badge">{dadosUsuario.role}</span>
+        {role === "advogado" && (
+          <>
+            {" "}
+            <span className="badge">
+              {advogado?.verificado ? "OAB verificada" : "OAB em análise"}
+            </span>
+          </>
+        )}
+      </p>
 
-      {role === "advogado" && (
-        <p>
-          Situação da OAB:{" "}
-          {advogado?.verificado ? "verificada" : "em análise (aguardando aprovação do admin)"}
-        </p>
-      )}
-
-      <form onSubmit={salvarUsuario}>
+      <form className="card stack" onSubmit={salvarUsuario}>
+        <h2>Dados básicos</h2>
         <Input label="Nome" id="nome" value={nome} onChange={(e) => setNome(e.target.value)} />
         <Input
           label="Telefone"
@@ -110,22 +114,28 @@ export function PerfilPage() {
       </form>
 
       {role === "advogado" && advogado && (
-        <form onSubmit={salvarAdvogado}>
+        <form className="card stack" onSubmit={salvarAdvogado}>
           <h2>Dados de advogado</h2>
-          <p>OAB: {advogado.oab?.numero}/{advogado.oab?.uf} (não editável)</p>
+          <p className="text-muted">
+            OAB: {advogado.oab?.numero}/{advogado.oab?.uf} (não editável)
+          </p>
           <Input
             label="WhatsApp"
             id="whatsapp"
             value={whatsapp}
             onChange={(e) => setWhatsapp(e.target.value)}
           />
-          <Input label="Cidade" id="cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} />
-          <Input label="UF" id="uf" value={uf} onChange={(e) => setUf(e.target.value)} maxLength={2} />
+          <div className="row">
+            <Input label="Cidade" id="cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} />
+            <Input label="UF" id="uf" value={uf} onChange={(e) => setUf(e.target.value)} maxLength={2} />
+          </div>
 
           {especialidadesDisponiveis.length > 0 && (
             <fieldset>
               <legend>Especialidades</legend>
-              <p>Ajuda o cliente a ver se você atende o assunto específico do caso dele.</p>
+              <p className="text-muted">
+                Ajuda o cliente a ver se você atende o assunto específico do caso dele.
+              </p>
               {especialidadesDisponiveis.map((c) => (
                 <label key={c.valor}>
                   <input

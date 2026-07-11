@@ -35,30 +35,39 @@ export function AdminAdvogadosPage() {
   return (
     <main>
       <h1>Advogados cadastrados</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>OAB</th>
-            <th>Situação</th>
-            <th>Ação</th>
-          </tr>
-        </thead>
-        <tbody>
-          {advogados.map((adv) => (
-            <tr key={adv.uid}>
-              <td>{adv.nome}</td>
-              <td>{adv.oab?.numero}/{adv.oab?.uf}</td>
-              <td>{adv.verificado ? "verificada" : "em análise"}</td>
-              <td>
-                <Button onClick={() => alternarVerificado(adv.uid, adv.verificado)}>
-                  {adv.verificado ? "Revogar" : "Aprovar"}
-                </Button>
-              </td>
+      <div className="card">
+        <table>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>OAB</th>
+              <th>Situação</th>
+              <th>Ação</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {advogados.map((adv) => (
+              <tr key={adv.uid}>
+                <td>{adv.nome}</td>
+                <td>
+                  {adv.oab?.numero}/{adv.oab?.uf}
+                </td>
+                <td>
+                  <span className="badge">{adv.verificado ? "verificada" : "em análise"}</span>
+                </td>
+                <td>
+                  <Button
+                    variant={adv.verificado ? "secondary" : "primary"}
+                    onClick={() => alternarVerificado(adv.uid, adv.verificado)}
+                  >
+                    {adv.verificado ? "Revogar" : "Aprovar"}
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </main>
   );
 }
