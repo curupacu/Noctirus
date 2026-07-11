@@ -32,7 +32,7 @@ export function LoginPage() {
     <main>
       <h1>Entrar</h1>
 
-      <form onSubmit={handleSubmit}>
+      <form className="card stack" onSubmit={handleSubmit}>
         <Input
           label="E-mail"
           id="email"

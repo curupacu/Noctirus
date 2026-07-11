@@ -1,6 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../features/auth/AuthContext";
 import { rotaInicial } from "../../features/auth/rotaInicial";
+import { Button } from "../Button/Button";
+import "./Header.css";
 
 export function Header() {
   const { user, role, loading, logout } = useAuth();
@@ -12,45 +14,51 @@ export function Header() {
   }
 
   return (
-    <header
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        flexWrap: "wrap",
-        gap: "0.5rem",
-        padding: "1rem",
-        borderBottom: "2px solid #333",
-        marginBottom: "1.5rem",
-      }}
-    >
-      <Link to="/">Nocturis</Link>
+    <header className="site-header">
+      <Link to="/" className="site-header__brand">
+        Nocturis
+      </Link>
 
-      <Link to="/advogados">Advogados</Link>
+      <nav className="site-header__nav">
+        <Link to="/advogados" className="site-header__link">
+          Advogados
+        </Link>
 
-      {loading ? null : user ? (
-        <nav style={{ display: "flex", gap: "1rem", alignItems: "center", flexWrap: "wrap" }}>
-          <span>
-            Logado como <strong>{user.email}</strong> ({role || "sem papel definido"})
-          </span>
-          <Link to={rotaInicial(role)}>Início</Link>
-          {role === "cliente" && (
-            <>
-              <Link to="/triagem">Fazer triagem</Link>
-              <Link to="/minhas-triagens">Minhas triagens</Link>
-            </>
-          )}
-          <Link to="/perfil">Meu perfil</Link>
-          <button type="button" onClick={handleLogout}>
-            Sair
-          </button>
-        </nav>
-      ) : (
-        <nav style={{ display: "flex", gap: "1rem" }}>
-          <Link to="/login">Entrar</Link>
-          <Link to="/cadastro">Criar conta</Link>
-        </nav>
-      )}
+        {loading ? null : user ? (
+          <>
+            <Link to={rotaInicial(role)} className="site-header__link">
+              Início
+            </Link>
+            {role === "cliente" && (
+              <>
+                <Link to="/triagem" className="site-header__link">
+                  Fazer triagem
+                </Link>
+                <Link to="/minhas-triagens" className="site-header__link">
+                  Minhas triagens
+                </Link>
+              </>
+            )}
+            <Link to="/perfil" className="site-header__link">
+              Meu perfil
+            </Link>
+            <span className="site-header__user">{user.email}</span>
+            <span className="badge">{role || "sem papel"}</span>
+            <Button variant="secondary" onClick={handleLogout}>
+              Sair
+            </Button>
+          </>
+        ) : (
+          <>
+            <Link to="/login" className="site-header__link">
+              Entrar
+            </Link>
+            <Link to="/cadastro" className="site-header__link">
+              Criar conta
+            </Link>
+          </>
+        )}
+      </nav>
     </header>
   );
 }

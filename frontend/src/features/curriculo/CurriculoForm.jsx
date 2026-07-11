@@ -63,16 +63,18 @@ export function CurriculoForm({ uid }) {
   if (carregando) return <p>Carregando currículo...</p>;
 
   return (
-    <form onSubmit={salvar}>
+    <form className="card stack" onSubmit={salvar}>
       <h2>Currículo</h2>
-      <p>Uma linha = um item da lista.</p>
+      <p className="text-muted">Uma linha = um item da lista.</p>
 
       {CAMPOS.map(({ chave, label }) => (
-        <div key={chave}>
-          <label htmlFor={chave}>{label}</label>
-          <br />
+        <div key={chave} className="input-group">
+          <label className="input-label" htmlFor={chave}>
+            {label}
+          </label>
           <textarea
             id={chave}
+            className="input"
             rows={4}
             value={valores[chave]}
             onChange={(e) => setValores((v) => ({ ...v, [chave]: e.target.value }))}

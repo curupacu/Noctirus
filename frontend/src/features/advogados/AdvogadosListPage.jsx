@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
+import { Select } from "../../components/Select/Select";
 import { api } from "../../lib/api";
 
 export function AdvogadosListPage() {
@@ -27,6 +28,7 @@ export function AdvogadosListPage() {
 
   useEffect(() => {
     buscar();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function limpar() {
@@ -40,14 +42,12 @@ export function AdvogadosListPage() {
     <main>
       <h1>Advogados</h1>
 
-      <form onSubmit={buscar}>
-        <label htmlFor="area">Área</label>
-        <br />
-        <select id="area" value={area} onChange={(e) => setArea(e.target.value)}>
+      <form className="card filter-bar" onSubmit={buscar}>
+        <Select label="Área" id="area" value={area} onChange={(e) => setArea(e.target.value)}>
           <option value="">Todas</option>
           <option value="civel">Cível</option>
           <option value="trabalhista">Trabalhista</option>
-        </select>
+        </Select>
 
         <Input label="Cidade" id="cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} />
         <Input label="UF" id="uf" value={uf} onChange={(e) => setUf(e.target.value)} maxLength={2} />
@@ -64,13 +64,16 @@ export function AdvogadosListPage() {
       {advogados && advogados.length === 0 && <p>Nenhum advogado encontrado com esses filtros.</p>}
 
       {advogados && advogados.length > 0 && (
-        <ul>
+        <ul className="list-plain">
           {advogados.map((adv) => (
-            <li key={adv.uid}>
-              <Link to={`/advogados/${adv.uid}`}>{adv.nome || adv.uid}</Link> —{" "}
-              {adv.areasAtuacao?.join(", ") || "sem área"} —{" "}
-              {adv.localizacao?.cidade}/{adv.localizacao?.uf} —{" "}
-              {adv.verificado ? "OAB verificada" : "OAB em análise"}
+            <li key={adv.uid} className="card">
+              <Link to={`/advogados/${adv.uid}`}>
+                <strong>{adv.nome || adv.uid}</strong>
+              </Link>
+              <p className="text-muted">
+                {adv.areasAtuacao?.join(", ") || "sem área"} — {adv.localizacao?.cidade}/
+                {adv.localizacao?.uf} — {adv.verificado ? "OAB verificada" : "OAB em análise"}
+              </p>
             </li>
           ))}
         </ul>

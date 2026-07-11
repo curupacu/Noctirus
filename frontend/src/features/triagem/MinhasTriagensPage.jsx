@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Button } from "../../components/Button/Button";
 import { api } from "../../lib/api";
 
 const LABEL_AREA = {
@@ -20,7 +21,9 @@ export function MinhasTriagensPage() {
     <main>
       <h1>Minhas triagens</h1>
       <p>
-        <Link to="/triagem">Fazer nova triagem</Link>
+        <Link to="/triagem">
+          <Button>Fazer nova triagem</Button>
+        </Link>
       </p>
 
       {erro && <p role="alert">{erro}</p>}
@@ -28,13 +31,14 @@ export function MinhasTriagensPage() {
       {triagens && triagens.length === 0 && <p>Você ainda não fez nenhuma triagem.</p>}
 
       {triagens && triagens.length > 0 && (
-        <ul>
+        <ul className="list-plain">
           {triagens.map((t) => (
-            <li key={t.id}>
+            <li key={t.id} className="card">
               <Link to={`/triagem/${t.id}`}>
-                {LABEL_AREA[t.areaClassificada] || t.areaClassificada} — {t.tipoAdvogadoSugerido}
-              </Link>{" "}
-              ({new Date(t.createdAt).toLocaleDateString("pt-BR")})
+                <strong>{LABEL_AREA[t.areaClassificada] || t.areaClassificada}</strong> —{" "}
+                {t.tipoAdvogadoSugerido}
+              </Link>
+              <p className="text-muted">{new Date(t.createdAt).toLocaleDateString("pt-BR")}</p>
             </li>
           ))}
         </ul>

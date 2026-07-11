@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
+import { Select } from "../../components/Select/Select";
 import { api } from "../../lib/api";
 
 export function TriagemPage() {
@@ -51,55 +52,51 @@ export function TriagemPage() {
   return (
     <main>
       <h1>Triagem</h1>
-      <p>
+      <p className="text-muted">
         Responda as perguntas e descreva seu caso com suas próprias palavras. Você pode fazer
         uma nova triagem sempre que tiver outro problema.
       </p>
 
-      <form onSubmit={enviar}>
+      <form className="card stack" onSubmit={enviar}>
         {arvore && (
-          <div>
-            <label htmlFor={arvore.principal.id}>{arvore.principal.pergunta}</label>
-            <br />
-            <select
-              id={arvore.principal.id}
-              value={respostas.situacao || ""}
-              onChange={(e) => escolherSituacao(e.target.value)}
-            >
-              <option value="">Selecione...</option>
-              {arvore.principal.opcoes.map((opcao) => (
-                <option key={opcao.valor} value={opcao.valor}>
-                  {opcao.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          <Select
+            label={arvore.principal.pergunta}
+            id={arvore.principal.id}
+            value={respostas.situacao || ""}
+            onChange={(e) => escolherSituacao(e.target.value)}
+          >
+            <option value="">Selecione...</option>
+            {arvore.principal.opcoes.map((opcao) => (
+              <option key={opcao.valor} value={opcao.valor}>
+                {opcao.label}
+              </option>
+            ))}
+          </Select>
         )}
 
         {perguntaSegundaEtapa && (
-          <div>
-            <label htmlFor={perguntaSegundaEtapa.id}>{perguntaSegundaEtapa.pergunta}</label>
-            <br />
-            <select
-              id={perguntaSegundaEtapa.id}
-              value={respostas[perguntaSegundaEtapa.id] || ""}
-              onChange={(e) => responderSegundaEtapa(perguntaSegundaEtapa.id, e.target.value)}
-            >
-              <option value="">Selecione...</option>
-              {perguntaSegundaEtapa.opcoes.map((opcao) => (
-                <option key={opcao.valor} value={opcao.valor}>
-                  {opcao.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          <Select
+            label={perguntaSegundaEtapa.pergunta}
+            id={perguntaSegundaEtapa.id}
+            value={respostas[perguntaSegundaEtapa.id] || ""}
+            onChange={(e) => responderSegundaEtapa(perguntaSegundaEtapa.id, e.target.value)}
+          >
+            <option value="">Selecione...</option>
+            {perguntaSegundaEtapa.opcoes.map((opcao) => (
+              <option key={opcao.valor} value={opcao.valor}>
+                {opcao.label}
+              </option>
+            ))}
+          </Select>
         )}
 
-        <div>
-          <label htmlFor="descricao">Descreva seu caso</label>
-          <br />
+        <div className="input-group">
+          <label className="input-label" htmlFor="descricao">
+            Descreva seu caso
+          </label>
           <textarea
             id="descricao"
+            className="input"
             rows={5}
             value={descricao}
             onChange={(e) => setDescricao(e.target.value)}
