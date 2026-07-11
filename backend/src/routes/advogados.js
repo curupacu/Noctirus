@@ -12,8 +12,7 @@ advogadosRouter.get(
   verificarToken,
   requireRole("admin"),
   async (_req, res) => {
-    const snapshot = await db.collection("advogados").get();
-    const advogados = snapshot.docs.map((doc) => ({ uid: doc.id, ...doc.data() }));
+    const advogados = await buscarAdvogadosCompativeis();
     res.json(advogados);
   },
 );
