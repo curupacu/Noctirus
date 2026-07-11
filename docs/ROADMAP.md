@@ -219,19 +219,21 @@ Sprints **semanais**. Itens com 🔴 são **bloqueadores** (precisam estar pront
 
 ### 🟦 FASE 2 — Triagem com IA + 1ª apresentação
 
-#### Sprint 5 — Triagem híbrida (Gemini) · 04–10/08   📌 *entrega de protótipos 06/08*
-- 🔴 [GC] Desenhar a **árvore de perguntas guiadas** (cível vs trabalhista) + lista de palavras-chave do fallback.
-- 🔴 [GP] Fluxo de triagem no front: perguntas guiadas + campo de descrição livre.
-- 🔴 [GR] Endpoint `POST /triagem/classificar`: manda respostas + texto pro **Gemini Flash-Lite** com *prompt* restrito → retorna JSON `{ area, tipoAdvogadoSugerido, confianca, justificativa }`.
-- 🔴 [GR] Fallback por regras se a IA falhar ou passar de 5s; gravar `origem` (RNF003).
-- 🔴 [GP] Tela de resultado: área + tipo de advogado ideal + advogados compatíveis.
-- **Pronto quando:** o cliente descreve um caso, o sistema classifica em ≤5s e mostra advogados coerentes.
+#### Sprint 5 — Triagem híbrida (Gemini) · ✅ concluído em 08/07 (adiantado — previsto 04–10/08)   📌 *entrega de protótipos 06/08*
+- ✅ [GC] Desenhar a **árvore de perguntas guiadas** (cível vs trabalhista) + lista de palavras-chave do fallback.
+- ✅ [GP] Fluxo de triagem no front: perguntas guiadas + campo de descrição livre.
+- ✅ [GR] Endpoint `POST /triagem/classificar`: manda respostas + texto pro **Gemini Flash-Lite** com *prompt* restrito → retorna JSON `{ area, categorias, tipoAdvogadoSugerido, confianca, justificativa }`.
+- ✅ [GR] Fallback por regras se a IA falhar ou passar de 5s; grava `origem` (RNF003).
+- ✅ [GP] Tela de resultado: área + tipo de advogado ideal + advogados compatíveis.
+- **Pronto quando:** o cliente descreve um caso, o sistema classifica em ≤5s e mostra advogados coerentes. ✅ Batido.
 
 > 🎤 **1ª Apresentação (13/08):** demonstrar o MVP + triagem funcionando de ponta a ponta.
 
-#### Sprint 6 — Refino da triagem + UX · 11–17/08
-- [GC] Rodar 15–20 casos de teste reais e afinar *prompt* + árvore (medir a taxa de acerto).
-- [GP] Passe de UX: textos, acessibilidade básica, microinterações.
+#### Sprint 6 — Refino da triagem + UX · parcialmente concluído em 08/07 (adiantado — previsto 11–17/08)
+- ✅ [GR] Árvore de perguntas evoluída pra **condicional** (2ª pergunta muda conforme a 1ª) + **categorias/subcategorias** detalhadas por área — vai além do que este roadmap previa originalmente.
+- ✅ [GR] Especialidades do advogado reaproveitando a mesma taxonomia de categorias da triagem (feature nova, não estava no escopo original — ajuda o cliente a ver se o advogado atende o assunto específico do caso).
+- [GC] Rodar 15–20 casos de teste reais e afinar *prompt* + árvore (medir a taxa de acerto). — pendente
+- [GP] Passe de UX: textos, acessibilidade básica, microinterações. — pendente. **UI ainda bem crua** (HTML sem estilo na maior parte das telas, sem o design system marrom/amarelo do Sprint 1 aplicado de fato) — candidato natural a puxar pra frente, já que o resto da sprint está adiantado.
 
 ### 🟪 FASE 3 — Confiança e administração (rumo à 2ª apresentação, 25/09)
 
