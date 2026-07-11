@@ -60,16 +60,35 @@ Na raiz: `npm run dev` sobe frontend e backend juntos (via `concurrently`).
   Free tier: dorme após inatividade, primeira requisição pode demorar ~30-60s.
 - **Sprint 1 (fundação)** concluído: scaffold de frontend/backend, rotas, design system,
   Firebase (Auth + Firestore) configurado, deploy inicial no ar. Falta só CI de preview
-  automático por PR (não bloqueia o Sprint 2).
+  automático por PR (não bloqueia o Sprint 2) — **ainda não existe** (`.github/workflows`
+  não existe no repo).
 - **Sprints 2–4 (auth, currículo/perfil, matching)** concluídos e no ar: cadastro/login por
   papel + custom claims, security rules por papel, OAB validada por formato/unicidade
   (verificação real fica manual pelo admin — sem API gratuita disponível, ver
   `docs/ROADMAP.md`), admin criado via `database/seed/criar-admin.js` (sem cadastro
   público), CRUD de currículo, perfil público do advogado com contato (WhatsApp/e-mail),
-  listagem de advogados com filtro por área/localização. UI propositalmente simples, sem
-  foto/bio/upload de PDF (ficou pra quando o Blaze for ativado — ver decisão registrada).
+  listagem de advogados com filtro por área/localização. Sem foto/bio/upload de PDF (ficou
+  pra quando o Blaze for ativado — ver decisão registrada).
   `frontend/.env.production` fixa a `VITE_API_URL` pro backend do Render no build de
-  produção (o `.env` normal aponta pro backend local).
+  produção (o `.env` normal aponta pro backend local — precisa existir localmente com as
+  credenciais do Firebase Web App pra rodar `npm run dev`, não vem commitado).
+- **Sprint 5 (triagem híbrida com Gemini) e parte do Sprint 6 já concluídos**, adiantados
+  em relação ao cronograma original (previsto pra 04–17/08, entregue em 08/07): endpoint
+  `POST /triagem/classificar` com Gemini Flash-Lite + fallback por regras (RNF003), árvore
+  de perguntas condicional, categorias/subcategorias detalhadas por área, e especialidades
+  do advogado reaproveitando essa taxonomia (feature nova, fora do escopo original). Ver
+  `docs/ROADMAP.md` pra detalhes. Falta do Sprint 6: rodar casos de teste reais pra afinar
+  o *prompt* (GC).
+- **Passe de UX do Sprint 6 (GP) adiantado pelo GR**: todas as telas do fluxo principal
+  (painel, triagem, resultado, listagem/perfil de advogados, cadastro, login, perfil,
+  currículo, admin) aplicam o design system de verdade agora (`components/Button`,
+  `Input`, `Select`, mais as classes utilitárias `card`, `stack`, `row`, `filter-bar`,
+  `badge`, `chip`/`chip-list`, `actions` em `index.css`). `/painel` deixou de ser
+  placeholder — é um dashboard com atalho pra triagem e últimas triagens do cliente.
+  Ainda cabe um passe fino de UX (copy, acessibilidade, microinterações) se o GP quiser
+  refinar, e testar responsividade em mobile (só foi validado em viewport desktop).
+- **Sem testes automatizados e sem CI** — nenhum arquivo de teste no repo, sem script
+  `test` nos `package.json`. Previsto pro Sprint 9.
 - **`nocturis-prod` ainda não existe de verdade** — o `.firebaserc` já tem o alias, mas hoje
   tanto dev quanto o "deploy no ar" apontam pro mesmo projeto `nocturis-web`. Criar o projeto
   de produção separado é decisão pendente.
