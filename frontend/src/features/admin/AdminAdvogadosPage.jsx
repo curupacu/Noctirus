@@ -30,7 +30,7 @@ export function AdminAdvogadosPage() {
   }
 
   if (erro) return <p role="alert">{erro}</p>;
-  if (!advogados) return <p>Carregando...</p>;
+  if (!advogados) return <p className="loading">Carregando...</p>;
 
   return (
     <main>

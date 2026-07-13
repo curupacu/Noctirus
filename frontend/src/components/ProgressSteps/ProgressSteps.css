@@ -1,0 +1,63 @@
+.progress-steps {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0 0 var(--space-lg);
+  padding: 0;
+  width: 100%;
+}
+
+.progress-steps__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex: 1;
+}
+
+.progress-steps__item:not(:last-child)::after {
+  content: "";
+  flex: 1;
+  height: 2px;
+  background: var(--color-border);
+  margin: 0 var(--space-xs);
+}
+
+.progress-steps__item--done:not(:last-child)::after {
+  background: var(--color-primary);
+}
+
+.progress-steps__dot {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--color-border);
+  background: var(--color-surface);
+}
+
+.progress-steps__item--current .progress-steps__dot {
+  border-color: var(--color-primary-hover);
+  background: var(--color-primary);
+}
+
+.progress-steps__item--done .progress-steps__dot {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+}
+
+.progress-steps__label {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.progress-steps__item--current .progress-steps__label {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+@media (max-width: 480px) {
+  .progress-steps__label {
+    display: none;
+  }
+}

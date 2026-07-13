@@ -29,37 +29,46 @@ export function LoginPage() {
   }
 
   return (
-    <main>
-      <h1>Entrar</h1>
+    <main className="auth-screen">
+      <Link to="/" className="auth-screen__close" aria-label="Voltar para o início">
+        ×
+      </Link>
 
-      <form className="card stack" onSubmit={handleSubmit}>
-        <Input
-          label="E-mail"
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <Input
-          label="Senha"
-          id="senha"
-          type="password"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-          required
-        />
+      <div className="auth-screen__inner">
+        <div className="auth-screen__header">
+          <h1>Entrar</h1>
+          <p>Bem-vindo(a) de volta.</p>
+        </div>
 
-        {erro && <p role="alert">{erro}</p>}
+        <form className="auth-screen__form" onSubmit={handleSubmit}>
+          <Input
+            label="E-mail"
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <Input
+            label="Senha"
+            id="senha"
+            type="password"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+            required
+          />
 
-        <Button type="submit" disabled={enviando}>
-          {enviando ? "Entrando..." : "Entrar"}
-        </Button>
-      </form>
+          {erro && <p role="alert">{erro}</p>}
 
-      <p>
-        Não tem conta? <Link to="/cadastro">Criar conta</Link>
-      </p>
+          <Button type="submit" disabled={enviando}>
+            {enviando ? "Entrando..." : "Entrar"}
+          </Button>
+        </form>
+
+        <p className="auth-screen__footer">
+          Não tem conta? <Link to="/cadastro">Criar conta</Link>
+        </p>
+      </div>
     </main>
   );
 }

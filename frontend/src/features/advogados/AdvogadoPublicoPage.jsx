@@ -41,7 +41,7 @@ export function AdvogadoPublicoPage() {
   }, [uid]);
 
   if (erro) return <p role="alert">{erro}</p>;
-  if (!advogado) return <p>Carregando...</p>;
+  if (!advogado) return <p className="loading">Carregando...</p>;
 
   const whatsapp = advogado.contatos?.whatsapp;
   const email = advogado.contatos?.email;
@@ -52,7 +52,10 @@ export function AdvogadoPublicoPage() {
 
   return (
     <main>
-      <h1>{advogado.nome}</h1>
+      <div className="media">
+        <span className="avatar-placeholder">{(advogado.nome || "?").charAt(0).toUpperCase()}</span>
+        <h1>{advogado.nome}</h1>
+      </div>
 
       <section className="card">
         <p>

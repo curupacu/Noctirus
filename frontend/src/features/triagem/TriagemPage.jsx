@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
-import { Select } from "../../components/Select/Select";
+import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
+import { ProgressSteps } from "../../components/ProgressSteps/ProgressSteps";
 import { api } from "../../lib/api";
+
+const STEPS = ["Situação", "Detalhes", "Descrição"];
 
 export function TriagemPage() {
   const [arvore, setArvore] = useState(null);
@@ -45,9 +48,15 @@ export function TriagemPage() {
     }
   }
 
-  if (!arvore && !erro) return <p>Carregando...</p>;
+  if (!arvore && !erro) return <p className="loading">Carregando...</p>;
 
   const perguntaSegundaEtapa = arvore && arvore.segundaEtapa[respostas.situacao];
+
+  const currentIndex = !respostas.situacao
+    ? 0
+    : perguntaSegundaEtapa && !respostas[perguntaSegundaEtapa.id]
+      ? 1
+      : 2;
 
   return (
     <main>
@@ -57,37 +66,43 @@ export function TriagemPage() {
         uma nova triagem sempre que tiver outro problema.
       </p>
 
+      <ProgressSteps steps={STEPS} currentIndex={currentIndex} />
+
       <form className="card stack" onSubmit={enviar}>
         {arvore && (
-          <Select
-            label={arvore.principal.pergunta}
-            id={arvore.principal.id}
-            value={respostas.situacao || ""}
-            onChange={(e) => escolherSituacao(e.target.value)}
-          >
-            <option value="">Selecione...</option>
-            {arvore.principal.opcoes.map((opcao) => (
-              <option key={opcao.valor} value={opcao.valor}>
-                {opcao.label}
-              </option>
-            ))}
-          </Select>
+          <div className="input-group">
+            <label className="input-label">{arvore.principal.pergunta}</label>
+            <div className="choice-grid">
+              {arvore.principal.opcoes.map((opcao) => (
+                <ChoiceCard
+                  key={opcao.valor}
+                  type="radio"
+                  name={arvore.principal.id}
+                  label={opcao.label}
+                  checked={respostas.situacao === opcao.valor}
+                  onChange={() => escolherSituacao(opcao.valor)}
+                />
+              ))}
+            </div>
+          </div>
         )}
 
         {perguntaSegundaEtapa && (
-          <Select
-            label={perguntaSegundaEtapa.pergunta}
-            id={perguntaSegundaEtapa.id}
-            value={respostas[perguntaSegundaEtapa.id] || ""}
-            onChange={(e) => responderSegundaEtapa(perguntaSegundaEtapa.id, e.target.value)}
-          >
-            <option value="">Selecione...</option>
-            {perguntaSegundaEtapa.opcoes.map((opcao) => (
-              <option key={opcao.valor} value={opcao.valor}>
-                {opcao.label}
-              </option>
-            ))}
-          </Select>
+          <div className="input-group">
+            <label className="input-label">{perguntaSegundaEtapa.pergunta}</label>
+            <div className="choice-grid">
+              {perguntaSegundaEtapa.opcoes.map((opcao) => (
+                <ChoiceCard
+                  key={opcao.valor}
+                  type="radio"
+                  name={perguntaSegundaEtapa.id}
+                  label={opcao.label}
+                  checked={respostas[perguntaSegundaEtapa.id] === opcao.valor}
+                  onChange={() => responderSegundaEtapa(perguntaSegundaEtapa.id, opcao.valor)}
+                />
+              ))}
+            </div>
+          </div>
         )}
 
         <div className="input-group">
@@ -97,16 +112,18 @@ export function TriagemPage() {
           <textarea
             id="descricao"
             className="input"
-            rows={5}
+            rows={6}
             value={descricao}
             onChange={(e) => setDescricao(e.target.value)}
           />
         </div>
 
-        <Button type="submit" disabled={enviando}>
-          {enviando ? "Classificando..." : "Enviar"}
-        </Button>
-        {erro && <p role="alert">{erro}</p>}
+        <div className="form-cta-sticky">
+          <Button type="submit" disabled={enviando}>
+            {enviando ? "Classificando..." : "Enviar"}
+          </Button>
+          {erro && <p role="alert">{erro}</p>}
+        </div>
       </form>
     </main>
   );

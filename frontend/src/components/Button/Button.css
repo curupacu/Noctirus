@@ -1,12 +1,17 @@
 .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
   font-family: var(--font-body);
   font-size: var(--font-size-base);
-  font-weight: 600;
+  font-weight: 700;
   padding: var(--space-sm) var(--space-lg);
-  border-radius: var(--radius-md);
-  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  border: 1.5px solid transparent;
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease,
+    transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .button:focus-visible {
@@ -26,6 +31,8 @@
 
 .button--primary:hover:not(:disabled) {
   background: var(--color-primary-hover);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }
 
 .button--secondary {
@@ -37,4 +44,26 @@
 .button--secondary:hover:not(:disabled) {
   border-color: var(--color-primary-hover);
   color: var(--color-primary-hover);
+}
+
+.button--dark {
+  background: var(--color-dark);
+  color: var(--color-dark-text);
+}
+
+.button--dark:hover:not(:disabled) {
+  background: var(--color-brown-900);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.button--light {
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+
+.button--light:hover:not(:disabled) {
+  background: var(--color-yellow-100);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }

@@ -33,7 +33,7 @@ export function ResultadoPage() {
   }, []);
 
   if (erro) return <p role="alert">{erro}</p>;
-  if (!resultado) return <p>Carregando...</p>;
+  if (!resultado) return <p className="loading">Carregando...</p>;
 
   const opcoesDaArea = catalogoCategorias?.[resultado.areaClassificada] || [];
   const rotuloCategoria = (valor) => opcoesDaArea.find((c) => c.valor === valor)?.label || valor;
@@ -52,7 +52,7 @@ export function ResultadoPage() {
     <main>
       <h1>Resultado da triagem</h1>
 
-      <section className="card">
+      <section className="hero-block">
         <span className="badge">
           {resultado.origem === "ia" ? "Classificado por IA" : "Classificado por regras"}
         </span>
@@ -62,7 +62,7 @@ export function ResultadoPage() {
         <p>
           <strong>Recomendação:</strong> {resultado.tipoAdvogadoSugerido}
         </p>
-        {resultado.justificativa && <p className="text-muted">{resultado.justificativa}</p>}
+        {resultado.justificativa && <p>{resultado.justificativa}</p>}
       </section>
 
       {opcoesDaArea.length > 0 && (
@@ -109,14 +109,17 @@ export function ResultadoPage() {
       {resultado.advogados.length > 0 && (
         <ul className="list-plain">
           {resultado.advogados.map((adv) => (
-            <li key={adv.uid} className="card">
-              <Link to={`/advogados/${adv.uid}`}>
-                <strong>{adv.nome || adv.uid}</strong>
-              </Link>
-              <p className="text-muted">
-                {adv.areasAtuacao?.join(", ") || "sem área"} — {adv.localizacao?.cidade}/
-                {adv.localizacao?.uf}
-              </p>
+            <li key={adv.uid} className="card media">
+              <span className="avatar-placeholder">{(adv.nome || "?").charAt(0).toUpperCase()}</span>
+              <div>
+                <Link to={`/advogados/${adv.uid}`}>
+                  <strong>{adv.nome || adv.uid}</strong>
+                </Link>
+                <p className="text-muted">
+                  {adv.areasAtuacao?.join(", ") || "sem área"} — {adv.localizacao?.cidade}/
+                  {adv.localizacao?.uf}
+                </p>
+              </div>
             </li>
           ))}
         </ul>
