@@ -23,20 +23,21 @@ completo de sprints, modelo de dados e decisões de arquitetura.
 ```
 frontend/            React (Vite) — telas, componentes, design system Nocturis
   src/
-    features/         auth, triagem, advogados, denuncias, admin
-    components/        UI reutilizável (botão, input, card...)
+    features/         auth, triagem, advogados, curriculo, perfil, painel, admin
+                       (denuncias ainda NÃO existe — ver "Escopo do MVP" abaixo)
+    components/        UI reutilizável (Button, Input, Select, ChoiceCard, BottomNav...)
     lib/               cliente Firebase, hooks, helpers
     routes/
 backend/              Node.js + Express — API, IA, validações, admin
   src/
-    routes/            endpoints REST
+    routes/            endpoints REST (auth, advogados, curriculos, triagem, users, health)
     services/          triagem/Gemini, OAB, matching
     middlewares/        verificação de token, papéis
     lib/               firebase-admin
 database/             Firestore: regras, índices, seed e docs do modelo
   firestore.rules
   firestore.indexes.json
-  seed/                scripts pra popular advogados fictícios
+  seed/                lawyers.json (30 advogados fictícios) + seed.js + criar-admin.js
 docs/                 ROADMAP.md e demais documentos
 ```
 
@@ -80,13 +81,32 @@ Na raiz: `npm run dev` sobe frontend e backend juntos (via `concurrently`).
   `docs/ROADMAP.md` pra detalhes. Falta do Sprint 6: rodar casos de teste reais pra afinar
   o *prompt* (GC).
 - **Passe de UX do Sprint 6 (GP) adiantado pelo GR**: todas as telas do fluxo principal
-  (painel, triagem, resultado, listagem/perfil de advogados, cadastro, login, perfil,
-  currículo, admin) aplicam o design system de verdade agora (`components/Button`,
-  `Input`, `Select`, mais as classes utilitárias `card`, `stack`, `row`, `filter-bar`,
-  `badge`, `chip`/`chip-list`, `actions` em `index.css`). `/painel` deixou de ser
-  placeholder — é um dashboard com atalho pra triagem e últimas triagens do cliente.
-  Ainda cabe um passe fino de UX (copy, acessibilidade, microinterações) se o GP quiser
-  refinar, e testar responsividade em mobile (só foi validado em viewport desktop).
+  aplicam o design system base (`components/Button`, `Input`, `Select`, mais classes
+  utilitárias `card`, `stack`, `row`, `badge`, `chip`/`chip-list`, `actions` em `index.css`).
+  `/painel` deixou de ser placeholder — é um dashboard com atalho pra triagem e últimas
+  triagens do cliente.
+- **Segunda rodada de redesign (referência Bumble)**: Home, Login, Cadastro e a busca
+  pública de advogados (`/advogados`) receberam um redesign completo — layout mobile-first
+  em tela cheia (sem `Header` nem card flutuando nas telas de auth, ver
+  `main.auth-screen`/`main.splash` em `index.css`), botões pill full-width, `BottomNav` pra
+  navegação de quem está logado, `ChoiceCard` e `.pill-toggle` pra seleção em vez de
+  `<select>` nativo. **O resto das telas (Painel, Perfil, currículo, perfil público do
+  advogado, resultado da triagem, admin) ainda está no nível do passe anterior** — funciona
+  e usa as cores/componentes certos, mas não tem esse mesmo tratamento visual. É o item mais
+  urgente em aberto — ver "Pontos fracos" no README da raiz.
+- **Taxonomia de categorias expandida** (`backend/src/services/triagem.js`): cível foi de 7
+  pra 17 subcategorias, trabalhista de 5 pra 16 (33 no total) — muito mais granular pra IA,
+  fallback por regras e especialidades de advogado. `ResultadoPage` troca o
+  antigo combo "adicionar categoria" por um grid de `.pill-toggle` (toca pra marcar/desmarcar).
+  Falta rodar casos de teste reais pra validar a taxa de acerto (item pendente do Sprint 6).
+- **Seed de advogados ampliado**: `database/seed/lawyers.json` foi de 5 pra 30 advogados
+  fictícios, cobrindo os 33 valores da taxonomia nova e 14 estados — dá pra testar filtro e
+  matching de verdade agora. **Matching ainda não usa `especialidades`**, só área + cidade/UF
+  (`backend/src/services/matching.js`) — é um item de prioridade média em aberto.
+- **Contas de teste**: as contas antigas (mistura de testes reais dos integrantes) foram
+  apagadas e recriadas como 3 contas limpas — `admin.teste@example.com`,
+  `cliente.teste@example.com`, `advogado.teste@example.com` (senhas com o integrante que
+  pediu o reset). Usar essas pra qualquer teste manual daqui pra frente.
 - **Sem testes automatizados e sem CI** — nenhum arquivo de teste no repo, sem script
   `test` nos `package.json`. Previsto pro Sprint 9.
 - **`nocturis-prod` ainda não existe de verdade** — o `.firebaserc` já tem o alias, mas hoje
