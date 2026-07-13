@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
-import { Select } from "../../components/Select/Select";
 import { api } from "../../lib/api";
 
 const LABEL_AREA = {
@@ -36,16 +35,9 @@ export function ResultadoPage() {
   if (!resultado) return <p className="loading">Carregando...</p>;
 
   const opcoesDaArea = catalogoCategorias?.[resultado.areaClassificada] || [];
-  const rotuloCategoria = (valor) => opcoesDaArea.find((c) => c.valor === valor)?.label || valor;
-  const disponiveisParaAdicionar = opcoesDaArea.filter((c) => !categorias.includes(c.valor));
 
-  function removerCategoria(valor) {
-    setCategorias((atual) => atual.filter((c) => c !== valor));
-  }
-
-  function adicionarCategoria(valor) {
-    if (!valor) return;
-    setCategorias((atual) => [...atual, valor]);
+  function alternarCategoria(valor) {
+    setCategorias((atual) => (atual.includes(valor) ? atual.filter((c) => c !== valor) : [...atual, valor]));
   }
 
   return (
@@ -68,39 +60,24 @@ export function ResultadoPage() {
       {opcoesDaArea.length > 0 && (
         <section className="card">
           <h2>Categorias identificadas no seu caso</h2>
-          <p className="text-muted">Se alguma não fizer sentido, remova. Se faltou algo, adicione.</p>
+          <p className="text-muted">Toque pra marcar ou desmarcar o que se aplica ao seu caso.</p>
 
-          <ul className="chip-list">
-            {categorias.length === 0 && <li className="text-muted">Nenhuma categoria selecionada.</li>}
-            {categorias.map((valor) => (
-              <li key={valor} className="chip">
-                {rotuloCategoria(valor)}
+          <div className="pill-toggle">
+            {opcoesDaArea.map((c) => {
+              const selecionada = categorias.includes(c.valor);
+              return (
                 <button
+                  key={c.valor}
                   type="button"
-                  onClick={() => removerCategoria(valor)}
-                  aria-label={`Remover ${rotuloCategoria(valor)}`}
+                  className={`pill-toggle__item${selecionada ? " pill-toggle__item--active" : ""}`}
+                  aria-pressed={selecionada}
+                  onClick={() => alternarCategoria(c.valor)}
                 >
-                  ✕
-                </button>
-              </li>
-            ))}
-          </ul>
-
-          {disponiveisParaAdicionar.length > 0 && (
-            <Select
-              label="Adicionar categoria"
-              id="adicionar-categoria"
-              value=""
-              onChange={(e) => adicionarCategoria(e.target.value)}
-            >
-              <option value="">Selecione...</option>
-              {disponiveisParaAdicionar.map((c) => (
-                <option key={c.valor} value={c.valor}>
                   {c.label}
-                </option>
-              ))}
-            </Select>
-          )}
+                </button>
+              );
+            })}
+          </div>
         </section>
       )}
 
