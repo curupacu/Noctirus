@@ -60,7 +60,7 @@ export function CurriculoForm({ uid }) {
     }
   }
 
-  if (carregando) return <p>Carregando currículo...</p>;
+  if (carregando) return <p className="loading">Carregando currículo...</p>;
 
   return (
     <form className="card stack" onSubmit={salvar}>

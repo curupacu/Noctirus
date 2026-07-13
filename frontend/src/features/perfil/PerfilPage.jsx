@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
+import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
 import { Input } from "../../components/Input/Input";
 import { useAuth } from "../auth/AuthContext";
 import { CurriculoForm } from "../curriculo/CurriculoForm";
@@ -83,7 +84,7 @@ export function PerfilPage() {
   }
 
   if (carregando || !dadosUsuario) {
-    return <p>Carregando perfil...</p>;
+    return <p className="loading">Carregando perfil...</p>;
   }
 
   return (
@@ -131,22 +132,23 @@ export function PerfilPage() {
           </div>
 
           {especialidadesDisponiveis.length > 0 && (
-            <fieldset>
-              <legend>Especialidades</legend>
+            <div className="input-group">
+              <label className="input-label">Especialidades</label>
               <p className="text-muted">
                 Ajuda o cliente a ver se você atende o assunto específico do caso dele.
               </p>
-              {especialidadesDisponiveis.map((c) => (
-                <label key={c.valor}>
-                  <input
+              <div className="choice-grid">
+                {especialidadesDisponiveis.map((c) => (
+                  <ChoiceCard
+                    key={c.valor}
                     type="checkbox"
+                    label={c.label}
                     checked={especialidades.includes(c.valor)}
                     onChange={() => alternarEspecialidade(c.valor)}
                   />
-                  {c.label}
-                </label>
-              ))}
-            </fieldset>
+                ))}
+              </div>
+            </div>
           )}
 
           <Button type="submit">Salvar dados de advogado</Button>

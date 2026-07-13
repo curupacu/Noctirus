@@ -24,7 +24,7 @@ export function PainelPage() {
   }, []);
 
   if (erro) return <p role="alert">{erro}</p>;
-  if (!usuario) return <p>Carregando...</p>;
+  if (!usuario) return <p className="loading">Carregando...</p>;
 
   const primeiroNome = (usuario.nome || usuario.email || "").split(" ")[0];
   const ultimasTriagens = (triagens || []).slice(0, 3);
@@ -36,7 +36,7 @@ export function PainelPage() {
         Este é o seu painel. Daqui você faz uma nova triagem ou acompanha as que já fez.
       </p>
 
-      <section className="card card--highlight">
+      <section className="hero-block hero-block--dark">
         <h2>Precisa de um advogado?</h2>
         <p>
           Responda algumas perguntas e descreva seu caso — a gente indica a área certa e

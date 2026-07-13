@@ -27,7 +27,7 @@ export function MinhasTriagensPage() {
       </p>
 
       {erro && <p role="alert">{erro}</p>}
-      {!triagens && !erro && <p>Carregando...</p>}
+      {!triagens && !erro && <p className="loading">Carregando...</p>}
       {triagens && triagens.length === 0 && <p>Você ainda não fez nenhuma triagem.</p>}
 
       {triagens && triagens.length > 0 && (

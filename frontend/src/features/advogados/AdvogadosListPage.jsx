@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
-import { Select } from "../../components/Select/Select";
 import { api } from "../../lib/api";
+
+const AREAS = [
+  { value: "", label: "Todas" },
+  { value: "civel", label: "Cível" },
+  { value: "trabalhista", label: "Trabalhista" },
+];
 
 export function AdvogadosListPage() {
   const [area, setArea] = useState("");
@@ -12,68 +16,89 @@ export function AdvogadosListPage() {
   const [advogados, setAdvogados] = useState(null);
   const [erro, setErro] = useState(null);
 
-  function buscar(e) {
-    e?.preventDefault();
+  useEffect(() => {
     const params = new URLSearchParams();
     if (area) params.set("area", area);
-    if (cidade) params.set("cidade", cidade);
-    if (uf) params.set("uf", uf);
-
+    if (cidade.trim()) params.set("cidade", cidade.trim());
+    if (uf.trim()) params.set("uf", uf.trim());
     const query = params.toString();
-    api
-      .get(`/advogados${query ? `?${query}` : ""}`)
-      .then(setAdvogados)
-      .catch((err) => setErro(err.message));
-  }
 
-  useEffect(() => {
-    buscar();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const timer = setTimeout(() => {
+      api
+        .get(`/advogados${query ? `?${query}` : ""}`)
+        .then(setAdvogados)
+        .catch((err) => setErro(err.message));
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [area, cidade, uf]);
+
+  const temFiltro = area || cidade || uf;
 
   function limpar() {
     setArea("");
     setCidade("");
     setUf("");
-    api.get("/advogados").then(setAdvogados).catch((err) => setErro(err.message));
   }
 
   return (
     <main>
       <h1>Advogados</h1>
+      <p className="text-muted advogados-subtitulo">Busque por área ou cidade, sem precisar criar conta.</p>
 
-      <form className="card filter-bar" onSubmit={buscar}>
-        <Select label="Área" id="area" value={area} onChange={(e) => setArea(e.target.value)}>
-          <option value="">Todas</option>
-          <option value="civel">Cível</option>
-          <option value="trabalhista">Trabalhista</option>
-        </Select>
+      <div className="advogados-filtros">
+        <div className="pill-toggle">
+          {AREAS.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              className={`pill-toggle__item${area === opt.value ? " pill-toggle__item--active" : ""}`}
+              onClick={() => setArea(opt.value)}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
 
-        <Input label="Cidade" id="cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} />
-        <Input label="UF" id="uf" value={uf} onChange={(e) => setUf(e.target.value)} maxLength={2} />
+        <div className="row">
+          <Input label="Cidade" id="cidade" placeholder="Ex.: São Paulo" value={cidade} onChange={(e) => setCidade(e.target.value)} />
+          <Input label="UF" id="uf" placeholder="Ex.: SP" value={uf} onChange={(e) => setUf(e.target.value)} maxLength={2} />
+        </div>
 
-        <Button type="submit">Filtrar</Button>
-        <Button type="button" variant="secondary" onClick={limpar}>
-          Limpar filtros
-        </Button>
-      </form>
+        {temFiltro && (
+          <button type="button" className="advogados-limpar" onClick={limpar}>
+            Limpar filtros
+          </button>
+        )}
+      </div>
 
       {erro && <p role="alert">{erro}</p>}
-      {!advogados && !erro && <p>Carregando...</p>}
+      {!advogados && !erro && <p className="loading">Carregando...</p>}
 
-      {advogados && advogados.length === 0 && <p>Nenhum advogado encontrado com esses filtros.</p>}
+      {advogados && advogados.length === 0 && (
+        <p className="text-muted">Nenhum advogado encontrado com esses filtros.</p>
+      )}
 
       {advogados && advogados.length > 0 && (
-        <ul className="list-plain">
+        <ul className="advogados-lista">
           {advogados.map((adv) => (
-            <li key={adv.uid} className="card">
-              <Link to={`/advogados/${adv.uid}`}>
-                <strong>{adv.nome || adv.uid}</strong>
+            <li key={adv.uid}>
+              <Link to={`/advogados/${adv.uid}`} className="advogado-row">
+                <span className="avatar-placeholder">{(adv.nome || "?").charAt(0).toUpperCase()}</span>
+                <span className="advogado-row__info">
+                  <span className="advogado-row__nome">
+                    {adv.nome || adv.uid}
+                    {adv.verificado && <span className="badge">OAB verificada</span>}
+                  </span>
+                  <span className="advogado-row__meta">
+                    {adv.areasAtuacao?.join(" · ") || "Área não informada"} — {adv.localizacao?.cidade}/
+                    {adv.localizacao?.uf}
+                  </span>
+                </span>
+                <span className="advogado-row__chevron" aria-hidden="true">
+                  ›
+                </span>
               </Link>
-              <p className="text-muted">
-                {adv.areasAtuacao?.join(", ") || "sem área"} — {adv.localizacao?.cidade}/
-                {adv.localizacao?.uf} — {adv.verificado ? "OAB verificada" : "OAB em análise"}
-              </p>
             </li>
           ))}
         </ul>

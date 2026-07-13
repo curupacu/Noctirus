@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BottomNav } from "../components/BottomNav/BottomNav";
 import { Header } from "../components/Header/Header";
 import { AdminAdvogadosPage } from "../features/admin/AdminAdvogadosPage";
 import { AdvogadoPublicoPage } from "../features/advogados/AdvogadoPublicoPage";
@@ -72,6 +73,7 @@ export function AppRouter() {
           }
         />
       </Routes>
+      <BottomNav />
     </BrowserRouter>
   );
 }
