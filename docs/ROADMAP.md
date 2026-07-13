@@ -34,8 +34,6 @@
 | **IA da triagem** | **Google Gemini — modelo Flash-Lite** | Grátis no *free tier*, sem cartão, ideal pra classificação/roteamento. Chamado **só pelo backend** (chave nunca no front). Fallback por regras se falhar ou passar de 5s (RNF003). |
 | **Escopo** | Fase 1 = MVP · Fase 2 = produto real | MVP com dados fictícios e tudo em *free tier*. Produto real depois: LGPD, Gemini via Vertex AI (não treina com os dados), verificação de OAB, advogados reais. |
 
-> ⚠️ **Atenção — README x banco:** o `README.md` atual do repositório lista **MySQL**, mas a decisão travada é **Firestore**. Atualizem o README pra refletir isso. Se o time preferir mesmo o MySQL (relacional, combina com o MER/DER), a mudança afeta a pasta `database/` (passa a ter DDL e *migrations*) e exige um host de banco grátis (ex.: Neon ou Aiven) — nesse caso, é só avisar que o roadmap é ajustado.
-
 ---
 
 ## 2. Arquitetura e hospedagem
@@ -186,7 +184,9 @@ Sprints **semanais**. Itens com 🔴 são **bloqueadores** (precisam estar pront
 ### 🟩 FASE 1 — MVP (recesso de julho)
 
 #### Sprint 1 — Fundação · 07–13/07
-- 🔴 [GR] Criar projeto Firebase (Auth, Firestore, Hosting). **Dois projetos:** `nocturis-dev` e `nocturis-prod`.
+- ✅ [GR] Criar projeto Firebase (Auth, Firestore, Hosting). **Dois projetos:** `nocturis-dev` e `nocturis-prod`.
+  Na prática, o projeto dev virou `nocturis-web`, e `nocturis-prod` ainda não existe de verdade
+  (ver "Status do deploy" no `CLAUDE.md`) — os dois nomes acima ficam só como registro do plano original.
 - 🔴 [GR] Configurar `backend/` (Express + Firebase Admin SDK) rodando localmente; `database/` com `firestore.rules` inicial.
 - 🔴 [GP] Scaffold do `frontend/` (Vite + React) + rotas + estrutura de pastas.
 - 🔴 [GP] **Design system Nocturis:** paleta (marrom/amarelo), tipografia e componentes base (botão, input, card).
@@ -229,11 +229,25 @@ Sprints **semanais**. Itens com 🔴 são **bloqueadores** (precisam estar pront
 
 > 🎤 **1ª Apresentação (13/08):** demonstrar o MVP + triagem funcionando de ponta a ponta.
 
-#### Sprint 6 — Refino da triagem + UX · parcialmente concluído em 08/07 (adiantado — previsto 11–17/08)
+#### Sprint 6 — Refino da triagem + UX · parcialmente concluído em 08–13/07 (adiantado — previsto 11–17/08)
 - ✅ [GR] Árvore de perguntas evoluída pra **condicional** (2ª pergunta muda conforme a 1ª) + **categorias/subcategorias** detalhadas por área — vai além do que este roadmap previa originalmente.
 - ✅ [GR] Especialidades do advogado reaproveitando a mesma taxonomia de categorias da triagem (feature nova, não estava no escopo original — ajuda o cliente a ver se o advogado atende o assunto específico do caso).
+- ✅ [GR] Taxonomia ampliada de 12 pra **33 categorias** (17 cíveis + 16 trabalhistas) — bem mais
+  granular pra IA, fallback por regras e especialidades. Seletor de categorias na tela de
+  resultado da triagem trocado por um grid de pills tocáveis (era um combo confuso que às vezes
+  mostrava o valor cru tipo `verbas_nao_pagas` em vez do rótulo).
+- ✅ [GR] Seed de advogados fictícios ampliado de 5 pra **30**, cobrindo as 33 categorias e 14
+  estados, pra dar pra testar filtro/matching de verdade.
 - [GC] Rodar 15–20 casos de teste reais e afinar *prompt* + árvore (medir a taxa de acerto). — pendente
-- [GP] Passe de UX: textos, acessibilidade básica, microinterações. — pendente. **UI ainda bem crua** (HTML sem estilo na maior parte das telas, sem o design system marrom/amarelo do Sprint 1 aplicado de fato) — candidato natural a puxar pra frente, já que o resto da sprint está adiantado.
+- ✅🟡 [GR] **Passe de UX, parcial**: Home, Login, Cadastro e a busca pública de advogados
+  (`/advogados`) ganharam um redesign completo, mobile-first, guiado por referência visual do
+  app Bumble (tela cheia, sem card flutuando, botões pill, seleção por `ChoiceCard`/pills em
+  vez de `<select>`). **O resto do app (Painel, Perfil, currículo, perfil público do advogado,
+  resultado da triagem, admin) só tem o design system básico aplicado** (cores/botões/inputs
+  certos, mas ainda com a estrutura antiga de cards em caixa) — puxar isso pra frente é o item
+  de UI/UX mais urgente em aberto.
+- [GR] **Matching ainda não usa `especialidades`**, só área + cidade/UF — item novo que apareceu
+  com a taxonomia ampliada, ainda não estava previsto neste roadmap. Prioridade média.
 
 ### 🟪 FASE 3 — Confiança e administração (rumo à 2ª apresentação, 25/09)
 
