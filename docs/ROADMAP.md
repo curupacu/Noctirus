@@ -270,9 +270,13 @@ Sprints **semanais**. Itens com 🔴 são **bloqueadores** (precisam estar pront
   Confirmação via `window.confirm` antes de remover. Admin não pode suspender/remover outro
   admin.
 
-#### Sprint 9 — Testes · 01–07/09  *(cobra o 3º bimestre)*
-- [GR] Testes unitários e de integração das partes críticas (auth, triagem, matching).
-- [GC] Documentar testes e validações.
+#### Sprint 9 — Testes · 01–07/09  *(cobra o 3º bimestre)* → 🟡 parcial em 18/07 (adiantado)
+- ✅🟡 [GR] Testes unitários das partes críticas (auth, triagem, matching) — 35 testes com
+  Vitest (`npm test`), veja `CLAUDE.md`. **Falta**: testes de integração via HTTP nas rotas
+  do Express.
+- ✅ [GR] CI configurado (`.github/workflows/ci.yml`) — roda os testes do backend e o
+  lint/build do frontend em todo push e PR, sem precisar de nenhum secret.
+- [GC] Documentar testes e validações. — pendente
 
 #### Sprint 10 — Polimento + *hardening* · 08–24/09 → 🎤 **2ª Apresentação 25/09**
 - [GR] Índices do Firestore, revisão das *rules*, checagem de disponibilidade (RNF007, RNF008).
