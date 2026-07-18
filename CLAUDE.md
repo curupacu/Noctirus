@@ -23,14 +23,14 @@ completo de sprints, modelo de dados e decisões de arquitetura.
 ```
 frontend/            React (Vite) — telas, componentes, design system Nocturis
   src/
-    features/         auth, triagem, advogados, curriculo, perfil, painel, admin
-                       (denuncias ainda NÃO existe — ver "Escopo do MVP" abaixo)
+    features/         auth, triagem, advogados, curriculo, perfil, painel, admin, denuncias
     components/        UI reutilizável (Button, Input, Select, ChoiceCard, BottomNav...)
     lib/               cliente Firebase, hooks, helpers
     routes/
 backend/              Node.js + Express — API, IA, validações, admin
   src/
-    routes/            endpoints REST (auth, advogados, curriculos, triagem, users, health)
+    routes/            endpoints REST (auth, advogados, curriculos, triagem, users, health,
+                       denuncias)
     services/          triagem/Gemini, OAB, matching
     middlewares/        verificação de token, papéis
     lib/               firebase-admin
@@ -101,8 +101,94 @@ Na raiz: `npm run dev` sobe frontend e backend juntos (via `concurrently`).
   Falta rodar casos de teste reais pra validar a taxa de acerto (item pendente do Sprint 6).
 - **Seed de advogados ampliado**: `database/seed/lawyers.json` foi de 5 pra 30 advogados
   fictícios, cobrindo os 33 valores da taxonomia nova e 14 estados — dá pra testar filtro e
-  matching de verdade agora. **Matching ainda não usa `especialidades`**, só área + cidade/UF
-  (`backend/src/services/matching.js`) — é um item de prioridade média em aberto.
+  matching de verdade agora.
+- **Matching agora usa `especialidades`** (`backend/src/services/matching.js`): quando a
+  triagem ou o filtro da listagem pública passam `categorias`, os advogados com
+  especialidade compatível sobem pro topo da lista (não filtra os demais fora — o dataset
+  do seed é pequeno demais pra filtrar na marra sem zerar resultado às vezes). Os pills de
+  categoria no resultado da triagem (`ResultadoPage`) e a listagem pública (`/advogados`,
+  que ganhou o mesmo seletor de assunto específico) agora refazem a busca ao marcar/
+  desmarcar — antes eram decorativos. Perfil público do advogado também parou de mostrar
+  valores crus (`civel`/`trabalhista`) e ganhou rótulo pra seção de especialidades.
+- **Sprint 7 (denúncias) concluído**, GR fez as duas partes (GP não ia chegar a tempo):
+  endpoint `POST /denuncias` persiste `autorId`/`autorTipo`/`alvoId`/`descricao`/`provaUrl`/
+  `status`/`decisao`/`createdAt` no Firestore, com rule liberando leitura só pro autor e pro
+  admin (escrita só pelo backend). Sem upload de prova (decisão já registrada no
+  ROADMAP.md — Storage saiu do free tier); `provaUrl` aceita opcionalmente um link já
+  hospedado em outro lugar. Front em `frontend/src/features/denuncias/DenunciarPage.jsx`
+  (rota `/denunciar`, protegida pra cliente/advogado), reaproveitando os mesmos componentes
+  e classes do resto do app (sem redesign) — entrada pelo perfil público do advogado
+  ("Denunciar este advogado", já pré-preenche o alvo) e pelo `/perfil` ("Denunciar um
+  problema", sem alvo específico). Testado ponta a ponta com login real de teste.
+- **Sprint 8 (painel admin + moderação) concluído**, GR fez as duas partes de novo: `GET
+  /admin/users` lista clientes/advogados (não lista admins — moderação não se aplica entre
+  admins), `PATCH /admin/users/:uid/suspender` desativa o login de verdade na Firebase Auth
+  além de marcar `status: "suspenso"` no Firestore (não adiantava só marcar um campo que
+  ninguém checava), `DELETE /admin/users/:uid` remove definitivamente (Auth + Firestore,
+  incluindo `advogados`/`curriculos` se for o caso — dataset é fictício no MVP, sem
+  soft-delete). As duas rotas bloqueiam mexer em outro admin. `GET /admin/denuncias` e
+  `PATCH /admin/denuncias/:id` (status + anotação de decisão) completam a moderação.
+  Front: `AdminUsuariosPage` e `AdminDenunciasPage` novas, reaproveitando a mesma tabela/
+  card/badge que `AdminAdvogadosPage` já usava (sem redesign); as três telas de admin agora
+  têm um sub-menu (`AdminNav`, componente novo, usa a classe `.pill-toggle` que já existia)
+  pra navegar entre OAB/Usuários/Denúncias. Botão "Remover" pede confirmação via
+  `window.confirm` antes de chamar o DELETE. Testado ponta a ponta: usuário descartável
+  criado, suspenso (login bloqueado de verdade), reativado, removido (some da Auth e do
+  Firestore); denúncia de teste criada, listada com nomes resolvidos, marcada como
+  resolvida — tudo limpo depois do teste.
+- **Correção pós-Sprint-8**: suspender/remover um dos 30 advogados do seed (que só existem
+  no Firestore, sem conta na Firebase Auth) derrubava o backend com 500
+  (`auth/user-not-found`) — reportado pelo usuário testando na tela. `usersRouter` agora
+  ignora especificamente esse erro e segue só atualizando o Firestore. Além disso,
+  `buscarAdvogadosCompativeis` (matching) passou a excluir por padrão quem está com
+  `status: "suspenso"` — suspender não tinha nenhum efeito visível antes disso, já que os
+  advogados fictícios não têm login pra bloquear. Só a rota `/admin/advogados` (o admin
+  aprovando OAB) pede `incluirSuspensos: true` pra continuar vendo todo mundo. O perfil
+  público (`/advogados/:uid`) também mostra um aviso "Suspenso da plataforma" e esconde os
+  botões de contato quando for o caso.
+- **Fluxo de decisão da denúncia repensado** (pedido do usuário: a tela só deixava marcar
+  "em análise"/"resolvida" sem comunicar nada pro autor). Agora `AdminDenunciasPage` tem
+  duas ações claras quando ainda não foi resolvida: "Suspender denunciado e resolver" (chama
+  o suspender do alvo e já resolve a denúncia com uma frase padrão, editável antes de
+  enviar) e "Resolver sem suspender". A explicação vai pro campo `decisao` da denúncia, que
+  o autor agora consegue ver numa tela nova, `MinhasDenunciasPage` (rota
+  `/minhas-denuncias`, linkada em `/perfil` e na confirmação do `DenunciarPage`) — antes não
+  existia jeito nenhum de o autor acompanhar o que aconteceu com a denúncia dele. Endpoint
+  novo: `GET /denuncias/minhas` (sem `orderBy` na query — ordena em memória — pra não
+  depender de um índice composto novo no Firestore que eu não conseguiria publicar daqui).
+- **Design**: `AdminAdvogadosPage`/`AdminUsuariosPage` tinham a tabela mais larga que o
+  card (a coluna de Ações com dois botões lado a lado não cabia) — os botões vazavam pra
+  fora da borda branca do card em vez de rolar. Adicionada a classe `.table-scroll`
+  (`overflow-x: auto` num `<div>` envolvendo o `<table>`) nas duas telas.
+- **Teste de ponta a ponta feito no navegador de verdade** (login real via formulário,
+  Firebase Auth de verdade, não atalho): cadastro de cliente → triagem completa → aba
+  advogados → cadastro de advogado com OAB → cliente denuncia o advogado pelo perfil
+  público → admin aprova a OAB e resolve a denúncia suspendendo o advogado → cliente vê a
+  decisão em "Minhas denúncias" → perfil público do advogado mostra "Suspenso da
+  plataforma" e esconde o contato. Achou e corrigiu 2 bugs reais nesse processo:
+  1. **`BottomNav` tinha uma key duplicada pro papel advogado** — `rotaInicial("advogado")`
+     já é `/perfil`, então "Início" e "Perfil" eram dois botões apontando pro mesmo lugar
+     com a mesma `key` (React reclamava no console). Agora dedupa por destino; advogado só
+     vê um botão que leva ao perfil, não dois iguais.
+  2. O bug do card com botão vazando (item acima).
+  Zero erros no console do navegador no fluxo inteiro depois dessas correções.
+- **3 falhas de segurança nas `firestore.rules` corrigidas e publicadas** (apontadas pelo
+  usuário, todas confirmadas reais antes de mexer):
+  1. **Advogado conseguia se auto-verificar**: a rule de `advogados/{uid}` deixava o dono
+     escrever qualquer campo, inclusive `verificado` — dava pra aprovar a própria OAB direto
+     pelo SDK do cliente, sem passar pelo backend (as chaves do Firebase web são públicas
+     por design). Agora só admin muda `verificado`/`oab`.
+  2. **Vazamento de dado pessoal (LGPD)**: `users/{uid}` liberava leitura pra qualquer
+     usuário logado — todo mundo lia e-mail/telefone de todo mundo. Agora só o dono e o
+     admin leem.
+  3. **Usuário suspenso conseguia se reativar sozinho**: a rule só travava a troca do campo
+     `role`, não do `status`. Agora `status` também só muda pelo admin.
+  Publicado de verdade em produção via `firebase deploy --only firestore:rules` (o usuário
+  precisou trocar de conta Google — a que tinha usado antes não era dona do projeto
+  `nocturis-web`). Verificado com ataques reais contra o Firestore ao vivo, usando a REST
+  API com token de usuário de teste descartável (não Admin SDK, que ignora as rules): os
+  três ataques agora tomam 403, e as edições legítimas (advogado editando especialidades,
+  usuário editando o próprio nome) continuam funcionando normalmente.
 - **Contas de teste**: as contas antigas (mistura de testes reais dos integrantes) foram
   apagadas e recriadas como 3 contas limpas — `admin.teste@example.com`,
   `cliente.teste@example.com`, `advogado.teste@example.com` (senhas com o integrante que

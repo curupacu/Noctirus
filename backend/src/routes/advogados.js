@@ -12,7 +12,7 @@ advogadosRouter.get(
   verificarToken,
   requireRole("admin"),
   async (_req, res) => {
-    const advogados = await buscarAdvogadosCompativeis();
+    const advogados = await buscarAdvogadosCompativeis({ incluirSuspensos: true });
     res.json(advogados);
   },
 );
@@ -21,8 +21,13 @@ advogadosRouter.get(
 // RF006/RF007). Filtragem em memória (dataset pequeno no MVP), sem precisar de índice
 // composto no Firestore.
 advogadosRouter.get("/advogados", async (req, res) => {
-  const { area, cidade, uf } = req.query;
-  const advogados = await buscarAdvogadosCompativeis({ area, cidade, uf });
+  const { area, cidade, uf, categorias } = req.query;
+  const advogados = await buscarAdvogadosCompativeis({
+    area,
+    cidade,
+    uf,
+    categorias: categorias ? categorias.split(",").filter(Boolean) : undefined,
+  });
   res.json(advogados);
 });
 
@@ -40,6 +45,7 @@ advogadosRouter.get("/advogados/:uid", async (req, res) => {
   res.json({
     uid,
     nome: usuarioDoc.exists ? usuarioDoc.data().nome : null,
+    status: usuarioDoc.exists ? usuarioDoc.data().status : null,
     ...advogadoDoc.data(),
   });
 });

@@ -34,7 +34,9 @@ triagemRouter.post(
 
     const resultado = await classificar({ respostas: respostas || {}, descricao });
     const advogados = await buscarAdvogadosCompativeis(
-      resultado.areaClassificada === "indefinido" ? {} : { area: resultado.areaClassificada },
+      resultado.areaClassificada === "indefinido"
+        ? {}
+        : { area: resultado.areaClassificada, categorias: resultado.categorias },
     );
 
     const triagem = {
@@ -79,7 +81,9 @@ triagemRouter.get("/triagem/:id", verificarToken, requireRole("cliente"), async 
 
   const triagem = doc.data();
   const advogados = await buscarAdvogadosCompativeis(
-    triagem.areaClassificada === "indefinido" ? {} : { area: triagem.areaClassificada },
+    triagem.areaClassificada === "indefinido"
+      ? {}
+      : { area: triagem.areaClassificada, categorias: triagem.categorias },
   );
 
   res.json({ id: doc.id, ...triagem, advogados });

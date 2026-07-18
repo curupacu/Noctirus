@@ -166,7 +166,14 @@ export function PerfilPage() {
 
       {role === "admin" && (
         <p>
-          <Link to="/admin/advogados">Aprovar OAB de advogados</Link>
+          <Link to="/admin/advogados">Painel administrativo</Link>
+        </p>
+      )}
+
+      {role !== "admin" && (
+        <p className="text-muted">
+          <Link to="/denunciar">Denunciar um problema</Link> ·{" "}
+          <Link to="/minhas-denuncias">Minhas denúncias</Link>
         </p>
       )}
 

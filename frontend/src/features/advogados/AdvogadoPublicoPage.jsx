@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { api } from "../../lib/api";
+
+const LABEL_AREA = {
+  civel: "Cível",
+  trabalhista: "Trabalhista",
+};
 
 function ListaOuVazio({ titulo, itens }) {
   return (
@@ -43,8 +48,9 @@ export function AdvogadoPublicoPage() {
   if (erro) return <p role="alert">{erro}</p>;
   if (!advogado) return <p className="loading">Carregando...</p>;
 
-  const whatsapp = advogado.contatos?.whatsapp;
-  const email = advogado.contatos?.email;
+  const suspenso = advogado.status === "suspenso";
+  const whatsapp = !suspenso && advogado.contatos?.whatsapp;
+  const email = !suspenso && advogado.contatos?.email;
   const rotulosEspecialidades = (advogado.especialidades || []).map((valor) => {
     const todas = Object.values(catalogoCategorias || {}).flat();
     return todas.find((c) => c.valor === valor)?.label || valor;
@@ -58,29 +64,37 @@ export function AdvogadoPublicoPage() {
       </div>
 
       <section className="card">
+        <h2>Sobre</h2>
+        {suspenso && (
+          <p>
+            <span className="badge">Suspenso da plataforma</span>
+          </p>
+        )}
         <p>
           <span className="badge">
             {advogado.verificado ? "OAB verificada" : "OAB em análise"}
           </span>
         </p>
         <p className="text-muted">
-          OAB {advogado.oab?.numero}/{advogado.oab?.uf}
+          OAB {advogado.oab?.numero}/{advogado.oab?.uf} — {advogado.localizacao?.cidade || "?"}/
+          {advogado.localizacao?.uf || "?"}
         </p>
-        <p>Áreas de atuação: {advogado.areasAtuacao?.join(", ") || "não informado"}</p>
+        <p>
+          Atua em: {advogado.areasAtuacao?.map((a) => LABEL_AREA[a] || a).join(", ") || "não informado"}
+        </p>
 
         {rotulosEspecialidades.length > 0 && (
-          <ul className="chip-list">
-            {rotulosEspecialidades.map((rotulo) => (
-              <li key={rotulo} className="chip">
-                {rotulo}
-              </li>
-            ))}
-          </ul>
+          <>
+            <p className="text-muted">Especialidades:</p>
+            <ul className="chip-list">
+              {rotulosEspecialidades.map((rotulo) => (
+                <li key={rotulo} className="chip">
+                  {rotulo}
+                </li>
+              ))}
+            </ul>
+          </>
         )}
-
-        <p className="text-muted">
-          Localização: {advogado.localizacao?.cidade || "?"}/{advogado.localizacao?.uf || "?"}
-        </p>
       </section>
 
       <section className="card">
@@ -102,7 +116,8 @@ export function AdvogadoPublicoPage() {
             </a>
           )}
         </div>
-        {!whatsapp && !email && <p>Nenhum contato cadastrado.</p>}
+        {suspenso && <p>Este advogado está suspenso e não pode ser contatado pela plataforma.</p>}
+        {!suspenso && !whatsapp && !email && <p>Nenhum contato cadastrado.</p>}
       </section>
 
       <section className="card">
@@ -112,6 +127,12 @@ export function AdvogadoPublicoPage() {
         <ListaOuVazio titulo="Cursos" itens={curriculo?.cursos} />
         <ListaOuVazio titulo="Experiências" itens={curriculo?.experiencias} />
       </section>
+
+      <p className="text-muted">
+        <Link to={`/denunciar?alvoId=${uid}&alvoNome=${encodeURIComponent(advogado.nome || "")}`}>
+          Denunciar este advogado
+        </Link>
+      </p>
     </main>
   );
 }

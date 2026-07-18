@@ -19,16 +19,32 @@ service cloud.firestore {
     }
 
     match /users/{uid} {
-      allow read: if request.auth != null;
+      // Só o dono e o admin leem — o doc tem email/telefone (LGPD). Antes qualquer usuário
+      // logado lia o doc de qualquer outro, o que vazava dado pessoal de todo mundo pra
+      // quem quisesse ler direto pelo SDK do cliente.
+      allow read: if dono(uid) || papel() == "admin";
       allow create: if dono(uid);
-      // Edição não pode trocar o papel — isso só acontece via custom claim, pelo backend.
-      allow update: if dono(uid) && request.resource.data.role == resource.data.role;
+      // Edição não pode trocar papel nem status — role só muda via custom claim (backend),
+      // e status só o admin muda (suspender/reativar). Sem essa segunda trava, um usuário
+      // suspenso conseguia se reativar sozinho escrevendo direto no próprio doc.
+      allow update: if papel() == "admin" ||
+        (dono(uid) &&
+          request.resource.data.role == resource.data.role &&
+          request.resource.data.status == resource.data.status);
     }
 
     match /advogados/{uid} {
       allow read: if true;
-      // Admin também pode escrever (aprovação manual da OAB via campo "verificado").
-      allow write: if (dono(uid) && papel() == "advogado") || papel() == "admin";
+      // O dono só pode mexer nos campos que o backend também deixa (áreas, especialidades,
+      // localização, contato) — nunca em "verificado" ou "oab". Sem essa trava, um advogado
+      // conseguia se auto-aprovar (`verificado: true`) escrevendo direto no Firestore pelo
+      // SDK do cliente, sem passar pelo backend — as chaves do Firebase web são públicas
+      // por design, "só o backend faz isso" não protege nada se a rule não travar também.
+      allow create, delete: if papel() == "admin";
+      allow update: if papel() == "admin" ||
+        (dono(uid) && papel() == "advogado" &&
+          request.resource.data.verificado == resource.data.verificado &&
+          request.resource.data.oab == resource.data.oab);
     }
 
     match /curriculos/{uid} {
@@ -40,6 +56,15 @@ service cloud.firestore {
     // aqui fica só como segunda camada, liberando leitura pro próprio cliente dono.
     match /triagens/{id} {
       allow read: if request.auth != null && request.auth.uid == resource.data.clienteId;
+      allow write: if false;
+    }
+
+    // Denúncia só é criada pelo backend (RF011); leitura liberada pro autor e pro admin
+    // (moderação, Sprint 8). Sem update aqui — mudar status/decisão é ação de admin via
+    // Admin SDK.
+    match /denuncias/{id} {
+      allow read: if request.auth != null &&
+        (request.auth.uid == resource.data.autorId || papel() == "admin");
       allow write: if false;
     }
   }

@@ -39,8 +39,14 @@ main {
 table {
   width: 100%;
   max-width: 100%;
-  overflow-x: auto;
   border-collapse: collapse;
+}
+
+/* Tabelas de admin (ex.: ações "Suspender"/"Remover" lado a lado) costumam ficar mais
+   largas que o card em telas estreitas — sem isso, os botões vazavam pra fora do card em
+   vez de simplesmente rolar. */
+.table-scroll {
+  overflow-x: auto;
 }
 
 textarea {
