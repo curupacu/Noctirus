@@ -15,6 +15,7 @@ export function ResultadoPage() {
   const [erro, setErro] = useState(null);
   const [catalogoCategorias, setCatalogoCategorias] = useState(null);
   const [categorias, setCategorias] = useState(resultado?.categorias || []);
+  const [advogados, setAdvogados] = useState(resultado?.advogados || null);
 
   useEffect(() => {
     if (resultado) return;
@@ -23,6 +24,7 @@ export function ResultadoPage() {
       .then((dados) => {
         setResultado(dados);
         setCategorias(dados.categorias || []);
+        setAdvogados(dados.advogados || []);
       })
       .catch((err) => setErro(err.message));
   }, [id, resultado]);
@@ -30,6 +32,16 @@ export function ResultadoPage() {
   useEffect(() => {
     api.get("/triagem/perguntas").then((dados) => setCatalogoCategorias(dados.categorias));
   }, []);
+
+  // Marcar/desmarcar categorias reordena a lista de advogados abaixo, priorizando quem
+  // tem `especialidades` compatíveis com o que o cliente ajustou — senão os pills ficavam
+  // clicáveis sem nenhum efeito visível.
+  useEffect(() => {
+    if (!resultado || resultado.areaClassificada === "indefinido") return;
+    const params = new URLSearchParams({ area: resultado.areaClassificada });
+    if (categorias.length) params.set("categorias", categorias.join(","));
+    api.get(`/advogados?${params.toString()}`).then(setAdvogados);
+  }, [categorias, resultado]);
 
   if (erro) return <p role="alert">{erro}</p>;
   if (!resultado) return <p className="loading">Carregando...</p>;
@@ -82,19 +94,22 @@ export function ResultadoPage() {
       )}
 
       <h2>Advogados compatíveis</h2>
-      {resultado.advogados.length === 0 && <p>Nenhum advogado compatível encontrado ainda.</p>}
-      {resultado.advogados.length > 0 && (
+      {advogados?.length === 0 && <p>Nenhum advogado compatível encontrado ainda.</p>}
+      {advogados?.length > 0 && (
         <ul className="list-plain">
-          {resultado.advogados.map((adv) => (
+          {advogados.map((adv) => (
             <li key={adv.uid} className="card media">
               <span className="avatar-placeholder">{(adv.nome || "?").charAt(0).toUpperCase()}</span>
               <div>
                 <Link to={`/advogados/${adv.uid}`}>
                   <strong>{adv.nome || adv.uid}</strong>
                 </Link>
+                {adv.especialidadesCompativeis > 0 && (
+                  <span className="badge">Atua no que você marcou</span>
+                )}
                 <p className="text-muted">
-                  {adv.areasAtuacao?.join(", ") || "sem área"} — {adv.localizacao?.cidade}/
-                  {adv.localizacao?.uf}
+                  {adv.areasAtuacao?.map((a) => LABEL_AREA[a] || a).join(", ") || "sem área"} —{" "}
+                  {adv.localizacao?.cidade}/{adv.localizacao?.uf}
                 </p>
               </div>
             </li>

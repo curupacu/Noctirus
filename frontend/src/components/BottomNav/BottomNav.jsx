@@ -47,12 +47,17 @@ export function BottomNav() {
 
   if (loading || !user) return null;
 
-  const itens = [
+  const itensBrutos = [
     { to: rotaInicial(role), label: "Início", Icon: IconInicio, end: true },
     ...(role === "cliente" ? [{ to: "/triagem", label: "Triagem", Icon: IconTriagem }] : []),
     { to: "/advogados", label: "Advogados", Icon: IconAdvogados },
     { to: "/perfil", label: "Perfil", Icon: IconPerfil },
   ];
+  // Pro advogado, rotaInicial já é "/perfil" — sem isso, "Início" e "Perfil" viravam dois
+  // botões idênticos apontando pro mesmo lugar (e com a mesma key, o que o React reclama).
+  const itens = itensBrutos.filter(
+    (item, i) => itensBrutos.findIndex((outro) => outro.to === item.to) === i,
+  );
 
   return (
     <>

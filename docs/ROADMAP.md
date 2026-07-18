@@ -251,13 +251,24 @@ Sprints **semanais**. Itens com 🔴 são **bloqueadores** (precisam estar pront
 
 ### 🟪 FASE 3 — Confiança e administração (rumo à 2ª apresentação, 25/09)
 
-#### Sprint 7 — Denúncias · 18–24/08
-- [GP] Fluxo **registrar denúncia** (descrição + prova) — RF011.
-- [GR] Persistir denúncia + rules. **Decidir** solução de upload de arquivo (Blaze ou Cloudinary).
+#### Sprint 7 — Denúncias · 18–24/08 → ✅ concluído em 18/07 (adiantado)
+- ✅ [GR] Fluxo **registrar denúncia** (descrição + prova) — RF011. GP não ia chegar a tempo
+  de fazer o front, então GR fez as duas partes: tela em `/denunciar` reaproveitando os
+  componentes existentes (sem redesign), com entrada pelo perfil público do advogado e
+  pelo `/perfil`.
+- ✅ [GR] `POST /denuncias` persistindo no Firestore + rule liberando leitura só pro autor/admin
+  (escrita só via backend, como o resto do modelo). **Decisão de upload**: sem upload no MVP
+  (já registrado na seção 4) — `provaUrl` aceita opcionalmente um link externo já hospedado.
 
-#### Sprint 8 — Painel admin + moderação · 25–31/08
-- [GP] Painel: listar/analisar denúncias, gerenciar clientes e advogados.
-- [GR] Suspender/remover com confirmação (RF012–RF014).
+#### Sprint 8 — Painel admin + moderação · 25–31/08 → ✅ concluído em 18/07 (adiantado)
+- ✅ [GR] Painel: listar/analisar denúncias, gerenciar clientes e advogados. De novo GR fez
+  a parte do GP também — `AdminUsuariosPage` e `AdminDenunciasPage`, com um sub-menu
+  (`AdminNav`) pra navegar entre OAB/Usuários/Denúncias, no mesmo estilo das telas de admin
+  que já existiam.
+- ✅ [GR] Suspender/remover com confirmação (RF012–RF014). Suspender desativa o login de
+  verdade na Firebase Auth (não só marca um campo); remover apaga da Auth e do Firestore.
+  Confirmação via `window.confirm` antes de remover. Admin não pode suspender/remover outro
+  admin.
 
 #### Sprint 9 — Testes · 01–07/09  *(cobra o 3º bimestre)*
 - [GR] Testes unitários e de integração das partes críticas (auth, triagem, matching).
