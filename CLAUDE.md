@@ -193,8 +193,32 @@ Na raiz: `npm run dev` sobe frontend e backend juntos (via `concurrently`).
   apagadas e recriadas como 3 contas limpas — `admin.teste@example.com`,
   `cliente.teste@example.com`, `advogado.teste@example.com` (senhas com o integrante que
   pediu o reset). Usar essas pra qualquer teste manual daqui pra frente.
-- **Sem testes automatizados e sem CI** — nenhum arquivo de teste no repo, sem script
-  `test` nos `package.json`. Previsto pro Sprint 9.
+- **Sprint 9 (testes automatizados), parte do GR concluída**: Vitest no `backend/`
+  (`npm test`, ou `npm test` na raiz que delega pro backend). 35 testes em 4 arquivos,
+  colocados do lado do código que testam:
+  - `services/oab.test.js` — validação de formato de OAB (limites de dígitos, UF válida).
+  - `services/triagem.test.js` — `classificarPorRegras` (o fallback que garante que a
+    triagem nunca trava, RNF003: classificação por área, detecção de subcategoria,
+    sugestão de tipo de advogado) + checagem estrutural da taxonomia (33 categorias, sem
+    duplicata).
+  - `middlewares/auth.test.js` — `requireRole` (autorização por papel).
+  - `services/matching.test.js` — `buscarAdvogadosCompativeis` com um Firestore falso
+    (`vi.mock` + `vi.hoisted`, sem precisar de credencial real): filtro por área/UF/cidade,
+    exclusão de suspenso por padrão, `incluirSuspensos` pro admin, ordenação por
+    especialidade — é a lógica onde já apareceram bugs reais antes, então funciona como
+    teste de regressão.
+  Rodar sem precisar de `service-account.json`: os módulos que tocam Firebase Admin
+  (`oab.js`, `auth.js`, `matching.js`) são mockados nos testes, então qualquer um do time
+  roda `npm test` sem configurar credencial nenhuma.
+- **CI configurado** (`.github/workflows/ci.yml`) — roda em todo push pra `main`/`develop`
+  e em toda PR. Dois jobs paralelos, cada um só instala/roda dentro da própria pasta
+  (`backend`/`frontend`), sem precisar de nenhum secret (nada toca Firebase de verdade):
+  `backend-test` (`npm ci` + `npm test`) e `frontend-check` (`npm ci` + `npm run lint` +
+  `npm run build`, confirmado que builda mesmo sem o `.env` que não vem commitado). **Não
+  cobre**: preview automático por PR (isso é infra de deploy, item separado do roadmap,
+  ainda não existe).
+- **Falta** (Sprint 9): testes de integração via HTTP nas rotas do Express (supertest ou
+  equivalente) e o item do GC (documentar testes/validações).
 - **`nocturis-prod` ainda não existe de verdade** — o `.firebaserc` já tem o alias, mas hoje
   tanto dev quanto o "deploy no ar" apontam pro mesmo projeto `nocturis-web`. Criar o projeto
   de produção separado é decisão pendente.
