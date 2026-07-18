@@ -50,6 +50,28 @@ docs/                 ROADMAP.md e demais documentos
   security rules negam tudo por padrão e liberam por papel.
 - **Node**: versão fixada em `.nvmrc` (22 LTS). Rode `nvm use` antes de trabalhar no repo.
 
+## Design (regras fixas)
+
+- Estética: app **mobile-first**, moderno e profissional. Nada de navbar genérica.
+- **Nunca** cartão branco sobre fundo branco. Sempre contraste e hierarquia visual claros.
+- Use os tokens de `frontend/src/styles/tokens.css` (paleta marrom/amarelo da Nocturis).
+  Nada de cor chumbada fora dos tokens.
+- Ao redesenhar, aplique a mudança **em todas as páginas de uma vez** (Home, Login,
+  Cadastro, busca de advogado, etc.) — nunca só uma tela.
+- Antes de um redesign grande, **mostre o plano primeiro** (páginas, esquema de cor,
+  navbar) e espere aprovação. Não saia editando.
+- Depois de mudança de UI: **tire screenshot** de cada página afetada e avalie
+  contraste/hierarquia/cara de app antes de dizer que terminou.
+
+## "Concluído" (definição honesta)
+
+- Commit no Git **NÃO** é deploy. Só está "no ar" depois de `firebase deploy`
+  rodar de verdade.
+- Ao terminar, **liste cada arquivo/etapa** que você tocou. Nada de "pronto" vago.
+- Antes de usar uma flag de CLI, confirme que ela existe (ex.: não existe
+  `firebase --dry-run`).
+- Para deploy: rode, confirme acessando a URL publicada, e cole a saída do comando.
+
 ## Rodando localmente
 
 Na raiz: `npm run dev` sobe frontend e backend juntos (via `concurrently`).
@@ -222,35 +244,6 @@ Na raiz: `npm run dev` sobe frontend e backend juntos (via `concurrently`).
 - **`nocturis-prod` ainda não existe de verdade** — o `.firebaserc` já tem o alias, mas hoje
   tanto dev quanto o "deploy no ar" apontam pro mesmo projeto `nocturis-web`. Criar o projeto
   de produção separado é decisão pendente.
-
-  # Bloco para adicionar ao CLAUDE.md
-
-Cole isto no final do seu CLAUDE.md. São as regras que o relatório mostrou
-que você repete a cada sessão — codificadas uma vez, valem pra sempre.
-
----
-
-## Design (regras fixas)
-
-- Estética: app **mobile-first**, moderno e profissional. Nada de navbar genérica.
-- **Nunca** cartão branco sobre fundo branco. Sempre contraste e hierarquia visual claros.
-- Use os tokens de `frontend/src/styles/tokens.css` (paleta marrom/amarelo da Nocturis).
-  Nada de cor chumbada fora dos tokens.
-- Ao redesenhar, aplique a mudança **em todas as páginas de uma vez** (Home, Login,
-  Cadastro, busca de advogado, etc.) — nunca só uma tela.
-- Antes de um redesign grande, **mostre o plano primeiro** (páginas, esquema de cor,
-  navbar) e espere aprovação. Não saia editando.
-- Depois de mudança de UI: **tire screenshot** de cada página afetada e avalie
-  contraste/hierarquia/cara de app antes de dizer que terminou.
-
-## "Concluído" (definição honesta)
-
-- Commit no Git **NÃO** é deploy. Só está "no ar" depois de `firebase deploy`
-  rodar de verdade.
-- Ao terminar, **liste cada arquivo/etapa** que você tocou. Nada de "pronto" vago.
-- Antes de usar uma flag de CLI, confirme que ela existe (ex.: não existe
-  `firebase --dry-run`).
-- Para deploy: rode, confirme acessando a URL publicada, e cole a saída do comando.
 
 ## Escopo do MVP (Fase 1)
 
