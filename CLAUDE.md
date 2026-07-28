@@ -239,8 +239,18 @@ Na raiz: `npm run dev` sobe frontend e backend juntos (via `concurrently`).
   `npm run build`, confirmado que builda mesmo sem o `.env` que não vem commitado). **Não
   cobre**: preview automático por PR (isso é infra de deploy, item separado do roadmap,
   ainda não existe).
-- **Falta** (Sprint 9): testes de integração via HTTP nas rotas do Express (supertest ou
-  equivalente) e o item do GC (documentar testes/validações).
+- **Sprint 9 (testes de integração) concluído**: `backend/src/app.js` separa a criação do
+  Express `app` do `app.listen()` (que ficou só em `src/index.js`) — sem isso, importar o
+  `app` nos testes já subia um servidor de verdade numa porta. `backend/src/test-utils/
+  fakeFirebase.js` centraliza um fake de Firestore (coleções em memória, com `where`/
+  `orderBy`/`batch`) e Auth (token de teste decodificável, registro de quem "existe" na
+  Auth) reaproveitado pelos 6 arquivos `routes/*.integration.test.js` novos — cobrem toda
+  rota HTTP das 6 áreas (auth, advogados, users/admin, triagem, denúncias, currículos):
+  401/403 por papel, validação de corpo, 404/409 de regra de negócio, e o efeito real no
+  Firestore fake após a chamada (ex.: currículo atualizado, denúncia com autorId certo,
+  advogado do seed sem conta na Auth suspendendo sem quebrar). 68 testes novos, mais os 35
+  já existentes = 103 no total (`npm test`, roda sem `service-account.json`). **Falta**: o
+  item do GC (documentar testes/validações).
 - **`nocturis-prod` ainda não existe de verdade** — o `.firebaserc` já tem o alias, mas hoje
   tanto dev quanto o "deploy no ar" apontam pro mesmo projeto `nocturis-web`. Criar o projeto
   de produção separado é decisão pendente.
