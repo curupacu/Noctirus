@@ -51,16 +51,16 @@ export function AdminAdvogadosPage() {
             <tbody>
               {advogados.map((adv) => (
                 <tr key={adv.uid}>
-                  <td>{adv.nome}</td>
-                  <td>
+                  <td data-label="Nome">{adv.nome}</td>
+                  <td data-label="OAB">
                     {adv.oab?.numero}/{adv.oab?.uf}
                   </td>
-                  <td>
+                  <td data-label="Situação">
                     <span className={`badge${adv.verificado ? " badge--success" : ""}`}>
                       {adv.verificado ? "verificada" : "em análise"}
                     </span>
                   </td>
-                  <td>
+                  <td className="actions" data-label="Ação">
                     <Button
                       variant={adv.verificado ? "secondary" : "primary"}
                       onClick={() => alternarVerificado(adv.uid, adv.verificado)}
