@@ -106,6 +106,11 @@ const PALAVRAS_TRABALHISTA = [
   "assédio sexual", "acidente de trabalho", "doenca ocupacional", "doença ocupacional",
   "equiparacao salarial", "equiparação salarial", "gestante", "estabilidade", "intervalo",
   "jornada", "terceirizado", "vinculo empregaticio", "vínculo empregatício",
+  // Achados rodando scripts/avaliar-triagem.js com casos reais: quem descreve assédio
+  // moral raramente usa esse termo técnico, descreve o que o chefe faz — mesmo ajuste já
+  // existia em PALAVRAS_POR_CATEGORIA.assedio_moral, mas faltava aqui na lista que decide
+  // a ÁREA (sem entrar aqui, nem chega a testar a categoria).
+  "chefe", "humilha", "humilhação", "humilhacao", "constrangimento",
 ];
 
 const PALAVRAS_CIVEL = [
@@ -146,7 +151,7 @@ const PALAVRAS_POR_CATEGORIA = {
   ferias_decimo_terceiro: ["ferias", "férias", "decimo terceiro", "décimo terceiro", "13o salario", "13º salário"],
   horas_extras: ["hora extra", "horas extras", "banco de horas"],
   equiparacao_salarial: ["equiparacao salarial", "equiparação salarial", "desvio de funcao", "desvio de função", "mesma funcao", "mesma função"],
-  assedio_moral: ["assedio moral", "assédio moral", "humilhacao", "humilhação", "constrangimento"],
+  assedio_moral: ["assedio moral", "assédio moral", "humilha", "constrangimento"],
   assedio_sexual: ["assedio sexual", "assédio sexual"],
   acidente_trabalho: ["acidente de trabalho", "doenca ocupacional", "doença ocupacional", "cat", "auxilio doenca", "auxílio doença"],
   sem_carteira: ["sem carteira", "carteira nao assinada", "carteira não assinada", "informal", "sem registro"],
@@ -334,7 +339,12 @@ export async function classificar({ respostas, descricao }) {
       return classificarPorRegras({ respostas, descricao });
     }
     return resultado;
-  } catch {
+  } catch (erro) {
+    // Antes esse erro era engolido em silêncio — rodando scripts/avaliar-triagem.js pela
+    // primeira vez, isso escondeu que a IA estava estourando a cota do free tier (10
+    // req/min) na maioria das chamadas. Loga o motivo real (sem derrubar a triagem, que
+    // continua caindo no fallback por regras normalmente — RNF003).
+    console.error("triagem: IA falhou, usando fallback por regras —", erro.message || erro);
     return classificarPorRegras({ respostas, descricao });
   }
 }

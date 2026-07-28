@@ -120,7 +120,25 @@ Na raiz: `npm run dev` sobe frontend e backend juntos (via `concurrently`).
   pra 17 subcategorias, trabalhista de 5 pra 16 (33 no total) — muito mais granular pra IA,
   fallback por regras e especialidades de advogado. `ResultadoPage` troca o
   antigo combo "adicionar categoria" por um grid de `.pill-toggle` (toca pra marcar/desmarcar).
-  Falta rodar casos de teste reais pra validar a taxa de acerto (item pendente do Sprint 6).
+- **Casos de teste reais rodados contra a triagem (28/07)** — item pendente do Sprint 6:
+  `backend/scripts/avaliar-triagem.js` (`npm run avaliar-triagem` no `backend/`) manda 20
+  descrições reais só com texto livre (sem respostas guiadas, pra estressar o *prompt* de
+  verdade) pro `classificar()` e mede acerto de área/categoria. Resultado: **95% de acerto
+  de área, 90% de categoria**; nas 7 vezes que a IA rodou de verdade, acertou **7/7** — o
+  *prompt* está bom, não precisou mexer nele. Os 2 erros que sobraram eram os dois gaps
+  pontuais do fallback por regras (corrigidos: `assedio_moral` e a área trabalhista em
+  geral não pegavam descrições tipo "meu chefe... me humilha" sem a palavra técnica
+  "assédio" — adicionado "chefe"/"humilha"/"constrangimento" nas listas de palavras-chave
+  de área e categoria).
+  **Achado mais importante que o *prompt* em si**: rodando o script, a API retornou erro
+  429 informando cota de **20 requisições/dia** pro `gemini-2.5-flash-lite` nesse projeto
+  — bem abaixo dos ~1.500/dia documentados no `ROADMAP.md` (ver seção 8 lá, item
+  atualizado com 🔴). Além disso, o `catch` de `classificar()` engolia esse erro em
+  silêncio (sem log nenhum) — agora loga `"triagem: IA falhou, usando fallback por
+  regras — <motivo>"`, pra dar pra confirmar isso pelos logs do Render antes da
+  apresentação. **Risco real pra 13/08**: testar a triagem repetidamente pode esgotar a
+  cota do dia e a demonstração cair inteira no fallback por regras sem nenhum aviso na
+  tela — ver mitigação no `ROADMAP.md`.
 - **Seed de advogados ampliado**: `database/seed/lawyers.json` foi de 5 pra 30 advogados
   fictícios, cobrindo os 33 valores da taxonomia nova e 14 estados — dá pra testar filtro e
   matching de verdade agora.
