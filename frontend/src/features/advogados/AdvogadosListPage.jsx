@@ -127,7 +127,7 @@ export function AdvogadosListPage() {
                 <span className="advogado-row__info">
                   <span className="advogado-row__nome">
                     {adv.nome || adv.uid}
-                    {adv.verificado && <span className="badge">OAB verificada</span>}
+                    {adv.verificado && <span className="badge badge--success">OAB verificada</span>}
                     {adv.especialidadesCompativeis > 0 && (
                       <span className="badge">Atua no assunto</span>
                     )}

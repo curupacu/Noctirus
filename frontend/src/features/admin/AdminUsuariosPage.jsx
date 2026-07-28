@@ -75,7 +75,9 @@ export function AdminUsuariosPage() {
                     </td>
                     <td>{LABEL_ROLE[u.role] || u.role}</td>
                     <td>
-                      <span className="badge">{suspenso ? "suspenso" : "ativo"}</span>
+                      <span className={`badge ${suspenso ? "badge--danger" : "badge--success"}`}>
+                        {suspenso ? "suspenso" : "ativo"}
+                      </span>
                     </td>
                     <td className="actions">
                       <Button variant="secondary" onClick={() => suspender(u.uid, suspenso)}>

@@ -94,15 +94,38 @@ a:hover {
   gap: var(--space-md);
 }
 
+/* Neutro por padrão — a maioria dos badges é rótulo de status (papel, "em análise"...),
+   dourado sólido em tudo ia contra "dourado com parcimônia" (ver docs/DESIGN.md).
+   Variantes semânticas abaixo pra verificado/sucesso, suspenso/erro e o destaque dourado
+   (usado só no badge de classificação da IA, que fica sobre o card de destaque). */
 .badge {
   display: inline-block;
   font-size: var(--font-size-xs);
   font-weight: 700;
-  color: var(--color-primary-text);
-  background: var(--color-primary);
+  color: var(--cream-dim);
+  background: var(--ink-800);
+  border: 1px solid var(--border);
   padding: 3px var(--space-sm);
   border-radius: var(--radius-full);
   text-transform: capitalize;
+}
+
+.badge--success {
+  color: var(--ink-950);
+  background: var(--green);
+  border-color: var(--green);
+}
+
+.badge--danger {
+  color: var(--ink-950);
+  background: var(--red);
+  border-color: var(--red);
+}
+
+.badge--gold {
+  color: var(--ink-950);
+  background: var(--gold);
+  border-color: var(--gold);
 }
 
 .loading {
@@ -136,21 +159,33 @@ a:hover {
   width: 44px;
   height: 44px;
   border-radius: var(--radius-full);
-  background: var(--color-brown-100);
-  color: var(--color-brown-700);
+  background: var(--ink-800);
+  color: var(--cream-dim);
   font-weight: 800;
   font-family: var(--font-display);
   font-size: var(--font-size-lg);
   flex-shrink: 0;
 }
 
+/* Advogado sem foto: placeholder neutro com ícone de pessoa, nunca a inicial em
+   fundo dourado (ver docs/DESIGN.md). O avatar do próprio usuário logado no header
+   (.site-header__avatar) continua mostrando a inicial normalmente. */
+.avatar-placeholder:not(.site-header__avatar) {
+  font-size: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237E7566' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 22px 22px;
+}
+
 .hero-block {
   position: relative;
   overflow: hidden;
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius);
   padding: var(--space-xl) var(--space-lg);
-  background: var(--color-yellow-400);
-  color: var(--color-ink);
+  background: var(--surface-warm);
+  border: 1px solid var(--border);
+  color: var(--cream);
   margin-bottom: var(--space-lg);
 }
 
@@ -158,11 +193,11 @@ a:hover {
   content: "";
   position: absolute;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Ccircle cx='106' cy='34' r='24' fill='none' stroke='%231a1008' stroke-width='2'/%3E%3Ccircle cx='126' cy='96' r='5' fill='%231a1008'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Ccircle cx='106' cy='34' r='24' fill='none' stroke='%23F2D98A' stroke-width='2'/%3E%3Ccircle cx='126' cy='96' r='5' fill='%23F2D98A'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: top right;
   background-size: 140px 140px;
-  opacity: 0.14;
+  opacity: 0.18;
   pointer-events: none;
 }
 
@@ -182,8 +217,8 @@ a:hover {
 }
 
 .hero-block--dark {
-  background: var(--color-dark);
-  color: var(--color-dark-text);
+  background: var(--ink-800);
+  color: var(--cream);
 }
 
 .hero-block--dark::before {
@@ -327,10 +362,10 @@ tbody tr:hover {
   .form-cta-sticky {
     position: sticky;
     bottom: 0;
-    background: var(--color-surface);
+    background: var(--ink-950);
     margin: 0 calc(-1 * var(--space-lg));
     padding: var(--space-md) var(--space-lg);
-    box-shadow: 0 -4px 12px rgba(26, 16, 8, 0.08);
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -338,34 +373,39 @@ main.splash {
   max-width: none;
   margin: 0;
   padding: var(--space-xl) var(--space-lg);
-  background: var(--color-ink);
-  color: var(--color-yellow-100);
+  background: var(--ink-950);
+  color: var(--cream);
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: var(--space-xl);
 }
 
-.splash__eyebrow {
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--color-yellow-400);
-  font-size: var(--font-size-sm);
-  margin: 0 0 var(--space-sm);
+.splash__logo {
+  height: 48px;
+  width: auto;
+  margin: 0 0 var(--space-lg);
 }
 
 .splash__headline {
+  font-family: var(--font-display);
   font-size: var(--font-size-3xl);
   line-height: 1.1;
-  color: var(--color-yellow-300);
+  color: var(--cream);
   margin: 0 0 var(--space-md);
+}
+
+/* No máximo uma palavra em destaque por título (ver docs/DESIGN.md) */
+.splash__headline .accent,
+h1 .accent,
+h2 .accent {
+  color: var(--gold);
+  font-style: italic;
 }
 
 .splash__subtitle {
   font-size: var(--font-size-lg);
-  color: var(--color-yellow-100);
-  opacity: 0.85;
+  color: var(--cream-dim);
   margin: 0;
 }
 
@@ -391,7 +431,7 @@ main.auth-screen {
   max-width: none;
   margin: 0;
   padding: 0;
-  background: var(--color-surface);
+  background: var(--ink-950);
   position: relative;
 }
 
@@ -422,6 +462,12 @@ main.auth-screen {
   max-width: 480px;
   margin: 0 auto;
   padding: 96px var(--space-lg) var(--space-xl);
+}
+
+.auth-screen__logo {
+  height: 36px;
+  width: auto;
+  margin-bottom: var(--space-lg);
 }
 
 .auth-screen__header {
@@ -494,7 +540,7 @@ main.auth-screen {
   color: var(--color-text);
   background: var(--color-surface);
   border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-sm);
   padding: var(--space-sm) var(--space-lg);
   cursor: pointer;
   transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;

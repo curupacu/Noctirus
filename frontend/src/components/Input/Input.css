@@ -24,14 +24,18 @@
   transition: border-color 0.15s ease;
 }
 
+.input::placeholder {
+  color: var(--cream-faint);
+}
+
 .input:hover {
   border-color: var(--color-brown-300);
 }
 
 .input:focus-visible {
-  outline: 2px solid var(--color-focus-ring);
-  outline-offset: 1px;
-  border-color: var(--color-focus-ring);
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold) 25%, transparent);
 }
 
 .input-error {

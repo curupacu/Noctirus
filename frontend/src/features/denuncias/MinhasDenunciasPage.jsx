@@ -24,7 +24,9 @@ export function MinhasDenunciasPage() {
           {denuncias.map((d) => (
             <li key={d.id} className="card stack">
               <p>
-                <span className="badge">{LABEL_STATUS[d.status] || d.status}</span>{" "}
+                <span className={`badge${d.status === "resolvida" ? " badge--success" : ""}`}>
+                  {LABEL_STATUS[d.status] || d.status}
+                </span>{" "}
                 <span className="text-muted">{new Date(d.createdAt).toLocaleDateString("pt-BR")}</span>
               </p>
               <p>{d.descricao}</p>

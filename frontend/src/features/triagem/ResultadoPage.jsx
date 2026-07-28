@@ -54,10 +54,12 @@ export function ResultadoPage() {
 
   return (
     <main>
-      <h1>Resultado da triagem</h1>
+      <h1>
+        Resultado da <em className="accent">triagem</em>
+      </h1>
 
       <section className="hero-block">
-        <span className="badge">
+        <span className="badge badge--gold">
           {resultado.origem === "ia" ? "Classificado por IA" : "Classificado por regras"}
         </span>
         <p>

@@ -67,11 +67,11 @@ export function AdvogadoPublicoPage() {
         <h2>Sobre</h2>
         {suspenso && (
           <p>
-            <span className="badge">Suspenso da plataforma</span>
+            <span className="badge badge--danger">Suspenso da plataforma</span>
           </p>
         )}
         <p>
-          <span className="badge">
+          <span className={`badge${advogado.verificado ? " badge--success" : ""}`}>
             {advogado.verificado ? "OAB verificada" : "OAB em análise"}
           </span>
         </p>

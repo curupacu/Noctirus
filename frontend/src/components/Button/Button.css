@@ -7,7 +7,7 @@
   font-size: var(--font-size-base);
   font-weight: 700;
   padding: var(--space-sm) var(--space-lg);
-  border-radius: var(--radius-full);
+  border-radius: var(--radius-sm);
   border: 1.5px solid transparent;
   cursor: pointer;
   transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease,
@@ -47,23 +47,25 @@
 }
 
 .button--dark {
-  background: var(--color-dark);
-  color: var(--color-dark-text);
+  background: var(--ink-800);
+  color: var(--cream);
 }
 
 .button--dark:hover:not(:disabled) {
-  background: var(--color-brown-900);
+  background: var(--ink-900);
   box-shadow: var(--shadow-md);
   transform: translateY(-1px);
 }
 
+/* Botão secundário sobre fundo escuro (ex.: "Entrar" na Home) — transparente com
+   borda, nunca claro sólido (fundo/texto quase pretos ficavam ilegíveis). */
 .button--light {
-  background: var(--color-surface);
-  color: var(--color-ink);
+  background: transparent;
+  color: var(--cream);
+  border-color: var(--border);
 }
 
 .button--light:hover:not(:disabled) {
-  background: var(--color-yellow-100);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
+  background: var(--ink-800);
+  border-color: var(--brown-400);
 }

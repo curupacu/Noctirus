@@ -13,18 +13,23 @@
   gap: var(--space-md);
   width: 100%;
   padding: var(--space-md) var(--space-lg);
-  border-radius: var(--radius-lg);
-  background: var(--color-brown-100);
+  border-radius: var(--radius);
+  background: var(--ink-850);
+  border: 1.5px solid var(--border);
   cursor: pointer;
-  transition: background-color 0.15s ease, transform 0.1s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
 }
 
 .choice-card:active {
   transform: scale(0.99);
 }
 
+/* Marcado: destaque pela borda dourada + ícone, não bloco inteiro dourado — várias
+   ChoiceCards marcadas ao mesmo tempo (Cadastro, Triagem) senão viram um mar de dourado
+   (ver docs/DESIGN.md, "dourado com parcimônia"). */
 .choice-card--checked {
-  background: var(--color-yellow-400);
+  background: var(--ink-800);
+  border-color: var(--gold);
 }
 
 .choice-card__input {
@@ -49,7 +54,7 @@
 .choice-card__label {
   font-weight: 700;
   font-size: var(--font-size-base);
-  color: var(--color-ink);
+  color: var(--cream);
 }
 
 .choice-card__description {
@@ -76,7 +81,7 @@
 }
 
 .choice-card--checked .choice-card__check {
-  background: var(--color-ink);
-  border-color: var(--color-ink);
-  color: var(--color-yellow-300);
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--ink-950);
 }

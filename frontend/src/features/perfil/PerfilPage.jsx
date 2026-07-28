@@ -95,7 +95,7 @@ export function PerfilPage() {
         {role === "advogado" && (
           <>
             {" "}
-            <span className="badge">
+            <span className={`badge${advogado?.verificado ? " badge--success" : ""}`}>
               {advogado?.verificado ? "OAB verificada" : "OAB em análise"}
             </span>
           </>

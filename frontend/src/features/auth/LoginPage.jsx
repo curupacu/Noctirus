@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import logoCompleta from "../../assets/logocomnomedolado.svg";
 import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
 import { useAuth } from "./AuthContext";
@@ -35,6 +36,7 @@ export function LoginPage() {
       </Link>
 
       <div className="auth-screen__inner">
+        <img src={logoCompleta} alt="Nocturis" className="auth-screen__logo" />
         <div className="auth-screen__header">
           <h1>Entrar</h1>
           <p>Bem-vindo(a) de volta.</p>
