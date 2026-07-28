@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import logoCompleta from "../../assets/logocomnomedolado.svg";
 import { Button } from "../../components/Button/Button";
 import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
 import { Input } from "../../components/Input/Input";
@@ -102,6 +103,7 @@ export function CadastroPage() {
       </Link>
 
       <div className="auth-screen__inner">
+        <img src={logoCompleta} alt="Nocturis" className="auth-screen__logo" />
         <div className="auth-screen__header">
           <h1>Criar conta</h1>
           <p>Leva menos de 2 minutos.</p>

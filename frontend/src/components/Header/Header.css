@@ -4,20 +4,23 @@
   align-items: center;
   gap: var(--space-md);
   padding: var(--space-md) var(--space-lg);
-  background: var(--color-surface);
+  background: var(--surface-warm);
+  border-bottom: 1px solid var(--border);
   box-shadow: var(--shadow-sm);
   position: sticky;
   top: 0;
   z-index: 10;
 }
 
+.site-header__logo {
+  height: 28px;
+  width: auto;
+  display: block;
+}
+
 .site-header__brand {
-  font-family: var(--font-display);
-  font-size: var(--font-size-xl);
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  color: var(--color-text);
-  text-decoration: none;
+  display: flex;
+  align-items: center;
 }
 
 .site-header__actions {

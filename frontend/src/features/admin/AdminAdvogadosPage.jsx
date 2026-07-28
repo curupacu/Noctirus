@@ -56,7 +56,9 @@ export function AdminAdvogadosPage() {
                     {adv.oab?.numero}/{adv.oab?.uf}
                   </td>
                   <td>
-                    <span className="badge">{adv.verificado ? "verificada" : "em análise"}</span>
+                    <span className={`badge${adv.verificado ? " badge--success" : ""}`}>
+                      {adv.verificado ? "verificada" : "em análise"}
+                    </span>
                   </td>
                   <td>
                     <Button

@@ -1,38 +1,71 @@
-/* Design tokens da Nocturis — paleta marrom/amarelo (coruja). Não confundir com o roxo da Aggrem. */
+/* Design tokens da Nocturis — tema escuro quente (coruja: marrom/dourado sobre carvão).
+   Fonte de verdade: docs/DESIGN.md. Os nomes --color-x, --font-x, --radius-x e --shadow-x
+   abaixo são os que o resto do CSS consome; apontam pros tokens novos (--ink-x, --gold,
+   --cream...) pra não precisar reescrever seletor por seletor. */
 :root {
-  /* Cor — marrom (base) */
-  --color-ink: #1a1008;
-  --color-brown-900: #2b1a12;
-  --color-brown-700: #4e2f1e;
-  --color-brown-500: #7a4a2d;
-  --color-brown-300: #a97c56;
-  --color-brown-100: #f2e4d7;
+  /* Fundos — escada de profundidade (quase-preto -> marrom), CHAPADOS */
+  --ink-950: #14120f;   /* fundo BASE da tela (atrás de tudo) */
+  --ink-900: #1e1913;   /* seções */
+  --ink-850: #2a2118;   /* cards comuns (sólido, SEM degradê) */
+  --ink-800: #37291c;   /* hover / elevado */
+  --surface-warm: #61402c; /* superfície de DESTAQUE (card resultado, header) — usar pouco */
+  --border: #47382a;    /* borda fininha 1px */
 
-  /* Cor — amarelo (destaque) */
-  --color-yellow-700: #b9800f;
-  --color-yellow-500: #e0a526;
-  --color-yellow-400: #f0b429;
-  --color-yellow-300: #f3c968;
-  --color-yellow-100: #fbe8bf;
+  /* Marrons da coruja — só em detalhes (ícones, tags, divisórias) */
+  --brown-400: #c89b6a;
+  --brown-600: #8a5e38;
+  --brown-800: #4a3420;
 
-  /* Semânticas */
-  --color-bg: #f5e8d3;
-  --color-surface: #ffffff;
-  --color-text: var(--color-brown-900);
-  --color-text-muted: var(--color-brown-500);
-  --color-border: var(--color-brown-100);
-  --color-primary: var(--color-yellow-500);
-  --color-primary-hover: var(--color-yellow-700);
-  --color-primary-text: var(--color-brown-900);
-  --color-dark: var(--color-ink);
-  --color-dark-text: var(--color-yellow-300);
-  --color-danger: #b3401d;
-  --color-focus-ring: var(--color-ink);
+  /* Amarelo-dourado (olhos da coruja) — só acentos */
+  --gold: #f2d98a;      /* botão principal, eyebrow, 1 palavra no título, ícone/bico */
+  --gold-dim: #d8b95e;  /* hover do dourado */
+
+  /* Texto — creme quente, NUNCA branco puro */
+  --cream: #f3ecdf;       /* título / texto principal */
+  --cream-dim: #b3a994;   /* secundário */
+  --cream-faint: #7e7566; /* legenda / placeholder */
+
+  /* Apoio (usar pouco) */
+  --green: #7fb98a; /* sucesso / verificado */
+  --red: #c77b5e;   /* erro / denúncia */
 
   /* Tipografia */
-  --font-heading: 'Manrope', system-ui, 'Segoe UI', Roboto, sans-serif;
-  --font-body: 'Manrope', system-ui, 'Segoe UI', Roboto, sans-serif;
-  --font-display: 'Manrope', system-ui, 'Segoe UI', Roboto, sans-serif;
+  --font-display: "Fraunces", Georgia, serif;   /* títulos — combina com a logo */
+  --font-body: "Inter", system-ui, sans-serif;  /* texto / UI */
+
+  /* Forma — cantos discretos */
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 10px 28px -14px rgba(0, 0, 0, 0.75);
+
+  /* --- Aliases: nomes consumidos pelo resto do CSS (index.css, componentes) --- */
+  --color-ink: var(--ink-950);
+  --color-brown-900: var(--brown-800);
+  --color-brown-700: var(--brown-600);
+  --color-brown-500: var(--brown-600);
+  --color-brown-300: var(--brown-400);
+  --color-brown-100: var(--ink-800);
+
+  --color-yellow-700: var(--gold-dim);
+  --color-yellow-500: var(--gold);
+  --color-yellow-400: var(--gold);
+  --color-yellow-300: var(--gold);
+  --color-yellow-100: var(--cream);
+
+  --color-bg: var(--ink-950);
+  --color-surface: var(--ink-850);
+  --color-text: var(--cream);
+  --color-text-muted: var(--cream-dim);
+  --color-border: var(--border);
+  --color-primary: var(--gold);
+  --color-primary-hover: var(--gold-dim);
+  --color-primary-text: var(--ink-950);
+  --color-dark: var(--ink-950);
+  --color-dark-text: var(--cream);
+  --color-danger: var(--red);
+  --color-focus-ring: var(--gold);
+
+  --font-heading: var(--font-display);
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.875rem;
   --font-size-base: 1rem;
@@ -42,12 +75,10 @@
   --font-size-3xl: 2.75rem;
   --line-height-base: 1.5;
 
-  /* Espaçamento e forma */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  --radius-full: 999px;
+  --radius-md: var(--radius-sm);
+  --radius-lg: var(--radius);
+  --radius-xl: var(--radius);
+  --radius-full: 999px; /* só pra formas realmente circulares (avatar, dot, check) */
   --space-xs: 4px;
   --space-sm: 8px;
   --space-md: 16px;
@@ -55,10 +86,9 @@
   --space-xl: 40px;
   --bottom-nav-height: 68px;
 
-  /* Sombra */
-  --shadow-sm: 0 1px 2px rgba(26, 16, 8, 0.06), 0 1px 1px rgba(26, 16, 8, 0.04);
-  --shadow-md: 0 8px 24px rgba(26, 16, 8, 0.12), 0 2px 6px rgba(26, 16, 8, 0.08);
+  --shadow-sm: var(--shadow);
+  --shadow-md: var(--shadow);
 }
 
-/* Sem modo escuro automático — o fundo bege/branco fica sempre igual,
-   não muda com o tema do sistema do visitante. */
+/* Sem modo claro automático — o app é sempre escuro/quente, não muda com o tema do
+   sistema do visitante (estética "app jurídico noturno", ver docs/DESIGN.md). */

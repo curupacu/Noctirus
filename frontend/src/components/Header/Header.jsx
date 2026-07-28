@@ -1,4 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import logoIcone from "../../assets/logosvg_sócoruja.svg";
 import { useAuth } from "../../features/auth/AuthContext";
 import { rotaInicial } from "../../features/auth/rotaInicial";
 import { Button } from "../Button/Button";
@@ -20,8 +21,8 @@ export function Header() {
 
   return (
     <header className="site-header">
-      <Link to={user ? rotaInicial(role) : "/"} className="site-header__brand">
-        Nocturis
+      <Link to={user ? rotaInicial(role) : "/"} className="site-header__brand" aria-label="Nocturis">
+        <img src={logoIcone} alt="Nocturis" className="site-header__logo" />
       </Link>
 
       {!loading && (

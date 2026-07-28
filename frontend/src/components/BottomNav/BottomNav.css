@@ -10,9 +10,9 @@
   z-index: 20;
   display: flex;
   height: var(--bottom-nav-height);
-  background: var(--color-surface);
+  background: var(--ink-900);
   border-top: 1px solid var(--color-border);
-  box-shadow: 0 -4px 16px rgba(26, 16, 8, 0.08);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.5);
 }
 
 .bottom-nav__item {
@@ -34,9 +34,9 @@
 }
 
 .bottom-nav__item--active {
-  color: var(--color-ink);
+  color: var(--cream);
 }
 
 .bottom-nav__item--active svg {
-  color: var(--color-yellow-700);
+  color: var(--gold);
 }
