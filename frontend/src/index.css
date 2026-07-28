@@ -42,11 +42,72 @@ table {
   border-collapse: collapse;
 }
 
-/* Tabelas de admin (ex.: ações "Suspender"/"Remover" lado a lado) costumam ficar mais
-   largas que o card em telas estreitas — sem isso, os botões vazavam pra fora do card em
-   vez de simplesmente rolar. */
-.table-scroll {
-  overflow-x: auto;
+/* Tabelas de admin (Usuários, OAB): 4 colunas + botões de ação nunca cabem nos 640px de
+   `main`, nem em telas largas — rolagem horizontal só escondia os botões sem indicar que
+   dava pra rolar. Em vez disso cada linha vira um "card" empilhado (rótulo + valor), sem
+   depender de largura nenhuma. */
+.table-scroll table,
+.table-scroll thead,
+.table-scroll tbody,
+.table-scroll tr,
+.table-scroll th,
+.table-scroll td {
+  display: block;
+  width: 100%;
+}
+
+.table-scroll thead {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+.table-scroll tbody tr {
+  background: var(--ink-800);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-md);
+  margin-bottom: var(--space-md);
+}
+
+.table-scroll tbody tr:last-child {
+  margin-bottom: 0;
+}
+
+.table-scroll tbody tr:nth-child(even) {
+  background: var(--ink-800);
+}
+
+.table-scroll tbody tr:hover {
+  background: var(--ink-800);
+}
+
+.table-scroll td {
+  border-bottom: none;
+  padding: var(--space-xs) 0;
+}
+
+.table-scroll td[data-label]::before {
+  content: attr(data-label);
+  display: block;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--cream-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
+}
+
+.table-scroll td.actions {
+  display: flex;
+  flex-direction: row;
+  padding-top: var(--space-sm);
+}
+
+.table-scroll td.actions .button {
+  flex: 1 1 auto;
 }
 
 textarea {
@@ -112,8 +173,8 @@ a:hover {
 
 .badge--success {
   color: var(--ink-950);
-  background: var(--green);
-  border-color: var(--green);
+  background: var(--gold);
+  border-color: var(--gold);
 }
 
 .badge--danger {

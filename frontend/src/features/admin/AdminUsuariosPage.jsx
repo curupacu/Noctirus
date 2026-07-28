@@ -68,18 +68,18 @@ export function AdminUsuariosPage() {
                 const suspenso = u.status === "suspenso";
                 return (
                   <tr key={u.uid}>
-                    <td>
+                    <td data-label="Nome">
                       {u.nome}
                       <br />
                       <span className="text-muted">{u.email}</span>
                     </td>
-                    <td>{LABEL_ROLE[u.role] || u.role}</td>
-                    <td>
+                    <td data-label="Papel">{LABEL_ROLE[u.role] || u.role}</td>
+                    <td data-label="Situação">
                       <span className={`badge ${suspenso ? "badge--danger" : "badge--success"}`}>
                         {suspenso ? "suspenso" : "ativo"}
                       </span>
                     </td>
-                    <td className="actions">
+                    <td className="actions" data-label="Ações">
                       <Button variant="secondary" onClick={() => suspender(u.uid, suspenso)}>
                         {suspenso ? "Reativar" : "Suspender"}
                       </Button>
