@@ -1,10 +1,38 @@
 import { Router } from "express";
+import multer from "multer";
+import { cloudinary } from "../lib/cloudinary.js";
 import { db } from "../lib/firebase-admin.js";
 import { requireRole, verificarToken } from "../middlewares/auth.js";
 import { buscarAdvogadosCompativeis } from "../services/matching.js";
 import { TODAS_CATEGORIAS } from "../services/triagem.js";
 
 export const advogadosRouter = Router();
+
+// Upload de foto de perfil (achado da auditoria de UX, 29/07: advogados sem foto real
+// recebem 17x menos contato — ver docs/ROADMAP.md pra decisão anterior de adiar isso).
+// Memória, não disco — o arquivo só existe no processo até subir pro Cloudinary.
+const uploadFoto = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (!file.mimetype.startsWith("image/")) {
+      return cb(new Error("Envie um arquivo de imagem"));
+    }
+    cb(null, true);
+  },
+}).single("foto");
+
+function tratarUploadFoto(req, res, next) {
+  uploadFoto(req, res, (erro) => {
+    if (erro instanceof multer.MulterError && erro.code === "LIMIT_FILE_SIZE") {
+      return res.status(400).json({ erro: "Imagem muito grande (máximo 5MB)" });
+    }
+    if (erro) {
+      return res.status(400).json({ erro: erro.message || "Não foi possível processar a imagem" });
+    }
+    next();
+  });
+}
 
 // Lista todos os advogados (admin usa pra ver quem falta aprovar a OAB).
 advogadosRouter.get(
@@ -76,6 +104,41 @@ advogadosRouter.put(
 
     await db.collection("advogados").doc(uid).update(campos);
     res.json({ ok: true });
+  },
+);
+
+advogadosRouter.post(
+  "/advogados/:uid/foto",
+  verificarToken,
+  requireRole("advogado"),
+  tratarUploadFoto,
+  async (req, res) => {
+    const { uid } = req.params;
+    if (uid !== req.user.uid) {
+      return res.status(403).json({ erro: "Só é possível editar o próprio perfil" });
+    }
+    if (!req.file) {
+      return res.status(400).json({ erro: "Nenhuma imagem enviada" });
+    }
+
+    // public_id fixo por advogado + overwrite: subir uma foto nova substitui a antiga
+    // no Cloudinary em vez de acumular lixo. Recorte quadrado centrado no rosto quando
+    // detectável, pra ficar bom no círculo do avatar sem a pessoa recortar antes.
+    const resultado = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: "nocturis/advogados",
+          public_id: uid,
+          overwrite: true,
+          transformation: [{ width: 400, height: 400, crop: "fill", gravity: "face" }],
+        },
+        (erro, resultado) => (erro ? reject(erro) : resolve(resultado)),
+      );
+      stream.end(req.file.buffer);
+    });
+
+    await db.collection("advogados").doc(uid).update({ foto: resultado.secure_url });
+    res.json({ foto: resultado.secure_url });
   },
 );
 

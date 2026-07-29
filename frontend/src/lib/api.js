@@ -23,10 +23,30 @@ async function request(path, { method = "GET", body } = {}) {
   return data;
 }
 
+// Upload de arquivo (multipart) — sem Content-Type manual de propósito: o browser
+// monta o header com o boundary certo sozinho quando o body é um FormData.
+async function requestUpload(path, formData) {
+  const headers = {};
+
+  if (auth.currentUser) {
+    const token = await auth.currentUser.getIdToken();
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const res = await fetch(`${API_URL}${path}`, { method: "POST", headers, body: formData });
+
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    throw new Error(data.erro || "Erro na requisição");
+  }
+  return data;
+}
+
 export const api = {
   get: (path) => request(path),
   post: (path, body) => request(path, { method: "POST", body }),
   put: (path, body) => request(path, { method: "PUT", body }),
   patch: (path, body) => request(path, { method: "PATCH", body }),
   delete: (path) => request(path, { method: "DELETE" }),
+  upload: (path, formData) => requestUpload(path, formData),
 };
