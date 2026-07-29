@@ -297,6 +297,35 @@ Na raiz: `npm run dev` sobe frontend e backend juntos (via `concurrently`).
   Minhas triagens, perfil público do advogado, Denunciar, Minhas denúncias — sem erro no
   console, `npm run lint` e `npm run build` do frontend limpos. **Não verificado**: viewport
   mobile de verdade (só desktop) e as 3 telas de admin ao vivo.
+- **Auditoria de UX/UI publicada (29/07)**: pedido do usuário pra entender por que o design
+  "não é tão bonito e chamativo" e por que o card de advogado "dá zero vontade de clicar mesmo
+  com a informação lá". Pesquisa sobre padrões genéricos de design gerado por IA + o que
+  constrói confiança em diretórios de profissionais/marketplaces, aplicada em cima de
+  screenshots reais do app (não teórico). Achado central: bastante disso não era CSS, era
+  ausência de dado — não existia foto, bio nem prova social no modelo de `advogados/{uid}`.
+  Publicado como artifact, não fica versionado no repo.
+  A partir do relatório, 4 correções entraram nesta sessão:
+  1. **Avatar com iniciais coloridas** em vez do ícone de silhueta genérica (pior opção da
+     escala, pior que iniciais) — `lib/avatarColor.js`, paleta fixa fora do dourado de acento.
+  2. **Hierarquia nos chips de especialidade** — só a primeira em destaque dourado, resto
+     neutro, `+N` pro excedente (o `.chip` padrão tinha tingimento dourado em tudo, diluindo
+     "dourado com parcimônia").
+  3. **Campo `bio`** (texto livre, até 240 caracteres) em `advogados/{uid}` — editável no
+     `PerfilPage`, exibido no topo do perfil público e como linha truncada no `AdvogadoCard`.
+  4. **Contador `vezesSugerido`** — soma 1 pra cada advogado retornado como compatível toda vez
+     que `POST /triagem/classificar` roda (leitura+escrita simples, não `FieldValue.increment`,
+     de propósito: contador de popularidade não crítico, funciona igual contra o fake de
+     testes). Exibido como badge "Em N triagens" — copy deliberadamente neutra, não é avaliação
+     de cliente, é só frequência de match do algoritmo.
+  5. **Upload de foto real via Cloudinary** — `POST /advogados/:uid/foto` (multer em memória,
+     5MB, valida imagem, recorte 400x400 com `gravity: face`, `public_id` = uid com
+     `overwrite: true`). Componente `Avatar` compartilhado decide foto > iniciais coloridas.
+     Cloudinary configurado via 3 variáveis novas em `backend/.env` (não commitado). Testado em
+     3 camadas sem senha de advogado (o sistema bloqueou corretamente uma tentativa de gerar
+     token pra personificar a conta de teste): 5 testes de integração novos com Cloudinary
+     mockado (109 no total), upload real direto confirmando as credenciais, e o caminho de
+     exibição verificado ao vivo associando uma foto de teste ao advogado de teste via
+     Firestore (revertido depois — não ficou foto de teste no ar).
 
 ## Escopo do MVP (Fase 1)
 
