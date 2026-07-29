@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Avatar } from "../../components/Avatar/Avatar";
 import { Button } from "../../components/Button/Button";
 import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
 import { Input } from "../../components/Input/Input";
@@ -15,6 +16,9 @@ export function PerfilPage() {
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
   const [bio, setBio] = useState("");
+  const [foto, setFoto] = useState("");
+  const [enviandoFoto, setEnviandoFoto] = useState(false);
+  const [erroFoto, setErroFoto] = useState(null);
   const [whatsapp, setWhatsapp] = useState("");
   const [cidade, setCidade] = useState("");
   const [uf, setUf] = useState("");
@@ -37,6 +41,7 @@ export function PerfilPage() {
         ]);
         setAdvogado(dadosAdvogado);
         setBio(dadosAdvogado.bio || "");
+        setFoto(dadosAdvogado.foto || "");
         setWhatsapp(dadosAdvogado.contatos?.whatsapp || "");
         setCidade(dadosAdvogado.localizacao?.cidade || "");
         setUf(dadosAdvogado.localizacao?.uf || "");
@@ -67,6 +72,25 @@ export function PerfilPage() {
       setMensagem("Dados salvos.");
     } catch (err) {
       setMensagem(err.message);
+    }
+  }
+
+  async function enviarFoto(e) {
+    const arquivo = e.target.files?.[0];
+    if (!arquivo) return;
+
+    setErroFoto(null);
+    setEnviandoFoto(true);
+    try {
+      const formData = new FormData();
+      formData.append("foto", arquivo);
+      const resultado = await api.upload(`/advogados/${user.uid}/foto`, formData);
+      setFoto(resultado.foto);
+    } catch (err) {
+      setErroFoto(err.message);
+    } finally {
+      setEnviandoFoto(false);
+      e.target.value = "";
     }
   }
 
@@ -124,6 +148,25 @@ export function PerfilPage() {
           <div className="section-heading">
             <h2>Dados de advogado</h2>
           </div>
+
+          <div className="media">
+            <Avatar nome={advogado.nome} foto={foto} seed={user.uid} className="avatar-placeholder--grande" />
+            <div className="stack">
+              <label className="button button--secondary" htmlFor="foto">
+                {enviandoFoto ? "Enviando..." : foto ? "Trocar foto" : "Adicionar foto"}
+              </label>
+              <input
+                id="foto"
+                type="file"
+                accept="image/*"
+                className="visually-hidden"
+                onChange={enviarFoto}
+                disabled={enviandoFoto}
+              />
+              {erroFoto && <p role="alert">{erroFoto}</p>}
+            </div>
+          </div>
+
           <form className="stack" onSubmit={salvarAdvogado}>
             <p className="text-muted">
               OAB: {advogado.oab?.numero}/{advogado.oab?.uf} (não editável)

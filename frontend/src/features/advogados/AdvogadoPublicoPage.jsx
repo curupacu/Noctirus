@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { Avatar } from "../../components/Avatar/Avatar";
 import { api } from "../../lib/api";
-import { corDoAvatar } from "../../lib/avatarColor";
 
 const LABEL_AREA = {
   civel: "Cível",
@@ -60,12 +60,7 @@ export function AdvogadoPublicoPage() {
   return (
     <main>
       <div className="media">
-        <span
-          className="avatar-placeholder avatar-placeholder--tinted"
-          style={{ background: corDoAvatar(uid || advogado.nome) }}
-        >
-          {(advogado.nome || "?").charAt(0).toUpperCase()}
-        </span>
+        <Avatar nome={advogado.nome} foto={advogado.foto} seed={uid} className="avatar-placeholder--grande" />
         <div>
           <h1>{advogado.nome}</h1>
           <p className="text-muted">
