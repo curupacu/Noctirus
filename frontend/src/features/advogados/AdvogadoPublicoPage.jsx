@@ -75,6 +75,8 @@ export function AdvogadoPublicoPage() {
         </div>
       </div>
 
+      {advogado.bio && <p className="advogado-bio">{advogado.bio}</p>}
+
       <div className="actions">
         {suspenso && <span className="badge badge--danger">Suspenso da plataforma</span>}
         <span className={`badge${advogado.verificado ? " badge--success" : ""}`}>

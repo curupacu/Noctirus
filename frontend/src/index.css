@@ -121,6 +121,12 @@ textarea {
   color: var(--color-text-muted);
 }
 
+.char-counter {
+  text-align: right;
+  margin: 0;
+  font-size: var(--font-size-xs);
+}
+
 a {
   color: var(--color-brown-700);
   text-decoration: none;
@@ -376,6 +382,15 @@ fieldset label {
 .media h1,
 .media h2 {
   margin: 0;
+}
+
+/* A bio é a primeira coisa em texto livre da pessoa no perfil — precisa ler como voz,
+   não como metadado (achado da auditoria de UX: currículo em lista plana não dava pra
+   entender quem era o advogado mesmo com a informação lá). */
+.advogado-bio {
+  font-size: var(--font-size-lg);
+  color: var(--color-text);
+  margin: var(--space-md) 0 var(--space-lg);
 }
 
 .actions {
@@ -704,6 +719,14 @@ main.auth-screen {
 .advogado-row__meta {
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.advogado-row__bio {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

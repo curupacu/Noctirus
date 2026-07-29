@@ -60,7 +60,7 @@ advogadosRouter.put(
       return res.status(403).json({ erro: "Só é possível editar o próprio perfil" });
     }
 
-    const { areasAtuacao, especialidades, localizacao, whatsapp } = req.body;
+    const { areasAtuacao, especialidades, localizacao, whatsapp, bio } = req.body;
     const campos = {};
     if (areasAtuacao !== undefined) campos.areasAtuacao = areasAtuacao;
     if (especialidades !== undefined) {
@@ -68,6 +68,7 @@ advogadosRouter.put(
     }
     if (localizacao !== undefined) campos.localizacao = localizacao;
     if (whatsapp !== undefined) campos["contatos.whatsapp"] = whatsapp;
+    if (bio !== undefined) campos.bio = String(bio).trim().slice(0, 240);
 
     if (Object.keys(campos).length === 0) {
       return res.status(400).json({ erro: "Nenhum campo para atualizar" });

@@ -21,6 +21,7 @@ export function AdvogadoCard({ advogado }) {
           {advogado.verificado && <span className="badge badge--success">OAB verificada</span>}
           {advogado.especialidadesCompativeis > 0 && <span className="badge">Atua no assunto</span>}
         </span>
+        {advogado.bio && <span className="advogado-row__bio">{advogado.bio}</span>}
         <span className="advogado-row__meta">
           {advogado.areasAtuacao?.map((a) => LABEL_AREA[a] || a).join(" · ") || "Área não informada"} —{" "}
           {advogado.localizacao?.cidade}/{advogado.localizacao?.uf}

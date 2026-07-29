@@ -10,7 +10,7 @@ const PAPEIS_PERMITIDOS = ["cliente", "advogado"];
 
 authRouter.post("/auth/completar-cadastro", verificarToken, async (req, res) => {
   const { uid, email } = req.user;
-  const { role, nome, telefone, oab, areasAtuacao, localizacao, whatsapp, especialidades } = req.body;
+  const { role, nome, telefone, oab, areasAtuacao, localizacao, whatsapp, especialidades, bio } = req.body;
 
   if (!PAPEIS_PERMITIDOS.includes(role)) {
     return res.status(400).json({ erro: "Papel inválido (use 'cliente' ou 'advogado')" });
@@ -54,6 +54,10 @@ authRouter.post("/auth/completar-cadastro", verificarToken, async (req, res) => 
       especialidades: (especialidades || []).filter((e) => TODAS_CATEGORIAS.includes(e)),
       localizacao: localizacao || {},
       contatos: { whatsapp: whatsapp || "", email },
+      // Frase curta em texto livre pra se apresentar (achado da auditoria de UX,
+      // 29/07): o perfil só tinha dados estruturados, nada que soasse como a pessoa
+      // falando. Opcional, capado pra não virar um textão na listagem.
+      bio: String(bio || "").trim().slice(0, 240),
       verificado: false,
     });
     await db.collection("curriculos").doc(uid).set({
