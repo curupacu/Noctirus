@@ -2,13 +2,16 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import logoIcone from "../../assets/logosvg_sócoruja.svg";
 import { useAuth } from "../../features/auth/AuthContext";
 import { rotaInicial } from "../../features/auth/rotaInicial";
+import { useTheme } from "../../lib/theme";
 import { Button } from "../Button/Button";
+import { ThemeToggle } from "../ThemeToggle/ThemeToggle";
 import "./Header.css";
 
 const TELAS_SEM_CABECALHO = ["/login", "/cadastro"];
 
 export function Header() {
   const { user, role, loading, logout } = useAuth();
+  const { tema, alternarTema } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -25,24 +28,28 @@ export function Header() {
         <img src={logoIcone} alt="Nocturis" className="site-header__logo" />
       </Link>
 
-      {!loading && (
-        <div className="site-header__actions">
-          {user ? (
-            <>
-              <span className="avatar-placeholder site-header__avatar">
-                {(user.email || "?").charAt(0).toUpperCase()}
-              </span>
-              <Button variant="secondary" onClick={handleLogout}>
-                Sair
-              </Button>
-            </>
-          ) : (
-            <Link to="/login" className="site-header__link">
-              Entrar
-            </Link>
-          )}
-        </div>
-      )}
+      <div className="site-header__actions">
+        <ThemeToggle tema={tema} onToggle={alternarTema} />
+
+        {!loading && (
+          <>
+            {user ? (
+              <>
+                <span className="avatar-placeholder site-header__avatar">
+                  {(user.email || "?").charAt(0).toUpperCase()}
+                </span>
+                <Button variant="secondary" onClick={handleLogout}>
+                  Sair
+                </Button>
+              </>
+            ) : (
+              <Link to="/login" className="site-header__link">
+                Entrar
+              </Link>
+            )}
+          </>
+        )}
+      </div>
     </header>
   );
 }

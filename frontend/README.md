@@ -49,8 +49,10 @@ npm run lint       # oxlint
 
 ## Estado do design
 
-Login, Cadastro, Home e a busca pública de advogados (`/advogados`) já passaram por um redesign
-completo — tela cheia, sem cards flutuando soltos, seletores em pills. O resto das telas usa o
-design system base (`components/Button`, `Input`, `Select` + classes utilitárias como `.card`,
-`.stack`, `.row`, `.badge`, `.chip`), mas ainda não recebeu esse mesmo tratamento visual — ver a
+Todas as telas do fluxo principal já passaram pelo redesign (tela cheia nas telas de entrada,
+sem cards flutuando soltos, seletores em pills, listas como `.list-row`/`AdvogadoCard` em vez de
+bullets dentro de caixas). Tema claro (padrão) e escuro alternável pelo botão no header —
+`lib/theme.js` guarda a escolha em `localStorage`, tokens em `styles/tokens.css`
+(`:root` = claro, `:root[data-theme="dark"]` = escuro; dourado/marrom do header ficam fixos nos
+dois temas). Falta validar responsividade mobile de verdade nas telas mais recentes — ver a
 seção "Pontos fracos" do README na raiz do repo.

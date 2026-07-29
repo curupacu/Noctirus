@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
+import { AdvogadoCard } from "../../components/AdvogadoCard/AdvogadoCard";
 import { api } from "../../lib/api";
 
 const LABEL_AREA = {
@@ -95,34 +96,34 @@ export function ResultadoPage() {
         </section>
       )}
 
-      <h2>Advogados compatíveis</h2>
-      {advogados?.length === 0 && <p>Nenhum advogado compatível encontrado ainda.</p>}
+      <div className="section-heading">
+        <h2>Advogados compatíveis</h2>
+      </div>
+      {advogados?.length === 0 && <p className="text-muted">Nenhum advogado compatível encontrado ainda.</p>}
       {advogados?.length > 0 && (
-        <ul className="list-plain">
+        <ul className="advogados-lista">
           {advogados.map((adv) => (
-            <li key={adv.uid} className="card media">
-              <span className="avatar-placeholder">{(adv.nome || "?").charAt(0).toUpperCase()}</span>
-              <div>
-                <Link to={`/advogados/${adv.uid}`}>
-                  <strong>{adv.nome || adv.uid}</strong>
-                </Link>
-                {adv.especialidadesCompativeis > 0 && (
-                  <span className="badge">Atua no que você marcou</span>
-                )}
-                <p className="text-muted">
-                  {adv.areasAtuacao?.map((a) => LABEL_AREA[a] || a).join(", ") || "sem área"} —{" "}
-                  {adv.localizacao?.cidade}/{adv.localizacao?.uf}
-                </p>
-              </div>
+            <li key={adv.uid}>
+              <AdvogadoCard advogado={adv} />
             </li>
           ))}
         </ul>
       )}
 
-      <p>
-        <Link to="/triagem">Fazer nova triagem</Link> ·{" "}
-        <Link to="/minhas-triagens">Minhas triagens</Link>
-      </p>
+      <ul className="list-plain resultado-proximos-passos">
+        <li>
+          <Link to="/triagem" className="list-row">
+            <span className="list-row__title">Fazer nova triagem</span>
+            <span className="advogado-row__chevron" aria-hidden="true">›</span>
+          </Link>
+        </li>
+        <li>
+          <Link to="/minhas-triagens" className="list-row">
+            <span className="list-row__title">Minhas triagens</span>
+            <span className="advogado-row__chevron" aria-hidden="true">›</span>
+          </Link>
+        </li>
+      </ul>
     </main>
   );
 }

@@ -61,11 +61,11 @@
    borda, nunca claro sólido (fundo/texto quase pretos ficavam ilegíveis). */
 .button--light {
   background: transparent;
-  color: var(--cream);
+  color: var(--text);
   border-color: var(--border);
 }
 
 .button--light:hover:not(:disabled) {
-  background: var(--ink-800);
+  background: var(--surface-hover);
   border-color: var(--brown-400);
 }

@@ -272,6 +272,31 @@ Na raiz: `npm run dev` sobe frontend e backend juntos (via `concurrently`).
 - **`nocturis-prod` ainda não existe de verdade** — o `.firebaserc` já tem o alias, mas hoje
   tanto dev quanto o "deploy no ar" apontam pro mesmo projeto `nocturis-web`. Criar o projeto
   de produção separado é decisão pendente.
+- **Tema claro/escuro + redesign estendido pro resto do app (29/07)**: pedido do usuário foi
+  inverter a direção do `DESIGN.md` — em vez de só o tema escuro fixo, o app agora abre no
+  **claro** (fundo bege quase-branco, `#F7F2E7`) com um botão (ícone sol/lua no header, e nas
+  telas de auth que não têm header) que liga o escuro (os tokens antigos, inalterados). Tudo
+  guardado em `localStorage` (`lib/theme.js`), aplicado antes do React montar via script inline
+  no `index.html` (evita flash do tema errado). Em `styles/tokens.css`: dourado, marrons e a cor
+  do header (`--surface-warm`) ficam **fixos** nos dois temas (identidade da marca); só fundo/
+  superfície/texto trocam. Achado no caminho: a logo teria ficado ilegível no tema claro (o
+  traçado do nome "Nocturis" tinha `fill="white"` fixo dentro do SVG) — resolvido convertendo
+  `<img>` pra um componente `Logo.jsx` inline com esse traçado em `currentColor`, herdando a cor
+  do texto do tema.
+  Aproveitando a pausa pra redesign, as telas que ainda estavam na estrutura antiga (Painel,
+  Perfil, Currículo, perfil público do advogado, Resultado da triagem, Minhas triagens,
+  Denunciar, Minhas denúncias) ganharam o mesmo tratamento das telas já redesenhadas — menos
+  "cards em caixa" empilhados, mais hierarquia (`.list-row`/`.section-heading` novos em
+  `index.css`). Criado `AdvogadoCard` (componente compartilhado) pra listagem pública e
+  resultado da triagem pararem de ter duas marcações quase-idênticas do mesmo card de advogado.
+  `TriagemPage` ganhou um resumo em chips das respostas escolhidas antes do campo de descrição
+  (referência: padrão de "revisão antes de enviar" de formulários multi-etapa). Admin (3 telas)
+  não foi alterado estruturalmente — só herda os tokens novos automaticamente — porque não havia
+  como testar logado como admin nesta sessão (sem a senha da conta de teste). Testado ao vivo no
+  Chrome nos dois temas: Home, Login, Cadastro, Advogados, Painel, Perfil, Triagem, Resultado,
+  Minhas triagens, perfil público do advogado, Denunciar, Minhas denúncias — sem erro no
+  console, `npm run lint` e `npm run build` do frontend limpos. **Não verificado**: viewport
+  mobile de verdade (só desktop) e as 3 telas de admin ao vivo.
 
 ## Escopo do MVP (Fase 1)
 

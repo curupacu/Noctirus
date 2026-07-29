@@ -15,20 +15,25 @@ Já funciona de ponta a ponta:
 
 - Cadastro/login por papel (cliente, advogado, admin) com Firebase Authentication + custom claims
 - Perfil e currículo do advogado, com contato direto (WhatsApp/e-mail)
-- Listagem pública de advogados com filtro por área/cidade/UF (não exige login)
+- Listagem pública de advogados com filtro por área/cidade/UF/especialidade (não exige login)
 - Triagem por perguntas guiadas + descrição livre, classificada por **IA (Gemini Flash-Lite)**
   com fallback automático por regras de palavras-chave se a IA falhar, demorar ou tiver baixa
-  confiança — a triagem nunca trava
+  confiança — a triagem nunca trava. Validada com 20 casos reais (28/07): 95% de acerto de área,
+  90% de categoria.
 - Taxonomia de 33 categorias (17 cíveis + 16 trabalhistas) usada tanto na triagem quanto nas
-  especialidades do advogado, pra matching mais preciso
-- Matching de advogados por área + localização
-- Painel básico de admin para gerenciar advogados
+  especialidades do advogado — o matching usa isso pra priorizar advogados aderentes ao assunto
+  específico do caso, não só a área ampla
+- Sistema de denúncias (registrar, acompanhar como autor, moderar como admin)
+- Painel admin completo: aprovar OAB, gerenciar usuários (suspender/remover), moderar denúncias
 - Banco populado com 30 advogados fictícios cobrindo várias cidades/estados e especialidades,
   pra dar pra testar filtro e matching de verdade
+- 103 testes automatizados (Vitest, unitários + integração via `supertest`) e CI no GitHub Actions
+- Tema claro (padrão) e escuro com botão de alternância, salvo por navegador
 
-**Ainda não existe:** sistema de denúncias, moderação/painel admin completo, verificação real de
-OAB, testes automatizados, CI. Ver [Pontos fracos e próximos passos](#pontos-fracos-e-próximos-passos)
-abaixo e o [roadmap completo](docs/ROADMAP.md) para o plano de sprints.
+**Ainda não existe:** `nocturis-prod` separado (dev e "produção" apontam pro mesmo Firebase),
+verificação real de OAB, upload de foto/currículo em PDF. Ver
+[Pontos fracos e próximos passos](#pontos-fracos-e-próximos-passos) abaixo e o
+[roadmap completo](docs/ROADMAP.md) para o plano de sprints.
 
 ## Stack
 
@@ -96,33 +101,25 @@ Levantamento honesto do que ainda precisa de trabalho, priorizado.
 
 ### 🔴 Urgente
 
-- **Design/UI-UX inconsistente entre telas.** Login, Cadastro, Home e a busca pública de
-  advogados passaram por um redesign completo (visual mobile-first, sem cards flutuando soltos,
-  seletores em pills). O resto do app (Painel, Perfil, currículo do advogado, perfil público do
-  advogado, resultado da triagem, admin) ainda está no nível anterior — usa o design system
-  básico (cores/botões/inputs corretos), mas ainda com a estrutura antiga de cards em caixa,
-  sem o mesmo tratamento visual. Precisa estender o padrão novo pro resto das telas.
-- **Responsividade mobile só parcialmente validada.** As telas redesenhadas foram testadas em
-  viewport de celular; o restante do app só foi validado em desktop.
+- **Risco de cota do Gemini na apresentação.** O free tier do `gemini-2.5-flash-lite` nesse
+  projeto está limitado a ~20 requisições/dia (bem abaixo do documentado pelo Google) — testar a
+  triagem repetidamente antes da banca pode esgotar a cota e a demonstração cair inteira no
+  fallback por regras, sem aviso na tela. Mitigação: rodar `npm run avaliar-triagem` (backend/)
+  antes do dia 13/08 pra confirmar a cota disponível, e evitar testes repetidos horas antes.
+- **`nocturis-prod` não existe de verdade.** O `.firebaserc` já tem o alias, mas hoje tudo aponta
+  pro mesmo projeto `nocturis-web` (dev e "produção" são o mesmo Firebase).
 
 ### 🟡 Médio
 
-- **Triagem por IA ainda não foi validada com casos reais.** Falta rodar 15–20 descrições reais
-  de problemas jurídicos pra medir taxa de acerto e ajustar o prompt/árvore de perguntas.
-- **Matching não usa especialidade, só área + cidade/UF.** A taxonomia de 33 categorias já existe
-  e os advogados já têm `especialidades` cadastradas, mas o filtro de matching
-  (`backend/src/services/matching.js`) ainda não cruza isso — só filtra por área ampla.
-- **Sem testes automatizados nem CI.** Nenhum arquivo de teste no repo, sem `.github/workflows`.
-- **`nocturis-prod` não existe de verdade.** O `.firebaserc` já tem o alias, mas hoje tudo aponta
-  pro mesmo projeto `nocturis-web` (dev e "produção" são o mesmo Firebase).
+- **Responsividade mobile das telas mais recentes ainda não validada em viewport de celular** —
+  o redesign (tema claro/escuro + estrutura nova) foi conferido em desktop; falta o mesmo teste
+  em mobile de verdade antes da apresentação.
+- **Documentar testes e validações** — item pendente do Gustavo (GC): os 103 testes existem e
+  passam, mas ainda não têm um resumo documentado pra monografia.
 - Diversos ajustes pontuais de copy/acessibilidade/microinterações pelo app.
 
 ### 🟢 Baixa prioridade (adiado de propósito — é um MVP)
 
-- **Sistema de denúncias** — nem começou (Sprint 7 do roadmap). Sem rota, sem tela, sem coleção
-  dedicada no banco.
-- **Painel admin/moderação completo** — hoje só dá pra listar/gerenciar advogados; falta
-  denúncias, suspender/remover usuário com confirmação.
 - **Verificação real de OAB** — hoje é só formato + unicidade; aprovação vira manual pelo admin.
   Não existe API pública gratuita pra automatizar isso.
 - **Upload de foto/currículo em PDF** — depende de ativar o plano pago (Blaze) do Firebase

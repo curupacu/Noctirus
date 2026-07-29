@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import logoCompleta from "../../assets/logocomnomedolado.svg";
 import { Button } from "../../components/Button/Button";
 import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
 import { Input } from "../../components/Input/Input";
+import { Logo } from "../../components/Logo/Logo";
+import { ThemeToggle } from "../../components/ThemeToggle/ThemeToggle";
 import { api } from "../../lib/api";
+import { useTheme } from "../../lib/theme";
 import { useAuth } from "./AuthContext";
 import { rotaInicial } from "./rotaInicial";
 
@@ -15,6 +17,7 @@ const AREAS = [
 
 export function CadastroPage() {
   const { cadastrar, atualizarRole } = useAuth();
+  const { tema, alternarTema } = useTheme();
   const navigate = useNavigate();
 
   const [role, setRole] = useState("cliente");
@@ -101,9 +104,10 @@ export function CadastroPage() {
       <Link to="/" className="auth-screen__close" aria-label="Voltar para o início">
         ×
       </Link>
+      <ThemeToggle tema={tema} onToggle={alternarTema} className="auth-screen__theme-toggle" />
 
       <div className="auth-screen__inner">
-        <img src={logoCompleta} alt="Nocturis" className="auth-screen__logo" />
+        <Logo className="auth-screen__logo" />
         <div className="auth-screen__header">
           <h1>Criar conta</h1>
           <p>Leva menos de 2 minutos.</p>

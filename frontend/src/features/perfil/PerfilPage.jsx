@@ -102,8 +102,10 @@ export function PerfilPage() {
         )}
       </p>
 
-      <form className="card stack" onSubmit={salvarUsuario}>
+      <div className="section-heading">
         <h2>Dados básicos</h2>
+      </div>
+      <form className="stack" onSubmit={salvarUsuario}>
         <Input label="Nome" id="nome" value={nome} onChange={(e) => setNome(e.target.value)} />
         <Input
           label="Telefone"
@@ -115,69 +117,91 @@ export function PerfilPage() {
       </form>
 
       {role === "advogado" && advogado && (
-        <form className="card stack" onSubmit={salvarAdvogado}>
-          <h2>Dados de advogado</h2>
-          <p className="text-muted">
-            OAB: {advogado.oab?.numero}/{advogado.oab?.uf} (não editável)
-          </p>
-          <Input
-            label="WhatsApp"
-            id="whatsapp"
-            value={whatsapp}
-            onChange={(e) => setWhatsapp(e.target.value)}
-          />
-          <div className="row">
-            <Input label="Cidade" id="cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} />
-            <Input label="UF" id="uf" value={uf} onChange={(e) => setUf(e.target.value)} maxLength={2} />
-          </div>
-
-          {especialidadesDisponiveis.length > 0 && (
-            <div className="input-group">
-              <label className="input-label">Especialidades</label>
-              <p className="text-muted">
-                Ajuda o cliente a ver se você atende o assunto específico do caso dele.
-              </p>
-              <div className="choice-grid">
-                {especialidadesDisponiveis.map((c) => (
-                  <ChoiceCard
-                    key={c.valor}
-                    type="checkbox"
-                    label={c.label}
-                    checked={especialidades.includes(c.valor)}
-                    onChange={() => alternarEspecialidade(c.valor)}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
-          <Button type="submit">Salvar dados de advogado</Button>
-        </form>
-      )}
-
-      {role === "advogado" && (
         <>
-          <CurriculoForm uid={user.uid} />
-          <p>
-            <Link to={`/advogados/${user.uid}`}>Ver meu perfil público</Link>
-          </p>
+          <div className="section-heading">
+            <h2>Dados de advogado</h2>
+          </div>
+          <form className="stack" onSubmit={salvarAdvogado}>
+            <p className="text-muted">
+              OAB: {advogado.oab?.numero}/{advogado.oab?.uf} (não editável)
+            </p>
+            <Input
+              label="WhatsApp"
+              id="whatsapp"
+              value={whatsapp}
+              onChange={(e) => setWhatsapp(e.target.value)}
+            />
+            <div className="row">
+              <Input label="Cidade" id="cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} />
+              <Input label="UF" id="uf" value={uf} onChange={(e) => setUf(e.target.value)} maxLength={2} />
+            </div>
+
+            {especialidadesDisponiveis.length > 0 && (
+              <div className="input-group">
+                <label className="input-label">Especialidades</label>
+                <p className="text-muted">
+                  Ajuda o cliente a ver se você atende o assunto específico do caso dele.
+                </p>
+                <div className="choice-grid">
+                  {especialidadesDisponiveis.map((c) => (
+                    <ChoiceCard
+                      key={c.valor}
+                      type="checkbox"
+                      label={c.label}
+                      checked={especialidades.includes(c.valor)}
+                      onChange={() => alternarEspecialidade(c.valor)}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <Button type="submit">Salvar dados de advogado</Button>
+          </form>
         </>
       )}
 
-      {role === "admin" && (
-        <p>
-          <Link to="/admin/advogados">Painel administrativo</Link>
-        </p>
-      )}
-
-      {role !== "admin" && (
-        <p className="text-muted">
-          <Link to="/denunciar">Denunciar um problema</Link> ·{" "}
-          <Link to="/minhas-denuncias">Minhas denúncias</Link>
-        </p>
-      )}
+      {role === "advogado" && <CurriculoForm uid={user.uid} />}
 
       {mensagem && <p role="status">{mensagem}</p>}
+
+      <div className="section-heading">
+        <h2>Mais</h2>
+      </div>
+      <ul className="list-plain">
+        {role === "advogado" && (
+          <li>
+            <Link to={`/advogados/${user.uid}`} className="list-row">
+              <span className="list-row__title">Ver meu perfil público</span>
+              <span className="advogado-row__chevron" aria-hidden="true">›</span>
+            </Link>
+          </li>
+        )}
+        {role === "admin" && (
+          <li>
+            <Link to="/admin/advogados" className="list-row">
+              <span className="list-row__title">Painel administrativo</span>
+              <span className="advogado-row__chevron" aria-hidden="true">›</span>
+            </Link>
+          </li>
+        )}
+        {role !== "admin" && (
+          <>
+            <li>
+              <Link to="/denunciar" className="list-row">
+                <span className="list-row__title">Denunciar um problema</span>
+                <span className="advogado-row__chevron" aria-hidden="true">›</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/minhas-denuncias" className="list-row">
+                <span className="list-row__title">Minhas denúncias</span>
+                <span className="advogado-row__chevron" aria-hidden="true">›</span>
+              </Link>
+            </li>
+          </>
+        )}
+      </ul>
     </main>
   );
 }

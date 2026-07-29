@@ -14,7 +14,7 @@
   width: 100%;
   padding: var(--space-md) var(--space-lg);
   border-radius: var(--radius);
-  background: var(--ink-850);
+  background: var(--surface);
   border: 1.5px solid var(--border);
   cursor: pointer;
   transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
@@ -28,7 +28,7 @@
    ChoiceCards marcadas ao mesmo tempo (Cadastro, Triagem) senão viram um mar de dourado
    (ver docs/DESIGN.md, "dourado com parcimônia"). */
 .choice-card--checked {
-  background: var(--ink-800);
+  background: var(--surface-hover);
   border-color: var(--gold);
 }
 
@@ -54,7 +54,7 @@
 .choice-card__label {
   font-weight: 700;
   font-size: var(--font-size-base);
-  color: var(--cream);
+  color: var(--text);
 }
 
 .choice-card__description {
@@ -83,5 +83,5 @@
 .choice-card--checked .choice-card__check {
   background: var(--gold);
   border-color: var(--gold);
-  color: var(--ink-950);
+  color: var(--ink-on-accent);
 }

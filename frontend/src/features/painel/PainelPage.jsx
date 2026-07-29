@@ -47,39 +47,49 @@ export function PainelPage() {
         </Link>
       </section>
 
-      <section className="card">
-        <div className="card__header">
-          <h2>Suas últimas triagens</h2>
-          <Link to="/minhas-triagens">Ver todas</Link>
-        </div>
+      <div className="section-heading">
+        <h2>Suas últimas triagens</h2>
+        {ultimasTriagens.length > 0 && <Link to="/minhas-triagens">Ver todas</Link>}
+      </div>
 
-        {ultimasTriagens.length === 0 && <p>Você ainda não fez nenhuma triagem.</p>}
+      {ultimasTriagens.length === 0 && (
+        <p className="text-muted">Você ainda não fez nenhuma triagem.</p>
+      )}
 
-        {ultimasTriagens.length > 0 && (
-          <ul className="list-plain">
-            {ultimasTriagens.map((t) => (
-              <li key={t.id}>
-                <Link to={`/triagem/${t.id}`}>
-                  {LABEL_AREA[t.areaClassificada] || t.areaClassificada} —{" "}
-                  {t.tipoAdvogadoSugerido}
-                </Link>{" "}
-                <span className="text-muted">
-                  ({new Date(t.createdAt).toLocaleDateString("pt-BR")})
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section className="card">
-        <h2>Minha conta</h2>
+      {ultimasTriagens.length > 0 && (
         <ul className="list-plain">
-          <li>Nome: {usuario.nome}</li>
-          <li>E-mail: {usuario.email}</li>
+          {ultimasTriagens.map((t) => (
+            <li key={t.id}>
+              <Link to={`/triagem/${t.id}`} className="list-row">
+                <span className="list-row__info">
+                  <span className="list-row__title">
+                    {LABEL_AREA[t.areaClassificada] || t.areaClassificada}
+                  </span>
+                  <span className="list-row__meta">
+                    {t.tipoAdvogadoSugerido} · {new Date(t.createdAt).toLocaleDateString("pt-BR")}
+                  </span>
+                </span>
+                <span className="advogado-row__chevron" aria-hidden="true">
+                  ›
+                </span>
+              </Link>
+            </li>
+          ))}
         </ul>
-        <Link to="/perfil">Editar meus dados</Link>
-      </section>
+      )}
+
+      <div className="section-heading">
+        <h2>Minha conta</h2>
+      </div>
+      <Link to="/perfil" className="list-row">
+        <span className="list-row__info">
+          <span className="list-row__title">{usuario.nome}</span>
+          <span className="list-row__meta">{usuario.email}</span>
+        </span>
+        <span className="advogado-row__chevron" aria-hidden="true">
+          ›
+        </span>
+      </Link>
     </main>
   );
 }

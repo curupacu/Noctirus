@@ -1,42 +1,51 @@
-/* Design tokens da Nocturis — tema escuro quente (coruja: marrom/dourado sobre carvão).
-   Fonte de verdade: docs/DESIGN.md. Os nomes --color-x, --font-x, --radius-x e --shadow-x
-   abaixo são os que o resto do CSS consome; apontam pros tokens novos (--ink-x, --gold,
-   --cream...) pra não precisar reescrever seletor por seletor. */
+/* Design tokens da Nocturis — tema claro (padrão) com alternância pra escuro via botão.
+   Fonte de verdade do visual: docs/DESIGN.md (paleta base marrom/dourado da coruja).
+   Os nomes --color-x, --font-x, --radius-x e --shadow-x abaixo são os que o resto do CSS
+   consome; apontam pros tokens novos (--bg, --text, --gold, --cream...) pra não precisar
+   reescrever seletor por seletor. */
 :root {
-  /* Fundos — escada de profundidade (quase-preto -> marrom), CHAPADOS */
-  --ink-950: #14120f;   /* fundo BASE da tela (atrás de tudo) */
-  --ink-900: #1e1913;   /* seções */
-  --ink-850: #2a2118;   /* cards comuns (sólido, SEM degradê) */
-  --ink-800: #37291c;   /* hover / elevado */
-  --surface-warm: #61402c; /* superfície de DESTAQUE (card resultado, header) — usar pouco */
-  --border: #47382a;    /* borda fininha 1px */
+  /* Constantes da marca — NÃO trocam entre claro/escuro. Usadas em botões/badges/acentos
+     dourados e nos poucos blocos propositalmente escuros em qualquer tema (header, hero
+     de destaque, painel de CTA escuro). */
+  --ink-950: #14120f;
+  --ink-900: #1e1913;
+  --ink-850: #2a2118;
+  --ink-800: #37291c;
+  --ink-on-accent: #14120f; /* texto/ícone sobre superfícies douradas ou vermelhas (sempre escuro) */
+  --surface-warm: #61402c; /* header e card de destaque — mesma cor nos dois temas */
 
-  /* Marrons da coruja — só em detalhes (ícones, tags, divisórias) */
   --brown-400: #c89b6a;
   --brown-600: #8a5e38;
   --brown-800: #4a3420;
 
-  /* Amarelo-dourado (olhos da coruja) — só acentos */
-  --gold: #f2d98a;      /* botão principal, eyebrow, 1 palavra no título, ícone/bico */
-  --gold-dim: #d8b95e;  /* hover do dourado */
+  --gold: #f2d98a;
+  --gold-dim: #d8b95e;
 
-  /* Texto — creme quente, NUNCA branco puro */
-  --cream: #f3ecdf;       /* título / texto principal */
-  --cream-dim: #b3a994;   /* secundário */
-  --cream-faint: #7e7566; /* legenda / placeholder */
+  --cream: #f3ecdf;
+  --cream-dim: #b3a994;
+  --cream-faint: #7e7566;
 
-  /* Apoio (usar pouco) */
-  --green: #7fb98a; /* sucesso / verificado */
-  --red: #c77b5e;   /* erro / denúncia */
+  --green: #7fb98a;
+  --red: #c77b5e;
 
   /* Tipografia */
-  --font-display: "Fraunces", Georgia, serif;   /* títulos — combina com a logo */
-  --font-body: "Inter", system-ui, sans-serif;  /* texto / UI */
+  --font-display: "Fraunces", Georgia, serif;
+  --font-body: "Inter", system-ui, sans-serif;
 
-  /* Forma — cantos discretos */
+  /* Forma */
   --radius: 12px;
   --radius-sm: 8px;
   --shadow: 0 10px 28px -14px rgba(0, 0, 0, 0.75);
+
+  /* --- Tema: claro (padrão) --- trocam em :root[data-theme="dark"] logo abaixo --- */
+  --bg: #f7f2e7;
+  --bg-section: #f1ead9;
+  --surface: #efe6d3;
+  --surface-hover: #e4d8bb;
+  --border: #dbcba3;
+  --text: #221b12;
+  --text-dim: #5b4c36;
+  --text-faint: #8a7b60;
 
   /* --- Aliases: nomes consumidos pelo resto do CSS (index.css, componentes) --- */
   --color-ink: var(--ink-950);
@@ -52,14 +61,17 @@
   --color-yellow-300: var(--gold);
   --color-yellow-100: var(--cream);
 
-  --color-bg: var(--ink-950);
-  --color-surface: var(--ink-850);
-  --color-text: var(--cream);
-  --color-text-muted: var(--cream-dim);
+  --color-bg: var(--bg);
+  --color-bg-section: var(--bg-section);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-dim);
+  --color-text-faint: var(--text-faint);
   --color-border: var(--border);
   --color-primary: var(--gold);
   --color-primary-hover: var(--gold-dim);
-  --color-primary-text: var(--ink-950);
+  --color-primary-text: var(--ink-on-accent);
   --color-dark: var(--ink-950);
   --color-dark-text: var(--cream);
   --color-danger: var(--red);
@@ -90,5 +102,16 @@
   --shadow-md: var(--shadow);
 }
 
-/* Sem modo claro automático — o app é sempre escuro/quente, não muda com o tema do
-   sistema do visitante (estética "app jurídico noturno", ver docs/DESIGN.md). */
+/* Tema escuro — ligado pelo botão no Header (ver lib/theme.js), guardado em localStorage.
+   Só os tokens de superfície/texto trocam; dourado, marrom e o marrom do header (acima)
+   ficam fixos nos dois temas de propósito, pra manter a identidade da marca. */
+:root[data-theme="dark"] {
+  --bg: #14120f;
+  --bg-section: #1e1913;
+  --surface: #2a2118;
+  --surface-hover: #37291c;
+  --border: #47382a;
+  --text: #f3ecdf;
+  --text-dim: #b3a994;
+  --text-faint: #7e7566;
+}

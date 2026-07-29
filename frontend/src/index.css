@@ -65,7 +65,7 @@ table {
 }
 
 .table-scroll tbody tr {
-  background: var(--ink-800);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: var(--space-md);
@@ -77,11 +77,11 @@ table {
 }
 
 .table-scroll tbody tr:nth-child(even) {
-  background: var(--ink-800);
+  background: var(--surface);
 }
 
 .table-scroll tbody tr:hover {
-  background: var(--ink-800);
+  background: var(--surface-hover);
 }
 
 .table-scroll td {
@@ -94,7 +94,7 @@ table {
   display: block;
   font-size: var(--font-size-xs);
   font-weight: 700;
-  color: var(--cream-faint);
+  color: var(--text-faint);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   margin-bottom: 2px;
@@ -163,8 +163,8 @@ a:hover {
   display: inline-block;
   font-size: var(--font-size-xs);
   font-weight: 700;
-  color: var(--cream-dim);
-  background: var(--ink-800);
+  color: var(--text-dim);
+  background: var(--surface-hover);
   border: 1px solid var(--border);
   padding: 3px var(--space-sm);
   border-radius: var(--radius-full);
@@ -172,19 +172,19 @@ a:hover {
 }
 
 .badge--success {
-  color: var(--ink-950);
+  color: var(--ink-on-accent);
   background: var(--gold);
   border-color: var(--gold);
 }
 
 .badge--danger {
-  color: var(--ink-950);
+  color: var(--ink-on-accent);
   background: var(--red);
   border-color: var(--red);
 }
 
 .badge--gold {
-  color: var(--ink-950);
+  color: var(--ink-on-accent);
   background: var(--gold);
   border-color: var(--gold);
 }
@@ -220,8 +220,8 @@ a:hover {
   width: 44px;
   height: 44px;
   border-radius: var(--radius-full);
-  background: var(--ink-800);
-  color: var(--cream-dim);
+  background: var(--surface-hover);
+  color: var(--text-dim);
   font-weight: 800;
   font-family: var(--font-display);
   font-size: var(--font-size-lg);
@@ -385,7 +385,7 @@ th {
 }
 
 tbody tr:nth-child(even) {
-  background: color-mix(in srgb, var(--color-brown-100) 60%, transparent);
+  background: color-mix(in srgb, var(--color-surface) 60%, transparent);
 }
 
 tbody tr:hover {
@@ -423,7 +423,7 @@ tbody tr:hover {
   .form-cta-sticky {
     position: sticky;
     bottom: 0;
-    background: var(--ink-950);
+    background: var(--bg);
     margin: 0 calc(-1 * var(--space-lg));
     padding: var(--space-md) var(--space-lg);
     box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.5);
@@ -434,8 +434,8 @@ main.splash {
   max-width: none;
   margin: 0;
   padding: var(--space-xl) var(--space-lg);
-  background: var(--ink-950);
-  color: var(--cream);
+  background: var(--bg);
+  color: var(--text);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -445,6 +445,7 @@ main.splash {
 .splash__logo {
   height: 48px;
   width: auto;
+  color: var(--color-text);
   margin: 0 0 var(--space-lg);
 }
 
@@ -452,7 +453,7 @@ main.splash {
   font-family: var(--font-display);
   font-size: var(--font-size-3xl);
   line-height: 1.1;
-  color: var(--cream);
+  color: var(--text);
   margin: 0 0 var(--space-md);
 }
 
@@ -466,7 +467,7 @@ h2 .accent {
 
 .splash__subtitle {
   font-size: var(--font-size-lg);
-  color: var(--cream-dim);
+  color: var(--text-dim);
   margin: 0;
 }
 
@@ -492,7 +493,7 @@ main.auth-screen {
   max-width: none;
   margin: 0;
   padding: 0;
-  background: var(--ink-950);
+  background: var(--bg);
   position: relative;
 }
 
@@ -513,9 +514,15 @@ main.auth-screen {
 }
 
 .auth-screen__close:hover {
-  background: var(--color-brown-100);
+  background: var(--color-surface-hover);
   color: var(--color-text);
   text-decoration: none;
+}
+
+.auth-screen__theme-toggle {
+  position: absolute;
+  top: var(--space-lg);
+  right: var(--space-lg);
 }
 
 .auth-screen__inner {
@@ -528,6 +535,7 @@ main.auth-screen {
 .auth-screen__logo {
   height: 36px;
   width: auto;
+  color: var(--color-text);
   margin-bottom: var(--space-lg);
 }
 
@@ -692,4 +700,72 @@ main.auth-screen {
   flex-shrink: 0;
   font-size: var(--font-size-xl);
   color: var(--color-brown-300);
+}
+
+/* Linha de lista genérica (sem avatar) — pra listas de triagens/denúncias virarem cards
+   individuais escaneáveis em vez de bullets dentro de uma única caixa grande (ver
+   docs/DESIGN.md: evitar "cards em caixa" empilhados sem hierarquia). */
+.list-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-lg);
+  box-shadow: var(--shadow-sm);
+  color: inherit;
+  text-decoration: none;
+  transition: transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+a.list-row:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+  color: inherit;
+  text-decoration: none;
+}
+
+.list-row__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.list-row__title {
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.list-row__meta {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  margin: var(--space-xl) 0 var(--space-md);
+}
+
+.section-heading:first-child {
+  margin-top: 0;
+}
+
+.section-heading h2 {
+  margin: 0;
+}
+
+.section-heading a {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+}
+
+.resultado-proximos-passos {
+  margin-top: var(--space-lg);
 }

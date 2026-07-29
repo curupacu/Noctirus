@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { AdvogadoCard } from "../../components/AdvogadoCard/AdvogadoCard";
 import { Input } from "../../components/Input/Input";
 import { api } from "../../lib/api";
 
@@ -8,8 +8,6 @@ const AREAS = [
   { value: "civel", label: "Cível" },
   { value: "trabalhista", label: "Trabalhista" },
 ];
-
-const LABEL_AREA = { civel: "Cível", trabalhista: "Trabalhista" };
 
 export function AdvogadosListPage() {
   const [area, setArea] = useState("");
@@ -122,25 +120,7 @@ export function AdvogadosListPage() {
         <ul className="advogados-lista">
           {advogados.map((adv) => (
             <li key={adv.uid}>
-              <Link to={`/advogados/${adv.uid}`} className="advogado-row">
-                <span className="avatar-placeholder">{(adv.nome || "?").charAt(0).toUpperCase()}</span>
-                <span className="advogado-row__info">
-                  <span className="advogado-row__nome">
-                    {adv.nome || adv.uid}
-                    {adv.verificado && <span className="badge badge--success">OAB verificada</span>}
-                    {adv.especialidadesCompativeis > 0 && (
-                      <span className="badge">Atua no assunto</span>
-                    )}
-                  </span>
-                  <span className="advogado-row__meta">
-                    {adv.areasAtuacao?.map((a) => LABEL_AREA[a] || a).join(" · ") || "Área não informada"} —{" "}
-                    {adv.localizacao?.cidade}/{adv.localizacao?.uf}
-                  </span>
-                </span>
-                <span className="advogado-row__chevron" aria-hidden="true">
-                  ›
-                </span>
-              </Link>
+              <AdvogadoCard advogado={adv} />
             </li>
           ))}
         </ul>

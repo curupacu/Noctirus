@@ -11,6 +11,15 @@
       rel="stylesheet"
     />
     <title>Nocturis</title>
+    <script>
+      // Aplica o tema salvo antes do React montar, pra não piscar o tema errado
+      // (ver frontend/src/lib/theme.js, mesma chave/lógica).
+      try {
+        if (localStorage.getItem("nocturis-theme") === "dark") {
+          document.documentElement.setAttribute("data-theme", "dark");
+        }
+      } catch {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

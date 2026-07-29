@@ -66,7 +66,7 @@ export function DenunciarPage() {
           : "Conte o que aconteceu. Toda denúncia é analisada com cuidado."}
       </p>
 
-      <form className="card stack" onSubmit={enviar}>
+      <form className="stack" onSubmit={enviar}>
         <div className="input-group">
           <label className="input-label" htmlFor="descricao">
             O que aconteceu?
