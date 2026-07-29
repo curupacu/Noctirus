@@ -228,15 +228,14 @@ a:hover {
   flex-shrink: 0;
 }
 
-/* Advogado sem foto: placeholder neutro com ícone de pessoa, nunca a inicial em
-   fundo dourado (ver docs/DESIGN.md). O avatar do próprio usuário logado no header
-   (.site-header__avatar) continua mostrando a inicial normalmente. */
-.avatar-placeholder:not(.site-header__avatar) {
-  font-size: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237E7566' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 22px 22px;
+/* Advogado sem foto: iniciais coloridas (ver lib/avatarColor.js) em vez do ícone de
+   silhueta genérica — silhueta não diferencia ninguém na lista (achado da auditoria de
+   UX, 29/07). A cor de fundo vem inline por advogado; o texto fica sempre creme fixo
+   (não --text-dim, que troca de tema), porque a paleta é toda de tom médio/escuro nos
+   dois temas. Dourado fica fora dessa paleta de propósito ("dourado com parcimônia",
+   ver docs/DESIGN.md) — é reservado pro badge de OAB verificada. */
+.avatar-placeholder--tinted {
+  color: var(--cream);
 }
 
 .hero-block {
@@ -300,11 +299,25 @@ a:hover {
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  background: color-mix(in srgb, var(--color-primary) 15%, var(--color-surface));
+  background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 999px;
   padding: var(--space-xs) var(--space-md);
   font-size: var(--font-size-sm);
+  color: var(--color-text);
+}
+
+/* Uma especialidade em destaque por perfil, dourado só nela — o resto fica neutro
+   (achado da auditoria de UX: chips todos iguais não deixam claro qual especialidade
+   é a forte do advogado, ver docs/DESIGN.md "dourado com parcimônia"). */
+.chip--destaque {
+  background: color-mix(in srgb, var(--gold) 18%, var(--color-surface));
+  border-color: var(--gold);
+  font-weight: 700;
+}
+
+.chip--overflow {
+  color: var(--color-text-muted);
 }
 
 .chip button {
