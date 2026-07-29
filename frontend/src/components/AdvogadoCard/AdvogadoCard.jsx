@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { corDoAvatar } from "../../lib/avatarColor";
 
 const LABEL_AREA = { civel: "Cível", trabalhista: "Trabalhista" };
 
@@ -8,7 +9,12 @@ const LABEL_AREA = { civel: "Cível", trabalhista: "Trabalhista" };
 export function AdvogadoCard({ advogado }) {
   return (
     <Link to={`/advogados/${advogado.uid}`} className="advogado-row">
-      <span className="avatar-placeholder">{(advogado.nome || "?").charAt(0).toUpperCase()}</span>
+      <span
+        className="avatar-placeholder avatar-placeholder--tinted"
+        style={{ background: corDoAvatar(advogado.uid || advogado.nome) }}
+      >
+        {(advogado.nome || "?").charAt(0).toUpperCase()}
+      </span>
       <span className="advogado-row__info">
         <span className="advogado-row__nome">
           {advogado.nome || advogado.uid}
