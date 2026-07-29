@@ -20,6 +20,11 @@ export function AdvogadoCard({ advogado }) {
           {advogado.nome || advogado.uid}
           {advogado.verificado && <span className="badge badge--success">OAB verificada</span>}
           {advogado.especialidadesCompativeis > 0 && <span className="badge">Atua no assunto</span>}
+          {advogado.vezesSugerido > 0 && (
+            <span className="badge">
+              Em {advogado.vezesSugerido} {advogado.vezesSugerido === 1 ? "triagem" : "triagens"}
+            </span>
+          )}
         </span>
         {advogado.bio && <span className="advogado-row__bio">{advogado.bio}</span>}
         <span className="advogado-row__meta">

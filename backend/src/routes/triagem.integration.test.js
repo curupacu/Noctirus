@@ -79,6 +79,31 @@ describe("POST /triagem/classificar", () => {
     const triagem = (await cell.fake.db.collection("triagens").doc(resposta.body.id).get()).data();
     expect(triagem.clienteId).toBe("c1");
   });
+
+  it("soma o contador de sugestão dos advogados compatíveis", async () => {
+    cell.fake.db._seed("advogados", "adv1", {
+      areasAtuacao: ["trabalhista"],
+      localizacao: {},
+      especialidades: [],
+      verificado: false,
+    });
+    cell.fake.db._seed("users", "adv1", { nome: "Advogado Um", status: "ativo" });
+
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    const resposta = await request(app)
+      .post("/triagem/classificar")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        respostas: { situacao: "trabalho", papel: "empregado" },
+        descricao: "Fui demitido sem justa causa e não pagaram minhas horas extras.",
+      });
+
+    expect(resposta.status).toBe(201);
+    expect(resposta.body.advogados.find((a) => a.uid === "adv1").vezesSugerido).toBe(1);
+
+    const advogado = (await cell.fake.db.collection("advogados").doc("adv1").get()).data();
+    expect(advogado.vezesSugerido).toBe(1);
+  });
 });
 
 describe("GET /triagem/historico", () => {

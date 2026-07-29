@@ -11,6 +11,23 @@ import {
 
 export const triagemRouter = Router();
 
+// Soma 1 no contador de "vezes sugerido" de cada advogado que apareceu como compatível
+// nessa triagem — vira prova social honesta no perfil/card (não é avaliação de cliente,
+// só frequência de match do algoritmo; achado da auditoria de UX, 29/07). Leitura +
+// escrita simples em vez de FieldValue.increment de propósito: é um contador de
+// popularidade, não crítico, e assim funciona igual contra o fake de testes.
+async function somarContadorDeSugestoes(advogados) {
+  await Promise.all(
+    advogados.map(async ({ uid }) => {
+      const doc = await db.collection("advogados").doc(uid).get();
+      if (!doc.exists) return;
+      await db.collection("advogados").doc(uid).update({
+        vezesSugerido: (doc.data().vezesSugerido || 0) + 1,
+      });
+    }),
+  );
+}
+
 triagemRouter.get("/triagem/perguntas", (_req, res) => {
   res.json({
     principal: PERGUNTA_PRINCIPAL,
@@ -53,8 +70,16 @@ triagemRouter.post(
     };
 
     const ref = await db.collection("triagens").add(triagem);
+    await somarContadorDeSugestoes(advogados);
 
-    res.status(201).json({ id: ref.id, ...triagem, advogados });
+    // Soma 1 na cópia que já foi buscada, pra resposta não voltar com o contador
+    // "atrasado" em relação ao que acabou de ser gravado.
+    const advogadosAtualizados = advogados.map((adv) => ({
+      ...adv,
+      vezesSugerido: (adv.vezesSugerido || 0) + 1,
+    }));
+
+    res.status(201).json({ id: ref.id, ...triagem, advogados: advogadosAtualizados });
   },
 );
 
