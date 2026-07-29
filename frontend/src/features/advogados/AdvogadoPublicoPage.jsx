@@ -85,6 +85,11 @@ export function AdvogadoPublicoPage() {
         <span className="badge">
           {advogado.areasAtuacao?.map((a) => LABEL_AREA[a] || a).join(" · ") || "área não informada"}
         </span>
+        {advogado.vezesSugerido > 0 && (
+          <span className="badge">
+            Em {advogado.vezesSugerido} {advogado.vezesSugerido === 1 ? "triagem" : "triagens"}
+          </span>
+        )}
       </div>
 
       {rotulosEspecialidades.length > 0 && (
