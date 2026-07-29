@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
-import logoCompleta from "../assets/logocomnomedolado.svg";
 import { Button } from "../components/Button/Button";
+import { Logo } from "../components/Logo/Logo";
 
 export function HomePage() {
   return (
     <main className="splash">
       <div>
-        <img src={logoCompleta} alt="Nocturis" className="splash__logo" />
+        <Logo className="splash__logo" />
         <h1 className="splash__headline">
           Encontre o advogado <em className="accent">certo</em> pro seu caso.
         </h1>

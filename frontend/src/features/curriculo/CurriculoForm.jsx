@@ -63,27 +63,31 @@ export function CurriculoForm({ uid }) {
   if (carregando) return <p className="loading">Carregando currículo...</p>;
 
   return (
-    <form className="card stack" onSubmit={salvar}>
-      <h2>Currículo</h2>
-      <p className="text-muted">Uma linha = um item da lista.</p>
+    <>
+      <div className="section-heading">
+        <h2>Currículo</h2>
+      </div>
+      <form className="stack" onSubmit={salvar}>
+        <p className="text-muted">Uma linha = um item da lista.</p>
 
-      {CAMPOS.map(({ chave, label }) => (
-        <div key={chave} className="input-group">
-          <label className="input-label" htmlFor={chave}>
-            {label}
-          </label>
-          <textarea
-            id={chave}
-            className="input"
-            rows={4}
-            value={valores[chave]}
-            onChange={(e) => setValores((v) => ({ ...v, [chave]: e.target.value }))}
-          />
-        </div>
-      ))}
+        {CAMPOS.map(({ chave, label }) => (
+          <div key={chave} className="input-group">
+            <label className="input-label" htmlFor={chave}>
+              {label}
+            </label>
+            <textarea
+              id={chave}
+              className="input"
+              rows={4}
+              value={valores[chave]}
+              onChange={(e) => setValores((v) => ({ ...v, [chave]: e.target.value }))}
+            />
+          </div>
+        ))}
 
-      <Button type="submit">Salvar currículo</Button>
-      {mensagem && <p role="status">{mensagem}</p>}
-    </form>
+        <Button type="submit">Salvar currículo</Button>
+        {mensagem && <p role="status">{mensagem}</p>}
+      </form>
+    </>
   );
 }

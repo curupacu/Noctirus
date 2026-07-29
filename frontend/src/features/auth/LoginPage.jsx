@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import logoCompleta from "../../assets/logocomnomedolado.svg";
 import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
+import { Logo } from "../../components/Logo/Logo";
+import { ThemeToggle } from "../../components/ThemeToggle/ThemeToggle";
+import { useTheme } from "../../lib/theme";
 import { useAuth } from "./AuthContext";
 import { rotaInicial } from "./rotaInicial";
 
 export function LoginPage() {
   const { login } = useAuth();
+  const { tema, alternarTema } = useTheme();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -34,9 +37,10 @@ export function LoginPage() {
       <Link to="/" className="auth-screen__close" aria-label="Voltar para o início">
         ×
       </Link>
+      <ThemeToggle tema={tema} onToggle={alternarTema} className="auth-screen__theme-toggle" />
 
       <div className="auth-screen__inner">
-        <img src={logoCompleta} alt="Nocturis" className="auth-screen__logo" />
+        <Logo className="auth-screen__logo" />
         <div className="auth-screen__header">
           <h1>Entrar</h1>
           <p>Bem-vindo(a) de volta.</p>

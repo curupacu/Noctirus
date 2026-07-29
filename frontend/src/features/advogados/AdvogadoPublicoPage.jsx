@@ -60,75 +60,74 @@ export function AdvogadoPublicoPage() {
     <main>
       <div className="media">
         <span className="avatar-placeholder">{(advogado.nome || "?").charAt(0).toUpperCase()}</span>
-        <h1>{advogado.nome}</h1>
+        <div>
+          <h1>{advogado.nome}</h1>
+          <p className="text-muted">
+            {advogado.localizacao?.cidade || "?"}/{advogado.localizacao?.uf || "?"} — OAB{" "}
+            {advogado.oab?.numero}/{advogado.oab?.uf}
+          </p>
+        </div>
       </div>
 
-      <section className="card">
-        <h2>Sobre</h2>
-        {suspenso && (
-          <p>
-            <span className="badge badge--danger">Suspenso da plataforma</span>
-          </p>
-        )}
-        <p>
-          <span className={`badge${advogado.verificado ? " badge--success" : ""}`}>
-            {advogado.verificado ? "OAB verificada" : "OAB em análise"}
-          </span>
-        </p>
-        <p className="text-muted">
-          OAB {advogado.oab?.numero}/{advogado.oab?.uf} — {advogado.localizacao?.cidade || "?"}/
-          {advogado.localizacao?.uf || "?"}
-        </p>
-        <p>
-          Atua em: {advogado.areasAtuacao?.map((a) => LABEL_AREA[a] || a).join(", ") || "não informado"}
-        </p>
+      <div className="actions">
+        {suspenso && <span className="badge badge--danger">Suspenso da plataforma</span>}
+        <span className={`badge${advogado.verificado ? " badge--success" : ""}`}>
+          {advogado.verificado ? "OAB verificada" : "OAB em análise"}
+        </span>
+        <span className="badge">
+          {advogado.areasAtuacao?.map((a) => LABEL_AREA[a] || a).join(" · ") || "área não informada"}
+        </span>
+      </div>
 
-        {rotulosEspecialidades.length > 0 && (
-          <>
-            <p className="text-muted">Especialidades:</p>
-            <ul className="chip-list">
-              {rotulosEspecialidades.map((rotulo) => (
-                <li key={rotulo} className="chip">
-                  {rotulo}
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
-      </section>
+      {rotulosEspecialidades.length > 0 && (
+        <>
+          <div className="section-heading">
+            <h2>Especialidades</h2>
+          </div>
+          <ul className="chip-list">
+            {rotulosEspecialidades.map((rotulo) => (
+              <li key={rotulo} className="chip">
+                {rotulo}
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
 
-      <section className="card">
+      <div className="section-heading">
         <h2>Contato</h2>
-        <div className="actions">
-          {whatsapp && (
-            <a
-              className="button button--primary"
-              href={`https://wa.me/${whatsapp}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Falar no WhatsApp
-            </a>
-          )}
-          {email && (
-            <a className="button button--secondary" href={`mailto:${email}`}>
-              Enviar e-mail
-            </a>
-          )}
-        </div>
-        {suspenso && <p>Este advogado está suspenso e não pode ser contatado pela plataforma.</p>}
-        {!suspenso && !whatsapp && !email && <p>Nenhum contato cadastrado.</p>}
-      </section>
+      </div>
+      <div className="actions">
+        {whatsapp && (
+          <a
+            className="button button--primary"
+            href={`https://wa.me/${whatsapp}`}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Falar no WhatsApp
+          </a>
+        )}
+        {email && (
+          <a className="button button--secondary" href={`mailto:${email}`}>
+            Enviar e-mail
+          </a>
+        )}
+      </div>
+      {suspenso && (
+        <p className="text-muted">Este advogado está suspenso e não pode ser contatado pela plataforma.</p>
+      )}
+      {!suspenso && !whatsapp && !email && <p className="text-muted">Nenhum contato cadastrado.</p>}
 
-      <section className="card">
+      <div className="section-heading">
         <h2>Currículo</h2>
-        <ListaOuVazio titulo="Formação" itens={curriculo?.formacao} />
-        <ListaOuVazio titulo="Especializações" itens={curriculo?.especializacoes} />
-        <ListaOuVazio titulo="Cursos" itens={curriculo?.cursos} />
-        <ListaOuVazio titulo="Experiências" itens={curriculo?.experiencias} />
-      </section>
+      </div>
+      <ListaOuVazio titulo="Formação" itens={curriculo?.formacao} />
+      <ListaOuVazio titulo="Especializações" itens={curriculo?.especializacoes} />
+      <ListaOuVazio titulo="Cursos" itens={curriculo?.cursos} />
+      <ListaOuVazio titulo="Experiências" itens={curriculo?.experiencias} />
 
-      <p className="text-muted">
+      <p className="text-muted resultado-proximos-passos">
         <Link to={`/denunciar?alvoId=${uid}&alvoNome=${encodeURIComponent(advogado.nome || "")}`}>
           Denunciar este advogado
         </Link>

@@ -33,12 +33,20 @@ export function MinhasTriagensPage() {
       {triagens && triagens.length > 0 && (
         <ul className="list-plain">
           {triagens.map((t) => (
-            <li key={t.id} className="card">
-              <Link to={`/triagem/${t.id}`}>
-                <strong>{LABEL_AREA[t.areaClassificada] || t.areaClassificada}</strong> —{" "}
-                {t.tipoAdvogadoSugerido}
+            <li key={t.id}>
+              <Link to={`/triagem/${t.id}`} className="list-row">
+                <span className="list-row__info">
+                  <span className="list-row__title">
+                    {LABEL_AREA[t.areaClassificada] || t.areaClassificada}
+                  </span>
+                  <span className="list-row__meta">
+                    {t.tipoAdvogadoSugerido} · {new Date(t.createdAt).toLocaleDateString("pt-BR")}
+                  </span>
+                </span>
+                <span className="advogado-row__chevron" aria-hidden="true">
+                  ›
+                </span>
               </Link>
-              <p className="text-muted">{new Date(t.createdAt).toLocaleDateString("pt-BR")}</p>
             </li>
           ))}
         </ul>

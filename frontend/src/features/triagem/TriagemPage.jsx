@@ -58,6 +58,17 @@ export function TriagemPage() {
       ? 1
       : 2;
 
+  // Resumo do que já foi respondido — aparece só quando dá pra escrever a descrição,
+  // pra pessoa conferir antes de enviar (sem isso, as respostas somem de vista assim que
+  // a pergunta seguinte aparece na tela).
+  const respostasEscolhidas =
+    currentIndex === 2 && arvore
+      ? [
+          arvore.principal.opcoes.find((o) => o.valor === respostas.situacao)?.label,
+          perguntaSegundaEtapa?.opcoes.find((o) => o.valor === respostas[perguntaSegundaEtapa.id])?.label,
+        ].filter(Boolean)
+      : [];
+
   return (
     <main>
       <h1>Triagem</h1>
@@ -103,6 +114,16 @@ export function TriagemPage() {
               ))}
             </div>
           </div>
+        )}
+
+        {respostasEscolhidas.length > 0 && (
+          <ul className="chip-list" aria-label="Respostas escolhidas até agora">
+            {respostasEscolhidas.map((label) => (
+              <li key={label} className="chip">
+                {label}
+              </li>
+            ))}
+          </ul>
         )}
 
         <div className="input-group">
