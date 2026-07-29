@@ -14,6 +14,7 @@ export function PerfilPage() {
   const [advogado, setAdvogado] = useState(null);
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
+  const [bio, setBio] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [cidade, setCidade] = useState("");
   const [uf, setUf] = useState("");
@@ -35,6 +36,7 @@ export function PerfilPage() {
           api.get("/triagem/perguntas"),
         ]);
         setAdvogado(dadosAdvogado);
+        setBio(dadosAdvogado.bio || "");
         setWhatsapp(dadosAdvogado.contatos?.whatsapp || "");
         setCidade(dadosAdvogado.localizacao?.cidade || "");
         setUf(dadosAdvogado.localizacao?.uf || "");
@@ -73,6 +75,7 @@ export function PerfilPage() {
     setMensagem(null);
     try {
       await api.put(`/advogados/${user.uid}`, {
+        bio,
         whatsapp,
         localizacao: { cidade, uf },
         especialidades,
@@ -125,6 +128,27 @@ export function PerfilPage() {
             <p className="text-muted">
               OAB: {advogado.oab?.numero}/{advogado.oab?.uf} (não editável)
             </p>
+
+            <div className="input-group">
+              <label className="input-label" htmlFor="bio">
+                Sobre você
+              </label>
+              <p className="text-muted">
+                Uma ou duas frases pra se apresentar — aparece no topo do seu perfil
+                público e na listagem.
+              </p>
+              <textarea
+                id="bio"
+                className="input"
+                rows={3}
+                maxLength={240}
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                placeholder="Ex.: Advogada trabalhista há 8 anos, focada em casos de rescisão indireta e assédio moral."
+              />
+              <p className="text-muted char-counter">{bio.length}/240</p>
+            </div>
+
             <Input
               label="WhatsApp"
               id="whatsapp"
