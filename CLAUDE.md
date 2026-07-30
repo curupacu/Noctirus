@@ -326,6 +326,13 @@ Na raiz: `npm run dev` sobe frontend e backend juntos (via `concurrently`).
      mockado (109 no total), upload real direto confirmando as credenciais, e o caminho de
      exibição verificado ao vivo associando uma foto de teste ao advogado de teste via
      Firestore (revertido depois — não ficou foto de teste no ar).
+- **Cota do Gemini reconfirmada (30/07)**: `npm run avaliar-triagem` (backend/) rodado de
+  novo, sem erro 429 dessa vez — os 20 casos foram classificados pela IA de verdade (nenhum
+  caiu no fallback por regras). Resultado **100% de acerto de área, 100% de categoria**
+  (melhora em relação ao 95%/90% de 28/07, provavelmente reflexo dos ajustes de palavras-
+  chave feitos depois daquela rodada). Como o script sozinho já consome as ~20
+  requisições/dia da cota, **não repetir esse teste no mesmo dia** — evita esgotar a cota
+  à toa antes da apresentação de 13/08.
 
 ## Escopo do MVP (Fase 1)
 
