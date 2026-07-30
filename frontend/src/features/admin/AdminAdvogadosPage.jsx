@@ -3,9 +3,12 @@ import { Button } from "../../components/Button/Button";
 import { api } from "../../lib/api";
 import { AdminNav } from "./AdminNav";
 
+const CNA_URL = "https://cna.oab.org.br/";
+
 export function AdminAdvogadosPage() {
   const [advogados, setAdvogados] = useState(null);
   const [erro, setErro] = useState(null);
+  const [copiadoUid, setCopiadoUid] = useState(null);
 
   async function carregar() {
     try {
@@ -28,6 +31,17 @@ export function AdminAdvogadosPage() {
     } catch (err) {
       setErro(err.message);
     }
+  }
+
+  async function verificarNoCna(adv) {
+    try {
+      await navigator.clipboard.writeText(adv.oab?.numero ?? "");
+      setCopiadoUid(adv.uid);
+      setTimeout(() => setCopiadoUid(null), 2000);
+    } catch {
+      // clipboard pode falhar (ex.: sem permissão) — ainda assim abre o CNA pro admin digitar manualmente
+    }
+    window.open(CNA_URL, "_blank", "noopener,noreferrer");
   }
 
   if (erro) return <p role="alert">{erro}</p>;
@@ -61,6 +75,9 @@ export function AdminAdvogadosPage() {
                     </span>
                   </td>
                   <td className="actions" data-label="Ação">
+                    <Button variant="secondary" onClick={() => verificarNoCna(adv)}>
+                      {copiadoUid === adv.uid ? "Nº copiado!" : "Verificar no CNA"}
+                    </Button>
                     <Button
                       variant={adv.verificado ? "secondary" : "primary"}
                       onClick={() => alternarVerificado(adv.uid, adv.verificado)}
