@@ -33,8 +33,8 @@ Já funciona de ponta a ponta:
   Actions — resumo em [`docs/TESTES.md`](docs/TESTES.md)
 - Tema claro (padrão) e escuro com botão de alternância, salvo por navegador
 
-**Ainda não existe:** `nocturis-prod` separado (dev e "produção" apontam pro mesmo Firebase),
-verificação real de OAB, upload de currículo em PDF. Ver
+**Ainda não existe:** verificação real de OAB, upload de currículo em PDF (`nocturis-prod`
+separado foi avaliado e descartado por decisão — ver abaixo). Ver
 [Pontos fracos e próximos passos](#pontos-fracos-e-próximos-passos) abaixo e o
 [roadmap completo](docs/ROADMAP.md) para o plano de sprints.
 
@@ -111,8 +111,6 @@ Levantamento honesto do que ainda precisa de trabalho, priorizado.
   backend/): cota disponível no dia, 100% de acerto nos 20 casos. Como o teste em si consome a
   cota diária, **não repetir** no mesmo dia — rodar de novo só perto do 13/08 pra confirmar a
   cota daquele dia, e evitar testes repetidos horas antes da banca.
-- **`nocturis-prod` não existe de verdade.** O `.firebaserc` já tem o alias, mas hoje tudo aponta
-  pro mesmo projeto `nocturis-web` (dev e "produção" são o mesmo Firebase).
 
 ### 🟡 Médio
 
@@ -127,8 +125,13 @@ Levantamento honesto do que ainda precisa de trabalho, priorizado.
 
 - **Verificação real de OAB** — hoje é só formato + unicidade; aprovação vira manual pelo admin.
   Não existe API pública gratuita pra automatizar isso.
-- **Upload de foto/currículo em PDF** — depende de ativar o plano pago (Blaze) do Firebase
-  Storage ou usar um serviço externo gratuito.
+- **Upload de currículo em PDF** — depende de ativar o plano pago (Blaze) do Firebase Storage
+  ou usar um serviço externo gratuito (upload de foto já foi resolvido via Cloudinary).
+- **`nocturis-prod` separado — avaliado e descartado (30/07).** O plano original previa dois
+  projetos Firebase pra isolar teste de dado real. Como o MVP roda inteiro com advogados
+  fictícios (seed) e contas de teste descartáveis, não há dado real em risco de poluir uma
+  "produção" — o custo de manter um segundo projeto não se paga aqui. Revisitar só se o
+  projeto virar produto real (Fase 4).
 - LGPD, rate limiting, monitoramento, domínio próprio — tudo isso é Fase 4 (produto real), fora
   do escopo do MVP do TCC.
 

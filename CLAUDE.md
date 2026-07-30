@@ -15,8 +15,9 @@ completo de sprints, modelo de dados e decisões de arquitetura.
 - **Banco**: Cloud Firestore — **não MySQL**, apesar do que documentação antiga possa dizer.
 - **IA de triagem** (Fase 2): Google Gemini Flash-Lite, chamado só pelo backend, com
   fallback por regras se falhar ou passar de 5s.
-- Dois projetos Firebase: `nocturis-web` (desenvolvimento) e `nocturis-prod` (produção).
-  Sem emulador local — o backend aponta direto para o projeto `nocturis-web` na nuvem.
+- **Um único projeto Firebase**, `nocturis-web`, usado tanto pra desenvolvimento quanto pro
+  deploy que a banca vê — decisão consciente (30/07), não pendência: ver nota em "Status do
+  deploy" abaixo. Sem emulador local — o backend aponta direto pra ele na nuvem.
 
 ## Estrutura do repositório
 
@@ -269,9 +270,13 @@ Na raiz: `npm run dev` sobe frontend e backend juntos (via `concurrently`).
   advogado do seed sem conta na Auth suspendendo sem quebrar). 68 testes novos, mais os 35
   já existentes = 103 no total (`npm test`, roda sem `service-account.json`). **Falta**: o
   item do GC (documentar testes/validações).
-- **`nocturis-prod` ainda não existe de verdade** — o `.firebaserc` já tem o alias, mas hoje
-  tanto dev quanto o "deploy no ar" apontam pro mesmo projeto `nocturis-web`. Criar o projeto
-  de produção separado é decisão pendente.
+- **Decidido não criar `nocturis-prod` separado (30/07)** — o `.firebaserc` mantém o alias
+  como registro do plano original, mas dev e "deploy no ar" seguem no mesmo projeto
+  `nocturis-web` de propósito. A separação existe pra isolar teste de dado real (evitar
+  poluir o que usuários reais veem enquanto o time mexe em dev); aqui os advogados são
+  fictícios (seed) e as contas de teste já foram recriadas do zero quando precisou — não
+  há dado real em risco, então o custo de manter um segundo projeto Firebase não se paga
+  pro MVP do TCC. Revisitar só se o projeto virar produto real (Fase 4).
 - **Tema claro/escuro + redesign estendido pro resto do app (29/07)**: pedido do usuário foi
   inverter a direção do `DESIGN.md` — em vez de só o tema escuro fixo, o app agora abre no
   **claro** (fundo bege quase-branco, `#F7F2E7`) com um botão (ícone sol/lua no header, e nas

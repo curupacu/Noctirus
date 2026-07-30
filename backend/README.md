@@ -19,8 +19,8 @@ Endpoint de verificação: `GET /health`.
 ## Variáveis de ambiente (`.env`)
 
 - `PORT` — porta do Express (padrão `3001`).
-- `FIREBASE_PROJECT_ID` — hoje sempre `nocturis-web` (não existe `nocturis-prod` de verdade
-  ainda, ver `docs/ROADMAP.md`).
+- `FIREBASE_PROJECT_ID` — sempre `nocturis-web`; não existe `nocturis-prod` separado, por
+  decisão (ver `CLAUDE.md`).
 - `GOOGLE_APPLICATION_CREDENTIALS` — caminho pro JSON da service account (Firebase Console >
   Configurações do projeto > Contas de serviço > Gerar nova chave privada). Não é commitado.
 - `GEMINI_API_KEY` — chave do Google AI Studio pra triagem por IA. **Opcional**: sem ela, a
