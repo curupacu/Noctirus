@@ -18,8 +18,8 @@ Já funciona de ponta a ponta:
 - Listagem pública de advogados com filtro por área/cidade/UF/especialidade (não exige login)
 - Triagem por perguntas guiadas + descrição livre, classificada por **IA (Gemini Flash-Lite)**
   com fallback automático por regras de palavras-chave se a IA falhar, demorar ou tiver baixa
-  confiança — a triagem nunca trava. Validada com 20 casos reais (28/07): 95% de acerto de área,
-  90% de categoria.
+  confiança — a triagem nunca trava. Validada com 20 casos reais: 100% de acerto de área e
+  categoria (30/07; era 95%/90% em 28/07, antes de ajustes no fallback por regras).
 - Taxonomia de 33 categorias (17 cíveis + 16 trabalhistas) usada tanto na triagem quanto nas
   especialidades do advogado — o matching usa isso pra priorizar advogados aderentes ao assunto
   específico do caso, não só a área ampla
@@ -27,11 +27,14 @@ Já funciona de ponta a ponta:
 - Painel admin completo: aprovar OAB, gerenciar usuários (suspender/remover), moderar denúncias
 - Banco populado com 30 advogados fictícios cobrindo várias cidades/estados e especialidades,
   pra dar pra testar filtro e matching de verdade
-- 103 testes automatizados (Vitest, unitários + integração via `supertest`) e CI no GitHub Actions
+- Upload de foto de perfil do advogado (Cloudinary, recorte automático de rosto), com avatar
+  de iniciais coloridas como fallback
+- 109 testes automatizados (Vitest, unitários + integração via `supertest`) e CI no GitHub
+  Actions — resumo em [`docs/TESTES.md`](docs/TESTES.md)
 - Tema claro (padrão) e escuro com botão de alternância, salvo por navegador
 
 **Ainda não existe:** `nocturis-prod` separado (dev e "produção" apontam pro mesmo Firebase),
-verificação real de OAB, upload de foto/currículo em PDF. Ver
+verificação real de OAB, upload de currículo em PDF. Ver
 [Pontos fracos e próximos passos](#pontos-fracos-e-próximos-passos) abaixo e o
 [roadmap completo](docs/ROADMAP.md) para o plano de sprints.
 
@@ -89,7 +92,7 @@ database/             Firestore: regras, índices, seed e docs do modelo
   firestore.rules
   firestore.indexes.json
   seed/                scripts pra popular advogados fictícios e criar admin
-docs/                 ROADMAP.md com o plano completo de sprints
+docs/                 ROADMAP.md (plano de sprints), DESIGN.md, TESTES.md (resumo dos testes)
 ```
 
 **Branches:** `main` (deploy) · `develop` (integração) · `feature/<nome>` por tarefa.
@@ -104,18 +107,20 @@ Levantamento honesto do que ainda precisa de trabalho, priorizado.
 - **Risco de cota do Gemini na apresentação.** O free tier do `gemini-2.5-flash-lite` nesse
   projeto está limitado a ~20 requisições/dia (bem abaixo do documentado pelo Google) — testar a
   triagem repetidamente antes da banca pode esgotar a cota e a demonstração cair inteira no
-  fallback por regras, sem aviso na tela. Mitigação: rodar `npm run avaliar-triagem` (backend/)
-  antes do dia 13/08 pra confirmar a cota disponível, e evitar testes repetidos horas antes.
+  fallback por regras, sem aviso na tela. Reconfirmado em 30/07 (`npm run avaliar-triagem`,
+  backend/): cota disponível no dia, 100% de acerto nos 20 casos. Como o teste em si consome a
+  cota diária, **não repetir** no mesmo dia — rodar de novo só perto do 13/08 pra confirmar a
+  cota daquele dia, e evitar testes repetidos horas antes da banca.
 - **`nocturis-prod` não existe de verdade.** O `.firebaserc` já tem o alias, mas hoje tudo aponta
   pro mesmo projeto `nocturis-web` (dev e "produção" são o mesmo Firebase).
 
 ### 🟡 Médio
 
-- **Responsividade mobile das telas mais recentes ainda não validada em viewport de celular** —
-  o redesign (tema claro/escuro + estrutura nova) foi conferido em desktop; falta o mesmo teste
-  em mobile de verdade antes da apresentação.
-- **Documentar testes e validações** — item pendente do Gustavo (GC): os 103 testes existem e
-  passam, mas ainda não têm um resumo documentado pra monografia.
+- **Responsividade mobile validada manualmente (30/07)**, não por automação — a ferramenta de
+  resize de viewport usada nas sessões de IA não funciona neste ambiente (ver nota no
+  `CLAUDE.md`). O usuário conferiu no navegador/celular de verdade e o espaçamento está OK,
+  incluindo o botão sticky da triagem/denúncia perto do `BottomNav`. Sem confirmação
+  automatizada (screenshot) ainda.
 - Diversos ajustes pontuais de copy/acessibilidade/microinterações pelo app.
 
 ### 🟢 Baixa prioridade (adiado de propósito — é um MVP)
