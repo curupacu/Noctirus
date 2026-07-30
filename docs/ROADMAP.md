@@ -185,8 +185,10 @@ Sprints **semanais**. Itens com 🔴 são **bloqueadores** (precisam estar pront
 
 #### Sprint 1 — Fundação · 07–13/07
 - ✅ [GR] Criar projeto Firebase (Auth, Firestore, Hosting). **Dois projetos:** `nocturis-dev` e `nocturis-prod`.
-  Na prática, o projeto dev virou `nocturis-web`, e `nocturis-prod` ainda não existe de verdade
-  (ver "Status do deploy" no `CLAUDE.md`) — os dois nomes acima ficam só como registro do plano original.
+  Na prática, o projeto dev virou `nocturis-web`, e criar um `nocturis-prod` separado foi
+  **descartado por decisão em 30/07** (dado 100% fictício no MVP, sem risco real de poluir
+  "produção" — ver "Status do deploy" no `CLAUDE.md`) — os dois nomes acima ficam só como
+  registro do plano original.
 - 🔴 [GR] Configurar `backend/` (Express + Firebase Admin SDK) rodando localmente; `database/` com `firestore.rules` inicial.
 - 🔴 [GP] Scaffold do `frontend/` (Vite + React) + rotas + estrutura de pastas.
 - 🔴 [GP] **Design system Nocturis:** paleta (marrom/amarelo), tipografia e componentes base (botão, input, card).
@@ -213,7 +215,8 @@ Sprints **semanais**. Itens com 🔴 são **bloqueadores** (precisam estar pront
 - 🔴 [GR] **Matching:** filtrar advogados por área + localização (RF006, RF007). *(Nesta semana a "área" ainda pode vir só das perguntas guiadas — a IA entra no Sprint 5.)*
 - 🔴 [GR] *Seed* de advogados fictícios pra demonstração; revisar as *rules*.
 - 🔴 [GP] Responsividade (desktop/mobile) + estados de carregamento, erro e vazio (RNF001, RNF006).
-- 🔴 [GR] **Deploy do MVP base** no `nocturis-prod` + *keep-warm* do backend.
+- 🔴 [GR] **Deploy do MVP base** — no `nocturis-web` (o `nocturis-prod` planejado aqui não foi
+  criado, decisão registrada no Sprint 1 acima) + *keep-warm* do backend.
 - [GC] Teste rápido de usabilidade com 3–5 pessoas.
 - **Pronto quando:** dá pra passar o link e a pessoa cadastra, vê advogados e fala com eles. **Meta de férias batida.**
 

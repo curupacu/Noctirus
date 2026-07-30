@@ -1,8 +1,8 @@
 # Nocturis — database
 
 Banco de dados: **Cloud Firestore** (Firebase), sem emulador local — aponta direto
-para o projeto `nocturis-web` na nuvem. Não existe `nocturis-prod` separado ainda
-(ver `docs/ROADMAP.md`).
+para o projeto `nocturis-web` na nuvem. Não existe `nocturis-prod` separado, por
+decisão (dado fictício, sem risco real de poluir produção — ver `CLAUDE.md`).
 
 - `firestore.rules` — regras de segurança (nega tudo por padrão, libera por papel via custom claims).
 - `firestore.indexes.json` — índices compostos do Firestore.
