@@ -470,9 +470,13 @@ tbody tr:hover {
 }
 
 @media (max-width: 480px) {
+  /* bottom: var(--bottom-nav-height), não 0 — essas telas (Triagem, Denunciar) só
+     existem logadas, então o BottomNav (fixed, z-index 20) sempre está por cima dos
+     últimos 68px da viewport. Grudar em bottom:0 aqui escondia o botão de enviar atrás
+     do menu (achado da auditoria de UX estática, 29/07). */
   .form-cta-sticky {
     position: sticky;
-    bottom: 0;
+    bottom: var(--bottom-nav-height);
     background: var(--bg);
     margin: 0 calc(-1 * var(--space-lg));
     padding: var(--space-md) var(--space-lg);
