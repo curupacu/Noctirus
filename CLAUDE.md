@@ -295,8 +295,17 @@ Na raiz: `npm run dev` sobe frontend e backend juntos (via `concurrently`).
   como testar logado como admin nesta sessão (sem a senha da conta de teste). Testado ao vivo no
   Chrome nos dois temas: Home, Login, Cadastro, Advogados, Painel, Perfil, Triagem, Resultado,
   Minhas triagens, perfil público do advogado, Denunciar, Minhas denúncias — sem erro no
-  console, `npm run lint` e `npm run build` do frontend limpos. **Não verificado**: viewport
-  mobile de verdade (só desktop) e as 3 telas de admin ao vivo.
+  console, `npm run lint` e `npm run build` do frontend limpos. **Não verificado nesta sessão**:
+  as 3 telas de admin ao vivo (viewport mobile foi validado manualmente pelo usuário em
+  30/07 — ver nota abaixo sobre a ferramenta de resize).
+- **Viewport mobile confirmado manualmente (30/07)**: a ferramenta de resize de janela do
+  Chrome usada nas sessões de automação não funciona neste ambiente (`resize_window` reporta
+  sucesso mas `window.innerWidth` não muda — confirmado de novo nesta sessão, mesmo problema
+  do commit `8c1efee`). Sem jeito de emular viewport mobile por aqui, o usuário testou o app
+  manualmente (janela estreitada/celular de verdade) e confirmou que o espaçamento/indentação
+  está OK, incluindo a área do botão sticky perto do `BottomNav` corrigida naquele commit.
+  Segue sem confirmação automatizada — se a ferramenta de resize voltar a funcionar, vale
+  revisitar com screenshots de verdade.
 - **Auditoria de UX/UI publicada (29/07)**: pedido do usuário pra entender por que o design
   "não é tão bonito e chamativo" e por que o card de advogado "dá zero vontade de clicar mesmo
   com a informação lá". Pesquisa sobre padrões genéricos de design gerado por IA + o que
