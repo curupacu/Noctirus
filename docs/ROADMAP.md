@@ -294,6 +294,30 @@ Sprints **semanais**. Itens com 🔴 são **bloqueadores** (precisam estar pront
 - **LGPD:** consentimento, política de privacidade, minimização e retenção de dados, criptografia do que for sensível.
 - **Gemini via Vertex AI** (não treina com os dados) no lugar do *free tier* — requisito de privacidade pra descrições reais de clientes.
 - **Verificação de OAB de verdade:** não há API pública oficial → aprovação manual por admin (marca `verificado`) ou consulta ao Cadastro Nacional dos Advogados.
+  **Investigação feita em 30/07** (pesquisa + testes técnicos reais, não só busca teórica):
+  - A OAB **tem** um web service oficial (`https://www5.oab.org.br/cnaws/service.asmx`, SOAP,
+    domínio `oab.org.br`, WSDL público) com a operação `ConsultaAdvogado(inscricao, uf, nome)`.
+    Mas toda chamada exige um header SOAP `Authentication` com uma `Key` — confirmado testando
+    sem chave (erro). É uma API de parceiro, concedida só mediante contato institucional com o
+    Conselho Federal da OAB, não algo que dá pra simplesmente pedir e usar num TCC.
+  - O site público do CNA (`cna.oab.org.br`) tem por trás um endpoint interno
+    (`cna-interno/api/advogado/search?Inscricao=...`) sem chave — mas **protegido por reCAPTCHA
+    de verdade**: testado via `curl` e retorna `400 — "Recaptcha token is missing"`. Só funciona
+    de dentro de uma sessão de navegador de verdade (o JS da página gera um token de reCAPTCHA
+    invisível). Ou seja, **não é só arriscado usar, é tecnicamente bloqueado** pra qualquer
+    automação simples (n8n, curl, script Python) — confirmado tentando montar um fluxo no n8n
+    especificamente pra isso (30/07), que esbarrou nesse mesmo bloqueio.
+  - Confirmação independente: a comunidade da [BrasilAPI](https://github.com/BrasilAPI/BrasilAPI/discussions/215)
+    (projeto open-source de APIs públicas brasileiras) já tentou resolver exatamente esse
+    problema — buscar profissional por número de conselho (OAB incluso) — e ficou sem solução
+    definitiva, citando o mesmo reCAPTCHA e apontando serviços pagos de terceiro como única
+    saída (`consultacrm.com.br`, 100 consultas grátis/mês, depois cobra; também existe a Exato
+    Digital).
+  - **Decisão**: manter a verificação manual pelo admin, com um atalho novo — botão "Verificar
+    no CNA" no `AdminAdvogadosPage` (frontend/backend, 30/07) que copia o número da OAB pra área
+    de transferência e abre `cna.oab.org.br` numa aba nova, sem automação nenhuma. Revisitar o
+    web service oficial só se o projeto virar produto real e valer a pena o contato institucional
+    com a OAB (Fase 4 de verdade, pós-TCC).
 - **Onboarding de advogados reais** + curadoria inicial.
 - **Hardening:** *rate limiting* no backend, monitoramento (Sentry/logs), backups do Firestore, domínio próprio, remover *cold start* (Render Starter ou Cloud Functions).
 - **Beta fechado** com feedback + telemetria básica de eventos.
