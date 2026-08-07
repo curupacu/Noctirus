@@ -504,6 +504,15 @@ tbody tr:hover {
     margin: 0 calc(-1 * var(--space-lg));
     padding: var(--space-md) var(--space-lg);
     box-shadow: var(--shadow-up);
+    /* O form pai é `.card.stack` (flex column, align-items: flex-start) — sem isso, a
+       barra sticky encolhe pro tamanho do botão em vez de ocupar a largura toda do card,
+       flutuando estreita no meio do conteúdo em telas mobile de verdade (achado testando
+       viewport mobile genuína via iframe, 07/08 — só aparecia em largura real de celular,
+       não em desktop redimensionado). `width: 100%` sozinho não bastava: vira uma largura
+       FIXA (100% do conteúdo do form, sem contar a margem negativa), e margem negativa só
+       desloca a caixa, não estica — sobrava undefined 2×24px de vão do lado direito. Somar
+       a margem de volta na largura é o jeito certo de "sangrar" borda a borda. */
+    width: calc(100% + 2 * var(--space-lg));
   }
 }
 

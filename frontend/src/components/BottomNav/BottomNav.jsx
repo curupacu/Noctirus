@@ -1,6 +1,7 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { useAuth } from "../../features/auth/AuthContext";
 import { rotaInicial } from "../../features/auth/rotaInicial";
+import { TELAS_VITRINE } from "../../lib/telasVitrine";
 import "./BottomNav.css";
 
 function IconInicio() {
@@ -44,8 +45,12 @@ function IconPerfil() {
 
 export function BottomNav() {
   const { user, role, loading } = useAuth();
+  const location = useLocation();
 
-  if (loading || !user) return null;
+  // Mesma lista do Header — sem isso, um usuário já logado que visita "/", "/login" ou
+  // "/cadastro" (ex.: digitando a URL de novo) via um BottomNav fixed cobrindo o formulário
+  // da vitrine, que não reserva espaço pra ele (achado testando viewport mobile, 07/08).
+  if (loading || !user || TELAS_VITRINE.includes(location.pathname)) return null;
 
   const itensBrutos = [
     { to: rotaInicial(role), label: "Início", Icon: IconInicio, end: true },
