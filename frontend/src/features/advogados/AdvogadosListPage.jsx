@@ -117,13 +117,19 @@ export function AdvogadosListPage() {
       )}
 
       {advogados && advogados.length > 0 && (
-        <ul className="advogados-lista">
-          {advogados.map((adv) => (
-            <li key={adv.uid}>
-              <AdvogadoCard advogado={adv} />
-            </li>
-          ))}
-        </ul>
+        <>
+          <span className="eyebrow">
+            {advogados.length} advogado{advogados.length === 1 ? "" : "s"} encontrado
+            {advogados.length === 1 ? "" : "s"}
+          </span>
+          <ul className="advogados-lista">
+            {advogados.map((adv) => (
+              <li key={adv.uid}>
+                <AdvogadoCard advogado={adv} />
+              </li>
+            ))}
+          </ul>
+        </>
       )}
     </main>
   );

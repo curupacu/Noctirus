@@ -49,7 +49,7 @@ export function DenunciarPage() {
           <div className="actions">
             <Button onClick={() => navigate(-1)}>Voltar</Button>
             <Link to="/minhas-denuncias" className="button button--secondary">
-              Acompanhar minhas denúncias
+              Acompanhar minhas denúncias <span className="button__arrow" aria-hidden="true">→</span>
             </Link>
           </div>
         </section>

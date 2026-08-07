@@ -71,6 +71,9 @@ export function TriagemPage() {
 
   return (
     <main>
+      <span className="eyebrow">
+        Passo {currentIndex + 1} de {STEPS.length}
+      </span>
       <h1>Triagem</h1>
       <p className="text-muted">
         Responda as perguntas e descreva seu caso com suas próprias palavras. Você pode fazer

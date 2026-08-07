@@ -49,6 +49,7 @@ export function AdminUsuariosPage() {
 
   return (
     <main>
+      <span className="eyebrow">Administração</span>
       <h1>Usuários</h1>
       <AdminNav />
 
@@ -75,7 +76,12 @@ export function AdminUsuariosPage() {
                     </td>
                     <td data-label="Papel">{LABEL_ROLE[u.role] || u.role}</td>
                     <td data-label="Situação">
-                      <span className={`badge ${suspenso ? "badge--danger" : "badge--success"}`}>
+                      <span className={`badge ${suspenso ? "badge--danger" : "badge--seal"}`}>
+                        {!suspenso && (
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <path d="M20 6 9 17l-5-5" />
+                          </svg>
+                        )}
                         {suspenso ? "suspenso" : "ativo"}
                       </span>
                     </td>

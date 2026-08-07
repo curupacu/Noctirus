@@ -207,6 +207,25 @@ a:hover {
   border-color: var(--gold);
 }
 
+/* Selo neutro pra "OAB verificada" — badge--success (dourado sólido) espalhava dourado
+   toda vez que vários advogados verificados apareciam juntos numa lista (o erro que o
+   próprio docs/DESIGN.md lista). O dourado sólido fica reservado só pro badge da
+   classificação da IA (badge--gold, no máximo 1 por tela). */
+.badge--seal {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--text-dim);
+  background: transparent;
+  border-color: var(--text-faint);
+}
+
+.badge--seal svg {
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+}
+
 .loading {
   display: inline-flex;
   align-items: center;
@@ -277,19 +296,21 @@ a:hover {
   margin-bottom: var(--space-lg);
 }
 
-.hero-block::before {
-  content: "";
+/* Coruja achatada no canto, mesma técnica do .splash__owl-mark — troca o padrão abstrato
+   de anel+bolinha (achado do usuário, 07/08: "ruim") que existia aqui antes. */
+.hero-block__owl-mark {
   position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Ccircle cx='106' cy='34' r='24' fill='none' stroke='%23F2D98A' stroke-width='2'/%3E%3Ccircle cx='126' cy='96' r='5' fill='%23F2D98A'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: top right;
-  background-size: 140px 140px;
-  opacity: 0.18;
+  top: 0;
+  right: 0;
+  width: 46%;
+  height: auto;
+  transform: translate(20%, -26%);
+  color: var(--gold);
+  opacity: 0.16;
   pointer-events: none;
 }
 
-.hero-block > * {
+.hero-block > *:not(.hero-block__owl-mark) {
   position: relative;
   z-index: 1;
 }
@@ -309,9 +330,8 @@ a:hover {
   color: var(--cream);
 }
 
-.hero-block--dark::before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Ccircle cx='106' cy='34' r='24' fill='none' stroke='%23f3c968' stroke-width='2'/%3E%3Ccircle cx='126' cy='96' r='5' fill='%23f3c968'/%3E%3C/svg%3E");
-  opacity: 0.25;
+.hero-block--dark .hero-block__owl-mark {
+  opacity: 0.22;
 }
 
 .chip-list {
@@ -477,10 +497,13 @@ tbody tr:hover {
   .form-cta-sticky {
     position: sticky;
     bottom: var(--bottom-nav-height);
-    background: var(--bg);
+    /* Era var(--bg) — a cor da tela, não a do card. Como o form mora dentro de um
+       .card (--surface), o retângulo sticky destacava como um bloco de cor errada
+       colado embaixo do botão (achado do usuário, 07/08). */
+    background: var(--surface);
     margin: 0 calc(-1 * var(--space-lg));
     padding: var(--space-md) var(--space-lg);
-    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.5);
+    box-shadow: var(--shadow-up);
   }
 }
 
@@ -494,6 +517,40 @@ main.splash {
   flex-direction: column;
   justify-content: center;
   gap: var(--space-xl);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Coruja achatada como textura de fundo — silhueta de um tom só, bem maior que a tela e
+   sangrando pra fora dela, não centralizada feito ícone. `position: absolute` tira do
+   fluxo flex; o conteúdo real (`> div`, `.splash__actions`, `.splash__secondary`) fica por
+   cima porque ganha z-index própria logo abaixo. */
+.splash__owl-mark {
+  position: absolute;
+  /* top/right em % aqui seriam relativos à altura do container (main.splash), que é um
+     flex item de altura variável — em telas mais baixas a coruja subia e sumia (achado do
+     usuário, 07/08). Ancorando em top:0/right:0 e deslocando com transform% (que resolve
+     sobre o TAMANHO DA PRÓPRIA coruja, não do container) o deslocamento fica estável em
+     qualquer altura de tela.
+     width usa min(%, vh) e o corte do transform é bem menor que a primeira tentativa —
+     um corte agressivo (o de antes) dependia de o container ter uma altura "certa" pra
+     sobrar exatamente a região dos olhos; num container baixo (mobile deitado, janela
+     redimensionada) sobrava só ponta de pena, sem os olhos — lia como bug, não como coruja
+     (segundo achado do usuário, mesmo dia). Corte pequeno = a coruja quase inteira sempre
+     cabe, então não tem "ângulo errado" pra mostrar. */
+  top: 0;
+  right: 0;
+  width: min(42%, 58vh);
+  height: auto;
+  transform: translate(12%, -8%);
+  color: var(--gold);
+  opacity: 0.09;
+  pointer-events: none;
+}
+
+main.splash > *:not(.splash__owl-mark) {
+  position: relative;
+  z-index: 1;
 }
 
 .splash__logo {
@@ -830,4 +887,71 @@ a.list-row:hover {
 
 .resultado-proximos-passos {
   margin-top: var(--space-lg);
+}
+
+/* Rótulo pequeno acima de título/seção — caixa alta, tracking largo (padrão visto nos
+   sites de advocacia da pesquisa: KM&M, Barr & Douds). Cor já muda sozinha com o tema
+   porque usa --text-faint. */
+.eyebrow {
+  display: block;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: var(--space-xs);
+}
+
+/* Seta que desliza no hover, pros CTAs secundários (ex.: "Entrar" na Home) — o span
+   `.button__arrow` fica dentro do botão/link, essa regra funciona em qualquer um dos dois. */
+.button__arrow {
+  display: inline-block;
+  transition: transform 0.18s ease;
+}
+
+.button:hover:not(:disabled) .button__arrow {
+  transform: translateX(4px);
+}
+
+/* Mesmo gesto (seta desliza no hover) nos cards/linhas de lista que já usam "›" como
+   affordance — advogado-row e list-row. */
+.advogado-row__chevron {
+  transition: transform 0.18s ease;
+}
+
+.advogado-row:hover .advogado-row__chevron,
+a.list-row:hover .advogado-row__chevron {
+  transform: translateX(3px);
+}
+
+/* Vitrine escura fixa — Home, Login e Cadastro são a primeira impressão da marca e ficam
+   sempre no visual noturno da coruja, independente do tema escolhido pro resto do app
+   (decisão de 07/08: "vitrine escura, app claro"). Sobrescreve os tokens de base E os
+   aliases --color-* na MESMA regra — um custom property que referencia var() é resolvido
+   com o valor que a variável referenciada tem *nesse mesmo elemento*, então --color-text:
+   var(--text) declarado só no :root não reagiria a um --text redefinido aqui embaixo se
+   --color-text não fosse redeclarado também. */
+main.splash,
+main.auth-screen {
+  /* main.splash já tinha `color` própria; main.auth-screen não tinha nenhuma — sem isso,
+     texto sem classe (ex.: rodapé "Não tem conta?") herdava o `color` já resolvido lá do
+     `body` no tema claro, em vez de reagir aos tokens redefinidos aqui. */
+  color: var(--text);
+  --bg: var(--ink-950);
+  --bg-section: var(--ink-900);
+  --surface: var(--ink-850);
+  --surface-hover: var(--ink-800);
+  --border: #47382a;
+  --text: var(--cream);
+  --text-dim: var(--cream-dim);
+  --text-faint: #7e7566;
+
+  --color-bg: var(--bg);
+  --color-bg-section: var(--bg-section);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-dim);
+  --color-text-faint: var(--text-faint);
+  --color-border: var(--border);
 }

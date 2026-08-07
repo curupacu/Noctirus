@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
+import { OwlMark } from "../../components/OwlMark/OwlMark";
 import { api } from "../../lib/api";
 
 const LABEL_AREA = {
@@ -37,6 +38,7 @@ export function PainelPage() {
       </p>
 
       <section className="hero-block hero-block--dark">
+        <OwlMark className="hero-block__owl-mark" />
         <h2>Precisa de um advogado?</h2>
         <p>
           Responda algumas perguntas e descreva seu caso — a gente indica a área certa e

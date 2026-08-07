@@ -7,7 +7,10 @@ import { Button } from "../Button/Button";
 import { ThemeToggle } from "../ThemeToggle/ThemeToggle";
 import "./Header.css";
 
-const TELAS_SEM_CABECALHO = ["/login", "/cadastro"];
+// "/" entrou na lista junto — a Home virou vitrine de marca sempre escura (própria Logo
+// completa já aparece nela) e não deve herdar o Header no tema do resto do app nem
+// duplicar o ícone da coruja no topo.
+const TELAS_SEM_CABECALHO = ["/", "/login", "/cadastro"];
 
 export function Header() {
   const { user, role, loading, logout } = useAuth();

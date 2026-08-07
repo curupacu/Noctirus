@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import { Button } from "../components/Button/Button";
 import { Logo } from "../components/Logo/Logo";
+import { OwlMark } from "../components/OwlMark/OwlMark";
 
 export function HomePage() {
   return (
     <main className="splash">
+      <OwlMark className="splash__owl-mark" />
       <div>
         <Logo className="splash__logo" />
         <h1 className="splash__headline">
@@ -21,7 +23,9 @@ export function HomePage() {
           <Button>Criar conta</Button>
         </Link>
         <Link to="/login">
-          <Button variant="light">Entrar</Button>
+          <Button variant="light">
+            Entrar <span className="button__arrow" aria-hidden="true">→</span>
+          </Button>
         </Link>
       </div>
 

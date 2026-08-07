@@ -31,7 +31,12 @@ Já funciona de ponta a ponta:
   de iniciais coloridas como fallback
 - 109 testes automatizados (Vitest, unitários + integração via `supertest`) e CI no GitHub
   Actions — resumo em [`docs/TESTES.md`](docs/TESTES.md)
-- Tema claro (padrão) e escuro com botão de alternância, salvo por navegador
+- Tema claro (padrão) e escuro com botão de alternância, salvo por navegador. Home, Login e
+  Cadastro ficam sempre no visual escuro ("vitrine" da marca); o resto do app segue o tema
+  escolhido
+- Redesign visual completo nas 12 telas do MVP (07/08) — coruja como marca d'água, sombras
+  discretas, selo neutro em vez de dourado espalhado, paleta clara revisada. Ver
+  [`CLAUDE.md`](CLAUDE.md) pra detalhes
 
 **Ainda não existe:** verificação real de OAB, upload de currículo em PDF (`nocturis-prod`
 separado foi avaliado e descartado por decisão — ver abaixo). Ver

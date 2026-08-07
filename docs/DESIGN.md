@@ -1,11 +1,27 @@
 # DESIGN.md — Nocturis (reformulação visual)
 
+> **Status (07/08): executado, com desvios aprovados pelo usuário.** Este documento
+> descrevia a visão original — escuro fixo em toda tela. Na prática o time decidiu
+> (29/07) abrir o app no **tema claro por padrão** com escuro opcional, e depois (07/08)
+> uma direção híbrida: **Home/Login/Cadastro ficam sempre escuras** ("vitrine" da marca,
+> fundo `--ink-950` fixo via `main.splash`/`main.auth-screen` no `index.css`, sem
+> `ThemeToggle` nessas 3 telas), o resto do app segue o tema claro/escuro escolhido pelo
+> usuário. A paleta também mudou (ver seção 4, valores atualizados) depois de feedback de
+> que o dourado original (`#F2D98A`) lia como "pastel"/"catarro" e a borda (`#DBCBA3`) como
+> "cinza estranho" — e o card virou branco puro (`#FFFFFF`) sobre fundo creme, um desvio
+> deliberado da regra "nunca card branco" abaixo (aqui não é branco-sobre-branco, o fundo
+> continua creme). O resto das regras deste documento (dourado com parcimônia, cantos
+> discretos, sem degradê, sombra discreta) continua valendo e foi seguido. Log completo da
+> execução em `CLAUDE.md`, entrada de 07/08.
+
 Estética-alvo: **app jurídico noturno e sóbrio** — fundo escuro quente, texto quase
 branco, marrons da coruja nos detalhes, amarelo-dourado só nos acentos. Serifada
 elegante nos títulos, combinando com a logo. Sério e premium, com cara de app mobile
 (NÃO landing page de escritório).
 
-Este documento é a fonte de verdade do visual. Siga-o à risca.
+Este documento é a fonte de verdade do visual **original** — pra paleta e tokens
+realmente em produção hoje, ver `frontend/src/styles/tokens.css` (comentado) ou a seção 4
+abaixo, já atualizada.
 
 ---
 
@@ -95,9 +111,11 @@ Esse era o problema das telas antigas (cartão branco-no-branco).
   --brown-600: #8A5E38;
   --brown-800: #4A3420;
 
-  /* Amarelo-dourado (olhos da coruja) — só acentos */
-  --gold:     #F2D98A;   /* botão principal, eyebrow, 1 palavra no título, ícone/bico */
-  --gold-dim: #D8B95E;   /* hover do dourado */
+  /* Amarelo-dourado (olhos da coruja) — só acentos.
+     Valores atualizados em 07/08 — os originais (#F2D98A/#D8B95E) liam como pastel/
+     "catarro" numa área grande de botão; versão mais densa/saturada. */
+  --gold:     #D9A23A;   /* botão principal, eyebrow, 1 palavra no título, ícone/bico */
+  --gold-dim: #B98527;   /* hover do dourado */
 
   /* Texto — creme quente, NUNCA branco puro */
   --cream:       #F3ECDF;   /* título / texto principal */
