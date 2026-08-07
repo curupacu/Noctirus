@@ -2,15 +2,11 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import logoIcone from "../../assets/logosvg_sócoruja.svg";
 import { useAuth } from "../../features/auth/AuthContext";
 import { rotaInicial } from "../../features/auth/rotaInicial";
+import { TELAS_VITRINE } from "../../lib/telasVitrine";
 import { useTheme } from "../../lib/theme";
 import { Button } from "../Button/Button";
 import { ThemeToggle } from "../ThemeToggle/ThemeToggle";
 import "./Header.css";
-
-// "/" entrou na lista junto — a Home virou vitrine de marca sempre escura (própria Logo
-// completa já aparece nela) e não deve herdar o Header no tema do resto do app nem
-// duplicar o ícone da coruja no topo.
-const TELAS_SEM_CABECALHO = ["/", "/login", "/cadastro"];
 
 export function Header() {
   const { user, role, loading, logout } = useAuth();
@@ -23,7 +19,7 @@ export function Header() {
     navigate("/");
   }
 
-  if (TELAS_SEM_CABECALHO.includes(location.pathname)) return null;
+  if (TELAS_VITRINE.includes(location.pathname)) return null;
 
   return (
     <header className="site-header">
