@@ -13,7 +13,14 @@ export function AdvogadoCard({ advogado }) {
       <span className="advogado-row__info">
         <span className="advogado-row__nome">
           {advogado.nome || advogado.uid}
-          {advogado.verificado && <span className="badge badge--success">OAB verificada</span>}
+          {advogado.verificado && (
+            <span className="badge badge--seal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M20 6 9 17l-5-5" />
+              </svg>
+              OAB verificada
+            </span>
+          )}
           {advogado.especialidadesCompativeis > 0 && <span className="badge">Atua no assunto</span>}
           {advogado.vezesSugerido > 0 && (
             <span className="badge">

@@ -61,6 +61,7 @@ export function AdminDenunciasPage() {
 
   return (
     <main>
+      <span className="eyebrow">Administração</span>
       <h1>Denúncias</h1>
       <AdminNav />
 
@@ -70,7 +71,12 @@ export function AdminDenunciasPage() {
         {denuncias.map((d) => (
           <li key={d.id} className="card stack">
             <p>
-              <span className={`badge${d.status === "resolvida" ? " badge--success" : ""}`}>
+              <span className={`badge${d.status === "resolvida" ? " badge--seal" : ""}`}>
+                {d.status === "resolvida" && (
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M20 6 9 17l-5-5" />
+                  </svg>
+                )}
                 {LABEL_STATUS[d.status] || d.status}
               </span>{" "}
               <span className="text-muted">{new Date(d.createdAt).toLocaleDateString("pt-BR")}</span>

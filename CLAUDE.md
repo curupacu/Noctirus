@@ -347,6 +347,67 @@ Na raiz: `npm run dev` sobe frontend e backend juntos (via `concurrently`).
   chave feitos depois daquela rodada). Como o script sozinho já consome as ~20
   requisições/dia da cota, **não repetir esse teste no mesmo dia** — evita esgotar a cota
   à toa antes da apresentação de 13/08.
+- **Redesign visual completo (07/08)**: pesquisa de referência (sites de advocacia
+  premiados — Quinn Emanuel, Kauff McGuire & Margolis, Barr & Douds, BCR Law) + plano
+  aprovado pelo usuário, executado em 3 fases (P0: Home/Login/Cadastro/Triagem/
+  Resultado/Advogados; P1: Perfil público, Painel, Perfil; P2: Denúncias, admin ×3) — as
+  12 telas do MVP inteiras. Decisão de direção ("vitrine escura, app claro"): Home, Login e
+  Cadastro ficam **sempre** no visual noturno da coruja (fundo `--ink-950` fixo via seletor
+  `main.splash, main.auth-screen` no `index.css`, sem `ThemeToggle` nessas telas — decisão
+  deliberada, não regressão do tema claro de 29/07); o resto do app continua claro por
+  padrão como já decidido, com escuro opcional. Principais mudanças, todas em
+  `frontend/src/`:
+  - **`components/OwlMark/`** (novo): silhueta achatada de um tom só, reaproveitando os
+    paths da coruja que já existiam no `Logo.jsx` — substitui o padrão abstrato de
+    anel+bolinha que existia em `.hero-block::before`/`main.splash` (achado do usuário:
+    "não gostei", "ruim"). Ajustada 2x depois de feedback: a 1ª versão cortava demais e em
+    telas baixas sobrava só ponta de pena sem os olhos (lia como bug); corrigido reduzindo
+    o corte e trocando `top/right` em `%` (relativos à altura variável do container) por
+    `transform: translate()` (relativo ao tamanho da própria coruja) — testado forçando
+    alturas de container até 180px via DOM.
+  - **Sombras suavizadas**: `--shadow-sm`/`--shadow-md`/`--shadow-up` (novo, pro
+    BottomNav/CTA sticky) substituindo o `--shadow` único a 75% de opacidade usado igual
+    em tudo (achado do usuário: "sombra muito forte").
+  - **Paleta clara ajustada** (achado do usuário: "cinza estranho", "amarelo catarro"):
+    `--gold` `#F2D98A`→`#D9A23A` (mais denso, menos pastel), `--border` `#DBCBA3`→`#E4E0D7`
+    (neutro de verdade em vez de caqui disfarçado de cinza), `--surface`
+    `#EFE6D3`→`#FFFFFF` (card branco sobre fundo creme — desvio deliberado e aprovado da
+    letra do `docs/DESIGN.md` original, que pedia "nunca card branco"; aqui não é
+    branco-sobre-branco, o fundo continua creme), `--bg`/`--surface-hover` também
+    ajustados. Ver `docs/DESIGN.md` (nota no topo) pra os valores atuais.
+  - **`.badge--seal`** (novo): selo neutro com ícone de check substituindo o badge dourado
+    sólido de "OAB verificada"/"resolvida"/"ativo"/"verificada" em toda listagem/tabela
+    onde aparecia repetido (`AdvogadoCard`, perfil público, Perfil, Minhas denúncias,
+    3 telas de admin) — dourado sólido ficou só pro badge de classificação da IA (1 por
+    tela), que é a regra "dourado com parcimônia" que o próprio `DESIGN.md` já pedia.
+  - **`.eyebrow`** (novo): rótulo pequeno de contexto acima de título/seção — "Passo N de
+    3" (Triagem), "Triagem concluída" (Resultado), contagem de resultados (Advogados,
+    Minhas denúncias), "Administração" (as 3 telas de admin).
+  - **Bug real corrigido no processo**: `main.auth-screen` nunca tinha uma regra `color`
+    própria (diferente de `main.splash`, que já tinha) — texto sem classe própria (ex.:
+    rodapé "Não tem conta?" do Login) herdava o `color` já resolvido lá do `body` no tema
+    claro, ficando ilegível na vitrine escura. Também: os aliases `--color-*` só reagem a
+    um token base redefinido (`--text`, `--bg`...) se forem redeclarados na mesma regra —
+    herdar de um ancestral não basta, porque a resolução do `var()` acontece no elemento
+    onde o alias foi declarado, não em quem herda.
+  - Deploy real no Firebase Hosting em 3 rodadas (uma por fase), confirmado acessando
+    https://nocturis-web.web.app depois de cada uma — comando e saída sempre colados no
+    chat, como este documento pede.
+- **Banco de dados resetado e repopulado (07/08)**, a pedido do usuário: as 12 contas do
+  Firebase Auth (as 3 de teste oficiais + 2 `e2e-advogado-*` de teste automatizado + 7 de
+  e-mail pessoal do time/testers — usuário confirmou explicitamente que podia apagar as
+  pessoais também) e todos os documentos de `users`/`advogados`/`curriculos`/`denuncias`/
+  `triagens` foram apagados via scripts temporários (fora do repo, sem ficar rastro).
+  Repopulado com o `database/seed/seed.js` + `lawyers.json` já existentes (30 advogados
+  fictícios, sem alteração) e as 3 contas de teste recriadas com login de verdade:
+  `admin.teste@example.com`, `cliente.teste@example.com`, `advogado.teste@example.com`,
+  todas com senha `Nocturis123!` (a de advogado já vem com bio/especialidades/currículo
+  completos e OAB verificada, diferente dos 30 do seed, que não têm login). Mais **5
+  denúncias de modelo** criadas direto no Firestore (2 resolvidas com decisão registrada,
+  1 em análise, 2 abertas — uma delas sem alvo específico, testando o fluxo "denunciar um
+  problema" genérico) pra dar pra demonstrar a moderação do admin sem precisar denunciar
+  nada de verdade. Confirmado ao vivo logando como `cliente.teste` e conferindo
+  `/minhas-denuncias` e `/advogados`.
 
 ## Escopo do MVP (Fase 1)
 

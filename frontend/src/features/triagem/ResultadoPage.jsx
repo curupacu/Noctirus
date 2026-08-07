@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { AdvogadoCard } from "../../components/AdvogadoCard/AdvogadoCard";
+import { OwlMark } from "../../components/OwlMark/OwlMark";
 import { api } from "../../lib/api";
 
 const LABEL_AREA = {
@@ -55,11 +56,13 @@ export function ResultadoPage() {
 
   return (
     <main>
+      <span className="eyebrow">Triagem concluída</span>
       <h1>
         Resultado da <em className="accent">triagem</em>
       </h1>
 
       <section className="hero-block">
+        <OwlMark className="hero-block__owl-mark" />
         <span className="badge badge--gold">
           {resultado.origem === "ia" ? "Classificado por IA" : "Classificado por regras"}
         </span>

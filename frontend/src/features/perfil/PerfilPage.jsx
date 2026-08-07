@@ -122,7 +122,12 @@ export function PerfilPage() {
         {role === "advogado" && (
           <>
             {" "}
-            <span className={`badge${advogado?.verificado ? " badge--success" : ""}`}>
+            <span className={`badge${advogado?.verificado ? " badge--seal" : ""}`}>
+              {advogado?.verificado && (
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M20 6 9 17l-5-5" />
+                </svg>
+              )}
               {advogado?.verificado ? "OAB verificada" : "OAB em análise"}
             </span>
           </>

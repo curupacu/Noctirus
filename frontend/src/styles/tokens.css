@@ -18,8 +18,11 @@
   --brown-600: #8a5e38;
   --brown-800: #4a3420;
 
-  --gold: #f2d98a;
-  --gold-dim: #d8b95e;
+  /* Dourado antigo (#F2D98A) era pastel claro demais — numa área grande (botão full-width,
+     pílula ativa) lia como desbotado em vez de rico (achado do usuário, 07/08: "meio
+     catarro"). Versão mais densa/saturada, tom de latão antigo. */
+  --gold: #d9a23a;
+  --gold-dim: #b98527;
 
   --cream: #f3ecdf;
   --cream-dim: #b3a994;
@@ -35,14 +38,31 @@
   /* Forma */
   --radius: 12px;
   --radius-sm: 8px;
+  /* 0.75 de opacidade lia como sombra pesada em qualquer card/botão (achado do usuário,
+     07/08) — os sites de referência da pesquisa quase não usam sombra, contam com borda
+     de 1px pra profundidade. --shadow-sm/--shadow-md eram idênticos (sem diferença nenhuma
+     entre estado normal e hover); agora sm é quase imperceptível e md é só um pouco mais
+     presente no hover. --shadow-up é a sombra voltada pra cima do BottomNav/CTA fixo. */
   --shadow: 0 10px 28px -14px rgba(0, 0, 0, 0.75);
 
   /* --- Tema: claro (padrão) --- trocam em :root[data-theme="dark"] logo abaixo --- */
-  --bg: #f7f2e7;
+  /* Levemente mais claro/limpo que #F7F2E7 — junto com o --surface branco, dá mais
+     respiro entre fundo e card (aprovado 07/08). */
+  --bg: #faf7f1;
   --bg-section: #f1ead9;
-  --surface: #efe6d3;
-  --surface-hover: #e4d8bb;
-  --border: #dbcba3;
+  /* Branco puro (não creme) — de propósito, aprovado 07/08. Cria separação real entre
+     card e fundo (--bg continua creme) sem precisar de sombra pesada pra sustentar a
+     hierarquia. Não é "branco sobre branco" (a regra que o DESIGN.md original queria
+     evitar): o fundo continua creme, só o card ficou branco-sobre-creme. */
+  --surface: #ffffff;
+  /* Era #E4D8BB — mesmo problema do --border antigo (caqui saturado). Com o --surface
+     branco novo, o hover precisa ser um passo bem mais discreto, não outro tom de bege
+     forte (aprovado 07/08). */
+  --surface-hover: #f1ede4;
+  /* Era #DBCBA3 — tinha ~35% de saturação, então lia como caqui sujo, não como linha
+     neutra de estrutura (achado do usuário, 07/08: "cinza estranho"). Versão bem mais
+     desaturada. */
+  --border: #e4e0d7;
   --text: #221b12;
   --text-dim: #5b4c36;
   --text-faint: #8a7b60;
@@ -98,8 +118,9 @@
   --space-xl: 40px;
   --bottom-nav-height: 68px;
 
-  --shadow-sm: var(--shadow);
-  --shadow-md: var(--shadow);
+  --shadow-sm: 0 1px 3px rgba(20, 18, 15, 0.12);
+  --shadow-md: 0 8px 20px -10px rgba(20, 18, 15, 0.22);
+  --shadow-up: 0 -2px 12px rgba(20, 18, 15, 0.14);
 }
 
 /* Tema escuro — ligado pelo botão no Header (ver lib/theme.js), guardado em localStorage.

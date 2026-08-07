@@ -242,13 +242,15 @@ Sprints **semanais**. Itens com 🔴 são **bloqueadores** (precisam estar pront
 - ✅ [GR] Seed de advogados fictícios ampliado de 5 pra **30**, cobrindo as 33 categorias e 14
   estados, pra dar pra testar filtro/matching de verdade.
 - [GC] Rodar 15–20 casos de teste reais e afinar *prompt* + árvore (medir a taxa de acerto). — pendente
-- ✅🟡 [GR] **Passe de UX, parcial**: Home, Login, Cadastro e a busca pública de advogados
-  (`/advogados`) ganharam um redesign completo, mobile-first, guiado por referência visual do
-  app Bumble (tela cheia, sem card flutuando, botões pill, seleção por `ChoiceCard`/pills em
-  vez de `<select>`). **O resto do app (Painel, Perfil, currículo, perfil público do advogado,
-  resultado da triagem, admin) só tem o design system básico aplicado** (cores/botões/inputs
-  certos, mas ainda com a estrutura antiga de cards em caixa) — puxar isso pra frente é o item
-  de UI/UX mais urgente em aberto.
+- ✅ [GR] **Passe de UX**: Home, Login, Cadastro e a busca pública de advogados (`/advogados`)
+  ganharam um redesign completo, mobile-first, guiado por referência visual do app Bumble
+  (tela cheia, sem card flutuando, botões pill, seleção por `ChoiceCard`/pills em vez de
+  `<select>`). *Atualização 07/08 — item fechado*: o resto do app (Painel, Perfil,
+  currículo, perfil público do advogado, resultado da triagem, denúncias, 3 telas de
+  admin) recebeu uma segunda leva de redesign, com pesquisa de referência visual de sites
+  de advocacia premiados, plano aprovado em 3 fases e execução completa — ver `CLAUDE.md`
+  pra detalhes (marca d'água da coruja, sombras suavizadas, paleta clara revisada, selo
+  neutro em vez de dourado espalhado). Não é mais o item mais urgente em aberto.
 - [GR] **Matching ainda não usa `especialidades`**, só área + cidade/UF — item novo que apareceu
   com a taxonomia ampliada, ainda não estava previsto neste roadmap. Prioridade média.
 

@@ -49,6 +49,7 @@ export function AdminAdvogadosPage() {
 
   return (
     <main>
+      <span className="eyebrow">Administração</span>
       <h1>Advogados cadastrados</h1>
       <AdminNav />
       <div className="card">
@@ -70,7 +71,12 @@ export function AdminAdvogadosPage() {
                     {adv.oab?.numero}/{adv.oab?.uf}
                   </td>
                   <td data-label="Situação">
-                    <span className={`badge${adv.verificado ? " badge--success" : ""}`}>
+                    <span className={`badge${adv.verificado ? " badge--seal" : ""}`}>
+                      {adv.verificado && (
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <path d="M20 6 9 17l-5-5" />
+                        </svg>
+                      )}
                       {adv.verificado ? "verificada" : "em análise"}
                     </span>
                   </td>
