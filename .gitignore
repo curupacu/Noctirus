@@ -20,6 +20,9 @@ npm-debug.log
 # VSCode
 .vscode/
 
+# Documento de sessão só local — não sobe pro GitHub (repo tem acesso de terceiros)
+CLAUDE.md
+
 # Sistema
 .DS_Store
 Thumbs.db
