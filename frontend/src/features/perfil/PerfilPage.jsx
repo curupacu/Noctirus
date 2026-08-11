@@ -242,12 +242,20 @@ export function PerfilPage() {
       </div>
       <ul className="list-plain">
         {role === "advogado" && (
-          <li>
-            <Link to={`/advogados/${user.uid}`} className="list-row">
-              <span className="list-row__title">Ver meu perfil público</span>
-              <span className="advogado-row__chevron" aria-hidden="true">›</span>
-            </Link>
-          </li>
+          <>
+            <li>
+              <Link to={`/advogados/${user.uid}`} className="list-row">
+                <span className="list-row__title">Ver meu perfil público</span>
+                <span className="advogado-row__chevron" aria-hidden="true">›</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/cartao" className="list-row">
+                <span className="list-row__title">Meu cartão de visita</span>
+                <span className="advogado-row__chevron" aria-hidden="true">›</span>
+              </Link>
+            </li>
+          </>
         )}
         {role === "admin" && (
           <li>
