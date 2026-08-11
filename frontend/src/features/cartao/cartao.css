@@ -1,0 +1,265 @@
+.cartao-preview-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: var(--space-lg) 0;
+}
+
+.cartao-preview {
+  width: min(100%, 420px);
+}
+
+/* container-type: cqw permite fixar a tipografia como % da largura do próprio cartão —
+   sem isso o texto não escala junto quando o preview encolhe no mobile (min(100%, 420px)
+   acima) nem quando o html-to-image exporta em pixelRatio maior (baixarCartao, ver
+   CartaoPage.jsx). */
+.cartao-face {
+  container-type: inline-size;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 7 / 4;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  font-family: var(--font-body);
+  display: flex;
+  flex-direction: column;
+}
+
+/* min-height: 0 deixa o pad encolher de verdade quando pad + band (Dourado) juntos
+   passam da altura fixa do cartão — sem isso o pad nunca cede espaço e o conteúdo dele
+   (chip de especialidade) acaba atrás da faixa, que é sobreposta por cima (achado do
+   usuário, 11/08). O ajuste de verdade foi tirar a logo da faixa (ver templates.jsx) pra
+   sobrar altura o bastante — isso aqui só evita que o mesmo tipo de estouro vire
+   sobreposição de novo se o conteúdo crescer (nome grande, etc). */
+.cartao-face__pad {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-height: 0;
+  padding: 5.6cqw;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.cartao-face__pad--sem-rodape {
+  padding-bottom: 3.6cqw;
+}
+
+.cartao-face__owl-mark {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  right: 0;
+  width: 52%;
+  height: auto;
+  transform: translate(16%, -22%);
+  pointer-events: none;
+}
+
+.cartao-face__owl-mark--escura {
+  color: var(--gold);
+  opacity: 0.18;
+}
+
+.cartao-face__owl-mark--clara {
+  color: var(--surface-warm);
+  opacity: 0.1;
+}
+
+.cartao-face__nome {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 6.6cqw;
+  line-height: 1.15;
+}
+
+.cartao-face__nome--sm {
+  font-size: 5.6cqw;
+}
+
+.cartao-face__cargo {
+  margin: 0.5cqw 0 0;
+  font-size: 3.2cqw;
+  font-weight: 600;
+}
+
+.cartao-face__chip {
+  display: inline-block;
+  margin-top: 1.8cqw;
+  padding: 0.8cqw 2.4cqw;
+  border-radius: 999px;
+  font-size: 2.5cqw;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+
+.cartao-face__footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 3cqw;
+}
+
+.cartao-face__contatos {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1cqw;
+  min-width: 0;
+}
+
+.cartao-face__contatos p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 1.3cqw;
+  font-size: 2.6cqw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cartao-face__contatos svg {
+  width: 3.1cqw;
+  height: 3.1cqw;
+  flex-shrink: 0;
+}
+
+.cartao-face__qr {
+  flex-shrink: 0;
+  width: 18cqw;
+  height: 18cqw;
+  background: #fff;
+  border-radius: 1.6cqw;
+  padding: 1.1cqw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cartao-face__qr img {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* --- Vitrine --- */
+.cartao-face--vitrine {
+  background: var(--ink-950);
+  color: var(--cream);
+}
+
+.cartao-face--vitrine .cartao-face__nome {
+  color: var(--gold);
+}
+
+.cartao-face--vitrine .cartao-face__cargo {
+  color: var(--cream-dim);
+}
+
+.cartao-face--vitrine .cartao-face__chip {
+  background: rgba(217, 162, 58, 0.16);
+  color: var(--gold);
+  border-color: rgba(217, 162, 58, 0.45);
+}
+
+.cartao-face--vitrine .cartao-face__contatos {
+  color: var(--cream);
+}
+
+/* --- Claro --- */
+.cartao-face--claro {
+  background: var(--surface, #fff);
+  color: var(--ink-950);
+  border: 1px solid var(--border);
+}
+
+.cartao-face--claro .cartao-face__nome {
+  color: var(--ink-950);
+}
+
+.cartao-face--claro .cartao-face__cargo,
+.cartao-face--claro .cartao-face__contatos {
+  color: var(--text-dim, #5b4c36);
+}
+
+.cartao-face--claro .cartao-face__chip {
+  background: rgba(217, 162, 58, 0.14);
+  color: var(--gold-dim);
+  border-color: rgba(217, 162, 58, 0.4);
+}
+
+/* --- Dourado --- */
+.cartao-face--dourado {
+  background: var(--surface, #fff);
+  color: var(--ink-950);
+}
+
+.cartao-face--dourado .cartao-face__nome {
+  color: var(--ink-950);
+}
+
+.cartao-face--dourado .cartao-face__cargo {
+  color: var(--text-dim, #5b4c36);
+}
+
+.cartao-face--dourado .cartao-face__chip {
+  background: rgba(217, 162, 58, 0.14);
+  color: var(--gold-dim);
+  border-color: rgba(217, 162, 58, 0.4);
+}
+
+.cartao-face__band {
+  position: relative;
+  z-index: 1;
+  background: var(--surface-warm);
+  color: var(--cream);
+  padding: 3.4cqw 5.6cqw;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 3cqw;
+}
+
+.cartao-face__band .cartao-face__contatos {
+  color: var(--cream);
+}
+
+/* --- Pessoal --- */
+.cartao-face--pessoal {
+  background: var(--surface, #fff);
+  color: var(--ink-950);
+  border: 1px solid var(--border);
+}
+
+.cartao-face--pessoal .cartao-face__nome {
+  color: var(--ink-950);
+}
+
+.cartao-face--pessoal .cartao-face__cargo,
+.cartao-face--pessoal .cartao-face__contatos {
+  color: var(--text-dim, #5b4c36);
+}
+
+.cartao-face--pessoal .cartao-face__chip {
+  background: rgba(217, 162, 58, 0.14);
+  color: var(--gold-dim);
+  border-color: rgba(217, 162, 58, 0.4);
+}
+
+.cartao-face__cabecalho-pessoal {
+  display: flex;
+  align-items: center;
+  gap: 3cqw;
+}
+
+/* Sobrescreve o tamanho fixo em px de .avatar-placeholder (pensado pra UI normal, não
+   pro cartão que escala em cqw) — dobrando a classe com a base pra ganhar de propósito
+   sem precisar de !important. */
+.avatar-placeholder.cartao-face__avatar {
+  width: 17cqw;
+  height: 17cqw;
+  font-size: 6cqw;
+  flex-shrink: 0;
+}
