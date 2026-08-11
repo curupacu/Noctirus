@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
+import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
 import { AdminNav } from "./AdminNav";
 
@@ -57,7 +58,7 @@ export function AdminDenunciasPage() {
   }
 
   if (erro) return <p role="alert">{erro}</p>;
-  if (!denuncias) return <p className="loading">Carregando...</p>;
+  if (!denuncias) return <Loading>Carregando...</Loading>;
 
   return (
     <main>

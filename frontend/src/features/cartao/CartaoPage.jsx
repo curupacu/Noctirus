@@ -3,6 +3,7 @@ import QRCode from "qrcode";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "../../components/Button/Button";
 import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
+import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
 import { useAuth } from "../auth/AuthContext";
 import "./cartao.css";
@@ -80,7 +81,7 @@ export function CartaoPage() {
 
   if (erroCarregar) return <p role="alert">{erroCarregar}</p>;
   if (!dadosUsuario || !advogado || !qrCode) {
-    return <p className="loading">Carregando cartão...</p>;
+    return <Loading>Carregando cartão...</Loading>;
   }
 
   const todasCategorias = Object.values(categoriasPorArea || {}).flat();

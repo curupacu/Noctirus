@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "../../components/Button/Button";
+import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
 import { AdminNav } from "./AdminNav";
 
@@ -45,7 +46,7 @@ export function AdminUsuariosPage() {
   }
 
   if (erro) return <p role="alert">{erro}</p>;
-  if (!usuarios) return <p className="loading">Carregando...</p>;
+  if (!usuarios) return <Loading>Carregando...</Loading>;
 
   return (
     <main>

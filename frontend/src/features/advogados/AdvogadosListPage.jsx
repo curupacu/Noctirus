@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AdvogadoCard } from "../../components/AdvogadoCard/AdvogadoCard";
 import { Input } from "../../components/Input/Input";
+import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
 
 const AREAS = [
@@ -110,7 +111,7 @@ export function AdvogadosListPage() {
       </div>
 
       {erro && <p role="alert">{erro}</p>}
-      {!advogados && !erro && <p className="loading">Carregando...</p>}
+      {!advogados && !erro && <Loading>Carregando...</Loading>}
 
       {advogados && advogados.length === 0 && (
         <p className="text-muted">Nenhum advogado encontrado com esses filtros.</p>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
 
 const LABEL_STATUS = { aberta: "Aberta", em_analise: "Em análise", resolvida: "Resolvida" };
@@ -22,7 +23,7 @@ export function MinhasDenunciasPage() {
       <h1>Minhas denúncias</h1>
 
       {erro && <p role="alert">{erro}</p>}
-      {!denuncias && !erro && <p className="loading">Carregando...</p>}
+      {!denuncias && !erro && <Loading>Carregando...</Loading>}
       {denuncias && denuncias.length === 0 && <p>Você ainda não registrou nenhuma denúncia.</p>}
 
       {denuncias && denuncias.length > 0 && (

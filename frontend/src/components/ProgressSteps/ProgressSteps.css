@@ -20,6 +20,7 @@
   height: 2px;
   background: var(--color-border);
   margin: 0 var(--space-xs);
+  transition: background-color 0.3s ease;
 }
 
 .progress-steps__item--done:not(:last-child)::after {
@@ -33,11 +34,13 @@
   border-radius: var(--radius-full);
   border: 2px solid var(--color-border);
   background: var(--color-surface);
+  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
 }
 
 .progress-steps__item--current .progress-steps__dot {
   border-color: var(--color-primary-hover);
   background: var(--color-primary);
+  transform: scale(1.15);
 }
 
 .progress-steps__item--done .progress-steps__dot {
@@ -49,6 +52,7 @@
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
   white-space: nowrap;
+  transition: color 0.3s ease;
 }
 
 .progress-steps__item--current .progress-steps__label {
@@ -59,5 +63,13 @@
 @media (max-width: 480px) {
   .progress-steps__label {
     display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress-steps__item:not(:last-child)::after,
+  .progress-steps__dot,
+  .progress-steps__label {
+    transition: none;
   }
 }

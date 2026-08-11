@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
 import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
+import { Loading } from "../../components/Loading/Loading";
 import { ProgressSteps } from "../../components/ProgressSteps/ProgressSteps";
 import { api } from "../../lib/api";
 
@@ -48,7 +49,7 @@ export function TriagemPage() {
     }
   }
 
-  if (!arvore && !erro) return <p className="loading">Carregando...</p>;
+  if (!arvore && !erro) return <Loading>Carregando...</Loading>;
 
   const perguntaSegundaEtapa = arvore && arvore.segundaEtapa[respostas.situacao];
 
@@ -84,7 +85,7 @@ export function TriagemPage() {
 
       <form className="card stack" onSubmit={enviar}>
         {arvore && (
-          <div className="input-group">
+          <div className="input-group step-enter">
             <label className="input-label">{arvore.principal.pergunta}</label>
             <div className="choice-grid">
               {arvore.principal.opcoes.map((opcao) => (
@@ -102,7 +103,7 @@ export function TriagemPage() {
         )}
 
         {perguntaSegundaEtapa && (
-          <div className="input-group">
+          <div className="input-group step-enter" key={perguntaSegundaEtapa.id}>
             <label className="input-label">{perguntaSegundaEtapa.pergunta}</label>
             <div className="choice-grid">
               {perguntaSegundaEtapa.opcoes.map((opcao) => (
@@ -120,7 +121,7 @@ export function TriagemPage() {
         )}
 
         {respostasEscolhidas.length > 0 && (
-          <ul className="chip-list" aria-label="Respostas escolhidas até agora">
+          <ul className="chip-list step-enter" aria-label="Respostas escolhidas até agora">
             {respostasEscolhidas.map((label) => (
               <li key={label} className="chip">
                 {label}

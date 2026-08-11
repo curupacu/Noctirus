@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
+import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
 
 const LABEL_AREA = {
@@ -27,7 +28,7 @@ export function MinhasTriagensPage() {
       </p>
 
       {erro && <p role="alert">{erro}</p>}
-      {!triagens && !erro && <p className="loading">Carregando...</p>}
+      {!triagens && !erro && <Loading>Carregando...</Loading>}
       {triagens && triagens.length === 0 && <p>Você ainda não fez nenhuma triagem.</p>}
 
       {triagens && triagens.length > 0 && (
