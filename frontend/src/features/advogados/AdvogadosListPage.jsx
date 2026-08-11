@@ -124,8 +124,8 @@ export function AdvogadosListPage() {
             {advogados.length === 1 ? "" : "s"}
           </span>
           <ul className="advogados-lista">
-            {advogados.map((adv) => (
-              <li key={adv.uid}>
+            {advogados.map((adv, i) => (
+              <li key={adv.uid} className="step-enter" style={{ animationDelay: `${Math.min(i * 40, 400)}ms` }}>
                 <AdvogadoCard advogado={adv} />
               </li>
             ))}

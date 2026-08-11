@@ -169,9 +169,13 @@ a:hover {
 /* Anima só na entrada (quando o elemento é inserido no DOM pela primeira vez) — pra
    blocos que aparecem conforme o usuário avança num fluxo (ex.: TriagemPage revelando a
    segunda pergunta e o resumo de respostas) em vez de simplesmente aparecerem de
-   supetão. Não reanima em re-renders normais, só em mount de verdade. */
+   supetão. Não reanima em re-renders normais, só em mount de verdade.
+   animation-fill-mode: backwards — sem isso, um item com animation-delay (ex.: a
+   entrada escalonada da lista de advogados) mostra o conteúdo normal durante o atraso e
+   só assume o "from" (opacity:0) quando a animação de fato começa — dá um flash antes de
+   sumir e reaparecer. Com backwards, fica no estado inicial (invisível) durante o delay. */
 .step-enter {
-  animation: step-enter 0.35s ease-out;
+  animation: step-enter 0.35s ease-out backwards;
 }
 
 @keyframes step-enter {
@@ -773,6 +777,8 @@ main.auth-screen {
 }
 
 .advogado-row {
+  position: relative;
+  overflow: hidden;
   display: flex;
   align-items: center;
   gap: var(--space-md);
@@ -790,6 +796,33 @@ main.auth-screen {
   transform: translateY(-1px);
   color: inherit;
   text-decoration: none;
+}
+
+/* Brilho dourado sutil varrendo o card no hover — "dourado com parcimônia" (docs/
+   DESIGN.md) então é bem discreto (16% de opacidade no pico) e só passa uma vez por
+   hover, não fica em loop. */
+.advogado-row::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(115deg, transparent, rgba(217, 162, 58, 0.16), transparent);
+  transform: skewX(-20deg);
+  pointer-events: none;
+  transition: left 0.65s ease;
+}
+
+.advogado-row:hover::after {
+  left: 130%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .advogado-row,
+  .advogado-row::after {
+    transition: none;
+  }
 }
 
 .advogado-row__info {

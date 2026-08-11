@@ -8,6 +8,69 @@
   width: min(100%, 420px);
 }
 
+/* Flip 3D frente/verso — pedido do usuário (11/08). .cartao-flip é o <button> clicável;
+   .cartao-flip__inner é quem gira (0deg = frente, 180deg = verso); as duas faces ficam
+   empilhadas (a de trás com position:absolute + rotateY(180) pra compensar o giro do
+   pai e ficar de frente pro usuário quando virado). Isso SÓ controla a prévia
+   interativa — o download usa .cartao-export-target logo abaixo, sem transform nenhum,
+   pra não arriscar o html-to-image capturar um frame torto no meio do giro 3D. */
+.cartao-flip {
+  all: unset;
+  display: block;
+  width: 100%;
+  cursor: pointer;
+  perspective: 1400px;
+  border-radius: var(--radius);
+}
+
+.cartao-flip:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 4px;
+}
+
+.cartao-flip__inner {
+  position: relative;
+  width: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0.1, 0.2, 1);
+}
+
+.cartao-flip__inner--virado {
+  transform: rotateY(180deg);
+}
+
+.cartao-flip__face {
+  backface-visibility: hidden;
+}
+
+.cartao-flip__face--verso {
+  position: absolute;
+  inset: 0;
+  transform: rotateY(180deg);
+}
+
+.cartao-flip-hint {
+  text-align: center;
+  margin-top: var(--space-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cartao-flip__inner {
+    transition: none;
+  }
+}
+
+/* Fora da tela de propósito — o botão de baixar sempre captura daqui, nunca da prévia
+   com o transform 3D do flip. Layout idêntico ao de .cartao-preview (mesma largura),
+   só sem o giro, pra garantir que o PNG exportado saia sempre reto e nítido. */
+.cartao-export-target {
+  position: fixed;
+  top: 0;
+  left: -9999px;
+  width: min(100%, 420px);
+  pointer-events: none;
+}
+
 /* container-type: cqw permite fixar a tipografia como % da largura do próprio cartão —
    sem isso o texto não escala junto quando o preview encolhe no mobile (min(100%, 420px)
    acima) nem quando o html-to-image exporta em pixelRatio maior (baixarCartao, ver
@@ -262,4 +325,47 @@
   height: 17cqw;
   font-size: 6cqw;
   flex-shrink: 0;
+}
+
+/* --- Verso --- */
+.cartao-face--verso {
+  background: var(--surface-warm);
+  color: var(--cream);
+}
+
+/* Maior e centralizada, diferente da marca d'água de canto das frentes — o verso é só
+   marca, não tem dado pessoal disputando espaço com ela. */
+.cartao-face--verso .cartao-face__owl-mark--verso {
+  top: 50%;
+  left: 50%;
+  right: auto;
+  width: 62%;
+  transform: translate(-50%, -50%);
+  color: var(--gold);
+  opacity: 0.14;
+}
+
+.cartao-face__verso-conteudo {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 3.2cqw;
+}
+
+.cartao-face__logo-verso {
+  height: 8cqw;
+  width: auto;
+  color: var(--cream);
+}
+
+.cartao-face__qr--verso {
+  width: 26cqw;
+  height: 26cqw;
+}
+
+.cartao-face__verso-legenda {
+  margin: 0;
+  font-size: 2.6cqw;
+  letter-spacing: 0.04em;
+  color: var(--cream-dim);
 }

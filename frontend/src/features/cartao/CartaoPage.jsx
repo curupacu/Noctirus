@@ -7,7 +7,7 @@ import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
 import { useAuth } from "../auth/AuthContext";
 import "./cartao.css";
-import { TEMPLATES } from "./templates";
+import { CartaoVerso, TEMPLATES } from "./templates";
 
 const LABEL_AREA = { civel: "Cível", trabalhista: "Trabalhista" };
 const CHAVE_TEMPLATE = "nocturis:cartao:template";
@@ -24,6 +24,7 @@ export function CartaoPage() {
   );
   const [baixando, setBaixando] = useState(false);
   const [erroDownload, setErroDownload] = useState(null);
+  const [virado, setVirado] = useState(false);
   const cartaoRef = useRef(null);
 
   useEffect(() => {
@@ -69,7 +70,7 @@ export function CartaoPage() {
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)/g, "");
       const link = document.createElement("a");
-      link.download = `cartao-nocturis-${nomeArquivo || "advogado"}.png`;
+      link.download = `cartao-nocturis-${nomeArquivo || "advogado"}${virado ? "-verso" : ""}.png`;
       link.href = dataUrl;
       link.click();
     } catch {
@@ -133,16 +134,37 @@ export function CartaoPage() {
       </div>
 
       <div className="cartao-preview-wrapper">
-        <div className="cartao-preview" ref={cartaoRef}>
-          <TemplateEscolhido dados={dadosCartao} />
+        <div className="cartao-preview">
+          <button
+            type="button"
+            className="cartao-flip"
+            onClick={() => setVirado((v) => !v)}
+            aria-label={virado ? "Ver a frente do cartão" : "Ver o verso do cartão"}
+          >
+            <div className={`cartao-flip__inner${virado ? " cartao-flip__inner--virado" : ""}`}>
+              <div className="cartao-flip__face cartao-flip__face--frente">
+                <TemplateEscolhido dados={dadosCartao} />
+              </div>
+              <div className="cartao-flip__face cartao-flip__face--verso">
+                <CartaoVerso dados={dadosCartao} />
+              </div>
+            </div>
+          </button>
         </div>
+      </div>
+      <p className="text-muted cartao-flip-hint">Toque no cartão pra ver o verso.</p>
+
+      {/* Fora da tela — o download sempre captura daqui (sem o transform 3D do flip
+          acima), pra garantir que o PNG saia sempre reto. */}
+      <div className="cartao-export-target" aria-hidden="true">
+        <div ref={cartaoRef}>{virado ? <CartaoVerso dados={dadosCartao} /> : <TemplateEscolhido dados={dadosCartao} />}</div>
       </div>
 
       {erroDownload && <p role="alert">{erroDownload}</p>}
 
       <div className="actions">
         <Button onClick={baixarCartao} disabled={baixando}>
-          {baixando ? "Gerando imagem..." : "Baixar cartão (PNG)"}
+          {baixando ? "Gerando imagem..." : `Baixar ${virado ? "verso" : "frente"} (PNG)`}
         </Button>
       </div>
     </main>
