@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { AdvogadoCard } from "../../components/AdvogadoCard/AdvogadoCard";
+import { Loading } from "../../components/Loading/Loading";
 import { OwlMark } from "../../components/OwlMark/OwlMark";
 import { api } from "../../lib/api";
 
@@ -46,7 +47,7 @@ export function ResultadoPage() {
   }, [categorias, resultado]);
 
   if (erro) return <p role="alert">{erro}</p>;
-  if (!resultado) return <p className="loading">Carregando...</p>;
+  if (!resultado) return <Loading>Carregando...</Loading>;
 
   const opcoesDaArea = catalogoCategorias?.[resultado.areaClassificada] || [];
 

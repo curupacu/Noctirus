@@ -4,6 +4,7 @@ import { Avatar } from "../../components/Avatar/Avatar";
 import { Button } from "../../components/Button/Button";
 import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
 import { Input } from "../../components/Input/Input";
+import { Loading } from "../../components/Loading/Loading";
 import { useAuth } from "../auth/AuthContext";
 import { CurriculoForm } from "../curriculo/CurriculoForm";
 import { api } from "../../lib/api";
@@ -111,7 +112,7 @@ export function PerfilPage() {
   }
 
   if (carregando || !dadosUsuario) {
-    return <p className="loading">Carregando perfil...</p>;
+    return <Loading>Carregando perfil...</Loading>;
   }
 
   return (

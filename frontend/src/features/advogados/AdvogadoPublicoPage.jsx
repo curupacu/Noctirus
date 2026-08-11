@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Avatar } from "../../components/Avatar/Avatar";
+import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
 
 const LABEL_AREA = {
@@ -47,7 +48,7 @@ export function AdvogadoPublicoPage() {
   }, [uid]);
 
   if (erro) return <p role="alert">{erro}</p>;
-  if (!advogado) return <p className="loading">Carregando...</p>;
+  if (!advogado) return <Loading>Carregando...</Loading>;
 
   const suspenso = advogado.status === "suspenso";
   const whatsapp = !suspenso && advogado.contatos?.whatsapp;

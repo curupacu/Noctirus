@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
+import { Loading } from "../../components/Loading/Loading";
 import { OwlMark } from "../../components/OwlMark/OwlMark";
 import { api } from "../../lib/api";
 
@@ -25,7 +26,7 @@ export function PainelPage() {
   }, []);
 
   if (erro) return <p role="alert">{erro}</p>;
-  if (!usuario) return <p className="loading">Carregando...</p>;
+  if (!usuario) return <Loading>Carregando...</Loading>;
 
   const primeiroNome = (usuario.nome || usuario.email || "").split(" ")[0];
   const ultimasTriagens = (triagens || []).slice(0, 3);

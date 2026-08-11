@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "../../components/Button/Button";
+import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
 
 const CAMPOS = [
@@ -60,7 +61,7 @@ export function CurriculoForm({ uid }) {
     }
   }
 
-  if (carregando) return <p className="loading">Carregando currículo...</p>;
+  if (carregando) return <Loading>Carregando currículo...</Loading>;
 
   return (
     <>
