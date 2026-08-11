@@ -1,4 +1,5 @@
 import { Avatar } from "../../components/Avatar/Avatar";
+import { Logo } from "../../components/Logo/Logo";
 import { OwlMark } from "../../components/OwlMark/OwlMark";
 
 function IconPhone() {
@@ -150,6 +151,25 @@ function CartaoPessoal({ dados }) {
           <Contatos dados={dados} />
           <QrCode dados={dados} />
         </div>
+      </div>
+    </div>
+  );
+}
+
+// Verso: pedido do usuário (11/08) — igual pra qualquer template escolhido (é a marca,
+// não o dado pessoal, que já está na frente). Logo por extenso + coruja d'água grande
+// centralizada + QR maior, pensado pra ser fácil de escanear sem precisar entender o
+// resto do cartão — o "selo" da Nocturis.
+export function CartaoVerso({ dados }) {
+  return (
+    <div className="cartao-face cartao-face--verso">
+      <OwlMark className="cartao-face__owl-mark cartao-face__owl-mark--verso" />
+      <div className="cartao-face__pad cartao-face__verso-conteudo">
+        <Logo className="cartao-face__logo-verso" />
+        <div className="cartao-face__qr cartao-face__qr--verso">
+          <img src={dados.qrCode} alt="QR code para o perfil público" />
+        </div>
+        <p className="cartao-face__verso-legenda">nocturis-web.web.app</p>
       </div>
     </div>
   );
