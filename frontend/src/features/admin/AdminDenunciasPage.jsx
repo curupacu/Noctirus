@@ -69,8 +69,12 @@ export function AdminDenunciasPage() {
       {denuncias.length === 0 && <p className="text-muted">Nenhuma denúncia registrada.</p>}
 
       <ul className="list-plain">
-        {denuncias.map((d) => (
-          <li key={d.id} className="card stack">
+        {denuncias.map((d, i) => (
+          <li
+            key={d.id}
+            className="card stack step-enter"
+            style={{ animationDelay: `${Math.min(i * 40, 400)}ms` }}
+          >
             <p>
               <span className={`badge${d.status === "resolvida" ? " badge--seal" : ""}`}>
                 {d.status === "resolvida" && (

@@ -7,7 +7,7 @@ export function HomePage() {
   return (
     <main className="splash">
       <OwlMark className="splash__owl-mark" />
-      <div>
+      <div className="step-enter">
         <Logo className="splash__logo" />
         <h1 className="splash__headline">
           Encontre o advogado <em className="accent">certo</em> pro seu caso.
@@ -18,7 +18,7 @@ export function HomePage() {
         </p>
       </div>
 
-      <div className="splash__actions">
+      <div className="splash__actions step-enter" style={{ animationDelay: "120ms" }}>
         <Link to="/cadastro">
           <Button>Criar conta</Button>
         </Link>
@@ -29,7 +29,11 @@ export function HomePage() {
         </Link>
       </div>
 
-      <Link to="/advogados" className="splash__secondary">
+      <Link
+        to="/advogados"
+        className="splash__secondary step-enter"
+        style={{ animationDelay: "200ms" }}
+      >
         Ver advogados sem criar conta
       </Link>
     </main>

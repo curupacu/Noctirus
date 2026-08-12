@@ -60,18 +60,14 @@ export function AdvogadoPublicoPage() {
 
   return (
     <main>
-      <div className="media">
-        <Avatar nome={advogado.nome} foto={advogado.foto} seed={uid} className="avatar-placeholder--grande" />
-        <div>
-          <h1>{advogado.nome}</h1>
-          <p className="text-muted">
-            {advogado.localizacao?.cidade || "?"}/{advogado.localizacao?.uf || "?"} — OAB{" "}
-            {advogado.oab?.numero}/{advogado.oab?.uf}
-          </p>
-        </div>
-      </div>
-
-      {advogado.bio && <p className="advogado-bio">{advogado.bio}</p>}
+      <section className="advogado-hero">
+        <Avatar nome={advogado.nome} foto={advogado.foto} seed={uid} className="avatar-placeholder--hero" />
+        <h1>{advogado.nome}</h1>
+        <p className="advogado-hero__local">
+          {advogado.localizacao?.cidade || "?"}/{advogado.localizacao?.uf || "?"}
+        </p>
+        {advogado.bio && <p className="advogado-bio">{advogado.bio}</p>}
+      </section>
 
       <div className="actions">
         {suspenso && <span className="badge badge--danger">Suspenso da plataforma</span>}
@@ -82,6 +78,9 @@ export function AdvogadoPublicoPage() {
             </svg>
           )}
           {advogado.verificado ? "OAB verificada" : "OAB em análise"}
+        </span>
+        <span className="badge">
+          OAB {advogado.oab?.numero}/{advogado.oab?.uf}
         </span>
         <span className="badge">
           {advogado.areasAtuacao?.map((a) => LABEL_AREA[a] || a).join(" · ") || "área não informada"}

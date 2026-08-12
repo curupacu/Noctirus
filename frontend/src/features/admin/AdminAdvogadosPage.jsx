@@ -65,8 +65,8 @@ export function AdminAdvogadosPage() {
               </tr>
             </thead>
             <tbody>
-              {advogados.map((adv) => (
-                <tr key={adv.uid}>
+              {advogados.map((adv, i) => (
+                <tr key={adv.uid} className="step-enter" style={{ animationDelay: `${Math.min(i * 40, 400)}ms` }}>
                   <td data-label="Nome">{adv.nome}</td>
                   <td data-label="OAB">
                     {adv.oab?.numero}/{adv.oab?.uf}
