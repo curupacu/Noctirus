@@ -67,5 +67,24 @@ service cloud.firestore {
         (request.auth.uid == resource.data.autorId || papel() == "admin");
       allow write: if false;
     }
+
+    // Contato: log de metadado (canal, quando) de quem clicou em falar com o advogado —
+    // nunca o conteúdo de nenhuma conversa (essa acontece inteira fora da plataforma).
+    // Só o backend cria (endpoint é público, sem exigir login); leitura só do próprio
+    // advogado ou admin.
+    match /contatos/{id} {
+      allow read: if request.auth != null &&
+        (request.auth.uid == resource.data.advogadoId || papel() == "admin");
+      allow write: if false;
+    }
+
+    // Feedback: avaliação privada do cliente sobre o atendimento. Nunca pública — só o
+    // próprio advogado avaliado ou o admin leem, e mesmo assim sem o autor exposto (ver
+    // routes/advogados.js).
+    match /feedbacks/{id} {
+      allow read: if request.auth != null &&
+        (request.auth.uid == resource.data.advogadoId || papel() == "admin");
+      allow write: if false;
+    }
   }
 }

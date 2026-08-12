@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Avatar } from "../../components/Avatar/Avatar";
 import { Button } from "../../components/Button/Button";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
@@ -54,54 +55,52 @@ export function AdminUsuariosPage() {
       <h1>Usuários</h1>
       <AdminNav />
 
-      <div className="card">
-        <div className="table-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Papel</th>
-                <th>Situação</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {usuarios.map((u, i) => {
-                const suspenso = u.status === "suspenso";
-                return (
-                  <tr key={u.uid} className="step-enter" style={{ animationDelay: `${Math.min(i * 40, 400)}ms` }}>
-                    <td data-label="Nome">
-                      {u.nome}
-                      <br />
-                      <span className="text-muted">{u.email}</span>
-                    </td>
-                    <td data-label="Papel">{LABEL_ROLE[u.role] || u.role}</td>
-                    <td data-label="Situação">
-                      <span className={`badge ${suspenso ? "badge--danger" : "badge--seal"}`}>
-                        {!suspenso && (
-                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                            <path d="M20 6 9 17l-5-5" />
-                          </svg>
-                        )}
-                        {suspenso ? "suspenso" : "ativo"}
-                      </span>
-                    </td>
-                    <td className="actions" data-label="Ações">
-                      <Button variant="secondary" onClick={() => suspender(u.uid, suspenso)}>
-                        {suspenso ? "Reativar" : "Suspender"}
-                      </Button>
-                      <Button variant="secondary" onClick={() => remover(u.uid, u.nome)}>
-                        Remover
-                      </Button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-        {usuarios.length === 0 && <p className="text-muted">Nenhum usuário cadastrado.</p>}
-      </div>
+      {usuarios.length === 0 && <p className="text-muted">Nenhum usuário cadastrado.</p>}
+
+      {/* Mesmo padrão de card das outras listas de admin (ver AdminDenunciasPage) — era
+          uma <table> crua, a única tela ainda nesse estilo (achado do usuário, 11/08).
+          Reaproveita as classes advogado-card__* (avatar + nome + meta + badges) já
+          usadas no card público do advogado. */}
+      <ul className="list-plain">
+        {usuarios.map((u, i) => {
+          const suspenso = u.status === "suspenso";
+          return (
+            <li
+              key={u.uid}
+              className="card stack step-enter"
+              style={{ animationDelay: `${Math.min(i * 40, 400)}ms` }}
+            >
+              <div className="advogado-card__top">
+                <Avatar nome={u.nome} seed={u.uid} className="advogado-card__avatar avatar-placeholder--grande" />
+                <div className="advogado-card__heading">
+                  <span className="advogado-card__nome">{u.nome}</span>
+                  <span className="advogado-card__meta">{u.email}</span>
+                  <span className="advogado-card__badges">
+                    <span className="badge">{LABEL_ROLE[u.role] || u.role}</span>
+                    <span className={`badge${suspenso ? " badge--danger" : " badge--seal"}`}>
+                      {!suspenso && (
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                          <path d="M20 6 9 17l-5-5" />
+                        </svg>
+                      )}
+                      {suspenso ? "suspenso" : "ativo"}
+                    </span>
+                  </span>
+                </div>
+              </div>
+
+              <div className="actions">
+                <Button variant="secondary" onClick={() => suspender(u.uid, suspenso)}>
+                  {suspenso ? "Reativar" : "Suspender"}
+                </Button>
+                <Button variant="secondary" onClick={() => remover(u.uid, u.nome)}>
+                  Remover
+                </Button>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
     </main>
   );
 }

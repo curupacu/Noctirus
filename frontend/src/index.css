@@ -40,80 +40,6 @@ main {
   padding: var(--space-lg);
 }
 
-table {
-  width: 100%;
-  max-width: 100%;
-  border-collapse: collapse;
-}
-
-/* Tabelas de admin (Usuários, OAB): 4 colunas + botões de ação nunca cabem nos 640px de
-   `main`, nem em telas largas — rolagem horizontal só escondia os botões sem indicar que
-   dava pra rolar. Em vez disso cada linha vira um "card" empilhado (rótulo + valor), sem
-   depender de largura nenhuma. */
-.table-scroll table,
-.table-scroll thead,
-.table-scroll tbody,
-.table-scroll tr,
-.table-scroll th,
-.table-scroll td {
-  display: block;
-  width: 100%;
-}
-
-.table-scroll thead {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-}
-
-.table-scroll tbody tr {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: var(--space-md);
-  margin-bottom: var(--space-md);
-}
-
-.table-scroll tbody tr:last-child {
-  margin-bottom: 0;
-}
-
-.table-scroll tbody tr:nth-child(even) {
-  background: var(--surface);
-}
-
-.table-scroll tbody tr:hover {
-  background: var(--surface-hover);
-}
-
-.table-scroll td {
-  border-bottom: none;
-  padding: var(--space-xs) 0;
-}
-
-.table-scroll td[data-label]::before {
-  content: attr(data-label);
-  display: block;
-  font-size: var(--font-size-xs);
-  font-weight: 700;
-  color: var(--text-faint);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-bottom: 2px;
-}
-
-.table-scroll td.actions {
-  display: flex;
-  flex-direction: row;
-  padding-top: var(--space-sm);
-}
-
-.table-scroll td.actions .button {
-  flex: 1 1 auto;
-}
-
 textarea {
   width: 100%;
   max-width: 100%;
@@ -324,6 +250,25 @@ a:hover {
   font-size: var(--font-size-sm);
 }
 
+.feedback-estrelas {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.feedback-estrelas__item {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.1s ease, transform 0.1s ease;
+}
+
+.feedback-estrelas__item:hover {
+  transform: scale(1.12);
+}
+
 .hero-block {
   position: relative;
   overflow: hidden;
@@ -528,27 +473,6 @@ fieldset label {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-md);
-}
-
-th,
-td {
-  text-align: left;
-  padding: var(--space-sm) var(--space-md);
-  border-bottom: 1px solid var(--color-border);
-}
-
-th {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-  font-weight: 600;
-}
-
-tbody tr:nth-child(even) {
-  background: color-mix(in srgb, var(--color-surface) 60%, transparent);
-}
-
-tbody tr:hover {
-  background: color-mix(in srgb, var(--color-primary) 6%, transparent);
 }
 
 .list-plain {

@@ -27,6 +27,8 @@ export function PerfilPage() {
   const [especialidades, setEspecialidades] = useState([]);
   const [mensagem, setMensagem] = useState(null);
   const [carregando, setCarregando] = useState(true);
+  const [metricas, setMetricas] = useState(null);
+  const [feedbacks, setFeedbacks] = useState(null);
 
   useEffect(() => {
     async function carregar() {
@@ -52,6 +54,12 @@ export function PerfilPage() {
       setCarregando(false);
     }
     if (user && role) carregar();
+  }, [user, role]);
+
+  useEffect(() => {
+    if (!user || role !== "advogado") return;
+    api.get(`/advogados/${user.uid}/metricas`).then(setMetricas);
+    api.get(`/advogados/${user.uid}/feedback`).then(setFeedbacks);
   }, [user, role]);
 
   function alternarEspecialidade(valor) {
@@ -237,6 +245,50 @@ export function PerfilPage() {
       {role === "advogado" && <CurriculoForm uid={user.uid} />}
 
       {mensagem && <p role="status">{mensagem}</p>}
+
+      {role === "advogado" && metricas && (
+        <>
+          <div className="section-heading">
+            <h2>Como está indo</h2>
+          </div>
+          <div className="row">
+            <div className="card">
+              <p className="text-muted">Contatos recebidos</p>
+              <p style={{ fontFamily: "var(--font-display)", fontSize: "var(--font-size-2xl)" }}>
+                {metricas.contatos.total}
+              </p>
+              <p className="text-muted">
+                {metricas.contatos.whatsapp} WhatsApp · {metricas.contatos.email} e-mail
+              </p>
+            </div>
+            <div className="card">
+              <p className="text-muted">Feedback dos clientes</p>
+              <p style={{ fontFamily: "var(--font-display)", fontSize: "var(--font-size-2xl)" }}>
+                {metricas.feedbacks.mediaNota ?? "—"}
+              </p>
+              <p className="text-muted">
+                {metricas.feedbacks.total === 0
+                  ? "Nenhuma avaliação ainda"
+                  : `${metricas.feedbacks.total} avaliação${metricas.feedbacks.total === 1 ? "" : "ões"}, privadas`}
+              </p>
+            </div>
+          </div>
+
+          {feedbacks && feedbacks.length > 0 && (
+            <ul className="list-plain">
+              {feedbacks.map((f) => (
+                <li key={f.id} className="card">
+                  <span aria-label={`Nota ${f.nota} de 5`}>
+                    {"★".repeat(f.nota)}
+                    <span className="text-muted">{"★".repeat(5 - f.nota)}</span>
+                  </span>
+                  {f.comentario && <p style={{ marginBottom: 0 }}>{f.comentario}</p>}
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
+      )}
 
       <div className="section-heading">
         <h2>Mais</h2>

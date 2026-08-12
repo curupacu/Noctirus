@@ -229,3 +229,136 @@ describe("PATCH /advogados/:uid/verificar", () => {
     expect(advogado.verificado).toBe(true);
   });
 });
+
+describe("POST /advogados/:uid/contato", () => {
+  it("recusa canal inválido", async () => {
+    semear("a1");
+    const resposta = await request(app).post("/advogados/a1/contato").send({ canal: "telefone" });
+    expect(resposta.status).toBe(400);
+  });
+
+  it("404 quando o advogado não existe", async () => {
+    const resposta = await request(app).post("/advogados/nao-existe/contato").send({ canal: "whatsapp" });
+    expect(resposta.status).toBe(404);
+  });
+
+  it("registra o contato sem exigir token (RF008/RF010: perfil é público)", async () => {
+    semear("a1");
+    const resposta = await request(app).post("/advogados/a1/contato").send({ canal: "whatsapp" });
+    expect(resposta.status).toBe(201);
+
+    const snap = await cell.fake.db.collection("contatos").where("advogadoId", "==", "a1").get();
+    expect(snap.docs).toHaveLength(1);
+    expect(snap.docs[0].data().canal).toBe("whatsapp");
+  });
+});
+
+describe("GET /advogados/:uid/metricas", () => {
+  it("recusa sem token", async () => {
+    const resposta = await request(app).get("/advogados/a1/metricas");
+    expect(resposta.status).toBe(401);
+  });
+
+  it("recusa ver métricas de outro advogado", async () => {
+    const token = cell.fake.criarToken({ uid: "a2", role: "advogado" });
+    const resposta = await request(app).get("/advogados/a1/metricas").set("Authorization", `Bearer ${token}`);
+    expect(resposta.status).toBe(403);
+  });
+
+  it("admin também pode ver", async () => {
+    const token = cell.fake.criarToken({ uid: "admin1", role: "admin" });
+    const resposta = await request(app).get("/advogados/a1/metricas").set("Authorization", `Bearer ${token}`);
+    expect(resposta.status).toBe(200);
+  });
+
+  it("soma contatos por canal e calcula a média das notas de feedback", async () => {
+    cell.fake.db._seed("contatos", "c1", { advogadoId: "a1", canal: "whatsapp" });
+    cell.fake.db._seed("contatos", "c2", { advogadoId: "a1", canal: "whatsapp" });
+    cell.fake.db._seed("contatos", "c3", { advogadoId: "a1", canal: "email" });
+    cell.fake.db._seed("feedbacks", "f1", { advogadoId: "a1", nota: 5 });
+    cell.fake.db._seed("feedbacks", "f2", { advogadoId: "a1", nota: 3 });
+
+    const token = cell.fake.criarToken({ uid: "a1", role: "advogado" });
+    const resposta = await request(app).get("/advogados/a1/metricas").set("Authorization", `Bearer ${token}`);
+
+    expect(resposta.status).toBe(200);
+    expect(resposta.body.contatos).toEqual({ total: 3, whatsapp: 2, email: 1 });
+    expect(resposta.body.feedbacks).toEqual({ total: 2, mediaNota: 4 });
+  });
+
+  it("mediaNota vem null quando ainda não tem feedback nenhum", async () => {
+    const token = cell.fake.criarToken({ uid: "a1", role: "advogado" });
+    const resposta = await request(app).get("/advogados/a1/metricas").set("Authorization", `Bearer ${token}`);
+    expect(resposta.body.feedbacks).toEqual({ total: 0, mediaNota: null });
+  });
+});
+
+describe("POST /advogados/:uid/feedback", () => {
+  it("recusa quem não é cliente", async () => {
+    semear("a1");
+    const token = cell.fake.criarToken({ uid: "a2", role: "advogado" });
+    const resposta = await request(app)
+      .post("/advogados/a1/feedback")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ nota: 5 });
+    expect(resposta.status).toBe(403);
+  });
+
+  it("recusa nota fora do intervalo 1-5", async () => {
+    semear("a1");
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    const resposta = await request(app)
+      .post("/advogados/a1/feedback")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ nota: 6 });
+    expect(resposta.status).toBe(400);
+  });
+
+  it("registra a avaliação vinculada ao cliente logado", async () => {
+    semear("a1");
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    const resposta = await request(app)
+      .post("/advogados/a1/feedback")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ nota: 4, comentario: "Atendimento rápido e claro." });
+
+    expect(resposta.status).toBe(201);
+    expect(resposta.body.autorId).toBe("c1");
+
+    const feedback = (await cell.fake.db.collection("feedbacks").doc(resposta.body.id).get()).data();
+    expect(feedback.advogadoId).toBe("a1");
+    expect(feedback.nota).toBe(4);
+  });
+});
+
+describe("GET /advogados/:uid/feedback", () => {
+  it("recusa ver feedback de outro advogado", async () => {
+    const token = cell.fake.criarToken({ uid: "a2", role: "advogado" });
+    const resposta = await request(app).get("/advogados/a1/feedback").set("Authorization", `Bearer ${token}`);
+    expect(resposta.status).toBe(403);
+  });
+
+  it("lista sem expor quem escreveu, mais recente primeiro", async () => {
+    cell.fake.db._seed("feedbacks", "f1", {
+      advogadoId: "a1",
+      autorId: "c1",
+      nota: 5,
+      comentario: "Ótimo",
+      createdAt: "2026-01-01T00:00:00.000Z",
+    });
+    cell.fake.db._seed("feedbacks", "f2", {
+      advogadoId: "a1",
+      autorId: "c2",
+      nota: 3,
+      comentario: "Ok",
+      createdAt: "2026-01-02T00:00:00.000Z",
+    });
+
+    const token = cell.fake.criarToken({ uid: "a1", role: "advogado" });
+    const resposta = await request(app).get("/advogados/a1/feedback").set("Authorization", `Bearer ${token}`);
+
+    expect(resposta.status).toBe(200);
+    expect(resposta.body.map((f) => f.id)).toEqual(["f2", "f1"]);
+    expect(resposta.body[0].autorId).toBeUndefined();
+  });
+});
