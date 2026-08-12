@@ -6,6 +6,8 @@
     "especialidades": ["familia_divorcio", "familia_pensao", "familia_guarda", "heranca_inventario", "heranca_testamento"],
     "localizacao": { "cidade": "São Paulo", "uf": "SP" },
     "contatos": { "whatsapp": "5511999990001", "email": "ana.souza@example.com" },
+    "bio": "Advogada especializada em direito de família e sucessões há mais de 10 anos, com atuação focada em divórcios, guarda de filhos e inventários conduzidos com cuidado e transparência.",
+    "foto": "https://randomuser.me/api/portraits/women/1.jpg",
     "verificado": false,
     "curriculo": {
       "formacao": ["Direito - USP (2010)"],
@@ -21,6 +23,8 @@
     "especialidades": ["demissao_sem_justa_causa", "verbas_rescisorias", "fgts_multa", "horas_extras"],
     "localizacao": { "cidade": "Guarulhos", "uf": "SP" },
     "contatos": { "whatsapp": "5511999990002", "email": "carlos.lima@example.com" },
+    "bio": "Advogado trabalhista há 8 anos, atuando em rescisões, verbas não pagas e horas extras. Atendimento direto e objetivo pra quem precisa entender seus direitos rapidamente.",
+    "foto": "https://randomuser.me/api/portraits/men/1.jpg",
     "verificado": false,
     "curriculo": {
       "formacao": ["Direito - Mackenzie (2012)"],
@@ -36,6 +40,8 @@
     "especialidades": ["dividas_cobranca", "aluguel_imoveis", "rescisao_indireta", "assedio_moral"],
     "localizacao": { "cidade": "São Paulo", "uf": "SP" },
     "contatos": { "whatsapp": "5511999990003", "email": "fernanda.torres@example.com" },
+    "bio": "Escritório próprio há 12 anos, com atuação em cobranças, contratos de aluguel e casos trabalhistas sensíveis como assédio moral. Foco em resolver com agilidade.",
+    "foto": "https://randomuser.me/api/portraits/women/2.jpg",
     "verificado": false,
     "curriculo": {
       "formacao": ["Direito - PUC-SP (2008)"],
@@ -51,6 +57,8 @@
     "especialidades": ["demissao_sem_justa_causa", "assedio_moral", "assedio_sexual", "sem_carteira", "estabilidade_gestante"],
     "localizacao": { "cidade": "Rio de Janeiro", "uf": "RJ" },
     "contatos": { "whatsapp": "5521999990004", "email": "rafael.andrade@example.com" },
+    "bio": "Defendo trabalhadores há 6 anos em casos de demissão irregular, assédio e trabalho sem carteira assinada. Atendimento próximo, sem juridiquês.",
+    "foto": "https://randomuser.me/api/portraits/men/2.jpg",
     "verificado": false,
     "curriculo": {
       "formacao": ["Direito - UERJ (2014)"],
@@ -66,6 +74,8 @@
     "especialidades": ["consumo_produto_servico", "banco_cartao", "plano_saude", "dividas_cobranca"],
     "localizacao": { "cidade": "Curitiba", "uf": "PR" },
     "contatos": { "whatsapp": "5541999990005", "email": "juliana.prado@example.com" },
+    "bio": "9 anos atuando em direito do consumidor: produtos com defeito, cobranças indevidas e problemas com planos de saúde. Já ajudei centenas de clientes a reverem contratos injustos.",
+    "foto": "https://randomuser.me/api/portraits/women/3.jpg",
     "verificado": false,
     "curriculo": {
       "formacao": ["Direito - UFPR (2011)"],
@@ -81,6 +91,8 @@
     "especialidades": ["familia_divorcio", "familia_pensao", "familia_guarda", "familia_uniao_estavel"],
     "localizacao": { "cidade": "São Paulo", "uf": "SP" },
     "contatos": { "whatsapp": "5511988880001", "email": "beatriz.alencar@example.com" },
+    "bio": "14 anos dedicados exclusivamente ao direito de família — divórcios, pensão alimentícia e guarda compartilhada conduzidos com sensibilidade e clareza em cada etapa.",
+    "foto": "https://randomuser.me/api/portraits/women/4.jpg",
     "verificado": true,
     "curriculo": {
       "formacao": ["Direito - Mackenzie (2009)"],
@@ -96,6 +108,8 @@
     "especialidades": ["horas_extras", "verbas_rescisorias", "equiparacao_salarial", "jornada_intervalo"],
     "localizacao": { "cidade": "São Paulo", "uf": "SP" },
     "contatos": { "whatsapp": "5511988880002", "email": "thiago.costa@example.com" },
+    "bio": "Advogado trabalhista com 7 anos de experiência em horas extras, verbas rescisórias e equiparação salarial. Faço os cálculos certos pra você não sair no prejuízo.",
+    "foto": "https://randomuser.me/api/portraits/men/3.jpg",
     "verificado": false,
     "curriculo": {
       "formacao": ["Direito - PUC-SP (2013)"],
@@ -111,6 +125,8 @@
     "especialidades": ["consumo_produto_servico", "banco_cartao", "dividas_cobranca"],
     "localizacao": { "cidade": "Rio de Janeiro", "uf": "RJ" },
     "contatos": { "whatsapp": "5521988880003", "email": "camila.ferreira@example.com" },
+    "bio": "5 anos em defesa do consumidor, com foco em cobranças indevidas e problemas com bancos e cartões. Atendimento acolhedor pra quem se sente perdido diante das dívidas.",
+    "foto": "https://randomuser.me/api/portraits/women/5.jpg",
     "verificado": false,
     "curriculo": {
       "formacao": ["Direito - UFRJ (2015)"],
@@ -126,6 +142,8 @@
     "especialidades": ["assedio_moral", "assedio_sexual", "estabilidade_gestante"],
     "localizacao": { "cidade": "Niterói", "uf": "RJ" },
     "contatos": { "whatsapp": "5521988880004", "email": "marcos.pereira@example.com" },
+    "bio": "11 anos representando vítimas de assédio moral e sexual no trabalho. Conduzo cada caso com sigilo e respeito, priorizando o bem-estar do cliente acima de tudo.",
+    "foto": "https://randomuser.me/api/portraits/men/4.jpg",
     "verificado": true,
     "curriculo": {
       "formacao": ["Direito - UFF (2010)"],
@@ -141,6 +159,8 @@
     "especialidades": ["heranca_inventario", "heranca_testamento", "familia_uniao_estavel"],
     "localizacao": { "cidade": "Belo Horizonte", "uf": "MG" },
     "contatos": { "whatsapp": "5531988880005", "email": "larissa.cavalcanti@example.com" },
+    "bio": "16 anos de experiência em inventários e partilha de bens. Simplifico processos sucessórios complexos pra famílias em Belo Horizonte e região.",
+    "foto": "https://randomuser.me/api/portraits/women/6.jpg",
     "verificado": false,
     "curriculo": {
       "formacao": ["Direito - UFMG (2007)"],
@@ -156,6 +176,8 @@
     "especialidades": ["demissao_sem_justa_causa", "sem_carteira", "fgts_multa"],
     "localizacao": { "cidade": "Belo Horizonte", "uf": "MG" },
     "contatos": { "whatsapp": "5531988880006", "email": "eduardo.lins@example.com" },
+    "bio": "Atuo há 4 anos regularizando vínculos empregatícios informais e cobrando FGTS não recolhido. Se você trabalhou sem carteira assinada, posso ajudar.",
+    "foto": "https://randomuser.me/api/portraits/men/5.jpg",
     "verificado": false,
     "curriculo": {
       "formacao": ["Direito - PUC Minas (2016)"],
@@ -171,6 +193,8 @@
     "especialidades": ["acidente_transito", "acidente_trabalho", "indenizacao_dano_moral"],
     "localizacao": { "cidade": "Uberlândia", "uf": "MG" },
     "contatos": { "whatsapp": "5531988880007", "email": "patricia.martins@example.com" },
+    "bio": "9 anos em ações de acidente de trânsito e de trabalho, buscando indenização justa por danos morais e materiais. Análise cuidadosa de cada caso antes de qualquer decisão.",
+    "foto": "https://randomuser.me/api/portraits/women/7.jpg",
     "verificado": false,
     "curriculo": {
       "formacao": ["Direito - UFU (2012)"],
@@ -186,6 +210,8 @@
     "especialidades": ["vizinhanca_condominio", "indenizacao_dano_moral"],
     "localizacao": { "cidade": "Curitiba", "uf": "PR" },
     "contatos": { "whatsapp": "5541988880008", "email": "rodrigo.vieira@example.com" },
+    "bio": "10 anos assessorando condomínios e síndicos em conflitos de vizinhança e questões condominiais. Soluções práticas pra problemas do dia a dia em Curitiba.",
+    "foto": "https://randomuser.me/api/portraits/men/6.jpg",
     "verificado": true,
     "curriculo": {
       "formacao": ["Direito - PUC-PR (2011)"],
@@ -201,6 +227,8 @@
     "especialidades": ["jornada_intervalo", "horas_extras"],
     "localizacao": { "cidade": "Londrina", "uf": "PR" },
     "contatos": { "whatsapp": "5541988880009", "email": "bianca.nascimento@example.com" },
+    "bio": "Advogada trabalhista iniciando carreira com foco em jornada excessiva e horas extras não pagas. Atendimento próximo e atenção total ao seu caso.",
+    "foto": "https://randomuser.me/api/portraits/women/8.jpg",
     "verificado": false,
     "curriculo": {
       "formacao": ["Direito - UEL (2017)"],
@@ -216,6 +244,8 @@
     "especialidades": ["aluguel_imoveis", "dividas_cobranca", "emprestimo_financiamento"],
     "localizacao": { "cidade": "Porto Alegre", "uf": "RS" },
     "contatos": { "whatsapp": "5551988880010", "email": "gustavo.barros@example.com" },
+    "bio": "12 anos em contratos de locação, despejo e cobrança de dívidas. Ajudo inquilinos e proprietários a resolverem impasses contratuais em Porto Alegre.",
+    "foto": "https://randomuser.me/api/portraits/men/7.jpg",
     "verificado": false,
     "curriculo": {
       "formacao": ["Direito - UFRGS (2009)"],
@@ -231,6 +261,8 @@
     "especialidades": ["demissao_justa_causa", "rescisao_indireta", "pedido_demissao"],
     "localizacao": { "cidade": "Porto Alegre", "uf": "RS" },
     "contatos": { "whatsapp": "5551988880011", "email": "renata.albuquerque@example.com" },
+    "bio": "6 anos em disputas sobre motivo de rescisão — justa causa contestada, pedido de demissão e verbas relacionadas. Defendo seus direitos com firmeza.",
+    "foto": "https://randomuser.me/api/portraits/women/9.jpg",
     "verificado": false,
     "curriculo": {
       "formacao": ["Direito - PUC-RS (2014)"],
@@ -246,6 +278,8 @@
     "especialidades": ["erro_medico", "plano_saude"],
     "localizacao": { "cidade": "Salvador", "uf": "BA" },
     "contatos": { "whatsapp": "5571988880012", "email": "felipe.teixeira@example.com" },
+    "bio": "15 anos em ações contra planos de saúde e casos de erro médico. Especialista em responsabilidade civil na área da saúde, com resultados consistentes.",
+    "foto": "https://randomuser.me/api/portraits/men/8.jpg",
     "verificado": true,
     "curriculo": {
       "formacao": ["Direito - UFBA (2008)"],
@@ -261,6 +295,8 @@
     "especialidades": ["pedido_demissao", "ferias_decimo_terceiro"],
     "localizacao": { "cidade": "Salvador", "uf": "BA" },
     "contatos": { "whatsapp": "5571988880013", "email": "vanessa.pinto@example.com" },
+    "bio": "Advogada trabalhista há 2 anos, atendendo casos de verbas não pagas, férias e décimo terceiro. Atenção próxima a cada cliente, do início ao fim do processo.",
+    "foto": "https://randomuser.me/api/portraits/women/10.jpg",
     "verificado": false,
     "curriculo": {
       "formacao": ["Direito - UCSAL (2018)"],
@@ -276,6 +312,8 @@
     "especialidades": ["consumo_produto_servico", "sem_carteira"],
     "localizacao": { "cidade": "Recife", "uf": "PE" },
     "contatos": { "whatsapp": "5581988880014", "email": "diego.siqueira@example.com" },
+    "bio": "8 anos com atuação mista em cível e trabalhista, do consumidor ao trabalho informal. Escuto com calma antes de indicar o melhor caminho jurídico.",
+    "foto": "https://randomuser.me/api/portraits/men/9.jpg",
     "verificado": false,
     "curriculo": {
       "formacao": ["Direito - UFPE (2013)"],
@@ -291,6 +329,8 @@
     "especialidades": ["familia_divorcio", "familia_guarda"],
     "localizacao": { "cidade": "Fortaleza", "uf": "CE" },
     "contatos": { "whatsapp": "5585988880015", "email": "aline.cunha@example.com" },
+    "bio": "5 anos em divórcios e disputas de guarda de filhos. Busco sempre a solução menos desgastante pra você e sua família em Fortaleza.",
+    "foto": "https://randomuser.me/api/portraits/women/11.jpg",
     "verificado": false,
     "curriculo": {
       "formacao": ["Direito - UFC (2016)"],
@@ -306,6 +346,8 @@
     "especialidades": ["assedio_moral", "equiparacao_salarial"],
     "localizacao": { "cidade": "Fortaleza", "uf": "CE" },
     "contatos": { "whatsapp": "5585988880016", "email": "bruno.lopes@example.com" },
+    "bio": "6 anos representando trabalhadores em casos de assédio moral e equiparação salarial. Atuação firme e atenta aos detalhes de cada processo.",
+    "foto": "https://randomuser.me/api/portraits/men/10.jpg",
     "verificado": false,
     "curriculo": {
       "formacao": ["Direito - UNIFOR (2015)"],
@@ -321,6 +363,8 @@
     "especialidades": ["banco_cartao", "indenizacao_dano_moral"],
     "localizacao": { "cidade": "Brasília", "uf": "DF" },
     "contatos": { "whatsapp": "5561988880017", "email": "isabela.prado@example.com" },
+    "bio": "13 anos em ações contra instituições financeiras — tarifas abusivas, cartões e cobranças indevidas. Já recuperei valores pra centenas de clientes em Brasília.",
+    "foto": "https://randomuser.me/api/portraits/women/12.jpg",
     "verificado": true,
     "curriculo": {
       "formacao": ["Direito - UnB (2010)"],
@@ -336,6 +380,8 @@
     "especialidades": ["horas_extras", "verbas_rescisorias"],
     "localizacao": { "cidade": "Brasília", "uf": "DF" },
     "contatos": { "whatsapp": "5561988880018", "email": "leonardo.dias@example.com" },
+    "bio": "7 anos cobrando horas extras e verbas rescisórias não pagas. Faço a conta certa pra você saber exatamente o que tem direito a receber.",
+    "foto": "https://randomuser.me/api/portraits/men/11.jpg",
     "verificado": false,
     "curriculo": {
       "formacao": ["Direito - UCB (2014)"],
@@ -351,6 +397,8 @@
     "especialidades": ["heranca_inventario", "aluguel_imoveis"],
     "localizacao": { "cidade": "Belém", "uf": "PA" },
     "contatos": { "whatsapp": "5591988880019", "email": "priscila.guimaraes@example.com" },
+    "bio": "9 anos em inventários e contratos de locação. Atendimento cuidadoso em processos sucessórios e questões imobiliárias em Belém.",
+    "foto": "https://randomuser.me/api/portraits/women/13.jpg",
     "verificado": false,
     "curriculo": {
       "formacao": ["Direito - UFPA (2012)"],
@@ -366,6 +414,8 @@
     "especialidades": ["demissao_sem_justa_causa", "acidente_trabalho"],
     "localizacao": { "cidade": "Manaus", "uf": "AM" },
     "contatos": { "whatsapp": "5592988880020", "email": "fabio.carvalho@example.com" },
+    "bio": "5 anos em ações de acidente de trabalho na indústria. Defendo trabalhadores lesionados buscando indenização e estabilidade justas.",
+    "foto": "https://randomuser.me/api/portraits/men/12.jpg",
     "verificado": false,
     "curriculo": {
       "formacao": ["Direito - UFAM (2015)"],
@@ -381,6 +431,8 @@
     "especialidades": ["consumo_produto_servico", "plano_saude"],
     "localizacao": { "cidade": "Goiânia", "uf": "GO" },
     "contatos": { "whatsapp": "5562988880021", "email": "tatiana.mendonca@example.com" },
+    "bio": "10 anos defendendo consumidores contra operadoras de plano de saúde. Se sua cobertura foi negada indevidamente, posso te ajudar a reverter.",
+    "foto": "https://randomuser.me/api/portraits/women/14.jpg",
     "verificado": false,
     "curriculo": {
       "formacao": ["Direito - UFG (2011)"],
@@ -396,6 +448,8 @@
     "especialidades": ["sem_carteira", "jornada_intervalo"],
     "localizacao": { "cidade": "Goiânia", "uf": "GO" },
     "contatos": { "whatsapp": "5562988880022", "email": "vinicius.rocha@example.com" },
+    "bio": "4 anos em ações de reconhecimento de vínculo empregatício e trabalho informal. Atendimento direto pra quem trabalhou sem os direitos garantidos.",
+    "foto": "https://randomuser.me/api/portraits/men/13.jpg",
     "verificado": false,
     "curriculo": {
       "formacao": ["Direito - PUC Goiás (2017)"],
@@ -411,6 +465,8 @@
     "especialidades": ["familia_pensao", "familia_uniao_estavel"],
     "localizacao": { "cidade": "Florianópolis", "uf": "SC" },
     "contatos": { "whatsapp": "5548988880023", "email": "carolina.ramos@example.com" },
+    "bio": "14 anos em pensão alimentícia e reconhecimento de união estável. Experiência consolidada em direito de família em Santa Catarina.",
+    "foto": "https://randomuser.me/api/portraits/women/15.jpg",
     "verificado": true,
     "curriculo": {
       "formacao": ["Direito - UFSC (2009)"],
@@ -426,6 +482,8 @@
     "especialidades": ["fgts_multa", "ferias_decimo_terceiro"],
     "localizacao": { "cidade": "Florianópolis", "uf": "SC" },
     "contatos": { "whatsapp": "5548988880024", "email": "andre.fontoura@example.com" },
+    "bio": "5 anos cobrando FGTS e férias não pagas por ex-empregadores. Atuação objetiva pra recuperar o que é seu por direito.",
+    "foto": "https://randomuser.me/api/portraits/men/14.jpg",
     "verificado": false,
     "curriculo": {
       "formacao": ["Direito - UNIVALI (2016)"],
@@ -441,6 +499,8 @@
     "especialidades": ["erro_medico", "assedio_sexual"],
     "localizacao": { "cidade": "Vitória", "uf": "ES" },
     "contatos": { "whatsapp": "5527988880025", "email": "debora.freitas@example.com" },
+    "bio": "7 anos com atuação mista, priorizando casos sensíveis como erro médico e assédio sexual no trabalho. Sigilo e acolhimento em cada atendimento.",
+    "foto": "https://randomuser.me/api/portraits/women/16.jpg",
     "verificado": false,
     "curriculo": {
       "formacao": ["Direito - UFES (2013)"],

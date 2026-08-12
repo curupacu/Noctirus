@@ -66,10 +66,10 @@ export function AdminUsuariosPage() {
               </tr>
             </thead>
             <tbody>
-              {usuarios.map((u) => {
+              {usuarios.map((u, i) => {
                 const suspenso = u.status === "suspenso";
                 return (
-                  <tr key={u.uid}>
+                  <tr key={u.uid} className="step-enter" style={{ animationDelay: `${Math.min(i * 40, 400)}ms` }}>
                     <td data-label="Nome">
                       {u.nome}
                       <br />

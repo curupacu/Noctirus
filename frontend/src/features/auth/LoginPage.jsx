@@ -36,13 +36,17 @@ export function LoginPage() {
       </Link>
 
       <div className="auth-screen__inner">
-        <Logo className="auth-screen__logo" />
-        <div className="auth-screen__header">
+        <Logo className="auth-screen__logo step-enter" />
+        <div className="auth-screen__header step-enter" style={{ animationDelay: "80ms" }}>
           <h1>Entrar</h1>
           <p>Bem-vindo(a) de volta.</p>
         </div>
 
-        <form className="auth-screen__form" onSubmit={handleSubmit}>
+        <form
+          className="auth-screen__form step-enter"
+          style={{ animationDelay: "160ms" }}
+          onSubmit={handleSubmit}
+        >
           <Input
             label="E-mail"
             id="email"
@@ -67,7 +71,7 @@ export function LoginPage() {
           </Button>
         </form>
 
-        <p className="auth-screen__footer">
+        <p className="auth-screen__footer step-enter" style={{ animationDelay: "220ms" }}>
           Não tem conta? <Link to="/cadastro">Criar conta</Link>
         </p>
       </div>

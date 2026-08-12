@@ -50,6 +50,11 @@ export function ResultadoPage() {
   if (!resultado) return <Loading>Carregando...</Loading>;
 
   const opcoesDaArea = catalogoCategorias?.[resultado.areaClassificada] || [];
+  const catalogoEspecialidades = Object.fromEntries(
+    Object.values(catalogoCategorias || {})
+      .flat()
+      .map((c) => [c.valor, c.label]),
+  );
 
   function alternarCategoria(valor) {
     setCategorias((atual) => (atual.includes(valor) ? atual.filter((c) => c !== valor) : [...atual, valor]));
@@ -62,7 +67,7 @@ export function ResultadoPage() {
         Resultado da <em className="accent">triagem</em>
       </h1>
 
-      <section className="hero-block">
+      <section className="hero-block hero-reveal">
         <OwlMark className="hero-block__owl-mark" />
         <span className="badge badge--gold">
           {resultado.origem === "ia" ? "Classificado por IA" : "Classificado por regras"}
@@ -106,9 +111,9 @@ export function ResultadoPage() {
       {advogados?.length === 0 && <p className="text-muted">Nenhum advogado compatível encontrado ainda.</p>}
       {advogados?.length > 0 && (
         <ul className="advogados-lista">
-          {advogados.map((adv) => (
-            <li key={adv.uid}>
-              <AdvogadoCard advogado={adv} />
+          {advogados.map((adv, i) => (
+            <li key={adv.uid} className="step-enter" style={{ animationDelay: `${Math.min(i * 40, 400)}ms` }}>
+              <AdvogadoCard advogado={adv} catalogoEspecialidades={catalogoEspecialidades} />
             </li>
           ))}
         </ul>

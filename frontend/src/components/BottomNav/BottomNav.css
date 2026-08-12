@@ -13,6 +13,7 @@
   background: var(--bg-section);
   border-top: 1px solid var(--color-border);
   box-shadow: var(--shadow-up);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .bottom-nav__item {

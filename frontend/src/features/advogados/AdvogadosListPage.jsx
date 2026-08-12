@@ -49,6 +49,11 @@ export function AdvogadosListPage() {
 
   const temFiltro = area || cidade || uf;
   const opcoesDaArea = (area && catalogoCategorias?.[area]) || [];
+  const catalogoEspecialidades = Object.fromEntries(
+    Object.values(catalogoCategorias || {})
+      .flat()
+      .map((c) => [c.valor, c.label]),
+  );
 
   function limpar() {
     setArea("");
@@ -126,7 +131,7 @@ export function AdvogadosListPage() {
           <ul className="advogados-lista">
             {advogados.map((adv, i) => (
               <li key={adv.uid} className="step-enter" style={{ animationDelay: `${Math.min(i * 40, 400)}ms` }}>
-                <AdvogadoCard advogado={adv} />
+                <AdvogadoCard advogado={adv} catalogoEspecialidades={catalogoEspecialidades} />
               </li>
             ))}
           </ul>

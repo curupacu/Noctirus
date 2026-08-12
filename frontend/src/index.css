@@ -11,6 +11,10 @@ body {
   line-height: var(--line-height-base);
   color: var(--color-text);
   background: var(--color-bg);
+  /* Troca suave ao ligar/desligar o tema escuro (lib/theme.js) — sem isso a troca de
+     token era um corte seco. Não afeta Home/Login/Cadastro: lá o tema é escuro fixo
+     (main.splash/main.auth-screen), o toggle nem aparece nessas telas. */
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 #root {
@@ -216,6 +220,7 @@ a:hover {
   padding: 3px var(--space-sm);
   border-radius: var(--radius-full);
   text-transform: capitalize;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 .badge--success {
@@ -290,6 +295,35 @@ a:hover {
   font-size: var(--font-size-2xl);
 }
 
+.avatar-placeholder--hero {
+  width: 128px;
+  height: 128px;
+  font-size: var(--font-size-3xl);
+}
+
+/* Topo do perfil público do advogado — a foto era um círculo pequeno igual ao da
+   listagem, competindo com o número da OAB na mesma linha de subtítulo (achado do
+   usuário, comparando com a tela de perfil de apps tipo Tinder: lá a foto é a âncora
+   visual e a bio vem antes de qualquer credencial). Empilhado (não lado a lado) pra
+   foto grande não espremer o nome em telas estreitas — mesmo princípio do `main.splash`. */
+.advogado-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.advogado-hero h1 {
+  margin: 0;
+}
+
+.advogado-hero__local {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
 .hero-block {
   position: relative;
   overflow: hidden;
@@ -337,6 +371,56 @@ a:hover {
 
 .hero-block--dark .hero-block__owl-mark {
   opacity: 0.22;
+}
+
+/* Entrada de destaque pro card de resultado da triagem — é o momento de clímax do
+   produto (a resposta que o usuário veio buscar), então merece mais do que um
+   step-enter genérico. Escala + fade suave (não é só translateY como o step-enter),
+   com o selo de classificação (.badge--gold) chegando um instante depois e ganhando um
+   pulso de brilho dourado uma única vez pra puxar o olho pra "aqui está a resposta" —
+   dourado com parcimônia (docs/DESIGN.md): só esse selo pulsa, o resto do card não. */
+.hero-reveal {
+  animation: hero-reveal 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@keyframes hero-reveal {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.hero-reveal .badge--gold {
+  animation: hero-reveal-badge-glow 1.1s ease-out 0.3s backwards;
+}
+
+@keyframes hero-reveal-badge-glow {
+  0% {
+    opacity: 0;
+    transform: translateY(-4px);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--gold) 55%, transparent);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(0);
+    box-shadow: 0 0 0 8px color-mix(in srgb, var(--gold) 0%, transparent);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--gold) 0%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-reveal,
+  .hero-reveal .badge--gold {
+    animation: none;
+  }
 }
 
 .chip-list {
@@ -483,6 +567,7 @@ tbody tr:hover {
   padding: var(--space-lg);
   margin-bottom: var(--space-lg);
   box-shadow: var(--shadow-sm);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .card__header {
@@ -776,56 +861,53 @@ main.auth-screen {
   gap: var(--space-sm);
 }
 
-.advogado-row {
-  position: relative;
-  overflow: hidden;
+/* Card de advogado — era uma linha fina (nome + cidade), achado do usuário (11/08): não
+   dava vontade de clicar, todo mundo parecia igual. Virou um card de verdade com bio e
+   chips de especialidade (ver components/AdvogadoCard).
+   Hover só com border-color + shadow, de propósito — a versão antiga tinha
+   `transform: translateY` no card INTEIRO junto com um brilho que desliza via
+   `transition: left` num pseudo-elemento; perto da borda do card isso podia entrar num
+   loop (o deslocamento tira o cursor de cima do elemento -> sai do :hover -> volta pra
+   posição original -> :hover liga de novo), o que lia como um "pisca" estranho (achado
+   do usuário). Sem transform no elemento hitboxeado pelo hover, esse loop não existe. */
+.advogado-card {
   display: flex;
-  align-items: center;
-  gap: var(--space-md);
+  flex-direction: column;
+  gap: var(--space-sm);
   background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius-lg);
-  padding: var(--space-md);
+  padding: var(--space-lg);
   box-shadow: var(--shadow-sm);
   color: inherit;
   text-decoration: none;
-  transition: transform 0.1s ease, box-shadow 0.15s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
 }
 
-.advogado-row:hover {
+.advogado-card:hover {
+  border-color: var(--gold);
   box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
   color: inherit;
   text-decoration: none;
 }
 
-/* Brilho dourado sutil varrendo o card no hover — "dourado com parcimônia" (docs/
-   DESIGN.md) então é bem discreto (16% de opacidade no pico) e só passa uma vez por
-   hover, não fica em loop. */
-.advogado-row::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -60%;
-  width: 40%;
-  height: 100%;
-  background: linear-gradient(115deg, transparent, rgba(217, 162, 58, 0.16), transparent);
-  transform: skewX(-20deg);
-  pointer-events: none;
-  transition: left 0.65s ease;
-}
-
-.advogado-row:hover::after {
-  left: 130%;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .advogado-row,
-  .advogado-row::after {
+  .advogado-card {
     transition: none;
   }
 }
 
-.advogado-row__info {
+.advogado-card__top {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+
+.advogado-card__avatar {
+  flex-shrink: 0;
+}
+
+.advogado-card__heading {
   flex: 1;
   min-width: 0;
   display: flex;
@@ -833,29 +915,32 @@ main.auth-screen {
   gap: 2px;
 }
 
-.advogado-row__nome {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-sm);
+.advogado-card__nome {
   font-weight: 800;
+  font-size: var(--font-size-lg);
   color: var(--color-text);
 }
 
-.advogado-row__meta {
+.advogado-card__meta {
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
-.advogado-row__bio {
+.advogado-card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+  margin-top: 4px;
+}
+
+.advogado-card__bio {
+  margin: 0;
   font-size: var(--font-size-sm);
   color: var(--color-text);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .advogado-row__chevron {
@@ -878,7 +963,7 @@ main.auth-screen {
   box-shadow: var(--shadow-sm);
   color: inherit;
   text-decoration: none;
-  transition: transform 0.1s ease, box-shadow 0.15s ease;
+  transition: transform 0.1s ease, box-shadow 0.15s ease, background-color 0.2s ease;
 }
 
 a.list-row:hover {
@@ -962,7 +1047,7 @@ a.list-row:hover {
   transition: transform 0.18s ease;
 }
 
-.advogado-row:hover .advogado-row__chevron,
+.advogado-card:hover .advogado-row__chevron,
 a.list-row:hover .advogado-row__chevron {
   transform: translateX(3px);
 }

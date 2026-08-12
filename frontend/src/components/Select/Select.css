@@ -7,7 +7,7 @@
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: var(--space-sm) var(--space-md);
-  transition: border-color 0.15s ease;
+  transition: border-color 0.15s ease, background-color 0.2s ease, color 0.2s ease;
 }
 
 .select:hover {

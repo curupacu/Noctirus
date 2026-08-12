@@ -103,13 +103,17 @@ export function CadastroPage() {
       </Link>
 
       <div className="auth-screen__inner">
-        <Logo className="auth-screen__logo" />
-        <div className="auth-screen__header">
+        <Logo className="auth-screen__logo step-enter" />
+        <div className="auth-screen__header step-enter" style={{ animationDelay: "80ms" }}>
           <h1>Criar conta</h1>
           <p>Leva menos de 2 minutos.</p>
         </div>
 
-        <form className="auth-screen__form" onSubmit={handleSubmit}>
+        <form
+          className="auth-screen__form step-enter"
+          style={{ animationDelay: "160ms" }}
+          onSubmit={handleSubmit}
+        >
           <div className="input-group">
             <label className="input-label">Você é:</label>
             <div className="choice-grid">
