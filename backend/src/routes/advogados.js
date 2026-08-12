@@ -160,3 +160,112 @@ advogadosRouter.patch(
     res.json({ ok: true });
   },
 );
+
+const CANAIS_CONTATO = ["whatsapp", "email"];
+
+// Loga que alguém clicou em falar no WhatsApp/e-mail (RF010 complementado) — só
+// metadado (canal, quando), nunca o conteúdo de nenhuma conversa. Por isso não esbarra
+// em sigilo profissional da OAB (Estatuto, Lei 8.906/94, art. 7º XIX): a conversa em si
+// acontece inteiramente fora da plataforma, a Nocturis nunca tem acesso a ela. Público,
+// sem token — navegar o perfil e clicar em contato não exige login (RF008/RF010).
+advogadosRouter.post("/advogados/:uid/contato", async (req, res) => {
+  const { uid } = req.params;
+  const { canal } = req.body;
+
+  if (!CANAIS_CONTATO.includes(canal)) {
+    return res.status(400).json({ erro: `Canal deve ser um de: ${CANAIS_CONTATO.join(", ")}` });
+  }
+
+  const advogadoDoc = await db.collection("advogados").doc(uid).get();
+  if (!advogadoDoc.exists) {
+    return res.status(404).json({ erro: "Advogado não encontrado" });
+  }
+
+  await db.collection("contatos").add({
+    advogadoId: uid,
+    canal,
+    createdAt: new Date().toISOString(),
+  });
+  res.status(201).json({ ok: true });
+});
+
+// Métricas do próprio perfil (contatos recebidos + média de feedback) — só o dono ou o
+// admin veem, mesmo padrão de autorização usado em PUT /advogados/:uid.
+advogadosRouter.get("/advogados/:uid/metricas", verificarToken, async (req, res) => {
+  const { uid } = req.params;
+  if (uid !== req.user.uid && req.user.role !== "admin") {
+    return res.status(403).json({ erro: "Só é possível ver as métricas do próprio perfil" });
+  }
+
+  const [contatosSnap, feedbacksSnap] = await Promise.all([
+    db.collection("contatos").where("advogadoId", "==", uid).get(),
+    db.collection("feedbacks").where("advogadoId", "==", uid).get(),
+  ]);
+
+  const contatos = contatosSnap.docs.map((doc) => doc.data());
+  const feedbacks = feedbacksSnap.docs.map((doc) => doc.data());
+  const somaNotas = feedbacks.reduce((soma, f) => soma + f.nota, 0);
+
+  res.json({
+    contatos: {
+      total: contatos.length,
+      whatsapp: contatos.filter((c) => c.canal === "whatsapp").length,
+      email: contatos.filter((c) => c.canal === "email").length,
+    },
+    feedbacks: {
+      total: feedbacks.length,
+      mediaNota: feedbacks.length ? Number((somaNotas / feedbacks.length).toFixed(1)) : null,
+    },
+  });
+});
+
+// Avaliação privada do cliente sobre o atendimento — nunca fica pública nem aparece no
+// perfil/listagem, diferente da denúncia (RF011, que vai pro admin moderar conduta
+// inadequada). Aqui é só um retorno construtivo direto pro advogado.
+advogadosRouter.post(
+  "/advogados/:uid/feedback",
+  verificarToken,
+  requireRole("cliente"),
+  async (req, res) => {
+    const { uid } = req.params;
+    const { nota, comentario } = req.body;
+    const notaNumero = Number(nota);
+
+    if (!Number.isInteger(notaNumero) || notaNumero < 1 || notaNumero > 5) {
+      return res.status(400).json({ erro: "Nota deve ser um número inteiro de 1 a 5" });
+    }
+
+    const advogadoDoc = await db.collection("advogados").doc(uid).get();
+    if (!advogadoDoc.exists) {
+      return res.status(404).json({ erro: "Advogado não encontrado" });
+    }
+
+    const feedback = {
+      advogadoId: uid,
+      autorId: req.user.uid,
+      nota: notaNumero,
+      comentario: comentario ? String(comentario).trim().slice(0, 500) : "",
+      createdAt: new Date().toISOString(),
+    };
+    const ref = await db.collection("feedbacks").add(feedback);
+    res.status(201).json({ id: ref.id, ...feedback });
+  },
+);
+
+// Lista o feedback recebido — só o dono ou o admin, e sem expor quem escreveu (fica
+// anônimo pro advogado de propósito: é um retorno privado, não uma denúncia formal).
+advogadosRouter.get("/advogados/:uid/feedback", verificarToken, async (req, res) => {
+  const { uid } = req.params;
+  if (uid !== req.user.uid && req.user.role !== "admin") {
+    return res.status(403).json({ erro: "Só é possível ver o feedback do próprio perfil" });
+  }
+
+  const snapshot = await db.collection("feedbacks").where("advogadoId", "==", uid).get();
+  const feedbacks = snapshot.docs
+    .map((doc) => {
+      const { nota, comentario, createdAt } = doc.data();
+      return { id: doc.id, nota, comentario, createdAt };
+    })
+    .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  res.json(feedbacks);
+});

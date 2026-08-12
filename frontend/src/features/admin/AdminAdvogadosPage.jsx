@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Avatar } from "../../components/Avatar/Avatar";
 import { Button } from "../../components/Button/Button";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
@@ -53,51 +54,55 @@ export function AdminAdvogadosPage() {
       <span className="eyebrow">Administração</span>
       <h1>Advogados cadastrados</h1>
       <AdminNav />
-      <div className="card">
-        <div className="table-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>OAB</th>
-                <th>Situação</th>
-                <th>Ação</th>
-              </tr>
-            </thead>
-            <tbody>
-              {advogados.map((adv, i) => (
-                <tr key={adv.uid} className="step-enter" style={{ animationDelay: `${Math.min(i * 40, 400)}ms` }}>
-                  <td data-label="Nome">{adv.nome}</td>
-                  <td data-label="OAB">
-                    {adv.oab?.numero}/{adv.oab?.uf}
-                  </td>
-                  <td data-label="Situação">
-                    <span className={`badge${adv.verificado ? " badge--seal" : ""}`}>
-                      {adv.verificado && (
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                          <path d="M20 6 9 17l-5-5" />
-                        </svg>
-                      )}
-                      {adv.verificado ? "verificada" : "em análise"}
-                    </span>
-                  </td>
-                  <td className="actions" data-label="Ação">
-                    <Button variant="secondary" onClick={() => verificarNoCna(adv)}>
-                      {copiadoUid === adv.uid ? "Nº copiado!" : "Verificar no CNA"}
-                    </Button>
-                    <Button
-                      variant={adv.verificado ? "secondary" : "primary"}
-                      onClick={() => alternarVerificado(adv.uid, adv.verificado)}
-                    >
-                      {adv.verificado ? "Revogar" : "Aprovar"}
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+
+      {advogados.length === 0 && <p className="text-muted">Nenhum advogado cadastrado.</p>}
+
+      <ul className="list-plain">
+        {advogados.map((adv, i) => (
+          <li
+            key={adv.uid}
+            className="card stack step-enter"
+            style={{ animationDelay: `${Math.min(i * 40, 400)}ms` }}
+          >
+            <div className="advogado-card__top">
+              <Avatar
+                nome={adv.nome}
+                foto={adv.foto}
+                seed={adv.uid}
+                className="advogado-card__avatar avatar-placeholder--grande"
+              />
+              <div className="advogado-card__heading">
+                <span className="advogado-card__nome">{adv.nome}</span>
+                <span className="advogado-card__meta">
+                  OAB {adv.oab?.numero}/{adv.oab?.uf}
+                </span>
+                <span className="advogado-card__badges">
+                  <span className={`badge${adv.verificado ? " badge--seal" : ""}`}>
+                    {adv.verificado && (
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M20 6 9 17l-5-5" />
+                      </svg>
+                    )}
+                    {adv.verificado ? "verificada" : "em análise"}
+                  </span>
+                </span>
+              </div>
+            </div>
+
+            <div className="actions">
+              <Button variant="secondary" onClick={() => verificarNoCna(adv)}>
+                {copiadoUid === adv.uid ? "Nº copiado!" : "Verificar no CNA"}
+              </Button>
+              <Button
+                variant={adv.verificado ? "secondary" : "primary"}
+                onClick={() => alternarVerificado(adv.uid, adv.verificado)}
+              >
+                {adv.verificado ? "Revogar" : "Aprovar"}
+              </Button>
+            </div>
+          </li>
+        ))}
+      </ul>
     </main>
   );
 }

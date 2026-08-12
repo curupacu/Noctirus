@@ -3,6 +3,8 @@ import { Link, useParams } from "react-router-dom";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
+import { useAuth } from "../auth/AuthContext";
+import { FeedbackForm } from "./FeedbackForm";
 
 const LABEL_AREA = {
   civel: "Cível",
@@ -28,6 +30,7 @@ function ListaOuVazio({ titulo, itens }) {
 
 export function AdvogadoPublicoPage() {
   const { uid } = useParams();
+  const { role } = useAuth();
   const [advogado, setAdvogado] = useState(null);
   const [curriculo, setCurriculo] = useState(null);
   const [catalogoCategorias, setCatalogoCategorias] = useState(null);
@@ -46,6 +49,12 @@ export function AdvogadoPublicoPage() {
       })
       .catch((err) => setErro(err.message));
   }, [uid]);
+
+  // Metadado apenas (canal + quando) — nunca o conteúdo da conversa, que acontece
+  // inteira fora da plataforma. Não bloqueia a abertura do link.
+  function logarContato(canal) {
+    api.post(`/advogados/${uid}/contato`, { canal }).catch(() => {});
+  }
 
   if (erro) return <p role="alert">{erro}</p>;
   if (!advogado) return <Loading>Carregando...</Loading>;
@@ -120,12 +129,13 @@ export function AdvogadoPublicoPage() {
             href={`https://wa.me/${whatsapp}`}
             target="_blank"
             rel="noreferrer"
+            onClick={() => logarContato("whatsapp")}
           >
             Falar no WhatsApp
           </a>
         )}
         {email && (
-          <a className="button button--secondary" href={`mailto:${email}`}>
+          <a className="button button--secondary" href={`mailto:${email}`} onClick={() => logarContato("email")}>
             Enviar e-mail
           </a>
         )}
@@ -134,6 +144,15 @@ export function AdvogadoPublicoPage() {
         <p className="text-muted">Este advogado está suspenso e não pode ser contatado pela plataforma.</p>
       )}
       {!suspenso && !whatsapp && !email && <p className="text-muted">Nenhum contato cadastrado.</p>}
+
+      {role === "cliente" && (
+        <>
+          <div className="section-heading">
+            <h2>Feedback</h2>
+          </div>
+          <FeedbackForm uid={uid} />
+        </>
+      )}
 
       <div className="section-heading">
         <h2>Currículo</h2>
