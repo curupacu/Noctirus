@@ -960,19 +960,23 @@ a.list-row:hover {
 /* Ícone de área na frente do título — trocado da inicial (C/T) numa caixa, que lia
    como placeholder inacabado, pra um ícone de verdade (achado do usuário, 18/08).
    Ver components/AreaIcon. */
+/* Circular, não quadrado arredondado — o cantinho reto lia como um botão solto dentro
+   da linha (achado do usuário, 18/08: "só um botão estranho"). Circular combina com o
+   Avatar que ocupa essa mesma posição nas outras linhas (conta, contatos), lendo como
+   "marcador de identidade da linha", não como controle clicável à parte. */
 .area-icon {
   flex-shrink: 0;
   width: 42px;
   height: 42px;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .area-icon svg {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
 }
 
 .area-icon--civel {
