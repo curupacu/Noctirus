@@ -938,7 +938,11 @@ main.auth-screen {
   justify-content: space-between;
   gap: var(--space-lg);
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
+  /* --color-border (#e4e0d7 no tema claro) é quase a mesma luminosidade do fundo —
+     ficava invisível em monitores menos contrastados (achado do usuário, 18/08: "não dá
+     pra enxergar nem as bordas"). --text-faint é bem mais escuro que --border nos dois
+     temas, ainda discreto mas com contraste de verdade contra --surface/--bg. */
+  border: 1.5px solid var(--color-text-faint);
   border-radius: var(--radius-sm);
   padding: var(--space-lg);
   box-shadow: var(--shadow-md);
@@ -1041,8 +1045,12 @@ a.list-row:hover .advogado-row__chevron {
   gap: 4px;
   padding: 6px 14px;
   border-radius: var(--radius-full);
-  background: var(--surface-hover);
-  border: 1px solid var(--border);
+  /* --surface-hover (bege bem claro) sobre --bg (creme) quase não diferenciava — mesmo
+     problema de contraste do .list-row, "não dá pra enxergar o botão" no claro.
+     --surface (branco, no tema claro) contra o fundo creme separa de verdade; a borda
+     usa --text-faint em vez de --border pelo mesmo motivo. */
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-text-faint);
   transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
 
