@@ -75,7 +75,9 @@ export function BottomNav() {
             end={end}
             className={({ isActive }) => `bottom-nav__item${isActive ? " bottom-nav__item--active" : ""}`}
           >
-            <Icon />
+            <span className="bottom-nav__icon-wrap">
+              <Icon />
+            </span>
             <span>{label}</span>
           </NavLink>
         ))}

@@ -17,7 +17,6 @@
 }
 
 .bottom-nav__item {
-  position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -35,33 +34,38 @@
   transform: scale(0.93);
 }
 
+/* Pílula dourada atrás do ícone ativo, como wrapper no fluxo normal (não posicionado
+   por coordenada absoluta) — a primeira versão travava um `top` fixo em pixels, mas o
+   item inteiro é centralizado verticalmente (`justify-content: center`), então o ícone
+   não fica numa altura previsível; o valor fixo cortava a pílula na metade do ícone
+   (achado do usuário, 18/08). Um wrapper que só existe ao redor do ícone acompanha ele
+   sozinho, sem precisar adivinhar posição. */
+.bottom-nav__icon-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 26px;
+  border-radius: var(--radius-full);
+  transition: background-color 0.15s ease;
+}
+
 .bottom-nav__item svg {
   width: 22px;
   height: 22px;
-  position: relative;
-  z-index: 1;
   transition: transform 0.15s ease;
 }
 
-/* Pílula dourada atrás do ícone ativo — os ícones eram finos e mudavam só de cor,
-   quase imperceptível (achado do usuário, 18/08: "nem um pouco chamativos"). */
 .bottom-nav__item--active {
   color: var(--text);
 }
 
-.bottom-nav__item--active svg {
-  color: var(--ink-on-accent);
-  transform: translateY(-1px);
+.bottom-nav__item--active .bottom-nav__icon-wrap {
+  background: var(--gold);
 }
 
-.bottom-nav__item--active::before {
-  content: "";
-  position: absolute;
-  top: 2px;
-  width: 38px;
-  height: 26px;
-  border-radius: var(--radius-full);
-  background: var(--gold);
+.bottom-nav__item--active svg {
+  color: var(--ink-on-accent);
 }
 
 @media (prefers-reduced-motion: reduce) {
