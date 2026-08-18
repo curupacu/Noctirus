@@ -1,30 +1,31 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { Avatar } from "../../components/Avatar/Avatar";
+import { ChatThread } from "../../components/ChatThread/ChatThread";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
 
 const LABEL_AREA = { civel: "cível", trabalhista: "trabalhista" };
 
-// Mensagens prontas, só isso — nada de campo livre (pedido do usuário, 18/08: "não
-// quero que a pessoa possa escrever algo, só mensagenzinhas prontas"). Reduz risco de
-// captação de clientela (Código de Ética da OAB, art. 34, IV: o advogado nunca aborda o
-// cliente primeiro) e mantém o texto sempre dentro do que a plataforma já revisou — o
-// cliente escolhe uma das opções, não redige a mensagem. O clique de enviar
-// (WhatsApp/e-mail) continua sendo sempre dele.
-function mensagensProntas(advogado) {
+// Categorias de mensagem do cliente pro chatzinho (ver components/ChatThread) — igual
+// lista de mensagens da OAB, agora separada por tipo (pedido do usuário, 18/08: "tipo
+// olá etc"). Precisa bater exatamente com mensagensCliente() no backend
+// (routes/conversas.js) — o servidor só aceita um desses textos.
+function categoriasCliente(advogado) {
   const area = LABEL_AREA[advogado?.areasAtuacao?.[0]] || "jurídica";
-  return [
-    `Olá! Tenho uma questão ${area} e preciso de ajuda.`,
-    "Quero sua ajuda com um problema urgente.",
-    "Gostaria de agendar uma conversa antes de decidir.",
-  ];
+  return {
+    Saudação: ["Olá!", "Oi, tudo bem?"],
+    "Sobre o caso": [
+      `Tenho uma questão ${area} e preciso de ajuda.`,
+      "Quero sua ajuda com um problema urgente.",
+      "Gostaria de agendar uma conversa antes de decidir.",
+    ],
+  };
 }
 
 export function ContatoAdvogadoPage() {
   const { uid } = useParams();
   const [advogado, setAdvogado] = useState(null);
-  const [mensagem, setMensagem] = useState("");
   const [erro, setErro] = useState(null);
 
   useEffect(() => {
@@ -44,8 +45,6 @@ export function ContatoAdvogadoPage() {
   const suspenso = advogado.status === "suspenso";
   const whatsapp = !suspenso && advogado.contatos?.whatsapp;
   const email = !suspenso && advogado.contatos?.email;
-  const mensagens = mensagensProntas(advogado);
-  const textoCodificado = encodeURIComponent(mensagem);
 
   return (
     <main>
@@ -64,54 +63,49 @@ export function ContatoAdvogadoPage() {
         <p className="text-muted">Este advogado está suspenso e não pode ser contatado pela plataforma.</p>
       )}
 
+      {!suspenso && (
+        <>
+          <div className="section-heading">
+            <h2>Conversa</h2>
+          </div>
+          <ChatThread comUid={uid} categorias={categoriasCliente(advogado)} />
+        </>
+      )}
+
       {!suspenso && (whatsapp || email) && (
         <>
           <div className="section-heading">
-            <h2>Mensagem inicial</h2>
+            <h2>Contato direto</h2>
           </div>
-          <p className="text-muted">Escolha uma mensagem pronta (opcional) pra já ir junto.</p>
-          <div className="pill-toggle">
-            {mensagens.map((texto) => (
-              <button
-                key={texto}
-                type="button"
-                className={`pill-toggle__item${mensagem === texto ? " pill-toggle__item--active" : ""}`}
-                aria-pressed={mensagem === texto}
-                onClick={() => setMensagem((atual) => (atual === texto ? "" : texto))}
+          <div className="stack">
+            {whatsapp && (
+              <a
+                className="button button--primary contato-canal"
+                href={`https://wa.me/${whatsapp}`}
+                target="_blank"
+                rel="noreferrer"
+                onClick={() => logarContato("whatsapp")}
               >
-                {texto}
-              </button>
-            ))}
+                <span className="contato-canal__label">Chamar no WhatsApp</span>
+                <span className="contato-canal__valor">{whatsapp}</span>
+              </a>
+            )}
+            {email && (
+              <a
+                className="button button--secondary contato-canal"
+                href={`mailto:${email}?subject=${encodeURIComponent("Contato via Nocturis")}`}
+                onClick={() => logarContato("email")}
+              >
+                <span className="contato-canal__label">Enviar e-mail</span>
+                <span className="contato-canal__valor">{email}</span>
+              </a>
+            )}
           </div>
         </>
       )}
 
-      {!suspenso && (
-        <div className="stack" style={{ marginTop: "var(--space-lg)" }}>
-          {whatsapp && (
-            <a
-              className="button button--primary contato-canal"
-              href={`https://wa.me/${whatsapp}${textoCodificado ? `?text=${textoCodificado}` : ""}`}
-              target="_blank"
-              rel="noreferrer"
-              onClick={() => logarContato("whatsapp")}
-            >
-              <span className="contato-canal__label">Chamar no WhatsApp</span>
-              <span className="contato-canal__valor">{whatsapp}</span>
-            </a>
-          )}
-          {email && (
-            <a
-              className="button button--secondary contato-canal"
-              href={`mailto:${email}?subject=${encodeURIComponent("Contato via Nocturis")}${textoCodificado ? `&body=${textoCodificado}` : ""}`}
-              onClick={() => logarContato("email")}
-            >
-              <span className="contato-canal__label">Enviar e-mail</span>
-              <span className="contato-canal__valor">{email}</span>
-            </a>
-          )}
-          {!whatsapp && !email && <p className="text-muted">Nenhum contato cadastrado ainda.</p>}
-        </div>
+      {!suspenso && !whatsapp && !email && (
+        <p className="text-muted">Nenhum contato direto cadastrado ainda.</p>
       )}
 
       <p className="text-muted resultado-proximos-passos">
