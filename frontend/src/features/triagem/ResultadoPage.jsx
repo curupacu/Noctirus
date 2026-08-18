@@ -110,13 +110,19 @@ export function ResultadoPage() {
       </div>
       {advogados?.length === 0 && <p className="text-muted">Nenhum advogado compatível encontrado ainda.</p>}
       {advogados?.length > 0 && (
-        <ul className="advogados-lista">
-          {advogados.map((adv, i) => (
-            <li key={adv.uid} className="step-enter" style={{ animationDelay: `${Math.min(i * 40, 400)}ms` }}>
-              <AdvogadoCard advogado={adv} catalogoEspecialidades={catalogoEspecialidades} />
-            </li>
-          ))}
-        </ul>
+        <>
+          <span className="eyebrow">
+            Sua triagem apareceu para {advogados.length} advogado{advogados.length === 1 ? "" : "s"}{" "}
+            compatíve{advogados.length === 1 ? "l" : "is"}
+          </span>
+          <ul className="advogados-lista">
+            {advogados.map((adv, i) => (
+              <li key={adv.uid} className="step-enter" style={{ animationDelay: `${Math.min(i * 40, 400)}ms` }}>
+                <AdvogadoCard advogado={adv} catalogoEspecialidades={catalogoEspecialidades} />
+              </li>
+            ))}
+          </ul>
+        </>
       )}
 
       <ul className="list-plain resultado-proximos-passos">
