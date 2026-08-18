@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
 import { Loading } from "../../components/Loading/Loading";
-import { OwlMark } from "../../components/OwlMark/OwlMark";
+import { OwlIllustration } from "../../components/OwlIllustration/OwlIllustration";
 import { api } from "../../lib/api";
 
 const LABEL_AREA = {
@@ -33,20 +33,27 @@ export function PainelPage() {
 
   return (
     <main>
-      <h1>Olá, {primeiroNome}</h1>
+      <h1>
+        Olá, <em className="accent">{primeiroNome}</em>
+      </h1>
       <p className="text-muted">
         Este é o seu painel. Daqui você faz uma nova triagem ou acompanha as que já fez.
       </p>
 
-      <section className="hero-block hero-block--dark">
-        <OwlMark className="hero-block__owl-mark" />
-        <h2>Precisa de um advogado?</h2>
+      <section className="hero-block hero-block--dark hero-cta">
+        <OwlIllustration className="hero-block__owl-mark" />
+        <span className="eyebrow">Novo caso?</span>
+        <h2>
+          Fale com o advogado <em className="accent">certo</em>
+        </h2>
         <p>
           Responda algumas perguntas e descreva seu caso — a gente indica a área certa e
           advogados compatíveis.
         </p>
         <Link to="/triagem">
-          <Button>Fazer triagem</Button>
+          <Button>
+            Fazer triagem <span className="button__arrow">→</span>
+          </Button>
         </Link>
       </section>
 
