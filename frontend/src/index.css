@@ -324,7 +324,11 @@ a:hover {
    18/08: tela do painel "muito sem graça"). Escopado com uma classe extra pra não
    afetar os outros hero-blocks (resultado da triagem, etc.) que já funcionavam bem. */
 .hero-cta {
-  background: var(--ink-950);
+  /* --ink-800 (marrom bem escuro), não --ink-950 (quase preto puro) — no tema escuro,
+     --bg do app já é --ink-950, então o card ficava preto-sobre-preto, sem nenhum
+     limite visível além da coruja (achado do usuário, 18/08). --ink-800 é constante de
+     marca (não troca de tema), então mantém contraste com a página nos dois temas. */
+  background: var(--ink-800);
 }
 
 .hero-cta::before {
@@ -951,6 +955,41 @@ a.list-row:hover {
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
+
+/* Selo de área na frente do título — as linhas de "últimas triagens" eram só texto
+   empilhado, sem nenhuma âncora visual pra escanear rápido (achado do usuário, 18/08:
+   "meio pálido" mesmo depois do CTA acima ganhar mais presença). */
+.list-row__icon {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--font-size-lg);
+}
+
+.list-row__icon--civel {
+  background: var(--cream);
+  color: var(--gold-dim);
+}
+
+.list-row__icon--trabalhista {
+  background: var(--ink-800);
+  color: var(--gold);
+}
+
+.list-row__icon--indefinido {
+  background: var(--surface-hover);
+  color: var(--text-faint);
+}
+
+.list-row .avatar-placeholder {
+  flex-shrink: 0;
 }
 
 .list-row__title {
