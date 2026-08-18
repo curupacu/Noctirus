@@ -2,7 +2,18 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
+
+    <!-- Favicon: coruja da marca (era a letra "N" antes) — SVG pros navegadores modernos,
+         PNG/ICO de fallback pro Google e navegadores antigos. -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="alternate icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#61402c" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -10,7 +21,56 @@
       href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <title>Nocturis</title>
+
+    <title>Nocturis — Advocacia Virtual: Triagem e Direcionamento Jurídico</title>
+    <meta
+      name="description"
+      content="Nocturis: descreva seu problema jurídico e receba direcionamento imediato — triagem por IA identifica se é caso cível ou trabalhista e indica advogados compatíveis por área e localização. Contato direto, sem intermediário."
+    />
+    <link rel="canonical" href="https://nocturis.com.br/" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph / redes sociais (WhatsApp, Facebook, LinkedIn) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nocturis" />
+    <meta property="og:locale" content="pt_BR" />
+    <meta property="og:url" content="https://nocturis.com.br/" />
+    <meta property="og:title" content="Nocturis — Advocacia Virtual: Triagem e Direcionamento Jurídico" />
+    <meta
+      property="og:description"
+      content="Descreva seu problema jurídico e receba direcionamento imediato — triagem por IA e matching de advogados por área (cível/trabalhista) e localização."
+    />
+    <meta property="og:image" content="https://nocturis.com.br/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Twitter/X card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Nocturis — Advocacia Virtual: Triagem e Direcionamento Jurídico" />
+    <meta
+      name="twitter:description"
+      content="Descreva seu problema jurídico e receba direcionamento imediato — triagem por IA e matching de advogados por área e localização."
+    />
+    <meta name="twitter:image" content="https://nocturis.com.br/og-image.png" />
+
+    <!-- Dados estruturados: ajuda o Google a entender que "Nocturis" é essa marca de
+         advocacia, não confundir com "tontura"/"nocturia" nos resultados de busca. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "LegalService",
+        "name": "Nocturis",
+        "alternateName": "Nocturis Advocacia Virtual",
+        "url": "https://nocturis.com.br/",
+        "logo": "https://nocturis.com.br/favicon-512.png",
+        "image": "https://nocturis.com.br/og-image.png",
+        "description": "Advocacia virtual com triagem e direcionamento jurídico em áreas cível e trabalhista. O cliente descreve o problema, o sistema identifica a área e sugere advogados compatíveis por especialidade e localização.",
+        "areaServed": "BR",
+        "priceRange": "Gratuito para o cliente",
+        "knowsAbout": ["Direito Civil", "Direito Trabalhista"]
+      }
+    </script>
+
     <script>
       // Aplica o tema salvo antes do React montar, pra não piscar o tema errado
       // (ver frontend/src/lib/theme.js, mesma chave/lógica).
