@@ -318,6 +318,54 @@ a:hover {
   opacity: 0.22;
 }
 
+/* CTA de destaque do painel do cliente — mesma estrutura do .hero-block, mas com a
+   coruja colorida de verdade (não a silhueta translúcida) e uma textura de grão sutil,
+   pra dar presença de marca em vez de ficar um bloco marrom liso (achado do usuário,
+   18/08: tela do painel "muito sem graça"). Escopado com uma classe extra pra não
+   afetar os outros hero-blocks (resultado da triagem, etc.) que já funcionavam bem. */
+.hero-cta {
+  background: var(--ink-950);
+}
+
+.hero-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+.hero-cta .hero-block__owl-mark {
+  width: 58%;
+  min-width: 200px;
+  opacity: 0.94;
+  transform: translate(14%, -10%);
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.35));
+}
+
+.hero-cta .eyebrow {
+  color: var(--gold);
+}
+
+.hero-cta h2 {
+  font-size: var(--font-size-2xl);
+  max-width: 12ch;
+  text-wrap: balance;
+}
+
+.hero-cta p {
+  max-width: 34ch;
+  color: var(--cream-dim);
+}
+
+.hero-cta .button--primary {
+  padding: 14px 28px;
+  font-size: var(--font-size-lg);
+  margin-top: var(--space-sm);
+}
+
 /* Entrada de destaque pro card de resultado da triagem — é o momento de clímax do
    produto (a resposta que o usuário veio buscar), então merece mais do que um
    step-enter genérico. Escala + fade suave (não é só translateY como o step-enter),
