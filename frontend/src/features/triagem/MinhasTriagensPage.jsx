@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { AreaIcon } from "../../components/AreaIcon/AreaIcon";
 import { Button } from "../../components/Button/Button";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
@@ -36,9 +37,7 @@ export function MinhasTriagensPage() {
           {triagens.map((t) => (
             <li key={t.id}>
               <Link to={`/triagem/${t.id}`} className="list-row">
-                <span className={`list-row__icon list-row__icon--${t.areaClassificada}`} aria-hidden="true">
-                  {(LABEL_AREA[t.areaClassificada] || t.areaClassificada || "?").charAt(0)}
-                </span>
+                <AreaIcon area={t.areaClassificada} />
                 <span className="list-row__info">
                   <span className="list-row__title">
                     {LABEL_AREA[t.areaClassificada] || t.areaClassificada}
