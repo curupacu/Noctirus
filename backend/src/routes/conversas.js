@@ -22,6 +22,9 @@ function mensagensCliente(areaAdvogado) {
       "Quero sua ajuda com um problema urgente.",
       "Gostaria de agendar uma conversa antes de decidir.",
     ],
+    // Fechava um ciclo estranho: o advogado podia perguntar "Vamos conversar por
+    // WhatsApp?" e não existia como o cliente responder nada (achado do usuário, 18/08).
+    "Resposta rápida": ["Sim, pode ser!", "Não, prefiro por aqui mesmo.", "Combinado, obrigado(a)!"],
   };
 }
 
@@ -32,6 +35,7 @@ const MENSAGENS_ADVOGADO = {
     "No momento não consigo assumir novos casos.",
     "Vamos conversar por WhatsApp?",
   ],
+  "Resposta rápida": ["Sim, sem problema.", "Combinado!", "Por enquanto não, mas te aviso."],
 };
 
 function todasAs(mapa) {
