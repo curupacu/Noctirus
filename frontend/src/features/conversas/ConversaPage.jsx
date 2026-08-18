@@ -11,6 +11,7 @@ const CATEGORIAS_ADVOGADO = {
     "No momento não consigo assumir novos casos.",
     "Vamos conversar por WhatsApp?",
   ],
+  "Resposta rápida": ["Sim, sem problema.", "Combinado!", "Por enquanto não, mas te aviso."],
 };
 
 export function ConversaPage() {

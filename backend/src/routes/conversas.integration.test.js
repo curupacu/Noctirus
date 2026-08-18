@@ -92,6 +92,16 @@ describe("POST /conversas/:comUid/mensagens", () => {
     expect(resposta.status).toBe(201);
   });
 
+  it("cliente consegue responder sim/não a uma pergunta do advogado", async () => {
+    semearPar();
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    const resposta = await request(app)
+      .post("/conversas/a1/mensagens")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ texto: "Sim, pode ser!" });
+    expect(resposta.status).toBe(201);
+  });
+
   it("advogado responde com mensagem válida da própria lista", async () => {
     semearPar();
     const token = cell.fake.criarToken({ uid: "a1", role: "advogado" });
@@ -102,6 +112,16 @@ describe("POST /conversas/:comUid/mensagens", () => {
 
     expect(resposta.status).toBe(201);
     expect(resposta.body).toMatchObject({ clienteId: "c1", advogadoId: "a1", remetente: "advogado" });
+  });
+
+  it("advogado também consegue responder sim/não rápido", async () => {
+    semearPar();
+    const token = cell.fake.criarToken({ uid: "a1", role: "advogado" });
+    const resposta = await request(app)
+      .post("/conversas/c1/mensagens")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ texto: "Combinado!" });
+    expect(resposta.status).toBe(201);
   });
 });
 

@@ -20,6 +20,7 @@ function categoriasCliente(advogado) {
       "Quero sua ajuda com um problema urgente.",
       "Gostaria de agendar uma conversa antes de decidir.",
     ],
+    "Resposta rápida": ["Sim, pode ser!", "Não, prefiro por aqui mesmo.", "Combinado, obrigado(a)!"],
   };
 }
 
