@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /painel
+Disallow: /perfil
+Disallow: /cartao
+Disallow: /triagem
+Disallow: /minhas-triagens
+Disallow: /denunciar
+Disallow: /minhas-denuncias
+Disallow: /admin
+
+Sitemap: https://nocturis.com.br/sitemap.xml
