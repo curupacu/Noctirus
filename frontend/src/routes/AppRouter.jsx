@@ -6,6 +6,7 @@ import { AdminDenunciasPage } from "../features/admin/AdminDenunciasPage";
 import { AdminUsuariosPage } from "../features/admin/AdminUsuariosPage";
 import { AdvogadoPublicoPage } from "../features/advogados/AdvogadoPublicoPage";
 import { AdvogadosListPage } from "../features/advogados/AdvogadosListPage";
+import { ContatoAdvogadoPage } from "../features/advogados/ContatoAdvogadoPage";
 import { CadastroPage } from "../features/auth/CadastroPage";
 import { LoginPage } from "../features/auth/LoginPage";
 import { RotaProtegida } from "../features/auth/RotaProtegida";
@@ -30,6 +31,7 @@ export function AppRouter() {
         <Route path="/cadastro" element={<CadastroPage />} />
         <Route path="/advogados" element={<AdvogadosListPage />} />
         <Route path="/advogados/:uid" element={<AdvogadoPublicoPage />} />
+        <Route path="/advogados/:uid/contato" element={<ContatoAdvogadoPage />} />
         <Route
           path="/painel"
           element={

@@ -50,12 +50,6 @@ export function AdvogadoPublicoPage() {
       .catch((err) => setErro(err.message));
   }, [uid]);
 
-  // Metadado apenas (canal + quando) — nunca o conteúdo da conversa, que acontece
-  // inteira fora da plataforma. Não bloqueia a abertura do link.
-  function logarContato(canal) {
-    api.post(`/advogados/${uid}/contato`, { canal }).catch(() => {});
-  }
-
   if (erro) return <p role="alert">{erro}</p>;
   if (!advogado) return <Loading>Carregando...</Loading>;
 
@@ -119,29 +113,15 @@ export function AdvogadoPublicoPage() {
         </>
       )}
 
-      <div className="section-heading">
-        <h2>Contato</h2>
-      </div>
-      <div className="actions">
-        {whatsapp && (
-          <a
-            className="button button--primary"
-            href={`https://wa.me/${whatsapp}`}
-            target="_blank"
-            rel="noreferrer"
-            onClick={() => logarContato("whatsapp")}
-          >
-            Falar no WhatsApp
-          </a>
-        )}
-        {email && (
-          <a className="button button--secondary" href={`mailto:${email}`} onClick={() => logarContato("email")}>
-            Enviar e-mail
-          </a>
-        )}
-      </div>
       {suspenso && (
         <p className="text-muted">Este advogado está suspenso e não pode ser contatado pela plataforma.</p>
+      )}
+      {!suspenso && (whatsapp || email) && (
+        <div className="actions">
+          <Link to={`/advogados/${uid}/contato`} className="button button--primary">
+            Contatar advogado <span className="button__arrow">→</span>
+          </Link>
+        </div>
       )}
       {!suspenso && !whatsapp && !email && <p className="text-muted">Nenhum contato cadastrado.</p>}
 
