@@ -5,6 +5,7 @@ import { Button } from "../../components/Button/Button";
 import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
 import { Input } from "../../components/Input/Input";
 import { Loading } from "../../components/Loading/Loading";
+import { PerfilCompletude } from "../../components/PerfilCompletude/PerfilCompletude";
 import { useAuth } from "../auth/AuthContext";
 import { CurriculoForm } from "../curriculo/CurriculoForm";
 import { api } from "../../lib/api";
@@ -29,6 +30,7 @@ export function PerfilPage() {
   const [carregando, setCarregando] = useState(true);
   const [metricas, setMetricas] = useState(null);
   const [feedbacks, setFeedbacks] = useState(null);
+  const [curriculo, setCurriculo] = useState(null);
 
   useEffect(() => {
     async function carregar() {
@@ -38,9 +40,10 @@ export function PerfilPage() {
       setTelefone(usuario.telefone || "");
 
       if (role === "advogado") {
-        const [dadosAdvogado, perguntas] = await Promise.all([
+        const [dadosAdvogado, perguntas, dadosCurriculo] = await Promise.all([
           api.get(`/advogados/${user.uid}`),
           api.get("/triagem/perguntas"),
+          api.get(`/curriculos/${user.uid}`),
         ]);
         setAdvogado(dadosAdvogado);
         setBio(dadosAdvogado.bio || "");
@@ -50,6 +53,7 @@ export function PerfilPage() {
         setUf(dadosAdvogado.localizacao?.uf || "");
         setEspecialidades(dadosAdvogado.especialidades || []);
         setCategoriasPorArea(perguntas.categorias);
+        setCurriculo(dadosCurriculo);
       }
       setCarregando(false);
     }
@@ -67,6 +71,19 @@ export function PerfilPage() {
       atual.includes(valor) ? atual.filter((e) => e !== valor) : [...atual, valor],
     );
   }
+
+  const curriculoPreenchido =
+    !!curriculo &&
+    ["formacao", "especializacoes", "cursos", "experiencias"].some(
+      (chave) => (curriculo[chave] || []).length > 0,
+    );
+
+  const itensCompletude = [
+    { label: "Foto de perfil", completo: !!foto },
+    { label: "Sobre você", completo: bio.trim().length > 0 },
+    { label: "Especialidades", completo: especialidades.length > 0 },
+    { label: "Currículo", completo: curriculoPreenchido },
+  ];
 
   const especialidadesDisponiveis = (categoriasPorArea && advogado
     ? (advogado.areasAtuacao || []).flatMap((area) => categoriasPorArea[area] || [])
@@ -142,6 +159,8 @@ export function PerfilPage() {
           </>
         )}
       </p>
+
+      {role === "advogado" && advogado && <PerfilCompletude itens={itensCompletude} />}
 
       <div className="section-heading">
         <h2>Dados básicos</h2>
@@ -242,7 +261,7 @@ export function PerfilPage() {
         </>
       )}
 
-      {role === "advogado" && <CurriculoForm uid={user.uid} />}
+      {role === "advogado" && <CurriculoForm uid={user.uid} onSalvo={setCurriculo} />}
 
       {mensagem && <p role="status">{mensagem}</p>}
 

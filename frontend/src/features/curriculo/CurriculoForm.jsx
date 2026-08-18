@@ -21,7 +21,7 @@ function paraLista(texto) {
     .filter(Boolean);
 }
 
-export function CurriculoForm({ uid }) {
+export function CurriculoForm({ uid, onSalvo }) {
   const [valores, setValores] = useState({
     formacao: "",
     especializacoes: "",
@@ -49,13 +49,15 @@ export function CurriculoForm({ uid }) {
     e.preventDefault();
     setMensagem(null);
     try {
-      await api.put(`/curriculos/${uid}`, {
+      const lista = {
         formacao: paraLista(valores.formacao),
         especializacoes: paraLista(valores.especializacoes),
         cursos: paraLista(valores.cursos),
         experiencias: paraLista(valores.experiencias),
-      });
+      };
+      await api.put(`/curriculos/${uid}`, lista);
       setMensagem("Currículo salvo.");
+      onSalvo?.(lista);
     } catch (err) {
       setMensagem(err.message);
     }
