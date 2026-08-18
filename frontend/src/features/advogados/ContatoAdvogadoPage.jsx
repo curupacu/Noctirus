@@ -6,26 +6,18 @@ import { api } from "../../lib/api";
 
 const LABEL_AREA = { civel: "cível", trabalhista: "trabalhista" };
 
-// Modelos de mensagem inicial — pedido do usuário, 18/08, pra reduzir risco de captação
-// de clientela (Código de Ética da OAB, art. 34, IV): a plataforma nunca manda mensagem
-// nenhuma sozinha, e o advogado nunca aborda o cliente primeiro. O que existe aqui é só
-// um ponto de partida redigido de forma neutra que o PRÓPRIO cliente decide usar, editar
-// ou ignorar — o clique de enviar (WhatsApp/e-mail) continua sendo sempre dele.
-function modelosDeMensagem(advogado) {
+// Mensagens prontas, só isso — nada de campo livre (pedido do usuário, 18/08: "não
+// quero que a pessoa possa escrever algo, só mensagenzinhas prontas"). Reduz risco de
+// captação de clientela (Código de Ética da OAB, art. 34, IV: o advogado nunca aborda o
+// cliente primeiro) e mantém o texto sempre dentro do que a plataforma já revisou — o
+// cliente escolhe uma das opções, não redige a mensagem. O clique de enviar
+// (WhatsApp/e-mail) continua sendo sempre dele.
+function mensagensProntas(advogado) {
   const area = LABEL_AREA[advogado?.areasAtuacao?.[0]] || "jurídica";
   return [
-    {
-      label: "Direto ao ponto",
-      texto: `Olá! Tenho uma questão ${area} e gostaria de conversar sobre o meu caso.`,
-    },
-    {
-      label: "Perguntar antes",
-      texto: `Olá! Encontrei seu perfil na Nocturis. Antes de decidir, gostaria de entender melhor como você poderia me ajudar com uma questão ${area}.`,
-    },
-    {
-      label: "Agendar uma conversa",
-      texto: "Olá! Gostaria de agendar uma conversa inicial sobre o meu caso, quando for possível pra você.",
-    },
+    `Olá! Tenho uma questão ${area} e preciso de ajuda.`,
+    "Quero sua ajuda com um problema urgente.",
+    "Gostaria de agendar uma conversa antes de decidir.",
   ];
 }
 
@@ -52,8 +44,8 @@ export function ContatoAdvogadoPage() {
   const suspenso = advogado.status === "suspenso";
   const whatsapp = !suspenso && advogado.contatos?.whatsapp;
   const email = !suspenso && advogado.contatos?.email;
-  const modelos = modelosDeMensagem(advogado);
-  const textoCodificado = encodeURIComponent(mensagem.trim());
+  const mensagens = mensagensProntas(advogado);
+  const textoCodificado = encodeURIComponent(mensagem);
 
   return (
     <main>
@@ -77,32 +69,20 @@ export function ContatoAdvogadoPage() {
           <div className="section-heading">
             <h2>Mensagem inicial</h2>
           </div>
-          <p className="text-muted">
-            Um ponto de partida pra você editar como quiser — a mensagem só sai quando você
-            mesmo clicar em enviar.
-          </p>
+          <p className="text-muted">Escolha uma mensagem pronta (opcional) pra já ir junto.</p>
           <div className="pill-toggle">
-            {modelos.map((modelo) => (
+            {mensagens.map((texto) => (
               <button
-                key={modelo.label}
+                key={texto}
                 type="button"
-                className={`pill-toggle__item${mensagem === modelo.texto ? " pill-toggle__item--active" : ""}`}
-                aria-pressed={mensagem === modelo.texto}
-                onClick={() => setMensagem(modelo.texto)}
+                className={`pill-toggle__item${mensagem === texto ? " pill-toggle__item--active" : ""}`}
+                aria-pressed={mensagem === texto}
+                onClick={() => setMensagem((atual) => (atual === texto ? "" : texto))}
               >
-                {modelo.label}
+                {texto}
               </button>
             ))}
           </div>
-          <textarea
-            className="input"
-            rows={3}
-            maxLength={500}
-            value={mensagem}
-            onChange={(e) => setMensagem(e.target.value)}
-            placeholder="Escolha um modelo acima ou escreva a sua própria mensagem"
-            style={{ marginTop: "var(--space-sm)" }}
-          />
         </>
       )}
 
