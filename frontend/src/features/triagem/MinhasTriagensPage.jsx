@@ -36,6 +36,9 @@ export function MinhasTriagensPage() {
           {triagens.map((t) => (
             <li key={t.id}>
               <Link to={`/triagem/${t.id}`} className="list-row">
+                <span className={`list-row__icon list-row__icon--${t.areaClassificada}`} aria-hidden="true">
+                  {(LABEL_AREA[t.areaClassificada] || t.areaClassificada || "?").charAt(0)}
+                </span>
                 <span className="list-row__info">
                   <span className="list-row__title">
                     {LABEL_AREA[t.areaClassificada] || t.areaClassificada}
