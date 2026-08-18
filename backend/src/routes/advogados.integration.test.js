@@ -251,6 +251,48 @@ describe("POST /advogados/:uid/contato", () => {
     expect(snap.docs).toHaveLength(1);
     expect(snap.docs[0].data().canal).toBe("whatsapp");
   });
+
+  it("não cria contatosCliente quando anônimo", async () => {
+    semear("a1");
+    await request(app).post("/advogados/a1/contato").send({ canal: "whatsapp" });
+    const doc = await cell.fake.db.collection("contatosCliente").doc("c1_a1").get();
+    expect(doc.exists).toBe(false);
+  });
+
+  it("upserta contatosCliente quando o clique vem de um cliente logado", async () => {
+    semear("a1");
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    const resposta = await request(app)
+      .post("/advogados/a1/contato")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ canal: "whatsapp" });
+    expect(resposta.status).toBe(201);
+
+    const doc = await cell.fake.db.collection("contatosCliente").doc("c1_a1").get();
+    expect(doc.exists).toBe(true);
+    expect(doc.data()).toMatchObject({ clienteId: "c1", advogadoId: "a1", status: null });
+  });
+
+  it("preserva o status já marcado ao contatar de novo o mesmo advogado", async () => {
+    semear("a1");
+    cell.fake.db._seed("contatosCliente", "c1_a1", {
+      clienteId: "c1",
+      advogadoId: "a1",
+      status: "Aguardando resposta",
+      criadoEm: "2026-08-01T00:00:00.000Z",
+      ultimoContatoEm: "2026-08-01T00:00:00.000Z",
+    });
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    await request(app)
+      .post("/advogados/a1/contato")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ canal: "email" });
+
+    const doc = await cell.fake.db.collection("contatosCliente").doc("c1_a1").get();
+    expect(doc.data().status).toBe("Aguardando resposta");
+    expect(doc.data().criadoEm).toBe("2026-08-01T00:00:00.000Z");
+    expect(doc.data().ultimoContatoEm).not.toBe("2026-08-01T00:00:00.000Z");
+  });
 });
 
 describe("GET /advogados/:uid/metricas", () => {

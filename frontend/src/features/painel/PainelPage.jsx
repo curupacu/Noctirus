@@ -15,13 +15,15 @@ const LABEL_AREA = {
 export function PainelPage() {
   const [usuario, setUsuario] = useState(null);
   const [triagens, setTriagens] = useState(null);
+  const [contatos, setContatos] = useState(null);
   const [erro, setErro] = useState(null);
 
   useEffect(() => {
-    Promise.all([api.get("/users/me"), api.get("/triagem/historico")])
-      .then(([dadosUsuario, dadosTriagens]) => {
+    Promise.all([api.get("/users/me"), api.get("/triagem/historico"), api.get("/contatos/meus")])
+      .then(([dadosUsuario, dadosTriagens, dadosContatos]) => {
         setUsuario(dadosUsuario);
         setTriagens(dadosTriagens);
+        setContatos(dadosContatos);
       })
       .catch((err) => setErro(err.message));
   }, []);
@@ -31,6 +33,7 @@ export function PainelPage() {
 
   const primeiroNome = (usuario.nome || usuario.email || "").split(" ")[0];
   const ultimasTriagens = (triagens || []).slice(0, 3);
+  const ultimosContatos = (contatos || []).slice(0, 3);
 
   return (
     <main>
@@ -92,6 +95,31 @@ export function PainelPage() {
             </li>
           ))}
         </ul>
+      )}
+
+      {ultimosContatos.length > 0 && (
+        <>
+          <div className="section-heading">
+            <h2>Advogados que você contatou</h2>
+            <Link to="/meus-contatos">Ver todos</Link>
+          </div>
+          <ul className="list-plain">
+            {ultimosContatos.map((c) => (
+              <li key={c.advogadoId}>
+                <Link to={`/advogados/${c.advogadoId}`} className="list-row">
+                  <Avatar nome={c.advogadoNome} foto={c.advogadoFoto} seed={c.advogadoId} />
+                  <span className="list-row__info">
+                    <span className="list-row__title">{c.advogadoNome || "Advogado"}</span>
+                    <span className="list-row__meta">{c.status || "Sem etiqueta ainda"}</span>
+                  </span>
+                  <span className="advogado-row__chevron" aria-hidden="true">
+                    ›
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </>
       )}
 
       <div className="section-heading">

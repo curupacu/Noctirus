@@ -2,7 +2,7 @@ import { Router } from "express";
 import multer from "multer";
 import { cloudinary } from "../lib/cloudinary.js";
 import { db } from "../lib/firebase-admin.js";
-import { requireRole, verificarToken } from "../middlewares/auth.js";
+import { requireRole, tentarVerificarToken, verificarToken } from "../middlewares/auth.js";
 import { buscarAdvogadosCompativeis } from "../services/matching.js";
 import { TODAS_CATEGORIAS } from "../services/triagem.js";
 
@@ -167,8 +167,12 @@ const CANAIS_CONTATO = ["whatsapp", "email"];
 // metadado (canal, quando), nunca o conteúdo de nenhuma conversa. Por isso não esbarra
 // em sigilo profissional da OAB (Estatuto, Lei 8.906/94, art. 7º XIX): a conversa em si
 // acontece inteiramente fora da plataforma, a Nocturis nunca tem acesso a ela. Público,
-// sem token — navegar o perfil e clicar em contato não exige login (RF008/RF010).
-advogadosRouter.post("/advogados/:uid/contato", async (req, res) => {
+// sem exigir token — navegar o perfil e clicar em contato não exige login (RF008/RF010).
+// tentarVerificarToken (não verificarToken) porque a rota continua funcionando anônima;
+// só quando o clique vem de um cliente logado é que também upsertamos contatosCliente,
+// pra alimentar GET /contatos/meus (pedido do usuário, 18/08: "advogados que você está
+// conversando"). O log bruto em `contatos` (usado nas métricas do advogado) não muda.
+advogadosRouter.post("/advogados/:uid/contato", tentarVerificarToken, async (req, res) => {
   const { uid } = req.params;
   const { canal } = req.body;
 
@@ -181,11 +185,29 @@ advogadosRouter.post("/advogados/:uid/contato", async (req, res) => {
     return res.status(404).json({ erro: "Advogado não encontrado" });
   }
 
+  const agora = new Date().toISOString();
   await db.collection("contatos").add({
     advogadoId: uid,
     canal,
-    createdAt: new Date().toISOString(),
+    createdAt: agora,
   });
+
+  if (req.user?.role === "cliente") {
+    const ref = db.collection("contatosCliente").doc(`${req.user.uid}_${uid}`);
+    const doc = await ref.get();
+    const existente = doc.exists ? doc.data() : null;
+    // Escreve o objeto completo (sem depender de `set(..., {merge:true})`) — preserva o
+    // `status`/`criadoEm` já marcados pelo cliente em contatos anteriores com esse mesmo
+    // advogado, só atualizando `ultimoContatoEm`.
+    await ref.set({
+      clienteId: req.user.uid,
+      advogadoId: uid,
+      status: existente?.status ?? null,
+      criadoEm: existente?.criadoEm ?? agora,
+      ultimoContatoEm: agora,
+    });
+  }
+
   res.status(201).json({ ok: true });
 });
 
