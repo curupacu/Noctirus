@@ -69,7 +69,9 @@ export function PainelPage() {
                     {LABEL_AREA[t.areaClassificada] || t.areaClassificada}
                   </span>
                   <span className="list-row__meta">
-                    {t.tipoAdvogadoSugerido} · {new Date(t.createdAt).toLocaleDateString("pt-BR")}
+                    {t.tipoAdvogadoSugerido} · {(t.advogadosSugeridos || []).length} advogado
+                    {(t.advogadosSugeridos || []).length === 1 ? "" : "s"} ·{" "}
+                    {new Date(t.createdAt).toLocaleDateString("pt-BR")}
                   </span>
                 </span>
                 <span className="advogado-row__chevron" aria-hidden="true">
