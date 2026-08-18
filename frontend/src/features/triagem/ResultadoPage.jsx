@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { AdvogadoCard } from "../../components/AdvogadoCard/AdvogadoCard";
 import { Loading } from "../../components/Loading/Loading";
@@ -19,6 +19,32 @@ export function ResultadoPage() {
   const [catalogoCategorias, setCatalogoCategorias] = useState(null);
   const [categorias, setCategorias] = useState(resultado?.categorias || []);
   const [advogados, setAdvogados] = useState(resultado?.advogados || null);
+
+  // Pequena pausa (com a coruja de loading) antes de revelar a lista de advogados —
+  // mesmo com a resposta pronta na hora, um instante de "procurando" faz o resultado
+  // parecer conquistado, não só carregado (referência: reveal de match do Tinder).
+  // Só acontece uma vez por triagem — marcar/desmarcar categoria não deve re-revelar.
+  const [revelando, setRevelando] = useState(true);
+  const jaRevelou = useRef(false);
+
+  const temResultado = Boolean(resultado);
+
+  useEffect(() => {
+    // Depende do booleano `temResultado`, não da referência de `resultado` — o efeito de
+    // busca abaixo pode chamar `setResultado` mais de uma vez com objetos diferentes (em
+    // StrictMode/dev, o efeito de fetch roda em dobro), o que trocaria a referência de
+    // novo e cancelaria o timer no cleanup antes de disparar. Uma vez `true`, o booleano
+    // nunca mais muda, então esse efeito só roda de verdade uma vez.
+    if (!temResultado || jaRevelou.current) return;
+    jaRevelou.current = true;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setRevelando(false);
+      return;
+    }
+    const timer = setTimeout(() => setRevelando(false), 900);
+    return () => clearTimeout(timer);
+  }, [temResultado]);
 
   useEffect(() => {
     if (resultado) return;
@@ -108,8 +134,11 @@ export function ResultadoPage() {
       <div className="section-heading">
         <h2>Advogados compatíveis</h2>
       </div>
-      {advogados?.length === 0 && <p className="text-muted">Nenhum advogado compatível encontrado ainda.</p>}
-      {advogados?.length > 0 && (
+      {advogados && revelando && <Loading>Revelando advogados compatíveis...</Loading>}
+      {advogados && !revelando && advogados.length === 0 && (
+        <p className="text-muted">Nenhum advogado compatível encontrado ainda.</p>
+      )}
+      {advogados && !revelando && advogados.length > 0 && (
         <>
           <span className="eyebrow">
             Sua triagem apareceu para {advogados.length} advogado{advogados.length === 1 ? "" : "s"}{" "}
