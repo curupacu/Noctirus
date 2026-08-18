@@ -337,6 +337,14 @@ export function PerfilPage() {
             </Link>
           </li>
         )}
+        {role === "cliente" && (
+          <li>
+            <Link to="/meus-contatos" className="list-row">
+              <span className="list-row__title">Meus contatos</span>
+              <span className="advogado-row__chevron" aria-hidden="true">›</span>
+            </Link>
+          </li>
+        )}
         {role !== "admin" && (
           <>
             <li>

@@ -10,6 +10,7 @@ import { CadastroPage } from "../features/auth/CadastroPage";
 import { LoginPage } from "../features/auth/LoginPage";
 import { RotaProtegida } from "../features/auth/RotaProtegida";
 import { CartaoPage } from "../features/cartao/CartaoPage";
+import { MeusContatosPage } from "../features/contatos/MeusContatosPage";
 import { DenunciarPage } from "../features/denuncias/DenunciarPage";
 import { MinhasDenunciasPage } from "../features/denuncias/MinhasDenunciasPage";
 import { PainelPage } from "../features/painel/PainelPage";
@@ -74,6 +75,14 @@ export function AppRouter() {
           element={
             <RotaProtegida papeis={["cliente"]}>
               <MinhasTriagensPage />
+            </RotaProtegida>
+          }
+        />
+        <Route
+          path="/meus-contatos"
+          element={
+            <RotaProtegida papeis={["cliente"]}>
+              <MeusContatosPage />
             </RotaProtegida>
           }
         />
