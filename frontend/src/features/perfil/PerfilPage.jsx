@@ -327,6 +327,12 @@ export function PerfilPage() {
                 <span className="advogado-row__chevron" aria-hidden="true">›</span>
               </Link>
             </li>
+            <li>
+              <Link to="/conversas" className="list-row">
+                <span className="list-row__title">Minhas conversas</span>
+                <span className="advogado-row__chevron" aria-hidden="true">›</span>
+              </Link>
+            </li>
           </>
         )}
         {role === "admin" && (

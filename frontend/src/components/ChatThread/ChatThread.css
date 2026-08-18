@@ -1,0 +1,66 @@
+.chat-thread {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.chat-thread__mensagens {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  max-height: 320px;
+  overflow-y: auto;
+  padding: var(--space-md);
+  background: var(--bg-section);
+  border: 1.5px solid var(--color-text-faint);
+  border-radius: var(--radius-sm);
+}
+
+.chat-thread__vazio {
+  margin: var(--space-md) 0;
+  text-align: center;
+}
+
+/* Bolha do "outro lado" (o advogado, quando quem olha é o cliente, e vice-versa) —
+   alinhada à esquerda, superfície neutra. A própria (.chat-bubble--minha) vai pra
+   direita em dourado, como qualquer chat comum — a lateralidade sozinha já diz quem
+   mandou o quê, sem precisar de rótulo. */
+.chat-bubble {
+  align-self: flex-start;
+  max-width: 80%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius) var(--radius) var(--radius) 4px;
+  padding: 8px 14px;
+}
+
+.chat-bubble p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+}
+
+.chat-bubble__hora {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.7rem;
+  color: var(--color-text-faint);
+}
+
+.chat-bubble--minha {
+  align-self: flex-end;
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--ink-on-accent);
+  border-radius: var(--radius) var(--radius) 4px var(--radius);
+}
+
+.chat-bubble--minha .chat-bubble__hora {
+  color: var(--ink-on-accent);
+  opacity: 0.65;
+}
+
+.chat-thread__categoria {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}

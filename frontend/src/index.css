@@ -805,6 +805,11 @@ main.auth-screen {
   border-color: var(--color-brown-300);
 }
 
+.pill-toggle__item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .pill-toggle__item--active {
   background: var(--color-primary);
   border-color: var(--color-primary);

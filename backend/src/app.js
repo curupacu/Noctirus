@@ -8,6 +8,7 @@ import "express-async-errors";
 import { advogadosRouter } from "./routes/advogados.js";
 import { authRouter } from "./routes/auth.js";
 import { contatosRouter } from "./routes/contatos.js";
+import { conversasRouter } from "./routes/conversas.js";
 import { curriculosRouter } from "./routes/curriculos.js";
 import { denunciasRouter } from "./routes/denuncias.js";
 import { healthRouter } from "./routes/health.js";
@@ -26,6 +27,7 @@ app.use(curriculosRouter);
 app.use(triagemRouter);
 app.use(denunciasRouter);
 app.use(contatosRouter);
+app.use(conversasRouter);
 
 app.use((err, _req, res, _next) => {
   console.error(err);
