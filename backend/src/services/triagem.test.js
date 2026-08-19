@@ -1,5 +1,29 @@
-import { describe, expect, it } from "vitest";
-import { CATEGORIAS_POR_AREA, TODAS_CATEGORIAS, classificarPorRegras } from "./triagem.js";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+const generateContentMock = vi.fn();
+const groqCreateMock = vi.fn();
+
+vi.mock("@google/genai", () => ({
+  GoogleGenAI: vi.fn().mockImplementation(function () {
+    return { models: { generateContent: generateContentMock } };
+  }),
+}));
+
+vi.mock("groq-sdk", () => ({
+  default: vi.fn().mockImplementation(function () {
+    return { chat: { completions: { create: groqCreateMock } } };
+  }),
+}));
+
+const { CATEGORIAS_POR_AREA, TODAS_CATEGORIAS, classificar, classificarPorRegras } = await import("./triagem.js");
+
+function respostaGemini(dados) {
+  return { text: JSON.stringify(dados) };
+}
+
+function respostaGroq(dados) {
+  return { choices: [{ message: { content: JSON.stringify(dados) } }] };
+}
 
 // classificarPorRegras é o fallback usado sempre que a IA falha, demora ou tem baixa
 // confiança (RNF003) — é literalmente o que garante que a triagem nunca trava. Merece
@@ -109,5 +133,106 @@ describe("taxonomia de categorias", () => {
       expect(categoria.valor).toBeTruthy();
       expect(categoria.label).toBeTruthy();
     }
+  });
+});
+
+// Orquestração Gemini → Groq → regras (RNF003, ver CLAUDE.md). O Groq só é chamado quando
+// o Gemini falha, estoura o tempo ou vem com baixa confiança — mocka as duas IAs pra testar
+// a cadeia de fallback sem depender de rede/chave de verdade.
+describe("classificar (orquestração Gemini → Groq → regras)", () => {
+  beforeEach(() => {
+    process.env.GEMINI_API_KEY = "fake-gemini-key";
+    process.env.GROQ_API_KEY = "fake-groq-key";
+    generateContentMock.mockReset();
+    groqCreateMock.mockReset();
+  });
+
+  afterEach(() => {
+    delete process.env.GEMINI_API_KEY;
+    delete process.env.GROQ_API_KEY;
+  });
+
+  it("usa o resultado do Gemini quando ele responde com confiança alta, sem chamar o Groq", async () => {
+    generateContentMock.mockResolvedValueOnce(
+      respostaGemini({
+        area: "trabalhista",
+        categorias: ["horas_extras"],
+        tipoAdvogadoSugerido: "Advogado trabalhista",
+        confianca: 0.95,
+        justificativa: "Menciona horas extras não pagas",
+      }),
+    );
+
+    const resultado = await classificar({ respostas: {}, descricao: "Faço muitas horas extras e nunca recebo por elas." });
+
+    expect(resultado.origem).toBe("ia");
+    expect(resultado.provedor).toBe("gemini");
+    expect(resultado.areaClassificada).toBe("trabalhista");
+    expect(groqCreateMock).not.toHaveBeenCalled();
+  });
+
+  it("Gemini falha (erro ou timeout) → tenta o Groq e usa a resposta dele", async () => {
+    generateContentMock.mockRejectedValueOnce(new Error("erro de rede"));
+    groqCreateMock.mockResolvedValueOnce(
+      respostaGroq({
+        area: "civel",
+        categorias: ["consumo_produto_servico"],
+        tipoAdvogadoSugerido: "Advogado cível",
+        confianca: 0.9,
+        justificativa: "Produto com defeito",
+      }),
+    );
+
+    const resultado = await classificar({ respostas: {}, descricao: "Comprei um produto com defeito e a loja não troca." });
+
+    expect(resultado.origem).toBe("ia");
+    expect(resultado.provedor).toBe("groq");
+    expect(resultado.areaClassificada).toBe("civel");
+  });
+
+  it("Gemini responde com baixa confiança → tenta o Groq antes de ir pras regras", async () => {
+    generateContentMock.mockResolvedValueOnce(
+      respostaGemini({ area: "civel", categorias: [], tipoAdvogadoSugerido: "x", confianca: 0.2, justificativa: "y" }),
+    );
+    groqCreateMock.mockResolvedValueOnce(
+      respostaGroq({
+        area: "civel",
+        categorias: ["plano_saude"],
+        tipoAdvogadoSugerido: "Advogado cível",
+        confianca: 0.85,
+        justificativa: "Negativa de cobertura",
+      }),
+    );
+
+    const resultado = await classificar({ respostas: {}, descricao: "Meu plano de saúde negou um exame urgente." });
+
+    expect(resultado.provedor).toBe("groq");
+    expect(resultado.categorias).toContain("plano_saude");
+  });
+
+  it("Gemini e Groq falham → cai no fallback por regras", async () => {
+    generateContentMock.mockRejectedValueOnce(new Error("erro de rede"));
+    groqCreateMock.mockRejectedValueOnce(new Error("erro de rede"));
+
+    const resultado = await classificar({
+      respostas: { situacao: "trabalho", papel: "empregado" },
+      descricao: "Fui demitido sem justa causa e não pagaram minhas horas extras.",
+    });
+
+    expect(resultado.origem).toBe("regras");
+    expect(resultado.areaClassificada).toBe("trabalhista");
+  });
+
+  it("sem GROQ_API_KEY configurada, Gemini falhando cai direto pras regras", async () => {
+    delete process.env.GROQ_API_KEY;
+    generateContentMock.mockRejectedValueOnce(new Error("erro de rede"));
+
+    const resultado = await classificar({
+      respostas: { situacao: "contrato_consumo" },
+      descricao: "Comprei um produto com defeito e a loja não quer trocar.",
+    });
+
+    expect(resultado.origem).toBe("regras");
+    expect(groqCreateMock).not.toHaveBeenCalled();
   });
 });

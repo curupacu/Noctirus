@@ -1,4 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
+import Groq from "groq-sdk";
 
 // Primeira pergunta guiada (RF008) — sempre feita. A segunda pergunta depende da
 // resposta desta (ver PERGUNTAS_SEGUNDA_ETAPA), porque "qual é o seu papel" só faz
@@ -259,23 +260,32 @@ export function classificarPorRegras({ respostas = {}, descricao = "" }) {
   };
 }
 
-const MODELO_GEMINI = process.env.GEMINI_MODEL || "gemini-2.5-flash-lite";
+const MODELO_GEMINI = process.env.GEMINI_MODEL || "gemini-3.5-flash-lite";
+const MODELO_GROQ = process.env.GROQ_MODEL || "openai/gpt-oss-120b";
 const TIMEOUT_MS = 5000;
+const TIMEOUT_MS_GROQ = 4000;
 const CONFIANCA_MINIMA = 0.5;
 export const TODAS_CATEGORIAS = Object.values(CATEGORIAS_POR_AREA).flatMap((lista) => lista.map((c) => c.valor));
 
-let cliente = null;
+let clienteGeminiInstance = null;
 function clienteGemini() {
   if (!process.env.GEMINI_API_KEY) return null;
-  if (!cliente) cliente = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-  return cliente;
+  if (!clienteGeminiInstance) clienteGeminiInstance = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  return clienteGeminiInstance;
 }
 
-async function classificarPorIA({ respostas, descricao }) {
-  const ai = clienteGemini();
-  if (!ai) throw new Error("GEMINI_API_KEY não configurada");
+let clienteGroqInstance = null;
+function clienteGroq() {
+  if (!process.env.GROQ_API_KEY) return null;
+  if (!clienteGroqInstance) clienteGroqInstance = new Groq({ apiKey: process.env.GROQ_API_KEY });
+  return clienteGroqInstance;
+}
 
-  const prompt = [
+// Prompt compartilhado pelas duas IAs (Gemini é a principal, Groq é o fallback antes das
+// regras — ver RNF003 e o histórico de cota do Gemini no CLAUDE.md). Cada provedor pede o
+// JSON de um jeito diferente (responseSchema vs. JSON mode), mas a instrução é a mesma.
+function construirPromptTriagem({ respostas, descricao }) {
+  return [
     "Você é um triador jurídico de uma plataforma que só atende as áreas cível e trabalhista.",
     "A IA orienta, não decide sozinha — responda SOMENTE com o JSON pedido, sem texto fora dele.",
     'Se o caso não for cível nem trabalhista, ou faltar informação, use area = "indefinido" e categorias = [].',
@@ -285,10 +295,32 @@ async function classificarPorIA({ respostas, descricao }) {
     `Respostas do questionário guiado: ${JSON.stringify(respostas)}`,
     `Descrição do cliente: ${descricao}`,
   ].join("\n");
+}
+
+function interpretarRespostaIA(dados) {
+  if (!["civel", "trabalhista", "indefinido"].includes(dados.area)) {
+    throw new Error("Resposta da IA fora do formato esperado");
+  }
+
+  const categoriasValidas = (CATEGORIAS_POR_AREA[dados.area] || []).map((c) => c.valor);
+  const categorias = (dados.categorias || []).filter((c) => categoriasValidas.includes(c));
+
+  return {
+    areaClassificada: dados.area,
+    categorias,
+    tipoAdvogadoSugerido: dados.tipoAdvogadoSugerido,
+    confianca: dados.confianca,
+    justificativa: dados.justificativa,
+  };
+}
+
+async function classificarPorIA({ respostas, descricao }) {
+  const ai = clienteGemini();
+  if (!ai) throw new Error("GEMINI_API_KEY não configurada");
 
   const resposta = await ai.models.generateContent({
     model: MODELO_GEMINI,
-    contents: prompt,
+    contents: construirPromptTriagem({ respostas, descricao }),
     config: {
       responseMimeType: "application/json",
       responseSchema: {
@@ -306,21 +338,31 @@ async function classificarPorIA({ respostas, descricao }) {
   });
 
   const dados = JSON.parse(resposta.text);
-  if (!["civel", "trabalhista", "indefinido"].includes(dados.area)) {
-    throw new Error("Resposta da IA fora do formato esperado");
-  }
+  return { ...interpretarRespostaIA(dados), origem: "ia", provedor: "gemini" };
+}
 
-  const categoriasValidas = (CATEGORIAS_POR_AREA[dados.area] || []).map((c) => c.valor);
-  const categorias = (dados.categorias || []).filter((c) => categoriasValidas.includes(c));
+// Segunda opinião antes de cair pro fallback por regras — só é chamada quando o Gemini
+// falha, estoura o tempo ou vem com baixa confiança. Free tier do Groq (openai/gpt-oss-120b,
+// ~1.000 req/dia) é uma margem bem maior do que a cota que o Gemini vinha entregando.
+async function classificarPorGroq({ respostas, descricao }) {
+  const groq = clienteGroq();
+  if (!groq) throw new Error("GROQ_API_KEY não configurada");
 
-  return {
-    areaClassificada: dados.area,
-    categorias,
-    tipoAdvogadoSugerido: dados.tipoAdvogadoSugerido,
-    confianca: dados.confianca,
-    justificativa: dados.justificativa,
-    origem: "ia",
-  };
+  const prompt = [
+    construirPromptTriagem({ respostas, descricao }),
+    "Responda só com um JSON contendo exatamente estes campos: " +
+      'area ("civel", "trabalhista" ou "indefinido"), categorias (lista de strings), ' +
+      "tipoAdvogadoSugerido (string), confianca (número de 0 a 1) e justificativa (string).",
+  ].join("\n");
+
+  const resposta = await groq.chat.completions.create({
+    model: MODELO_GROQ,
+    messages: [{ role: "user", content: prompt }],
+    response_format: { type: "json_object" },
+  });
+
+  const dados = JSON.parse(resposta.choices[0].message.content);
+  return { ...interpretarRespostaIA(dados), origem: "ia", provedor: "groq" };
 }
 
 function comTimeout(promessa, ms) {
@@ -330,21 +372,35 @@ function comTimeout(promessa, ms) {
   ]);
 }
 
-// Orquestra IA + fallback: se a IA falhar, estourar o tempo ou vier com baixa confiança,
-// cai pro resultado das regras — a triagem nunca trava (RNF003).
+async function classificarPorGroqOuRegras({ respostas, descricao }) {
+  try {
+    const resultado = await comTimeout(classificarPorGroq({ respostas, descricao }), TIMEOUT_MS_GROQ);
+    if (resultado.confianca < CONFIANCA_MINIMA) {
+      return classificarPorRegras({ respostas, descricao });
+    }
+    return resultado;
+  } catch (erro) {
+    console.error("triagem: Groq falhou, usando fallback por regras —", erro.message || erro);
+    return classificarPorRegras({ respostas, descricao });
+  }
+}
+
+// Orquestra Gemini → Groq → regras: se o Gemini falhar, estourar o tempo ou vier com baixa
+// confiança, tenta o Groq como segunda opinião antes de cair pro fallback por regras — a
+// triagem nunca trava (RNF003).
 export async function classificar({ respostas, descricao }) {
   try {
     const resultado = await comTimeout(classificarPorIA({ respostas, descricao }), TIMEOUT_MS);
     if (resultado.confianca < CONFIANCA_MINIMA) {
-      return classificarPorRegras({ respostas, descricao });
+      return classificarPorGroqOuRegras({ respostas, descricao });
     }
     return resultado;
   } catch (erro) {
     // Antes esse erro era engolido em silêncio — rodando scripts/avaliar-triagem.js pela
     // primeira vez, isso escondeu que a IA estava estourando a cota do free tier (10
     // req/min) na maioria das chamadas. Loga o motivo real (sem derrubar a triagem, que
-    // continua caindo no fallback por regras normalmente — RNF003).
-    console.error("triagem: IA falhou, usando fallback por regras —", erro.message || erro);
-    return classificarPorRegras({ respostas, descricao });
+    // continua caindo no Groq e depois no fallback por regras normalmente — RNF003).
+    console.error("triagem: Gemini falhou, tentando Groq —", erro.message || erro);
+    return classificarPorGroqOuRegras({ respostas, descricao });
   }
 }
