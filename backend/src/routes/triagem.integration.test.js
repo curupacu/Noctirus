@@ -23,9 +23,10 @@ const { app } = await import("../app.js");
 beforeEach(() => {
   cell.fake = criarFakeFirebase();
   // Garante que a classificação usa o fallback por regras nos testes (sem depender de
-  // chave/rede do Gemini) — RNF003, o mesmo caminho que já é coberto em
+  // chave/rede do Gemini nem do Groq) — RNF003, o mesmo caminho que já é coberto em
   // services/triagem.test.js.
   delete process.env.GEMINI_API_KEY;
+  delete process.env.GROQ_API_KEY;
 });
 
 describe("GET /triagem/perguntas", () => {
