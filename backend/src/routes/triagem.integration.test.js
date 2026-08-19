@@ -80,6 +80,25 @@ describe("POST /triagem/classificar", () => {
     expect(triagem.clienteId).toBe("c1");
   });
 
+  it("compartilharComAdvogado é falso por padrão, e vira true só com opt-in explícito", async () => {
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+
+    const semOptIn = await request(app)
+      .post("/triagem/classificar")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ descricao: "Fui demitido sem justa causa e não pagaram minhas horas extras." });
+    expect(semOptIn.body.compartilharComAdvogado).toBe(false);
+
+    const comOptIn = await request(app)
+      .post("/triagem/classificar")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        descricao: "Fui demitido sem justa causa e não pagaram minhas horas extras.",
+        compartilharComAdvogado: true,
+      });
+    expect(comOptIn.body.compartilharComAdvogado).toBe(true);
+  });
+
   it("soma o contador de sugestão dos advogados compatíveis", async () => {
     cell.fake.db._seed("advogados", "adv1", {
       areasAtuacao: ["trabalhista"],

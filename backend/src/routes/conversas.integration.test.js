@@ -123,6 +123,116 @@ describe("POST /conversas/:comUid/mensagens", () => {
       .send({ texto: "Combinado!" });
     expect(resposta.status).toBe(201);
   });
+
+  it("cliente manda triagemId válido e a mensagem fica vinculada à triagem", async () => {
+    semearPar();
+    cell.fake.db._seed("triagens", "t1", { clienteId: "c1", areaClassificada: "trabalhista" });
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    const resposta = await request(app)
+      .post("/conversas/a1/mensagens")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ texto: "Olá!", triagemId: "t1" });
+
+    expect(resposta.status).toBe(201);
+    expect(resposta.body.triagemId).toBe("t1");
+  });
+
+  it("ignora triagemId de outro cliente (não deixa vincular triagem alheia)", async () => {
+    semearPar();
+    cell.fake.db._seed("triagens", "t1", { clienteId: "outro-cliente", areaClassificada: "trabalhista" });
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    const resposta = await request(app)
+      .post("/conversas/a1/mensagens")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ texto: "Olá!", triagemId: "t1" });
+
+    expect(resposta.status).toBe(201);
+    expect(resposta.body.triagemId).toBeUndefined();
+  });
+
+  it("ignora triagemId inexistente sem derrubar o envio", async () => {
+    semearPar();
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    const resposta = await request(app)
+      .post("/conversas/a1/mensagens")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ texto: "Olá!", triagemId: "nao-existe" });
+
+    expect(resposta.status).toBe(201);
+    expect(resposta.body.triagemId).toBeUndefined();
+  });
+});
+
+describe("GET /conversas/:comUid/triagem", () => {
+  it("recusa sem token", async () => {
+    const resposta = await request(app).get("/conversas/c1/triagem");
+    expect(resposta.status).toBe(401);
+  });
+
+  it("recusa cliente (só advogado vê o contexto da triagem)", async () => {
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    const resposta = await request(app).get("/conversas/a1/triagem").set("Authorization", `Bearer ${token}`);
+    expect(resposta.status).toBe(403);
+  });
+
+  it("retorna null quando não há triagem vinculada", async () => {
+    semearPar();
+    const token = cell.fake.criarToken({ uid: "a1", role: "advogado" });
+    const resposta = await request(app).get("/conversas/c1/triagem").set("Authorization", `Bearer ${token}`);
+    expect(resposta.status).toBe(200);
+    expect(resposta.body).toBeNull();
+  });
+
+  it("retorna null quando a triagem existe mas o cliente não deu opt-in", async () => {
+    semearPar();
+    cell.fake.db._seed("triagens", "t1", {
+      clienteId: "c1",
+      areaClassificada: "trabalhista",
+      descricao: "Descrição sensível do caso",
+      compartilharComAdvogado: false,
+    });
+    cell.fake.db._seed("mensagensChat", "m1", {
+      conversaId: "c1_a1",
+      clienteId: "c1",
+      advogadoId: "a1",
+      remetente: "cliente",
+      texto: "Olá!",
+      triagemId: "t1",
+      createdAt: "2026-08-18T10:00:00.000Z",
+    });
+
+    const token = cell.fake.criarToken({ uid: "a1", role: "advogado" });
+    const resposta = await request(app).get("/conversas/c1/triagem").set("Authorization", `Bearer ${token}`);
+    expect(resposta.status).toBe(200);
+    expect(resposta.body).toBeNull();
+  });
+
+  it("retorna área e descrição quando o cliente deu opt-in", async () => {
+    semearPar();
+    cell.fake.db._seed("triagens", "t1", {
+      clienteId: "c1",
+      areaClassificada: "trabalhista",
+      descricao: "Fui demitido sem justa causa",
+      compartilharComAdvogado: true,
+    });
+    cell.fake.db._seed("mensagensChat", "m1", {
+      conversaId: "c1_a1",
+      clienteId: "c1",
+      advogadoId: "a1",
+      remetente: "cliente",
+      texto: "Olá!",
+      triagemId: "t1",
+      createdAt: "2026-08-18T10:00:00.000Z",
+    });
+
+    const token = cell.fake.criarToken({ uid: "a1", role: "advogado" });
+    const resposta = await request(app).get("/conversas/c1/triagem").set("Authorization", `Bearer ${token}`);
+    expect(resposta.status).toBe(200);
+    expect(resposta.body).toMatchObject({
+      areaClassificada: "trabalhista",
+      descricao: "Fui demitido sem justa causa",
+    });
+  });
 });
 
 describe("GET /conversas/:comUid/mensagens", () => {

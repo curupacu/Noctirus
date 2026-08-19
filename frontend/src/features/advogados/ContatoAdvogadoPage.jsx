@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { ChatThread } from "../../components/ChatThread/ChatThread";
 import { Loading } from "../../components/Loading/Loading";
@@ -26,6 +26,8 @@ function categoriasCliente(advogado) {
 
 export function ContatoAdvogadoPage() {
   const { uid } = useParams();
+  const [searchParams] = useSearchParams();
+  const triagemId = searchParams.get("triagemId");
   const [advogado, setAdvogado] = useState(null);
   const [erro, setErro] = useState(null);
 
@@ -69,7 +71,11 @@ export function ContatoAdvogadoPage() {
           <div className="section-heading">
             <h2>Conversa</h2>
           </div>
-          <ChatThread comUid={uid} categorias={categoriasCliente(advogado)} />
+          <ChatThread
+            comUid={uid}
+            categorias={categoriasCliente(advogado)}
+            extra={triagemId ? { triagemId } : undefined}
+          />
         </>
       )}
 
