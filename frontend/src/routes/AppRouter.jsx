@@ -17,6 +17,7 @@ import { ConversasPage } from "../features/conversas/ConversasPage";
 import { DenunciarPage } from "../features/denuncias/DenunciarPage";
 import { MinhasDenunciasPage } from "../features/denuncias/MinhasDenunciasPage";
 import { PainelPage } from "../features/painel/PainelPage";
+import { EditarPerfilPage } from "../features/perfil/EditarPerfilPage";
 import { PerfilPage } from "../features/perfil/PerfilPage";
 import { MinhasTriagensPage } from "../features/triagem/MinhasTriagensPage";
 import { ResultadoPage } from "../features/triagem/ResultadoPage";
@@ -47,6 +48,14 @@ export function AppRouter() {
           element={
             <RotaProtegida>
               <PerfilPage />
+            </RotaProtegida>
+          }
+        />
+        <Route
+          path="/perfil/editar"
+          element={
+            <RotaProtegida papeis={["advogado"]}>
+              <EditarPerfilPage />
             </RotaProtegida>
           }
         />
