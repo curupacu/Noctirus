@@ -546,6 +546,14 @@ fieldset label {
   transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
+/* Número grande de estatística dentro de um .card (dashboard do advogado) — era estilo
+   inline repetido em cada card; virou classe já que agora são 3 cards, não 2. */
+.stat-numero {
+  font-family: var(--font-display);
+  font-size: var(--font-size-2xl);
+  margin: 4px 0 0;
+}
+
 .card__header {
   display: flex;
   justify-content: space-between;
