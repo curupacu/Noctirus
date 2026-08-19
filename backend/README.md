@@ -20,7 +20,7 @@ Endpoint de verificação: `GET /health`.
 
 - `PORT` — porta do Express (padrão `3001`).
 - `FIREBASE_PROJECT_ID` — sempre `nocturis-web`; não existe `nocturis-prod` separado, por
-  decisão (ver `CLAUDE.md`).
+  decisão (ver `database/README.md`).
 - `GOOGLE_APPLICATION_CREDENTIALS` — caminho pro JSON da service account (Firebase Console >
   Configurações do projeto > Contas de serviço > Gerar nova chave privada). Não é commitado.
 - `GEMINI_API_KEY` — chave do Google AI Studio pra triagem por IA. **Opcional**: sem ela, a
@@ -31,11 +31,15 @@ Endpoint de verificação: `GET /health`.
 
 ```
 src/
-  routes/        endpoints REST (auth, advogados, curriculos, triagem, users, health)
+  routes/        endpoints REST — auth, advogados, curriculos, triagem, users, health,
+                 contatos (rastreio pessoal do cliente), conversas (chat de mensagens
+                 pré-definidas), denuncias
   services/      triagem.js (taxonomia + classificação IA/regras), oab.js, matching.js
   middlewares/   verificação de token e papel
   lib/           firebase-admin.js
 ```
+
+Modelo de dados por coleção: [`database/schema.md`](../database/schema.md).
 
 ## Scripts úteis (fora do `npm run dev`)
 

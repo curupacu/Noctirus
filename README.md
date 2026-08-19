@@ -7,7 +7,7 @@ O cliente descreve o problema em texto livre + responde algumas perguntas guiada
 identifica se é um caso cível ou trabalhista, sugere o tipo de advogado ideal e lista advogados
 compatíveis (por área e localização) pra contato direto via WhatsApp/e-mail.
 
-**No ar:** https://nocturis-web.web.app
+**No ar:** https://nocturis.com.br (domínio próprio; também responde em https://nocturis-web.web.app)
 
 ## Status atual
 
@@ -19,24 +19,37 @@ Já funciona de ponta a ponta:
 - Triagem por perguntas guiadas + descrição livre, classificada por **IA (Gemini Flash-Lite)**
   com fallback automático por regras de palavras-chave se a IA falhar, demorar ou tiver baixa
   confiança — a triagem nunca trava. Validada com 20 casos reais: 100% de acerto de área e
-  categoria (30/07; era 95%/90% em 28/07, antes de ajustes no fallback por regras).
+  categoria (30/07).
 - Taxonomia de 33 categorias (17 cíveis + 16 trabalhistas) usada tanto na triagem quanto nas
   especialidades do advogado — o matching usa isso pra priorizar advogados aderentes ao assunto
   específico do caso, não só a área ampla
+- **Opt-in de compartilhar a triagem com o advogado contatado**: o cliente escolhe (desligado
+  por padrão) se quer deixar a descrição do caso visível pro advogado que ele contatar a partir
+  do resultado da triagem — o advogado só vê o contexto ("Chegou via triagem", área +
+  descrição) quando o cliente marcou essa opção.
+- **Chat de mensagens pré-definidas** entre cliente e advogado, nos dois sentidos — nunca texto
+  livre, só listas fixas de mensagens por categoria (decisão deliberada: art. 34, IV do Código
+  de Ética da OAB, proibição de captação de clientela). "Meus Contatos" (cliente) e "Minhas
+  conversas" (advogado) mostram quem já foi contatado/está conversando.
+- Dashboard do advogado (`/perfil`): saudação, estatísticas (contatos, feedback, conversas),
+  completude do perfil, conversas recentes e atalhos — edição de dados fica à parte, em
+  `/perfil/editar`
 - Sistema de denúncias (registrar, acompanhar como autor, moderar como admin)
 - Painel admin completo: aprovar OAB, gerenciar usuários (suspender/remover), moderar denúncias
 - Banco populado com 30 advogados fictícios cobrindo várias cidades/estados e especialidades,
   pra dar pra testar filtro e matching de verdade
 - Upload de foto de perfil do advogado (Cloudinary, recorte automático de rosto), com avatar
   de iniciais coloridas como fallback
-- 109 testes automatizados (Vitest, unitários + integração via `supertest`) e CI no GitHub
+- Domínio próprio (`nocturis.com.br`) com favicon completo, SEO on-page (meta tags, Open Graph,
+  JSON-LD), sitemap e `robots.txt`, ligado ao Google Search Console
+- 156 testes automatizados (Vitest, unitários + integração via `supertest`) e CI no GitHub
   Actions — resumo em [`docs/TESTES.md`](docs/TESTES.md)
 - Tema claro (padrão) e escuro com botão de alternância, salvo por navegador. Home, Login e
   Cadastro ficam sempre no visual escuro ("vitrine" da marca); o resto do app segue o tema
   escolhido
-- Redesign visual completo nas 12 telas do MVP (07/08) — coruja como marca d'água, sombras
-  discretas, selo neutro em vez de dourado espalhado, paleta clara revisada. Ver
-  [`CLAUDE.md`](CLAUDE.md) pra detalhes
+- Redesign visual completo nas telas do MVP — coruja como marca d'água, sombras discretas,
+  selo neutro em vez de dourado espalhado, paleta clara revisada. Decisões de design em
+  [`docs/DESIGN.md`](docs/DESIGN.md)
 
 **Ainda não existe:** verificação real de OAB, upload de currículo em PDF (`nocturis-prod`
 separado foi avaliado e descartado por decisão — ver abaixo). Ver
@@ -83,19 +96,22 @@ regras. Detalhes de cada parte em [`backend/README.md`](backend/README.md),
 ```
 frontend/            React (Vite) — telas, componentes, design system Nocturis
   src/
-    features/         auth, triagem, advogados, curriculo, perfil, painel, admin
-    components/       UI reutilizável (Button, Input, Select, ChoiceCard, BottomNav...)
+    features/         auth, triagem, advogados, curriculo, perfil (dashboard + editar),
+                      painel, conversas (chat), contatos (Meus Contatos), admin
+    components/       UI reutilizável (Button, Input, Select, ChoiceCard, BottomNav,
+                      ChatThread, AdvogadoCard...)
     lib/               cliente Firebase, hooks, helpers
     routes/
 backend/              Node.js + Express — API, IA, validações, admin
   src/
-    routes/            endpoints REST
+    routes/            endpoints REST, incluindo conversas.js (chat) e contatos.js
     services/          triagem/Gemini, OAB, matching
     middlewares/        verificação de token, papéis
     lib/               firebase-admin
 database/             Firestore: regras, índices, seed e docs do modelo
   firestore.rules
   firestore.indexes.json
+  schema.md            modelo de dados por coleção
   seed/                scripts pra popular advogados fictícios e criar admin
 docs/                 ROADMAP.md (plano de sprints), DESIGN.md, TESTES.md (resumo dos testes)
 ```
@@ -112,18 +128,16 @@ Levantamento honesto do que ainda precisa de trabalho, priorizado.
 - **Risco de cota do Gemini na apresentação.** O free tier do `gemini-2.5-flash-lite` nesse
   projeto está limitado a ~20 requisições/dia (bem abaixo do documentado pelo Google) — testar a
   triagem repetidamente antes da banca pode esgotar a cota e a demonstração cair inteira no
-  fallback por regras, sem aviso na tela. Reconfirmado em 30/07 (`npm run avaliar-triagem`,
+  fallback por regras, sem aviso na tela. Última confirmação em 30/07 (`npm run avaliar-triagem`,
   backend/): cota disponível no dia, 100% de acerto nos 20 casos. Como o teste em si consome a
-  cota diária, **não repetir** no mesmo dia — rodar de novo só perto do 13/08 pra confirmar a
-  cota daquele dia, e evitar testes repetidos horas antes da banca.
+  cota diária, **não repetir** no mesmo dia — rodar de novo só perto da data real da banca pra
+  confirmar a cota daquele dia, e evitar testes repetidos horas antes da apresentação.
 
 ### 🟡 Médio
 
-- **Responsividade mobile validada manualmente (30/07)**, não por automação — a ferramenta de
-  resize de viewport usada nas sessões de IA não funciona neste ambiente (ver nota no
-  `CLAUDE.md`). O usuário conferiu no navegador/celular de verdade e o espaçamento está OK,
-  incluindo o botão sticky da triagem/denúncia perto do `BottomNav`. Sem confirmação
-  automatizada (screenshot) ainda.
+- **Responsividade mobile validada manualmente**, não por automação. Conferida no
+  navegador/celular de verdade e o espaçamento está OK, incluindo o botão sticky da
+  triagem/denúncia perto do `BottomNav`. Sem confirmação automatizada (screenshot) ainda.
 - Diversos ajustes pontuais de copy/acessibilidade/microinterações pelo app.
 
 ### 🟢 Baixa prioridade (adiado de propósito — é um MVP)
@@ -137,8 +151,8 @@ Levantamento honesto do que ainda precisa de trabalho, priorizado.
   fictícios (seed) e contas de teste descartáveis, não há dado real em risco de poluir uma
   "produção" — o custo de manter um segundo projeto não se paga aqui. Revisitar só se o
   projeto virar produto real (Fase 4).
-- LGPD, rate limiting, monitoramento, domínio próprio — tudo isso é Fase 4 (produto real), fora
-  do escopo do MVP do TCC.
+- LGPD, rate limiting, monitoramento — tudo isso é Fase 4 (produto real), fora do escopo do
+  MVP do TCC. (Domínio próprio já foi resolvido — `nocturis.com.br`, ver "Status atual" acima.)
 
 ## Time
 

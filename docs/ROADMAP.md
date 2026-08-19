@@ -187,7 +187,7 @@ Sprints **semanais**. Itens com 🔴 são **bloqueadores** (precisam estar pront
 - ✅ [GR] Criar projeto Firebase (Auth, Firestore, Hosting). **Dois projetos:** `nocturis-dev` e `nocturis-prod`.
   Na prática, o projeto dev virou `nocturis-web`, e criar um `nocturis-prod` separado foi
   **descartado por decisão em 30/07** (dado 100% fictício no MVP, sem risco real de poluir
-  "produção" — ver "Status do deploy" no `CLAUDE.md`) — os dois nomes acima ficam só como
+  "produção") — os dois nomes acima ficam só como
   registro do plano original.
 - 🔴 [GR] Configurar `backend/` (Express + Firebase Admin SDK) rodando localmente; `database/` com `firestore.rules` inicial.
 - 🔴 [GP] Scaffold do `frontend/` (Vite + React) + rotas + estrutura de pastas.
@@ -248,9 +248,9 @@ Sprints **semanais**. Itens com 🔴 são **bloqueadores** (precisam estar pront
   `<select>`). *Atualização 07/08 — item fechado*: o resto do app (Painel, Perfil,
   currículo, perfil público do advogado, resultado da triagem, denúncias, 3 telas de
   admin) recebeu uma segunda leva de redesign, com pesquisa de referência visual de sites
-  de advocacia premiados, plano aprovado em 3 fases e execução completa — ver `CLAUDE.md`
-  pra detalhes (marca d'água da coruja, sombras suavizadas, paleta clara revisada, selo
-  neutro em vez de dourado espalhado). Não é mais o item mais urgente em aberto.
+  de advocacia premiados, plano aprovado em 3 fases e execução completa (marca d'água da
+  coruja, sombras suavizadas, paleta clara revisada, selo neutro em vez de dourado
+  espalhado). Não é mais o item mais urgente em aberto.
 - [GR] **Matching ainda não usa `especialidades`**, só área + cidade/UF — item novo que apareceu
   com a taxonomia ampliada, ainda não estava previsto neste roadmap. Prioridade média.
 
@@ -277,11 +277,11 @@ Sprints **semanais**. Itens com 🔴 são **bloqueadores** (precisam estar pront
 
 #### Sprint 9 — Testes · 01–07/09  *(cobra o 3º bimestre)* → 🟡 quase completo em 28/07 (adiantado)
 - ✅ [GR] Testes unitários das partes críticas (auth, triagem, matching) — 35 testes com
-  Vitest (`npm test`), veja `CLAUDE.md`.
+  Vitest (`npm test`).
 - ✅ [GR] Testes de integração via HTTP nas rotas do Express (`supertest`) — 68 testes
   novos cobrindo as 6 áreas de rotas (auth, advogados, users/admin, triagem, denúncias,
   currículos), com um fake de Firestore/Auth em `backend/src/test-utils/fakeFirebase.js`.
-  103 testes no total, veja `CLAUDE.md`.
+  ver contagem atualizada em `docs/TESTES.md`.
 - ✅ [GR] CI configurado (`.github/workflows/ci.yml`) — roda os testes do backend e o
   lint/build do frontend em todo push e PR, sem precisar de nenhum secret.
 - [GC] Documentar testes e validações. — pendente
