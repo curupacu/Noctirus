@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { AdvogadoCard } from "../../components/AdvogadoCard/AdvogadoCard";
 import { Loading } from "../../components/Loading/Loading";
@@ -25,7 +25,6 @@ export function ResultadoPage() {
   // parecer conquistado, não só carregado (referência: reveal de match do Tinder).
   // Só acontece uma vez por triagem — marcar/desmarcar categoria não deve re-revelar.
   const [revelando, setRevelando] = useState(true);
-  const jaRevelou = useRef(false);
 
   const temResultado = Boolean(resultado);
 
@@ -33,10 +32,14 @@ export function ResultadoPage() {
     // Depende do booleano `temResultado`, não da referência de `resultado` — o efeito de
     // busca abaixo pode chamar `setResultado` mais de uma vez com objetos diferentes (em
     // StrictMode/dev, o efeito de fetch roda em dobro), o que trocaria a referência de
-    // novo e cancelaria o timer no cleanup antes de disparar. Uma vez `true`, o booleano
-    // nunca mais muda, então esse efeito só roda de verdade uma vez.
-    if (!temResultado || jaRevelou.current) return;
-    jaRevelou.current = true;
+    // novo. Um booleano não oscila de volta pra `false` depois de virar `true`, então
+    // esse efeito só dispara de verdade uma vez — sem precisar de guarda por ref (uma
+    // guarda por ref aqui quebrava o caso de vir com `location.state.resultado` já
+    // preenchido: `temResultado` já nasce `true`, o efeito roda dentro da simulação de
+    // remount do StrictMode, o timer da primeira invocação é cancelado no cleanup e a
+    // guarda impedia a segunda invocação de armar um novo, travando "Revelando..." pra
+    // sempre — achado ao vivo, 18/08).
+    if (!temResultado) return;
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setRevelando(false);
