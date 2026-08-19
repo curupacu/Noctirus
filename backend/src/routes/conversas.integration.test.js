@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const cell = vi.hoisted(() => ({ fake: null }));
+const enviarEmailMock = vi.fn().mockResolvedValue({ enviado: true });
 
 vi.mock("../lib/firebase-admin.js", () => ({
   db: {
@@ -15,6 +16,10 @@ vi.mock("../lib/firebase-admin.js", () => ({
   },
 }));
 
+vi.mock("../lib/email.js", () => ({
+  enviarEmail: (...args) => enviarEmailMock(...args),
+}));
+
 import { criarFakeFirebase } from "../test-utils/fakeFirebase.js";
 
 const request = (await import("supertest")).default;
@@ -22,10 +27,11 @@ const { app } = await import("../app.js");
 
 beforeEach(() => {
   cell.fake = criarFakeFirebase();
+  enviarEmailMock.mockClear();
 });
 
 function semearPar() {
-  cell.fake.db._seed("users", "c1", { nome: "Cliente Um", role: "cliente" });
+  cell.fake.db._seed("users", "c1", { nome: "Cliente Um", role: "cliente", email: "cliente-um@example.com" });
   cell.fake.db._seed("users", "a1", { nome: "Advogado Um", role: "advogado" });
   cell.fake.db._seed("advogados", "a1", { areasAtuacao: ["trabalhista"] });
 }
@@ -160,6 +166,99 @@ describe("POST /conversas/:comUid/mensagens", () => {
 
     expect(resposta.status).toBe(201);
     expect(resposta.body.triagemId).toBeUndefined();
+  });
+});
+
+describe("notificação por e-mail quando o advogado responde", () => {
+  it("advogado responde pela primeira vez → notifica o cliente por e-mail", async () => {
+    semearPar();
+    const token = cell.fake.criarToken({ uid: "a1", role: "advogado" });
+    const resposta = await request(app)
+      .post("/conversas/c1/mensagens")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ texto: "Combinado!" });
+
+    expect(resposta.status).toBe(201);
+    expect(enviarEmailMock).toHaveBeenCalledTimes(1);
+    expect(enviarEmailMock).toHaveBeenCalledWith(
+      expect.objectContaining({ to: "cliente-um@example.com", subject: expect.stringContaining("Advogado Um") }),
+    );
+  });
+
+  it("cliente enviando mensagem nunca dispara notificação (só resposta do advogado notifica)", async () => {
+    semearPar();
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    const resposta = await request(app)
+      .post("/conversas/a1/mensagens")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ texto: "Olá!" });
+
+    expect(resposta.status).toBe(201);
+    expect(enviarEmailMock).not.toHaveBeenCalled();
+  });
+
+  it("advogado manda várias mensagens seguidas sem o cliente responder → notifica só a primeira", async () => {
+    semearPar();
+    const token = cell.fake.criarToken({ uid: "a1", role: "advogado" });
+
+    await request(app)
+      .post("/conversas/c1/mensagens")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ texto: "Combinado!" });
+    await request(app)
+      .post("/conversas/c1/mensagens")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ texto: "Sim, sem problema." });
+
+    expect(enviarEmailMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("cliente responde depois do advogado → próxima resposta do advogado notifica de novo", async () => {
+    semearPar();
+    const tokenAdvogado = cell.fake.criarToken({ uid: "a1", role: "advogado" });
+    const tokenCliente = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+
+    await request(app)
+      .post("/conversas/c1/mensagens")
+      .set("Authorization", `Bearer ${tokenAdvogado}`)
+      .send({ texto: "Combinado!" });
+    await request(app)
+      .post("/conversas/a1/mensagens")
+      .set("Authorization", `Bearer ${tokenCliente}`)
+      .send({ texto: "Sim, pode ser!" });
+    await request(app)
+      .post("/conversas/c1/mensagens")
+      .set("Authorization", `Bearer ${tokenAdvogado}`)
+      .send({ texto: "Sim, sem problema." });
+
+    expect(enviarEmailMock).toHaveBeenCalledTimes(2);
+  });
+
+  it("cliente sem e-mail cadastrado → não quebra o envio da mensagem, só não notifica", async () => {
+    cell.fake.db._seed("users", "c1", { nome: "Cliente Sem Email", role: "cliente" });
+    cell.fake.db._seed("users", "a1", { nome: "Advogado Um", role: "advogado" });
+    cell.fake.db._seed("advogados", "a1", { areasAtuacao: ["trabalhista"] });
+
+    const token = cell.fake.criarToken({ uid: "a1", role: "advogado" });
+    const resposta = await request(app)
+      .post("/conversas/c1/mensagens")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ texto: "Combinado!" });
+
+    expect(resposta.status).toBe(201);
+    expect(enviarEmailMock).not.toHaveBeenCalled();
+  });
+
+  it("falha no envio do e-mail não derruba a resposta da rota", async () => {
+    semearPar();
+    enviarEmailMock.mockRejectedValueOnce(new Error("falha de rede"));
+    const token = cell.fake.criarToken({ uid: "a1", role: "advogado" });
+    const resposta = await request(app)
+      .post("/conversas/c1/mensagens")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ texto: "Combinado!" });
+
+    expect(resposta.status).toBe(201);
   });
 });
 

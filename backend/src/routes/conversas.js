@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { enviarEmail } from "../lib/email.js";
 import { db } from "../lib/firebase-admin.js";
 import { requireRole, verificarToken } from "../middlewares/auth.js";
 
@@ -44,6 +45,38 @@ function todasAs(mapa) {
 
 function idConversa(clienteId, advogadoId) {
   return `${clienteId}_${advogadoId}`;
+}
+
+// Notifica o cliente por e-mail só na PRIMEIRA mensagem de uma sequência do advogado —
+// se ele mandar várias seguidas sem o cliente responder, não manda um e-mail por
+// mensagem. Decide isso olhando quem mandou a penúltima mensagem da conversa (antes da
+// que acabou de ser salva): se foi o cliente (ou não existe mensagem anterior), notifica.
+async function notificarClienteSeNecessario({ conversaId, clienteId, advogadoId }) {
+  const anteriores = await db
+    .collection("mensagensChat")
+    .where("conversaId", "==", conversaId)
+    .get();
+
+  const mensagensAnteriores = anteriores.docs
+    .map((doc) => doc.data())
+    .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+  // A mensagem recém-salva já está nesse snapshot — a penúltima é quem decide.
+  const penultima = mensagensAnteriores[mensagensAnteriores.length - 2];
+  if (penultima && penultima.remetente === "advogado") return;
+
+  const [clienteDoc, advogadoDoc] = await Promise.all([
+    db.collection("users").doc(clienteId).get(),
+    db.collection("users").doc(advogadoId).get(),
+  ]);
+  const email = clienteDoc.data()?.email;
+  if (!email) return;
+
+  const advogadoNome = advogadoDoc.data()?.nome || "Um advogado";
+  await enviarEmail({
+    to: email,
+    subject: `${advogadoNome} respondeu na Nocturis`,
+    html: `<p>${advogadoNome} te respondeu na Nocturis. Entre no app pra ver a mensagem.</p>`,
+  });
 }
 
 conversasRouter.post(
@@ -95,6 +128,16 @@ conversasRouter.post(
     }
 
     const ref = await db.collection("mensagensChat").add(mensagem);
+
+    if (!souCliente) {
+      // Notificação é um extra, não pode derrubar o envio da mensagem se falhar.
+      try {
+        await notificarClienteSeNecessario({ conversaId: mensagem.conversaId, clienteId, advogadoId });
+      } catch (erro) {
+        console.error("conversas: falha ao notificar cliente por e-mail —", erro.message || erro);
+      }
+    }
+
     res.status(201).json({ id: ref.id, ...mensagem });
   },
 );
