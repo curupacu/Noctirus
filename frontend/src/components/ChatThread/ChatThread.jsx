@@ -19,7 +19,7 @@ import "./ChatThread.css";
 // (achado ao vivo, 18/08: conversa aparecia vazia mesmo com mensagens salvas, só em
 // F5 — carregar direto por URL, sem passar pela navegação do app, é o caso que expõe
 // isso). Esperar `!loading` resolve pros dois lados (logado ou não).
-export function ChatThread({ comUid, categorias }) {
+export function ChatThread({ comUid, categorias, extra }) {
   const { user, role, loading } = useAuth();
   const [mensagens, setMensagens] = useState(null);
   const [enviando, setEnviando] = useState(false);
@@ -40,7 +40,7 @@ export function ChatThread({ comUid, categorias }) {
   async function enviar(texto) {
     setEnviando(true);
     try {
-      const nova = await api.post(`/conversas/${comUid}/mensagens`, { texto });
+      const nova = await api.post(`/conversas/${comUid}/mensagens`, { texto, ...extra });
       setMensagens((atual) => [...(atual || []), nova]);
     } catch {
       // silencioso — a mensagem simplesmente não aparece e a pessoa pode tentar de novo

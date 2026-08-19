@@ -43,7 +43,7 @@ triagemRouter.post(
   verificarToken,
   requireRole("cliente"),
   async (req, res) => {
-    const { respostas, descricao } = req.body;
+    const { respostas, descricao, compartilharComAdvogado } = req.body;
 
     if (!descricao || descricao.trim().length < 10) {
       return res.status(400).json({ erro: "Descreva o problema com pelo menos 10 caracteres" });
@@ -60,6 +60,10 @@ triagemRouter.post(
       clienteId: req.user.uid,
       respostas: respostas || {},
       descricao,
+      // Opt-in explícito do cliente pra descrição do caso poder aparecer pro advogado
+      // que ele vier a contatar (ver POST /conversas/:comUid/mensagens) — falso por
+      // padrão, dado sensível não vaza sem escolha ativa.
+      compartilharComAdvogado: Boolean(compartilharComAdvogado),
       areaClassificada: resultado.areaClassificada,
       categorias: resultado.categorias || [],
       tipoAdvogadoSugerido: resultado.tipoAdvogadoSugerido,

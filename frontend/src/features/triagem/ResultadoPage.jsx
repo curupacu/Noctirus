@@ -147,7 +147,7 @@ export function ResultadoPage() {
           <ul className="advogados-lista">
             {advogados.map((adv, i) => (
               <li key={adv.uid} className="step-enter" style={{ animationDelay: `${Math.min(i * 40, 400)}ms` }}>
-                <AdvogadoCard advogado={adv} catalogoEspecialidades={catalogoEspecialidades} />
+                <AdvogadoCard advogado={adv} catalogoEspecialidades={catalogoEspecialidades} triagemId={id} />
               </li>
             ))}
           </ul>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
@@ -31,6 +31,8 @@ function ListaOuVazio({ titulo, itens }) {
 export function AdvogadoPublicoPage() {
   const { uid } = useParams();
   const { role } = useAuth();
+  const [searchParams] = useSearchParams();
+  const triagemId = searchParams.get("triagemId");
   const [advogado, setAdvogado] = useState(null);
   const [curriculo, setCurriculo] = useState(null);
   const [catalogoCategorias, setCatalogoCategorias] = useState(null);
@@ -118,7 +120,10 @@ export function AdvogadoPublicoPage() {
       )}
       {!suspenso && (whatsapp || email) && (
         <div className="actions">
-          <Link to={`/advogados/${uid}/contato`} className="button button--primary">
+          <Link
+            to={`/advogados/${uid}/contato${triagemId ? `?triagemId=${triagemId}` : ""}`}
+            className="button button--primary"
+          >
             Contatar advogado <span className="button__arrow">→</span>
           </Link>
         </div>

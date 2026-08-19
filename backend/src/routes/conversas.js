@@ -52,7 +52,7 @@ conversasRouter.post(
   requireRole("cliente", "advogado"),
   async (req, res) => {
     const { comUid } = req.params;
-    const { texto } = req.body;
+    const { texto, triagemId } = req.body;
     const souCliente = req.user.role === "cliente";
     const clienteId = souCliente ? req.user.uid : comUid;
     const advogadoId = souCliente ? comUid : req.user.uid;
@@ -82,6 +82,18 @@ conversasRouter.post(
       texto,
       createdAt: new Date().toISOString(),
     };
+
+    // Vincula a conversa à triagem de origem (RF: mostrar contexto real pro advogado) —
+    // só quando o cliente veio de um resultado de triagem e a triagem é mesmo dele. ID
+    // inválido/de outro cliente é ignorado silenciosamente, não derruba o envio da
+    // mensagem.
+    if (souCliente && triagemId) {
+      const triagemDoc = await db.collection("triagens").doc(triagemId).get();
+      if (triagemDoc.exists && triagemDoc.data().clienteId === req.user.uid) {
+        mensagem.triagemId = triagemId;
+      }
+    }
+
     const ref = await db.collection("mensagensChat").add(mensagem);
     res.status(201).json({ id: ref.id, ...mensagem });
   },
@@ -106,6 +118,40 @@ conversasRouter.get(
       .map((doc) => ({ id: doc.id, ...doc.data() }))
       .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
     res.json(mensagens);
+  },
+);
+
+// Contexto da triagem que originou a conversa, só pro advogado — e só quando o cliente
+// deu opt-in explícito (`compartilharComAdvogado`) na triagem. Sem isso, o advogado não
+// vê nada extra além do que o chat já mostra.
+conversasRouter.get(
+  "/conversas/:comUid/triagem",
+  verificarToken,
+  requireRole("advogado"),
+  async (req, res) => {
+    const { comUid: clienteId } = req.params;
+
+    const snapshot = await db
+      .collection("mensagensChat")
+      .where("conversaId", "==", idConversa(clienteId, req.user.uid))
+      .get();
+
+    const mensagemComTriagem = snapshot.docs.map((doc) => doc.data()).find((m) => m.triagemId);
+    if (!mensagemComTriagem) {
+      return res.json(null);
+    }
+
+    const triagemDoc = await db.collection("triagens").doc(mensagemComTriagem.triagemId).get();
+    const triagem = triagemDoc.exists ? triagemDoc.data() : null;
+    if (!triagem || triagem.clienteId !== clienteId || !triagem.compartilharComAdvogado) {
+      return res.json(null);
+    }
+
+    res.json({
+      areaClassificada: triagem.areaClassificada,
+      descricao: triagem.descricao,
+      createdAt: triagem.createdAt,
+    });
   },
 );
 

@@ -13,15 +13,18 @@ const LABEL_AREA = { civel: "Cível", trabalhista: "Trabalhista" };
 // `.chip--destaque`/`.chip--overflow` já usados no perfil público do advogado.
 // `catalogoEspecialidades` é um mapa valor->label (a página que usa o card já busca o
 // catálogo de categorias em /triagem/perguntas pra outra coisa; aqui só reaproveita).
-export function AdvogadoCard({ advogado, catalogoEspecialidades = {} }) {
+export function AdvogadoCard({ advogado, catalogoEspecialidades = {}, triagemId }) {
   const especialidades = (advogado.especialidades || [])
     .map((valor) => catalogoEspecialidades[valor])
     .filter(Boolean);
   const especialidadesVisiveis = especialidades.slice(0, 3);
   const especialidadesRestantes = especialidades.length - especialidadesVisiveis.length;
+  const destino = triagemId
+    ? `/advogados/${advogado.uid}?triagemId=${triagemId}`
+    : `/advogados/${advogado.uid}`;
 
   return (
-    <Link to={`/advogados/${advogado.uid}`} className="advogado-card">
+    <Link to={destino} className="advogado-card">
       <span className="advogado-card__top">
         <Avatar
           nome={advogado.nome}

@@ -12,6 +12,7 @@ export function TriagemPage() {
   const [arvore, setArvore] = useState(null);
   const [respostas, setRespostas] = useState({});
   const [descricao, setDescricao] = useState("");
+  const [compartilharComAdvogado, setCompartilharComAdvogado] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState(null);
   const navigate = useNavigate();
@@ -40,7 +41,11 @@ export function TriagemPage() {
 
     setEnviando(true);
     try {
-      const resultado = await api.post("/triagem/classificar", { respostas, descricao });
+      const resultado = await api.post("/triagem/classificar", {
+        respostas,
+        descricao,
+        compartilharComAdvogado,
+      });
       navigate(`/triagem/${resultado.id}`, { state: { resultado } });
     } catch (err) {
       setErro(err.message);
@@ -142,6 +147,14 @@ export function TriagemPage() {
             onChange={(e) => setDescricao(e.target.value)}
           />
         </div>
+
+        <ChoiceCard
+          type="checkbox"
+          label="Deixar a descrição do caso visível pro advogado que eu contatar"
+          description="Só depois que você mandar mensagem — ajuda o advogado a entender o caso antes de responder. Fica desligado até você marcar."
+          checked={compartilharComAdvogado}
+          onChange={() => setCompartilharComAdvogado((v) => !v)}
+        />
 
         <div className="form-cta-sticky">
           <Button type="submit" disabled={enviando}>
