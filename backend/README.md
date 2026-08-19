@@ -24,8 +24,16 @@ Endpoint de verificação: `GET /health`.
 - `GOOGLE_APPLICATION_CREDENTIALS` — caminho pro JSON da service account (Firebase Console >
   Configurações do projeto > Contas de serviço > Gerar nova chave privada). Não é commitado.
 - `GEMINI_API_KEY` — chave do Google AI Studio pra triagem por IA. **Opcional**: sem ela, a
-  triagem cai direto no fallback por regras e o backend funciona normalmente.
-- `GEMINI_MODEL` — opcional, padrão `gemini-2.5-flash-lite`.
+  triagem tenta o Groq e depois cai no fallback por regras; o backend funciona normalmente.
+- `GEMINI_MODEL` — opcional, padrão `gemini-3.5-flash-lite`.
+- `GROQ_API_KEY` — chave do [Groq](https://console.groq.com/keys), segunda opinião de IA
+  antes do fallback por regras (só é chamada se o Gemini falhar/demorar/tiver baixa
+  confiança). **Opcional**: sem ela, pula direto pro fallback por regras.
+- `GROQ_MODEL` — opcional, padrão `openai/gpt-oss-120b`.
+- `RESEND_API_KEY` — chave do [Resend](https://resend.com/api-keys), notifica o cliente por
+  e-mail quando o advogado responde no chat. **Opcional**: sem ela, só não manda o e-mail
+  (loga no console).
+- `RESEND_FROM` — opcional, remetente padrão já assume `mail.nocturis.com.br` verificado.
 
 ## Estrutura
 
@@ -36,7 +44,7 @@ src/
                  pré-definidas), denuncias
   services/      triagem.js (taxonomia + classificação IA/regras), oab.js, matching.js
   middlewares/   verificação de token e papel
-  lib/           firebase-admin.js
+  lib/           firebase-admin.js, email.js (notificação via Resend)
 ```
 
 Modelo de dados por coleção: [`database/schema.md`](../database/schema.md).

@@ -16,10 +16,11 @@ Já funciona de ponta a ponta:
 - Cadastro/login por papel (cliente, advogado, admin) com Firebase Authentication + custom claims
 - Perfil e currículo do advogado, com contato direto (WhatsApp/e-mail)
 - Listagem pública de advogados com filtro por área/cidade/UF/especialidade (não exige login)
-- Triagem por perguntas guiadas + descrição livre, classificada por **IA (Gemini Flash-Lite)**
-  com fallback automático por regras de palavras-chave se a IA falhar, demorar ou tiver baixa
+- Triagem por perguntas guiadas + descrição livre, classificada por **IA em duas camadas**
+  (Gemini 3.5 Flash-Lite → Groq/`openai-gpt-oss-120b` como segunda opinião) com fallback final
+  automático por regras de palavras-chave se as duas IAs falharem, demorarem ou tiverem baixa
   confiança — a triagem nunca trava. Validada com 20 casos reais: 100% de acerto de área e
-  categoria (30/07).
+  categoria, nos dois provedores de IA (19/08).
 - Taxonomia de 33 categorias (17 cíveis + 16 trabalhistas) usada tanto na triagem quanto nas
   especialidades do advogado — o matching usa isso pra priorizar advogados aderentes ao assunto
   específico do caso, não só a área ampla
@@ -34,6 +35,10 @@ Já funciona de ponta a ponta:
 - Dashboard do advogado (`/perfil`): saudação, estatísticas (contatos, feedback, conversas),
   completude do perfil, conversas recentes e atalhos — edição de dados fica à parte, em
   `/perfil/editar`
+- **Notificação por e-mail** pro cliente quando o advogado responde no chat (Resend, domínio
+  próprio `mail.nocturis.com.br` verificado) — dispara direto do backend, sem Cloud Functions.
+  Só notifica a primeira mensagem de uma sequência do advogado, não manda um e-mail por
+  mensagem se ele responder várias vezes seguidas.
 - Sistema de denúncias (registrar, acompanhar como autor, moderar como admin)
 - Painel admin completo: aprovar OAB, gerenciar usuários (suspender/remover), moderar denúncias
 - Banco populado com 30 advogados fictícios cobrindo várias cidades/estados e especialidades,
@@ -42,14 +47,15 @@ Já funciona de ponta a ponta:
   de iniciais coloridas como fallback
 - Domínio próprio (`nocturis.com.br`) com favicon completo, SEO on-page (meta tags, Open Graph,
   JSON-LD), sitemap e `robots.txt`, ligado ao Google Search Console
-- 156 testes automatizados (Vitest, unitários + integração via `supertest`) e CI no GitHub
+- 167 testes automatizados (Vitest, unitários + integração via `supertest`) e CI no GitHub
   Actions — resumo em [`docs/TESTES.md`](docs/TESTES.md)
 - Tema claro (padrão) e escuro com botão de alternância, salvo por navegador. Home, Login e
   Cadastro ficam sempre no visual escuro ("vitrine" da marca); o resto do app segue o tema
   escolhido
 - Redesign visual completo nas telas do MVP — coruja como marca d'água, sombras discretas,
-  selo neutro em vez de dourado espalhado, paleta clara revisada. Decisões de design em
-  [`docs/DESIGN.md`](docs/DESIGN.md)
+  selo neutro em vez de dourado espalhado, paleta clara revisada, tipografia de corpo em
+  IBM Plex Sans (troca da Inter, genérica demais) e cor própria por área (cível/trabalhista)
+  além do ícone. Decisões de design em [`docs/DESIGN.md`](docs/DESIGN.md)
 
 **Ainda não existe:** verificação real de OAB, upload de currículo em PDF (`nocturis-prod`
 separado foi avaliado e descartado por decisão — ver abaixo). Ver
@@ -64,7 +70,8 @@ separado foi avaliado e descartado por decisão — ver abaixo). Ver
 | Backend | Node.js + Express (`backend/`), Firebase Admin SDK |
 | Auth | Firebase Authentication + custom claims (papéis: `cliente`, `advogado`, `admin`) |
 | Banco | Cloud Firestore (NoSQL, sem emulador — aponta direto pro projeto na nuvem) |
-| IA da triagem | Google Gemini Flash-Lite, chamado só pelo backend, com fallback por regras |
+| IA da triagem | Google Gemini 3.5 Flash-Lite → Groq (`openai-gpt-oss-120b`) → fallback por regras |
+| E-mail transacional | Resend, domínio `mail.nocturis.com.br` verificado — notificação de resposta no chat |
 | Deploy | Firebase Hosting (frontend) + Render (backend) |
 
 Identidade visual própria da Nocturis (coruja, tons marrom/amarelo) — não confundir com a marca
@@ -122,16 +129,6 @@ docs/                 ROADMAP.md (plano de sprints), DESIGN.md, TESTES.md (resum
 ## Pontos fracos e próximos passos
 
 Levantamento honesto do que ainda precisa de trabalho, priorizado.
-
-### 🔴 Urgente
-
-- **Risco de cota do Gemini na apresentação.** O free tier do `gemini-2.5-flash-lite` nesse
-  projeto está limitado a ~20 requisições/dia (bem abaixo do documentado pelo Google) — testar a
-  triagem repetidamente antes da banca pode esgotar a cota e a demonstração cair inteira no
-  fallback por regras, sem aviso na tela. Última confirmação em 30/07 (`npm run avaliar-triagem`,
-  backend/): cota disponível no dia, 100% de acerto nos 20 casos. Como o teste em si consome a
-  cota diária, **não repetir** no mesmo dia — rodar de novo só perto da data real da banca pra
-  confirmar a cota daquele dia, e evitar testes repetidos horas antes da apresentação.
 
 ### 🟡 Médio
 
