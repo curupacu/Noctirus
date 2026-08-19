@@ -4,9 +4,9 @@ Resumo da suíte de testes do `backend/`, pra referência na monografia (Sprint 
 lógica crítica (triagem, matching, autorização) e o comportamento HTTP de toda rota da API,
 sem precisar de nenhuma credencial real do Firebase ou do Gemini pra rodar.
 
-## Números (30/07)
+## Números (18/08)
 
-- **109 testes**, em **11 arquivos**, 100% passando.
+- **156 testes**, em **13 arquivos**, 100% passando.
 - Framework: [Vitest](https://vitest.dev/) (`backend/package.json`).
 - Rodar: `npm test` na raiz (delega pro backend) ou `npm test` dentro de `backend/`.
 - Tempo total: ~8s.
@@ -32,7 +32,7 @@ Nenhum teste toca Firebase ou Gemini de verdade:
 - Sem `GEMINI_API_KEY` configurada (como é o caso em CI), a triagem cai no fallback por
   regras — os testes de integração da triagem verificam esse caminho, não a chamada real à
   IA (a qualidade da classificação por IA é medida à parte, ver
-  `backend/scripts/avaliar-triagem.js` e a nota de 30/07 no `CLAUDE.md`).
+  `backend/scripts/avaliar-triagem.js`).
 
 ## Cobertura por arquivo
 
@@ -53,8 +53,10 @@ Nenhum teste toca Firebase ou Gemini de verdade:
 | `advogados.integration.test.js` | Listagem pública (sem token), filtro por área, 404 de advogado inexistente, edição do próprio perfil (recusando editar o de outro), upload de foto (recusa sem token/arquivo/tipo errado, sucesso), aprovação de OAB restrita a admin, listagem admin incluindo suspensos. |
 | `users.integration.test.js` | `GET/PUT /users/me`, listagem admin (clientes/advogados, nunca admins), suspender (bloqueia outro admin, ignora `auth/user-not-found` de advogado do seed sem conta na Auth), remover (Auth + Firestore, incluindo `advogados`/`curriculos` quando aplicável). |
 | `curriculos.integration.test.js` | Leitura pública do currículo, edição restrita ao próprio advogado, validação de campo que deveria ser lista, atualização com sucesso. |
-| `triagem.integration.test.js` | `GET /triagem/perguntas` sem token, `POST /triagem/classificar` (papel cliente obrigatório, descrição curta rejeitada, classificação por fallback quando não há `GEMINI_API_KEY`, contador `vezesSugerido` incrementado), histórico e detalhe da triagem restritos ao próprio cliente (404 pra triagem de outro, sem vazar dado). |
+| `triagem.integration.test.js` | `GET /triagem/perguntas` sem token, `POST /triagem/classificar` (papel cliente obrigatório, descrição curta rejeitada, classificação por fallback quando não há `GEMINI_API_KEY`, contador `vezesSugerido` incrementado, opt-in `compartilharComAdvogado` falso por padrão), histórico e detalhe da triagem restritos ao próprio cliente (404 pra triagem de outro, sem vazar dado). |
 | `denuncias.integration.test.js` | Registro de denúncia (papel permitido, descrição mínima de 10 caracteres, vínculo com autor logado), listagem "minhas denúncias" (só do autor, mais recente primeiro), moderação admin (resolver com decisão registrada, status inválido rejeitado). |
+| `contatos.integration.test.js` | `GET /contatos/meus` (rastreio pessoal do cliente), `PATCH`/`DELETE` de status de um contato. |
+| `conversas.integration.test.js` | Chat de mensagens pré-definidas: recusa texto fora da lista fixa por papel, envio válido dos dois lados, vínculo (ou não) de `triagemId` a uma mensagem — só aceita triagem do próprio cliente, ignora id inexistente ou de outro cliente sem derrubar o envio —, listagem de uma conversa em ordem cronológica, `GET /conversas/minhas` (última mensagem por conversa), `GET /conversas/:comUid/triagem` (só advogado; retorna `null` sem opt-in do cliente ou sem vínculo, retorna área+descrição só com as duas condições batendo). |
 | `health.integration.test.js` | `GET /health` responde 200. |
 
 ## O que não está coberto
@@ -62,11 +64,11 @@ Nenhum teste toca Firebase ou Gemini de verdade:
 - **Frontend** não tem testes automatizados (só `npm run lint` + `npm run build` no CI,
   sem testes de componente/E2E).
 - **Qualidade da classificação por IA** (Gemini de verdade) não é medida pela suíte do
-  Vitest — é o papel do `backend/scripts/avaliar-triagem.js` (ver `CLAUDE.md`, resultado
-  mais recente: 100% de acerto de área e categoria em 20 casos reais, 30/07).
+  Vitest — é o papel do `backend/scripts/avaliar-triagem.js` (resultado mais recente: 100% de
+  acerto de área e categoria em 20 casos reais, 30/07).
 - **Security rules do Firestore** (`database/firestore.rules`) não têm teste automatizado —
   foram verificadas manualmente contra o projeto de verdade com a REST API e um token de
-  usuário de teste descartável (ver "3 falhas de segurança" no `CLAUDE.md`).
+  usuário de teste descartável.
 
 ## CI
 

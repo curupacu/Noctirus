@@ -11,8 +11,7 @@
 > "cinza estranho" — e o card virou branco puro (`#FFFFFF`) sobre fundo creme, um desvio
 > deliberado da regra "nunca card branco" abaixo (aqui não é branco-sobre-branco, o fundo
 > continua creme). O resto das regras deste documento (dourado com parcimônia, cantos
-> discretos, sem degradê, sombra discreta) continua valendo e foi seguido. Log completo da
-> execução em `CLAUDE.md`, entrada de 07/08.
+> discretos, sem degradê, sombra discreta) continua valendo e foi seguido.
 
 Estética-alvo: **app jurídico noturno e sóbrio** — fundo escuro quente, texto quase
 branco, marrons da coruja nos detalhes, amarelo-dourado só nos acentos. Serifada

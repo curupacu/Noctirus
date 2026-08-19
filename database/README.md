@@ -2,11 +2,13 @@
 
 Banco de dados: **Cloud Firestore** (Firebase), sem emulador local — aponta direto
 para o projeto `nocturis-web` na nuvem. Não existe `nocturis-prod` separado, por
-decisão (dado fictício, sem risco real de poluir produção — ver `CLAUDE.md`).
+decisão: o app roda inteiro com advogados fictícios (seed) e contas de teste
+descartáveis, sem dado real em risco de poluir uma "produção" separada.
 
 - `firestore.rules` — regras de segurança (nega tudo por padrão, libera por papel via custom claims).
 - `firestore.indexes.json` — índices compostos do Firestore.
-- `schema.md` — modelo de dados por coleção.
+- [`schema.md`](schema.md) — modelo de dados por coleção (`users`, `advogados`, `curriculos`,
+  `triagens`, `contatos`, `contatosCliente`, `mensagensChat`, `feedbacks`, `denuncias`).
 - `seed/lawyers.json` — 30 advogados fictícios (nome, OAB, áreas, especialidades, localização,
   currículo) cobrindo os 33 valores da taxonomia de categorias e 14 estados diferentes.
 - `seed/seed.js` — lê `lawyers.json` e cria, pra cada advogado, um documento em `users/`,
