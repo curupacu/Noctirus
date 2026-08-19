@@ -31,9 +31,21 @@
   --green: #7fb98a;
   --red: #c77b5e;
 
+  /* Cor por área (cível/trabalhista) — antes as duas viviam só na família dourada
+     (gold-dim sobre creme vs. gold sobre ink-800), sem hue próprio nenhum; só o ícone
+     (contrato vs. maleta) diferenciava. Constantes nos dois temas, como gold/brown. */
+  --area-civel: #3d5c4e;
+  --area-civel-bg: #dce6de;
+  --area-trabalhista: #8b4332;
+  --area-trabalhista-bg: #eddad2;
+
   /* Tipografia */
   --font-display: "Fraunces", Georgia, serif;
-  --font-body: "Inter", system-ui, sans-serif;
+  /* Trocado de Inter pra IBM Plex Sans (19/08) — Inter virou a fonte padrão de praticamente
+     todo produto novo, o que a torna "invisível" no sentido ruim (sinaliza template em vez
+     de marca). Plex tem proporções mais estruturadas/com caráter próprio, mesma legibilidade
+     em telas pequenas. Fraunces (título) continua igual — já era uma escolha pouco comum. */
+  --font-body: "IBM Plex Sans", system-ui, sans-serif;
 
   /* Forma */
   --radius: 12px;
