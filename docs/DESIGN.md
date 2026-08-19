@@ -22,6 +22,15 @@ Este documento é a fonte de verdade do visual **original** — pra paleta e tok
 realmente em produção hoje, ver `frontend/src/styles/tokens.css` (comentado) ou a seção 4
 abaixo, já atualizada.
 
+> **Atualização (19/08):** `--font-body` trocada de Inter pra **IBM Plex Sans** — Inter
+> virou a fonte mais comum de produto novo em 2026 (~90% dos projetos, achado numa
+> pesquisa de tipografia), o que a torna "invisível" como escolha de marca em vez de
+> neutra. `--font-display` (Fraunces) continua igual, já era uma escolha pouco comum.
+> Também foram adicionados `--area-civel`/`--area-civel-bg` (verde-petróleo) e
+> `--area-trabalhista`/`--area-trabalhista-bg` (terracota) — cor própria por área no
+> `AreaIcon`, que antes vivia só na família dourada (sem hue semântico nenhum de
+> categoria). Ver seção 4 pros valores exatos.
+
 ---
 
 ## 0. Contexto importante sobre a logo e o fundo
@@ -125,9 +134,16 @@ Esse era o problema das telas antigas (cartão branco-no-branco).
   --green: #7FB98A;   /* sucesso / verificado */
   --red:   #C77B5E;   /* erro / denúncia */
 
+  /* Cor por área (cível/trabalhista), adicionada 19/08 — antes as duas viviam só na
+     família dourada, sem hue semântico de categoria nenhum, só o ícone diferenciava. */
+  --area-civel: #3D5C4E;
+  --area-civel-bg: #DCE6DE;
+  --area-trabalhista: #8B4332;
+  --area-trabalhista-bg: #EDDAD2;
+
   /* Tipografia */
-  --font-display: "Fraunces", Georgia, serif;   /* títulos — combina com a logo */
-  --font-body: "Inter", system-ui, sans-serif;  /* texto / UI */
+  --font-display: "Fraunces", Georgia, serif;        /* títulos — combina com a logo */
+  --font-body: "IBM Plex Sans", system-ui, sans-serif; /* texto / UI — era Inter até 19/08 */
 
   /* Forma — cantos discretos */
   --radius: 12px;
@@ -136,7 +152,7 @@ Esse era o problema das telas antigas (cartão branco-no-branco).
 }
 ```
 
-Importar as fontes no `index.html` (Google Fonts): `Fraunces` (títulos) e `Inter` (corpo).
+Importar as fontes no `index.html` (Google Fonts): `Fraunces` (títulos) e `IBM Plex Sans` (corpo).
 
 ---
 

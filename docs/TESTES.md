@@ -4,9 +4,9 @@ Resumo da suíte de testes do `backend/`, pra referência na monografia (Sprint 
 lógica crítica (triagem, matching, autorização) e o comportamento HTTP de toda rota da API,
 sem precisar de nenhuma credencial real do Firebase ou do Gemini pra rodar.
 
-## Números (18/08)
+## Números (19/08)
 
-- **156 testes**, em **13 arquivos**, 100% passando.
+- **167 testes**, em **13 arquivos**, 100% passando.
 - Framework: [Vitest](https://vitest.dev/) (`backend/package.json`).
 - Rodar: `npm test` na raiz (delega pro backend) ou `npm test` dentro de `backend/`.
 - Tempo total: ~8s.
@@ -29,10 +29,16 @@ Nenhum teste toca Firebase ou Gemini de verdade:
 - Módulos que tocam o Firebase Admin de verdade (`oab.js`, `auth.js`, `matching.js`,
   Cloudinary) são mockados via `vi.mock`/`vi.hoisted` nos testes unitários que precisam
   deles.
-- Sem `GEMINI_API_KEY` configurada (como é o caso em CI), a triagem cai no fallback por
-  regras — os testes de integração da triagem verificam esse caminho, não a chamada real à
-  IA (a qualidade da classificação por IA é medida à parte, ver
-  `backend/scripts/avaliar-triagem.js`).
+- Sem `GEMINI_API_KEY`/`GROQ_API_KEY` configuradas (como é o caso em CI), a triagem cai no
+  fallback por regras — os testes de integração da triagem verificam esse caminho, não a
+  chamada real às IAs (a qualidade da classificação por IA é medida à parte, ver
+  `backend/scripts/avaliar-triagem.js`). `services/triagem.test.js` também mocka
+  `@google/genai` e `groq-sdk` pra cobrir a cadeia Gemini → Groq → regras sem rede real.
+  `triagem.integration.test.js` apaga as duas chaves no `beforeEach` — apagar só a do
+  Gemini não bastava mais depois que o Groq virou segunda camada (achado real, 19/08: o
+  teste vazava pra API de verdade do Groq).
+- `lib/email.js` (Resend) é mockado em `conversas.integration.test.js`, pra testar a
+  notificação por e-mail quando o advogado responde sem depender de rede real.
 
 ## Cobertura por arquivo
 
@@ -56,16 +62,17 @@ Nenhum teste toca Firebase ou Gemini de verdade:
 | `triagem.integration.test.js` | `GET /triagem/perguntas` sem token, `POST /triagem/classificar` (papel cliente obrigatório, descrição curta rejeitada, classificação por fallback quando não há `GEMINI_API_KEY`, contador `vezesSugerido` incrementado, opt-in `compartilharComAdvogado` falso por padrão), histórico e detalhe da triagem restritos ao próprio cliente (404 pra triagem de outro, sem vazar dado). |
 | `denuncias.integration.test.js` | Registro de denúncia (papel permitido, descrição mínima de 10 caracteres, vínculo com autor logado), listagem "minhas denúncias" (só do autor, mais recente primeiro), moderação admin (resolver com decisão registrada, status inválido rejeitado). |
 | `contatos.integration.test.js` | `GET /contatos/meus` (rastreio pessoal do cliente), `PATCH`/`DELETE` de status de um contato. |
-| `conversas.integration.test.js` | Chat de mensagens pré-definidas: recusa texto fora da lista fixa por papel, envio válido dos dois lados, vínculo (ou não) de `triagemId` a uma mensagem — só aceita triagem do próprio cliente, ignora id inexistente ou de outro cliente sem derrubar o envio —, listagem de uma conversa em ordem cronológica, `GET /conversas/minhas` (última mensagem por conversa), `GET /conversas/:comUid/triagem` (só advogado; retorna `null` sem opt-in do cliente ou sem vínculo, retorna área+descrição só com as duas condições batendo). |
+| `conversas.integration.test.js` | Chat de mensagens pré-definidas: recusa texto fora da lista fixa por papel, envio válido dos dois lados, vínculo (ou não) de `triagemId` a uma mensagem — só aceita triagem do próprio cliente, ignora id inexistente ou de outro cliente sem derrubar o envio —, listagem de uma conversa em ordem cronológica, `GET /conversas/minhas` (última mensagem por conversa), `GET /conversas/:comUid/triagem` (só advogado; retorna `null` sem opt-in do cliente ou sem vínculo, retorna área+descrição só com as duas condições batendo). Notificação por e-mail: só a resposta do advogado notifica (nunca o cliente), só a primeira de uma sequência sem resposta do cliente, cliente sem e-mail cadastrado não quebra o envio, falha no envio do e-mail não derruba a resposta da rota. |
 | `health.integration.test.js` | `GET /health` responde 200. |
 
 ## O que não está coberto
 
 - **Frontend** não tem testes automatizados (só `npm run lint` + `npm run build` no CI,
   sem testes de componente/E2E).
-- **Qualidade da classificação por IA** (Gemini de verdade) não é medida pela suíte do
+- **Qualidade da classificação por IA** (Gemini/Groq de verdade) não é medida pela suíte do
   Vitest — é o papel do `backend/scripts/avaliar-triagem.js` (resultado mais recente: 100% de
-  acerto de área e categoria em 20 casos reais, 30/07).
+  acerto de área e categoria em 20 casos reais, tanto via Gemini quanto forçando o caminho do
+  Groq, 19/08).
 - **Security rules do Firestore** (`database/firestore.rules`) não têm teste automatizado —
   foram verificadas manualmente contra o projeto de verdade com a REST API e um token de
   usuário de teste descartável.
