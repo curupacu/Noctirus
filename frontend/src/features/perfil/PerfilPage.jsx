@@ -31,6 +31,7 @@ export function PerfilPage() {
   const [metricas, setMetricas] = useState(null);
   const [feedbacks, setFeedbacks] = useState(null);
   const [curriculo, setCurriculo] = useState(null);
+  const [conversas, setConversas] = useState(null);
 
   useEffect(() => {
     async function carregar() {
@@ -64,6 +65,7 @@ export function PerfilPage() {
     if (!user || role !== "advogado") return;
     api.get(`/advogados/${user.uid}/metricas`).then(setMetricas);
     api.get(`/advogados/${user.uid}/feedback`).then(setFeedbacks);
+    api.get("/conversas/minhas").then(setConversas);
   }, [user, role]);
 
   function alternarEspecialidade(valor) {
@@ -140,14 +142,18 @@ export function PerfilPage() {
     return <Loading>Carregando perfil...</Loading>;
   }
 
+  const primeiroNome = (dadosUsuario.nome || dadosUsuario.email || "").split(" ")[0];
+  const conversasRecentes = (conversas || []).slice(0, 3);
+
   return (
     <main>
-      <h1>Meu perfil</h1>
-      <p>
-        <span className="badge">{dadosUsuario.role}</span>
-        {role === "advogado" && (
-          <>
-            {" "}
+      {role === "advogado" && advogado ? (
+        <>
+          <h1>
+            Olá, <em className="accent">{primeiroNome}</em>
+          </h1>
+          <p className="text-muted">
+            <span className="badge">{dadosUsuario.role}</span>{" "}
             <span className={`badge${advogado?.verificado ? " badge--seal" : ""}`}>
               {advogado?.verificado && (
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -156,11 +162,80 @@ export function PerfilPage() {
               )}
               {advogado?.verificado ? "OAB verificada" : "OAB em análise"}
             </span>
-          </>
-        )}
-      </p>
+          </p>
 
-      {role === "advogado" && advogado && <PerfilCompletude itens={itensCompletude} />}
+          <div className="row">
+            <div className="card">
+              <p className="text-muted">Contatos recebidos</p>
+              <p className="stat-numero">{metricas ? metricas.contatos.total : "—"}</p>
+            </div>
+            <div className="card">
+              <p className="text-muted">Feedback dos clientes</p>
+              <p className="stat-numero">{metricas ? (metricas.feedbacks.mediaNota ?? "—") : "—"}</p>
+            </div>
+            <div className="card">
+              <p className="text-muted">Conversas</p>
+              <p className="stat-numero">{conversas ? conversas.length : "—"}</p>
+            </div>
+          </div>
+
+          <PerfilCompletude itens={itensCompletude} />
+
+          <div className="section-heading">
+            <h2>Conversas recentes</h2>
+            {conversasRecentes.length > 0 && <Link to="/conversas">Ver todas</Link>}
+          </div>
+          {conversas && conversas.length === 0 && (
+            <p className="text-muted">Ninguém te mandou mensagem ainda.</p>
+          )}
+          {conversasRecentes.length > 0 && (
+            <ul className="list-plain">
+              {conversasRecentes.map((c) => (
+                <li key={c.comUid}>
+                  <Link to={`/conversas/${c.comUid}`} state={{ nome: c.nome }} className="list-row">
+                    <Avatar nome={c.nome} seed={c.comUid} />
+                    <span className="list-row__info">
+                      <span className="list-row__title">{c.nome || "Cliente"}</span>
+                      <span className="list-row__meta">
+                        {c.ultimoRemetente === "advogado" ? "Você" : "Cliente"}: {c.ultimaMensagem}
+                      </span>
+                    </span>
+                    <span className="advogado-row__chevron" aria-hidden="true">
+                      ›
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <ul className="list-plain">
+            <li>
+              <Link to={`/advogados/${user.uid}`} className="list-row">
+                <span className="list-row__title">Ver meu perfil público</span>
+                <span className="advogado-row__chevron" aria-hidden="true">›</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/cartao" className="list-row">
+                <span className="list-row__title">Meu cartão de visita</span>
+                <span className="advogado-row__chevron" aria-hidden="true">›</span>
+              </Link>
+            </li>
+          </ul>
+
+          <div className="section-heading">
+            <h2>Editar perfil</h2>
+          </div>
+        </>
+      ) : (
+        <>
+          <h1>Meu perfil</h1>
+          <p>
+            <span className="badge">{dadosUsuario.role}</span>
+          </p>
+        </>
+      )}
 
       <div className="section-heading">
         <h2>Dados básicos</h2>
@@ -265,47 +340,22 @@ export function PerfilPage() {
 
       {mensagem && <p role="status">{mensagem}</p>}
 
-      {role === "advogado" && metricas && (
+      {role === "advogado" && feedbacks && feedbacks.length > 0 && (
         <>
           <div className="section-heading">
-            <h2>Como está indo</h2>
+            <h2>Avaliações recentes</h2>
           </div>
-          <div className="row">
-            <div className="card">
-              <p className="text-muted">Contatos recebidos</p>
-              <p style={{ fontFamily: "var(--font-display)", fontSize: "var(--font-size-2xl)" }}>
-                {metricas.contatos.total}
-              </p>
-              <p className="text-muted">
-                {metricas.contatos.whatsapp} WhatsApp · {metricas.contatos.email} e-mail
-              </p>
-            </div>
-            <div className="card">
-              <p className="text-muted">Feedback dos clientes</p>
-              <p style={{ fontFamily: "var(--font-display)", fontSize: "var(--font-size-2xl)" }}>
-                {metricas.feedbacks.mediaNota ?? "—"}
-              </p>
-              <p className="text-muted">
-                {metricas.feedbacks.total === 0
-                  ? "Nenhuma avaliação ainda"
-                  : `${metricas.feedbacks.total} avaliação${metricas.feedbacks.total === 1 ? "" : "ões"}, privadas`}
-              </p>
-            </div>
-          </div>
-
-          {feedbacks && feedbacks.length > 0 && (
-            <ul className="list-plain">
-              {feedbacks.map((f) => (
-                <li key={f.id} className="card">
-                  <span aria-label={`Nota ${f.nota} de 5`}>
-                    {"★".repeat(f.nota)}
-                    <span className="text-muted">{"★".repeat(5 - f.nota)}</span>
-                  </span>
-                  {f.comentario && <p style={{ marginBottom: 0 }}>{f.comentario}</p>}
-                </li>
-              ))}
-            </ul>
-          )}
+          <ul className="list-plain">
+            {feedbacks.map((f) => (
+              <li key={f.id} className="card">
+                <span aria-label={`Nota ${f.nota} de 5`}>
+                  {"★".repeat(f.nota)}
+                  <span className="text-muted">{"★".repeat(5 - f.nota)}</span>
+                </span>
+                {f.comentario && <p style={{ marginBottom: 0 }}>{f.comentario}</p>}
+              </li>
+            ))}
+          </ul>
         </>
       )}
 
@@ -313,28 +363,6 @@ export function PerfilPage() {
         <h2>Mais</h2>
       </div>
       <ul className="list-plain">
-        {role === "advogado" && (
-          <>
-            <li>
-              <Link to={`/advogados/${user.uid}`} className="list-row">
-                <span className="list-row__title">Ver meu perfil público</span>
-                <span className="advogado-row__chevron" aria-hidden="true">›</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/cartao" className="list-row">
-                <span className="list-row__title">Meu cartão de visita</span>
-                <span className="advogado-row__chevron" aria-hidden="true">›</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/conversas" className="list-row">
-                <span className="list-row__title">Minhas conversas</span>
-                <span className="advogado-row__chevron" aria-hidden="true">›</span>
-              </Link>
-            </li>
-          </>
-        )}
         {role === "admin" && (
           <li>
             <Link to="/admin/advogados" className="list-row">
