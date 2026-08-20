@@ -1,20 +1,15 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
+import { useCarregar } from "../../lib/useCarregar";
 
 // Mesma lista de STATUS_CONTATO_CLIENTE do backend (backend/src/routes/contatos.js) —
 // duplicado de propósito, é só rótulo de UI, não vale um endpoint só pra isso.
 const STATUS_OPCOES = ["Chamei no WhatsApp", "Mandei e-mail", "Aguardando resposta", "Já conversamos"];
 
 export function MeusContatosPage() {
-  const [contatos, setContatos] = useState(null);
-  const [erro, setErro] = useState(null);
-
-  useEffect(() => {
-    api.get("/contatos/meus").then(setContatos).catch((err) => setErro(err.message));
-  }, []);
+  const { dado: contatos, setDado: setContatos, erro, setErro } = useCarregar(() => api.get("/contatos/meus"));
 
   async function marcarStatus(advogadoId, status) {
     const anterior = contatos;

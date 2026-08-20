@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AreaIcon } from "../../components/AreaIcon/AreaIcon";
 import { Avatar } from "../../components/Avatar/Avatar";
@@ -6,6 +5,7 @@ import { Button } from "../../components/Button/Button";
 import { Loading } from "../../components/Loading/Loading";
 import { OwlIllustration } from "../../components/OwlIllustration/OwlIllustration";
 import { api } from "../../lib/api";
+import { useCarregar } from "../../lib/useCarregar";
 
 const LABEL_AREA = {
   civel: "Cível",
@@ -13,25 +13,22 @@ const LABEL_AREA = {
   indefinido: "Não identificada",
 };
 
-export function PainelPage() {
-  const [usuario, setUsuario] = useState(null);
-  const [triagens, setTriagens] = useState(null);
-  const [contatos, setContatos] = useState(null);
-  const [erro, setErro] = useState(null);
+async function buscarPainel() {
+  const [usuario, triagens, contatos] = await Promise.all([
+    api.get("/users/me"),
+    api.get("/triagem/historico"),
+    api.get("/contatos/meus"),
+  ]);
+  return { usuario, triagens, contatos };
+}
 
-  useEffect(() => {
-    Promise.all([api.get("/users/me"), api.get("/triagem/historico"), api.get("/contatos/meus")])
-      .then(([dadosUsuario, dadosTriagens, dadosContatos]) => {
-        setUsuario(dadosUsuario);
-        setTriagens(dadosTriagens);
-        setContatos(dadosContatos);
-      })
-      .catch((err) => setErro(err.message));
-  }, []);
+export function PainelPage() {
+  const { dado, erro } = useCarregar(buscarPainel);
 
   if (erro) return <p role="alert">{erro}</p>;
-  if (!usuario) return <Loading>Carregando...</Loading>;
+  if (!dado) return <Loading>Carregando...</Loading>;
 
+  const { usuario, triagens, contatos } = dado;
   const primeiroNome = (usuario.nome || usuario.email || "").split(" ")[0];
   const ultimasTriagens = (triagens || []).slice(0, 3);
   const ultimosContatos = (contatos || []).slice(0, 3);

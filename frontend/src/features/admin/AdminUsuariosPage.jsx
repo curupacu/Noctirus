@@ -1,33 +1,20 @@
-import { useEffect, useState } from "react";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { Button } from "../../components/Button/Button";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
+import { useCarregar } from "../../lib/useCarregar";
 import { AdminNav } from "./AdminNav";
 
 const LABEL_ROLE = { cliente: "Cliente", advogado: "Advogado" };
 
 export function AdminUsuariosPage() {
-  const [usuarios, setUsuarios] = useState(null);
-  const [erro, setErro] = useState(null);
-
-  async function carregar() {
-    try {
-      setUsuarios(await api.get("/admin/users"));
-    } catch (err) {
-      setErro(err.message);
-    }
-  }
-
-  useEffect(() => {
-    carregar();
-  }, []);
+  const { dado: usuarios, erro, setErro, recarregar } = useCarregar(() => api.get("/admin/users"));
 
   async function suspender(uid, suspensoAtual) {
     setErro(null);
     try {
       await api.patch(`/admin/users/${uid}/suspender`, { suspenso: !suspensoAtual });
-      await carregar();
+      await recarregar();
     } catch (err) {
       setErro(err.message);
     }
@@ -40,7 +27,7 @@ export function AdminUsuariosPage() {
     setErro(null);
     try {
       await api.delete(`/admin/users/${uid}`);
-      await carregar();
+      await recarregar();
     } catch (err) {
       setErro(err.message);
     }

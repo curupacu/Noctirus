@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
+import { useCarregar } from "../../lib/useCarregar";
 import { useAuth } from "../auth/AuthContext";
 import { FeedbackForm } from "./FeedbackForm";
 
@@ -33,27 +33,19 @@ export function AdvogadoPublicoPage() {
   const { role } = useAuth();
   const [searchParams] = useSearchParams();
   const triagemId = searchParams.get("triagemId");
-  const [advogado, setAdvogado] = useState(null);
-  const [curriculo, setCurriculo] = useState(null);
-  const [catalogoCategorias, setCatalogoCategorias] = useState(null);
-  const [erro, setErro] = useState(null);
-
-  useEffect(() => {
-    Promise.all([
+  const { dado, erro } = useCarregar(async () => {
+    const [advogado, curriculo, perguntas] = await Promise.all([
       api.get(`/advogados/${uid}`),
       api.get(`/curriculos/${uid}`).catch(() => null),
       api.get("/triagem/perguntas"),
-    ])
-      .then(([dadosAdvogado, dadosCurriculo, perguntas]) => {
-        setAdvogado(dadosAdvogado);
-        setCurriculo(dadosCurriculo);
-        setCatalogoCategorias(perguntas.categorias);
-      })
-      .catch((err) => setErro(err.message));
+    ]);
+    return { advogado, curriculo, catalogoCategorias: perguntas.categorias };
   }, [uid]);
 
   if (erro) return <p role="alert">{erro}</p>;
-  if (!advogado) return <Loading>Carregando...</Loading>;
+  if (!dado) return <Loading>Carregando...</Loading>;
+
+  const { advogado, curriculo, catalogoCategorias } = dado;
 
   const suspenso = advogado.status === "suspenso";
   const whatsapp = !suspenso && advogado.contatos?.whatsapp;

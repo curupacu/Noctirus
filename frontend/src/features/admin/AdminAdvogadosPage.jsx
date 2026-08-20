@@ -1,35 +1,22 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { Button } from "../../components/Button/Button";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
+import { useCarregar } from "../../lib/useCarregar";
 import { AdminNav } from "./AdminNav";
 
 const CNA_URL = "https://cna.oab.org.br/";
 
 export function AdminAdvogadosPage() {
-  const [advogados, setAdvogados] = useState(null);
-  const [erro, setErro] = useState(null);
+  const { dado: advogados, erro, setErro, recarregar } = useCarregar(() => api.get("/admin/advogados"));
   const [copiadoUid, setCopiadoUid] = useState(null);
-
-  async function carregar() {
-    try {
-      const dados = await api.get("/admin/advogados");
-      setAdvogados(dados);
-    } catch (err) {
-      setErro(err.message);
-    }
-  }
-
-  useEffect(() => {
-    carregar();
-  }, []);
 
   async function alternarVerificado(uid, verificado) {
     setErro(null);
     try {
       await api.patch(`/advogados/${uid}/verificar`, { verificado: !verificado });
-      await carregar();
+      await recarregar();
     } catch (err) {
       setErro(err.message);
     }
