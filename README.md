@@ -105,7 +105,7 @@ frontend/            React (Vite) — telas, componentes, design system Nocturis
   src/
     features/         auth, triagem, advogados, curriculo, perfil (dashboard + editar),
                       painel, conversas (chat), contatos (Meus Contatos), admin
-    components/       UI reutilizável (Button, Input, Select, ChoiceCard, BottomNav,
+    components/       UI reutilizável (Button, Input, ChoiceCard, BottomNav,
                       ChatThread, AdvogadoCard...)
     lib/               cliente Firebase, hooks, helpers
     routes/
