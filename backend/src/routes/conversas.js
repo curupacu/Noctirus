@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { enviarEmail } from "../lib/email.js";
+import { templateNovaResposta } from "../lib/emailTemplates.js";
 import { db } from "../lib/firebase-admin.js";
 import { requireRole, verificarToken } from "../middlewares/auth.js";
 
@@ -64,18 +65,24 @@ async function notificarClienteSeNecessario({ conversaId, clienteId, advogadoId 
   const penultima = mensagensAnteriores[mensagensAnteriores.length - 2];
   if (penultima && penultima.remetente === "advogado") return;
 
-  const [clienteDoc, advogadoDoc] = await Promise.all([
+  const [clienteDoc, advogadoUserDoc, advogadoPerfilDoc] = await Promise.all([
     db.collection("users").doc(clienteId).get(),
     db.collection("users").doc(advogadoId).get(),
+    db.collection("advogados").doc(advogadoId).get(),
   ]);
   const email = clienteDoc.data()?.email;
   if (!email) return;
 
-  const advogadoNome = advogadoDoc.data()?.nome || "Um advogado";
+  const advogadoNome = advogadoUserDoc.data()?.nome || "Um advogado";
+  const advogadoFoto = advogadoPerfilDoc.data()?.foto || null;
   await enviarEmail({
     to: email,
     subject: `${advogadoNome} respondeu na Nocturis`,
-    html: `<p>${advogadoNome} te respondeu na Nocturis. Entre no app pra ver a mensagem.</p>`,
+    html: templateNovaResposta({
+      advogadoNome,
+      advogadoFoto,
+      linkConversa: `https://nocturis.com.br/advogados/${advogadoId}/contato`,
+    }),
   });
 }
 
