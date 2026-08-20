@@ -102,15 +102,15 @@ export function AdvogadoPublicoPage() {
           <div className="section-heading">
             <h2>Especialidades</h2>
           </div>
+          {/* Página de perfil completo — diferente do AdvogadoCard (lista/preview), aqui
+              mostra todas as especialidades em vez de truncar em 3 + "+N": não tem pra
+              onde esse "+N" expandir numa página que já é a própria página de detalhe. */}
           <ul className="chip-list">
-            {rotulosEspecialidades.slice(0, 3).map((rotulo, i) => (
+            {rotulosEspecialidades.map((rotulo, i) => (
               <li key={rotulo} className={`chip${i === 0 ? " chip--destaque" : ""}`}>
                 {rotulo}
               </li>
             ))}
-            {rotulosEspecialidades.length > 3 && (
-              <li className="chip chip--overflow">+{rotulosEspecialidades.length - 3}</li>
-            )}
           </ul>
         </>
       )}
