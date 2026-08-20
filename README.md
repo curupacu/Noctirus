@@ -150,6 +150,14 @@ Levantamento honesto do que ainda precisa de trabalho, priorizado.
   projeto virar produto real (Fase 4).
 - LGPD, rate limiting, monitoramento — tudo isso é Fase 4 (produto real), fora do escopo do
   MVP do TCC. (Domínio próprio já foi resolvido — `nocturis.com.br`, ver "Status atual" acima.)
+- **Notificação em tempo real dentro do app** ("sininho"/badge) — enquanto o usuário está
+  logado e navegando, sem precisar de F5. Daria pra fazer de graça com um listener do
+  Firestore (`onSnapshot`), sem serviço novo. Adiado de propósito (19/08) — combina melhor
+  com **push notification de verdade** (chega mesmo com o navegador fechado, precisa de
+  service worker + permissão do navegador + chaves VAPID), que por sua vez combina melhor
+  com **login com Google** (plano futuro do time) — faz mais sentido amarrar inscrição de
+  push numa conta de verdade do que numa sessão solta. As duas ficam pra quando o login
+  com Google entrar.
 
 ## Time
 
