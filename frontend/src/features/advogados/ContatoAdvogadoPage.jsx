@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { ChatThread } from "../../components/ChatThread/ChatThread";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
+import { useCarregar } from "../../lib/useCarregar";
 
 const LABEL_AREA = { civel: "cível", trabalhista: "trabalhista" };
 
@@ -28,15 +28,7 @@ export function ContatoAdvogadoPage() {
   const { uid } = useParams();
   const [searchParams] = useSearchParams();
   const triagemId = searchParams.get("triagemId");
-  const [advogado, setAdvogado] = useState(null);
-  const [erro, setErro] = useState(null);
-
-  useEffect(() => {
-    api
-      .get(`/advogados/${uid}`)
-      .then(setAdvogado)
-      .catch((err) => setErro(err.message));
-  }, [uid]);
+  const { dado: advogado, erro } = useCarregar(() => api.get(`/advogados/${uid}`), [uid]);
 
   function logarContato(canal) {
     api.post(`/advogados/${uid}/contato`, { canal }).catch(() => {});

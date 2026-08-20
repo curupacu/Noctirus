@@ -1,34 +1,22 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
+import { useCarregar } from "../../lib/useCarregar";
 import { AdminNav } from "./AdminNav";
 
 const LABEL_STATUS = { aberta: "Aberta", em_analise: "Em análise", resolvida: "Resolvida" };
 
 export function AdminDenunciasPage() {
-  const [denuncias, setDenuncias] = useState(null);
-  const [erro, setErro] = useState(null);
+  const { dado: denuncias, erro, setErro, recarregar } = useCarregar(() => api.get("/admin/denuncias"));
   const [decisoes, setDecisoes] = useState({});
-
-  async function carregar() {
-    try {
-      setDenuncias(await api.get("/admin/denuncias"));
-    } catch (err) {
-      setErro(err.message);
-    }
-  }
-
-  useEffect(() => {
-    carregar();
-  }, []);
 
   async function marcarEmAnalise(id) {
     setErro(null);
     try {
       await api.patch(`/admin/denuncias/${id}`, { status: "em_analise" });
-      await carregar();
+      await recarregar();
     } catch (err) {
       setErro(err.message);
     }
@@ -51,7 +39,7 @@ export function AdminDenunciasPage() {
         status: "resolvida",
         decisao: decisaoDigitada || decisaoPadrao,
       });
-      await carregar();
+      await recarregar();
     } catch (err) {
       setErro(err.message);
     }

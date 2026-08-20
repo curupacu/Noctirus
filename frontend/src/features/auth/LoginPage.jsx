@@ -15,7 +15,7 @@ export function LoginPage() {
   const [erro, setErro] = useState(null);
   const [enviando, setEnviando] = useState(false);
 
-  async function handleSubmit(e) {
+  async function entrar(e) {
     e.preventDefault();
     setErro(null);
     setEnviando(true);
@@ -45,7 +45,7 @@ export function LoginPage() {
         <form
           className="auth-screen__form step-enter"
           style={{ animationDelay: "160ms" }}
-          onSubmit={handleSubmit}
+          onSubmit={entrar}
         >
           <Input
             label="E-mail"

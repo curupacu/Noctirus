@@ -1,10 +1,11 @@
 import { toPng } from "html-to-image";
 import QRCode from "qrcode";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "../../components/Button/Button";
 import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
+import { useCarregar } from "../../lib/useCarregar";
 import { useAuth } from "../auth/AuthContext";
 import "./cartao.css";
 import { CartaoVerso, TEMPLATES } from "./templates";
@@ -14,11 +15,6 @@ const CHAVE_TEMPLATE = "nocturis:cartao:template";
 
 export function CartaoPage() {
   const { user } = useAuth();
-  const [dadosUsuario, setDadosUsuario] = useState(null);
-  const [advogado, setAdvogado] = useState(null);
-  const [categoriasPorArea, setCategoriasPorArea] = useState(null);
-  const [qrCode, setQrCode] = useState(null);
-  const [erroCarregar, setErroCarregar] = useState(null);
   const [templateId, setTemplateId] = useState(
     () => localStorage.getItem(CHAVE_TEMPLATE) || TEMPLATES[0].id,
   );
@@ -27,35 +23,30 @@ export function CartaoPage() {
   const [virado, setVirado] = useState(false);
   const cartaoRef = useRef(null);
 
-  useEffect(() => {
+  const { dado, erro: erroCarregar } = useCarregar(async () => {
     const perfilUrl = `${window.location.origin}/advogados/${user.uid}`;
-    async function carregar() {
-      try {
-        const [usuario, dadosAdvogado, perguntas, qr] = await Promise.all([
-          api.get("/users/me"),
-          api.get(`/advogados/${user.uid}`),
-          api.get("/triagem/perguntas"),
-          QRCode.toDataURL(perfilUrl, {
-            margin: 1,
-            width: 240,
-            color: { dark: "#221b12", light: "#ffffff" },
-          }),
-        ]);
-        setDadosUsuario(usuario);
-        setAdvogado(dadosAdvogado);
-        setCategoriasPorArea(perguntas.categorias);
-        setQrCode(qr);
-      } catch (err) {
-        setErroCarregar(err.message);
-      }
-    }
-    carregar();
+    const [usuario, advogado, perguntas, qrCode] = await Promise.all([
+      api.get("/users/me"),
+      api.get(`/advogados/${user.uid}`),
+      api.get("/triagem/perguntas"),
+      QRCode.toDataURL(perfilUrl, {
+        margin: 1,
+        width: 240,
+        color: { dark: "#221b12", light: "#ffffff" },
+      }),
+    ]);
+    return { dadosUsuario: usuario, advogado, categoriasPorArea: perguntas.categorias, qrCode };
   }, [user.uid]);
 
   function selecionarTemplate(id) {
     setTemplateId(id);
     localStorage.setItem(CHAVE_TEMPLATE, id);
   }
+
+  if (erroCarregar) return <p role="alert">{erroCarregar}</p>;
+  if (!dado) return <Loading>Carregando cartão...</Loading>;
+
+  const { dadosUsuario, advogado, categoriasPorArea, qrCode } = dado;
 
   async function baixarCartao() {
     if (!cartaoRef.current) return;
@@ -78,11 +69,6 @@ export function CartaoPage() {
     } finally {
       setBaixando(false);
     }
-  }
-
-  if (erroCarregar) return <p role="alert">{erroCarregar}</p>;
-  if (!dadosUsuario || !advogado || !qrCode) {
-    return <Loading>Carregando cartão...</Loading>;
   }
 
   const todasCategorias = Object.values(categoriasPorArea || {}).flat();

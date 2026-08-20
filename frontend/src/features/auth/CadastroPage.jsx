@@ -60,7 +60,7 @@ export function CadastroPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [areasAtuacao, categoriasPorArea]);
 
-  async function handleSubmit(e) {
+  async function criarConta(e) {
     e.preventDefault();
     setErro(null);
     setEnviando(true);
@@ -112,7 +112,7 @@ export function CadastroPage() {
         <form
           className="auth-screen__form step-enter"
           style={{ animationDelay: "160ms" }}
-          onSubmit={handleSubmit}
+          onSubmit={criarConta}
         >
           <div className="input-group">
             <label className="input-label">Você é:</label>
