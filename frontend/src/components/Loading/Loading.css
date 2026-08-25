@@ -6,104 +6,13 @@
   font-size: var(--font-size-sm);
 }
 
+/* Visual simples: ícone estático, sem animação. */
 .loading__owl {
   width: 30px;
   height: auto;
   flex-shrink: 0;
-  transform-origin: 50% 62%;
-  animation: loading-owl-breathe 5.5s ease-in-out infinite;
 }
 
-@keyframes loading-owl-breathe {
-  0%,
-  100% {
-    transform: translateY(0) scale(1);
-  }
-  50% {
-    transform: translateY(-1px) scale(1.012);
-  }
-}
-
-/* Coordenadas em px aqui são espaço interno do SVG (viewBox 0 0 386 260), não pixels de
-   tela — por isso não escalam com o tamanho renderizado do ícone (30px acima). */
-.loading__wing--l {
-  transform-origin: 185px 118px;
-  animation: loading-owl-wind-l 6.5s ease-in-out infinite;
-}
-
-.loading__wing--r {
-  transform-origin: 200px 118px;
-  animation: loading-owl-wind-r 6.5s ease-in-out infinite;
-}
-
-@keyframes loading-owl-wind-l {
-  0%,
-  100% {
-    transform: rotate(0);
-  }
-  38% {
-    transform: rotate(-1.4deg);
-  }
-  72% {
-    transform: rotate(0.5deg);
-  }
-}
-
-@keyframes loading-owl-wind-r {
-  0%,
-  100% {
-    transform: rotate(0);
-  }
-  38% {
-    transform: rotate(1.4deg);
-  }
-  72% {
-    transform: rotate(-0.5deg);
-  }
-}
-
-/* Pálpebra recortada dentro do olho (clipPath no SVG) — fecha de cima devagar, a
-   maior parte do ciclo o olho fica aberto (scaleY(0) = pálpedra encolhida/invisível). */
 .loading__lid {
-  transform-origin: center top;
   transform: scaleY(0);
-  animation: loading-owl-blink 9s ease-in-out infinite;
-}
-
-@keyframes loading-owl-blink {
-  0%,
-  86%,
-  100% {
-    transform: scaleY(0);
-  }
-  91% {
-    transform: scaleY(1);
-  }
-  96% {
-    transform: scaleY(0);
-  }
-}
-
-.loading__glow {
-  animation: loading-owl-glow 5.5s ease-in-out infinite;
-}
-
-@keyframes loading-owl-glow {
-  0%,
-  100% {
-    opacity: 0.9;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .loading__owl,
-  .loading__wing--l,
-  .loading__wing--r,
-  .loading__lid,
-  .loading__glow {
-    animation: none;
-  }
 }

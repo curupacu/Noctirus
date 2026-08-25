@@ -31,8 +31,6 @@
 
 .button--primary:hover:not(:disabled) {
   background: var(--color-primary-hover);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
 }
 
 .button--secondary {
@@ -53,8 +51,6 @@
 
 .button--dark:hover:not(:disabled) {
   background: var(--ink-900);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
 }
 
 /* Botão secundário sobre fundo escuro (ex.: "Entrar" na Home) — transparente com
