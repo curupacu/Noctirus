@@ -39,23 +39,17 @@
   --area-trabalhista: #8b4332;
   --area-trabalhista-bg: #eddad2;
 
-  /* Tipografia */
-  --font-display: "Fraunces", Georgia, serif;
-  /* Trocado de Inter pra IBM Plex Sans (19/08) — Inter virou a fonte padrão de praticamente
-     todo produto novo, o que a torna "invisível" no sentido ruim (sinaliza template em vez
-     de marca). Plex tem proporções mais estruturadas/com caráter próprio, mesma legibilidade
-     em telas pequenas. Fraunces (título) continua igual — já era uma escolha pouco comum. */
+  /* Tipografia — uma família só (títulos e corpo), pra manter o visual simples e fácil
+     de manter. */
   --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  --font-display: var(--font-body);
 
   /* Forma */
   --radius: 12px;
   --radius-sm: 8px;
-  /* 0.75 de opacidade lia como sombra pesada em qualquer card/botão (achado do usuário,
-     07/08) — os sites de referência da pesquisa quase não usam sombra, contam com borda
-     de 1px pra profundidade. --shadow-sm/--shadow-md eram idênticos (sem diferença nenhuma
-     entre estado normal e hover); agora sm é quase imperceptível e md é só um pouco mais
-     presente no hover. --shadow-up é a sombra voltada pra cima do BottomNav/CTA fixo. */
-  --shadow: 0 10px 28px -14px rgba(0, 0, 0, 0.75);
+  /* Visual simples: profundidade vem da borda de 1px, não de sombra — os tokens de
+     sombra abaixo ficam bem discretos de propósito. */
+  --shadow: none;
 
   /* --- Tema: claro (padrão) --- trocam em :root[data-theme="dark"] logo abaixo --- */
   /* Levemente mais claro/limpo que #F7F2E7 — junto com o --surface branco, dá mais
@@ -130,9 +124,9 @@
   --space-xl: 40px;
   --bottom-nav-height: 68px;
 
-  --shadow-sm: 0 1px 3px rgba(20, 18, 15, 0.12);
-  --shadow-md: 0 8px 20px -10px rgba(20, 18, 15, 0.22);
-  --shadow-up: 0 -2px 12px rgba(20, 18, 15, 0.14);
+  --shadow-sm: 0 1px 2px rgba(20, 18, 15, 0.08);
+  --shadow-md: 0 1px 2px rgba(20, 18, 15, 0.08);
+  --shadow-up: 0 -1px 2px rgba(20, 18, 15, 0.08);
 }
 
 /* Tema escuro — ligado pelo botão no Header (ver lib/theme.js), guardado em localStorage.

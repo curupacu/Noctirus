@@ -96,33 +96,9 @@ a:hover {
   gap: var(--space-md);
 }
 
-/* Anima só na entrada (quando o elemento é inserido no DOM pela primeira vez) — pra
-   blocos que aparecem conforme o usuário avança num fluxo (ex.: TriagemPage revelando a
-   segunda pergunta e o resumo de respostas) em vez de simplesmente aparecerem de
-   supetão. Não reanima em re-renders normais, só em mount de verdade.
-   animation-fill-mode: backwards — sem isso, um item com animation-delay (ex.: a
-   entrada escalonada da lista de advogados) mostra o conteúdo normal durante o atraso e
-   só assume o "from" (opacity:0) quando a animação de fato começa — dá um flash antes de
-   sumir e reaparecer. Com backwards, fica no estado inicial (invisível) durante o delay. */
+/* Visual simples: sem animação de entrada, o conteúdo já aparece pronto. */
 .step-enter {
-  animation: step-enter 0.35s ease-out backwards;
-}
-
-@keyframes step-enter {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .step-enter {
-    animation: none;
-  }
+  animation: none;
 }
 
 .filter-bar {
@@ -280,18 +256,9 @@ a:hover {
   margin-bottom: var(--space-lg);
 }
 
-/* Coruja achatada no canto, mesma técnica do .splash__owl-mark — troca o padrão abstrato
-   de anel+bolinha (achado do usuário, 07/08: "ruim") que existia aqui antes. */
+/* Visual simples: sem marca d'água decorativa no card de destaque. */
 .hero-block__owl-mark {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 46%;
-  height: auto;
-  transform: translate(20%, -26%);
-  color: var(--gold);
-  opacity: 0.16;
-  pointer-events: none;
+  display: none;
 }
 
 .hero-block > *:not(.hero-block__owl-mark) {
@@ -331,24 +298,6 @@ a:hover {
   background: var(--ink-800);
 }
 
-.hero-cta::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity: 0.05;
-  mix-blend-mode: overlay;
-  pointer-events: none;
-}
-
-.hero-cta .hero-block__owl-mark {
-  width: 58%;
-  min-width: 200px;
-  opacity: 0.94;
-  transform: translate(14%, -10%);
-  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.35));
-}
-
 .hero-cta .eyebrow {
   color: var(--gold);
 }
@@ -370,54 +319,10 @@ a:hover {
   margin-top: var(--space-sm);
 }
 
-/* Entrada de destaque pro card de resultado da triagem — é o momento de clímax do
-   produto (a resposta que o usuário veio buscar), então merece mais do que um
-   step-enter genérico. Escala + fade suave (não é só translateY como o step-enter),
-   com o selo de classificação (.badge--gold) chegando um instante depois e ganhando um
-   pulso de brilho dourado uma única vez pra puxar o olho pra "aqui está a resposta" —
-   dourado com parcimônia (docs/DESIGN.md): só esse selo pulsa, o resto do card não. */
-.hero-reveal {
-  animation: hero-reveal 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
-}
-
-@keyframes hero-reveal {
-  from {
-    opacity: 0;
-    transform: scale(0.96) translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
+/* Visual simples: sem animação de entrada no card de resultado. */
+.hero-reveal,
 .hero-reveal .badge--gold {
-  animation: hero-reveal-badge-glow 1.1s ease-out 0.3s backwards;
-}
-
-@keyframes hero-reveal-badge-glow {
-  0% {
-    opacity: 0;
-    transform: translateY(-4px);
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--gold) 55%, transparent);
-  }
-  60% {
-    opacity: 1;
-    transform: translateY(0);
-    box-shadow: 0 0 0 8px color-mix(in srgb, var(--gold) 0%, transparent);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--gold) 0%, transparent);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .hero-reveal,
-  .hero-reveal .badge--gold {
-    animation: none;
-  }
+  animation: none;
 }
 
 .chip-list {
@@ -604,31 +509,9 @@ main.splash {
   overflow: hidden;
 }
 
-/* Coruja achatada como textura de fundo — silhueta de um tom só, bem maior que a tela e
-   sangrando pra fora dela, não centralizada feito ícone. `position: absolute` tira do
-   fluxo flex; o conteúdo real (`> div`, `.splash__actions`, `.splash__secondary`) fica por
-   cima porque ganha z-index própria logo abaixo. */
+/* Visual simples: sem marca d'água decorativa no fundo. */
 .splash__owl-mark {
-  position: absolute;
-  /* top/right em % aqui seriam relativos à altura do container (main.splash), que é um
-     flex item de altura variável — em telas mais baixas a coruja subia e sumia (achado do
-     usuário, 07/08). Ancorando em top:0/right:0 e deslocando com transform% (que resolve
-     sobre o TAMANHO DA PRÓPRIA coruja, não do container) o deslocamento fica estável em
-     qualquer altura de tela.
-     width usa min(%, vh) e o corte do transform é bem menor que a primeira tentativa —
-     um corte agressivo (o de antes) dependia de o container ter uma altura "certa" pra
-     sobrar exatamente a região dos olhos; num container baixo (mobile deitado, janela
-     redimensionada) sobrava só ponta de pena, sem os olhos — lia como bug, não como coruja
-     (segundo achado do usuário, mesmo dia). Corte pequeno = a coruja quase inteira sempre
-     cabe, então não tem "ângulo errado" pra mostrar. */
-  top: 0;
-  right: 0;
-  width: min(42%, 58vh);
-  height: auto;
-  transform: translate(12%, -8%);
-  color: var(--gold);
-  opacity: 0.09;
-  pointer-events: none;
+  display: none;
 }
 
 main.splash > *:not(.splash__owl-mark) {
@@ -968,7 +851,6 @@ main.auth-screen {
 a.list-row:hover {
   box-shadow: var(--shadow-md);
   border-color: var(--gold-dim);
-  transform: translateY(-1px);
   color: inherit;
   text-decoration: none;
 }
@@ -1071,7 +953,6 @@ a.list-row:hover .advogado-row__chevron {
   background: var(--gold);
   border-color: var(--gold);
   color: var(--ink-on-accent);
-  transform: translateY(-1px);
 }
 
 .section-heading a::after {
@@ -1175,34 +1056,5 @@ a.list-row:hover .advogado-row__chevron {
   transform: translateX(3px);
 }
 
-/* Vitrine escura fixa — Home, Login e Cadastro são a primeira impressão da marca e ficam
-   sempre no visual noturno da coruja, independente do tema escolhido pro resto do app
-   (decisão de 07/08: "vitrine escura, app claro"). Sobrescreve os tokens de base E os
-   aliases --color-* na MESMA regra — um custom property que referencia var() é resolvido
-   com o valor que a variável referenciada tem *nesse mesmo elemento*, então --color-text:
-   var(--text) declarado só no :root não reagiria a um --text redefinido aqui embaixo se
-   --color-text não fosse redeclarado também. */
-main.splash,
-main.auth-screen {
-  /* main.splash já tinha `color` própria; main.auth-screen não tinha nenhuma — sem isso,
-     texto sem classe (ex.: rodapé "Não tem conta?") herdava o `color` já resolvido lá do
-     `body` no tema claro, em vez de reagir aos tokens redefinidos aqui. */
-  color: var(--text);
-  --bg: var(--ink-950);
-  --bg-section: var(--ink-900);
-  --surface: var(--ink-850);
-  --surface-hover: var(--ink-800);
-  --border: #47382a;
-  --text: var(--cream);
-  --text-dim: var(--cream-dim);
-  --text-faint: #7e7566;
-
-  --color-bg: var(--bg);
-  --color-bg-section: var(--bg-section);
-  --color-surface: var(--surface);
-  --color-surface-hover: var(--surface-hover);
-  --color-text: var(--text);
-  --color-text-muted: var(--text-dim);
-  --color-text-faint: var(--text-faint);
-  --color-border: var(--border);
-}
+/* Visual simples: Home, Login e Cadastro usam o mesmo tema (claro/escuro) do resto do
+   app, sem um visual "vitrine" fixo à parte. */
