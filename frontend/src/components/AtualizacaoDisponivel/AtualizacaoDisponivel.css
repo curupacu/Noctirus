@@ -1,0 +1,48 @@
+.atualizacao-disponivel {
+  position: fixed;
+  left: var(--space-lg);
+  right: var(--space-lg);
+  /* Soma --bottom-nav-height mesmo em telas sem BottomNav (desktop, vitrine) — sobra
+     espaço à toa aí, mas evita o toast ficar embaixo do menu fixo de quem está logado
+     no mobile, que é o caso mais comum de alguém ver esse aviso (app instalado). */
+  bottom: calc(var(--bottom-nav-height) + var(--space-lg) + env(safe-area-inset-bottom));
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+  max-width: 420px;
+  margin: 0 auto;
+  padding: var(--space-md) var(--space-lg);
+  background: var(--ink-800);
+  color: var(--cream);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+}
+
+.atualizacao-disponivel__actions {
+  display: flex;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
+.atualizacao-disponivel__actions button {
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 6px 14px;
+  font-family: var(--font-body);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.atualizacao-disponivel__actions button:first-child {
+  background: var(--gold);
+  color: var(--ink-on-accent);
+}
+
+.atualizacao-disponivel__actions button:last-child {
+  background: transparent;
+  color: var(--cream-dim);
+}
