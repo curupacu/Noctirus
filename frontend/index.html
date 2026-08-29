@@ -11,8 +11,16 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
     <link rel="alternate icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="manifest" href="/site.webmanifest" />
+    <!-- manifest.webmanifest é gerado pelo vite-plugin-pwa (ver vite.config.js) e injetado
+         automaticamente no build — não precisa de <link rel="manifest"> manual aqui. -->
     <meta name="theme-color" content="#61402c" />
+
+    <!-- "Adicionar à Tela de Início" no Safari/iOS não lê o manifest.webmanifest (suporte
+         parcial) — precisa dessas meta tags pra abrir sem a barra do navegador e com o
+         nome/ícone certos. -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Nocturis" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />

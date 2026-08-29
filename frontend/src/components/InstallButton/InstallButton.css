@@ -1,0 +1,29 @@
+.install-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background: transparent;
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.install-button:hover {
+  background: var(--color-surface-hover);
+  border-color: var(--color-brown-300);
+}
+
+.install-button:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.install-button svg {
+  width: 20px;
+  height: 20px;
+}

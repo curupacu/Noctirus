@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AtualizacaoDisponivel } from "../components/AtualizacaoDisponivel/AtualizacaoDisponivel";
 import { BottomNav } from "../components/BottomNav/BottomNav";
 import { Header } from "../components/Header/Header";
 import { AdminAdvogadosPage } from "../features/admin/AdminAdvogadosPage";
@@ -170,6 +171,7 @@ export function AppRouter() {
         <Route path="*" element={<NaoEncontradaPage />} />
       </Routes>
       <BottomNav />
+      <AtualizacaoDisponivel />
     </BrowserRouter>
   );
 }

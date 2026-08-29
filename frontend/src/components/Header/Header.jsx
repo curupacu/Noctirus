@@ -6,6 +6,7 @@ import { TELAS_VITRINE } from "../../lib/telasVitrine";
 import { useTheme } from "../../lib/theme";
 import { useNotificacoes } from "../../lib/useNotificacoes";
 import { Button } from "../Button/Button";
+import { InstallButton } from "../InstallButton/InstallButton";
 import { NotificationBell } from "../NotificationBell/NotificationBell";
 import { ThemeToggle } from "../ThemeToggle/ThemeToggle";
 import "./Header.css";
@@ -31,6 +32,7 @@ export function Header() {
       </Link>
 
       <div className="site-header__actions">
+        <InstallButton />
         <ThemeToggle tema={tema} onToggle={alternarTema} />
 
         {!loading && (
