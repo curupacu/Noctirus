@@ -21,6 +21,9 @@ export function PerfilPage() {
   const [dadosUsuario, setDadosUsuario] = useState(null);
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
+  const [foto, setFoto] = useState("");
+  const [enviandoFoto, setEnviandoFoto] = useState(false);
+  const [erroFoto, setErroFoto] = useState(null);
   const [mensagem, setMensagem] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [advogado, setAdvogado] = useState(null);
@@ -35,6 +38,7 @@ export function PerfilPage() {
       setDadosUsuario(usuario);
       setNome(usuario.nome || "");
       setTelefone(usuario.telefone || "");
+      setFoto(usuario.foto || "");
 
       if (role === "advogado") {
         const [dadosAdvogado, dadosCurriculo] = await Promise.all([
@@ -64,6 +68,25 @@ export function PerfilPage() {
       setMensagem("Dados salvos.");
     } catch (err) {
       setMensagem(err.message);
+    }
+  }
+
+  async function enviarFoto(e) {
+    const arquivo = e.target.files?.[0];
+    if (!arquivo) return;
+
+    setErroFoto(null);
+    setEnviandoFoto(true);
+    try {
+      const formData = new FormData();
+      formData.append("foto", arquivo);
+      const resultado = await api.upload("/users/me/foto", formData);
+      setFoto(resultado.foto);
+    } catch (err) {
+      setErroFoto(err.message);
+    } finally {
+      setEnviandoFoto(false);
+      e.target.value = "";
     }
   }
 
@@ -131,8 +154,12 @@ export function PerfilPage() {
           <ul className="list-plain">
             {conversasRecentes.map((c) => (
               <li key={c.comUid}>
-                <Link to={`/conversas/${c.comUid}`} state={{ nome: c.nome }} className="list-row">
-                  <Avatar nome={c.nome} seed={c.comUid} />
+                <Link
+                  to={`/conversas/${c.comUid}`}
+                  state={{ nome: c.nome, foto: c.foto }}
+                  className="list-row"
+                >
+                  <Avatar nome={c.nome} foto={c.foto} seed={c.comUid} />
                   <span className="list-row__info">
                     <span className="list-row__title">{c.nome || "Cliente"}</span>
                     <span className="list-row__meta">
@@ -224,6 +251,26 @@ export function PerfilPage() {
       <p>
         <span className="badge">{dadosUsuario.role}</span>
       </p>
+
+      {role === "cliente" && (
+        <div className="media" style={{ marginBottom: "var(--space-lg)" }}>
+          <Avatar nome={nome} foto={foto} seed={user.uid} className="avatar-placeholder--grande" />
+          <div className="stack">
+            <label className="button button--secondary" htmlFor="foto">
+              {enviandoFoto ? "Enviando..." : foto ? "Trocar foto" : "Adicionar foto"}
+            </label>
+            <input
+              id="foto"
+              type="file"
+              accept="image/*"
+              className="visually-hidden"
+              onChange={enviarFoto}
+              disabled={enviandoFoto}
+            />
+            {erroFoto && <p role="alert">{erroFoto}</p>}
+          </div>
+        </div>
+      )}
 
       <div className="section-heading">
         <h2>Dados básicos</h2>

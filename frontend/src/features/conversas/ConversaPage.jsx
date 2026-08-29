@@ -25,6 +25,7 @@ export function ConversaPage() {
   // Nome vem da lista (ConversasPage manda via state) — não existe endpoint pra buscar
   // nome de qualquer usuário por uid, só o que a própria conversa já resolveu.
   const nome = location.state?.nome || "Cliente";
+  const foto = location.state?.foto || null;
   useTitulo(`Conversa — ${nome}`);
 
   const [triagem, setTriagem] = useState(null);
@@ -40,7 +41,7 @@ export function ConversaPage() {
     <main>
       <span className="eyebrow">Conversa</span>
       <div className="media">
-        <Avatar nome={nome} seed={uid} className="avatar-placeholder--grande" />
+        <Avatar nome={nome} foto={foto} seed={uid} className="avatar-placeholder--grande" />
         <h1 style={{ margin: 0 }}>{nome}</h1>
       </div>
 

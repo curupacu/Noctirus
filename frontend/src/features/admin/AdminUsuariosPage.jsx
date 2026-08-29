@@ -60,7 +60,12 @@ export function AdminUsuariosPage() {
               style={{ animationDelay: `${Math.min(i * 40, 400)}ms` }}
             >
               <div className="advogado-card__top">
-                <Avatar nome={u.nome} seed={u.uid} className="advogado-card__avatar avatar-placeholder--grande" />
+                <Avatar
+                  nome={u.nome}
+                  foto={u.foto}
+                  seed={u.uid}
+                  className="advogado-card__avatar avatar-placeholder--grande"
+                />
                 <div className="advogado-card__heading">
                   <span className="advogado-card__nome">{u.nome}</span>
                   <span className="advogado-card__meta">{u.email}</span>
