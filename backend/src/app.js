@@ -5,6 +5,8 @@ import express from "express";
 // de derrubar o processo inteiro com um erro não tratado (aconteceu com um erro do
 // Firestore durante os testes da triagem — sem isso, um único erro tirava o backend do ar).
 import "express-async-errors";
+import helmet from "helmet";
+import { limiteGeral } from "./middlewares/rateLimit.js";
 import { advogadosRouter } from "./routes/advogados.js";
 import { authRouter } from "./routes/auth.js";
 import { contatosRouter } from "./routes/contatos.js";
@@ -17,9 +19,35 @@ import { usersRouter } from "./routes/users.js";
 
 export const app = express();
 
-app.use(cors());
+// Sem restrição de origem, qualquer site do mundo podia chamar a API com o token de
+// alguém (ex.: página maliciosa fazendo o navegador da vítima usar a sessão dela contra
+// a própria conta). ALLOWED_ORIGINS é opcional em dev — sem ela, libera qualquer origem
+// só localmente, pra não travar quem está começando a mexer no projeto.
+const origensPermitidas = (process.env.ALLOWED_ORIGINS || "")
+  .split(",")
+  .map((o) => o.trim())
+  .filter(Boolean);
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      // Sem header Origin (ex.: curl, apps mobile, health check) — deixa passar, CORS é
+      // uma proteção de navegador, não substitui autenticação.
+      if (!origin) return callback(null, true);
+      if (origensPermitidas.length === 0 && process.env.NODE_ENV !== "production") {
+        return callback(null, true);
+      }
+      if (origensPermitidas.includes(origin)) return callback(null, true);
+      callback(new Error("Origem não permitida por CORS"));
+    },
+  }),
+);
+app.use(helmet());
 app.use(express.json());
+// Health check fica antes do rate limit — é chamado com frequência (keep-warm do
+// Render) e não representa risco nenhum de abuso.
 app.use(healthRouter);
+app.use(limiteGeral);
 app.use(authRouter);
 app.use(usersRouter);
 app.use(advogadosRouter);

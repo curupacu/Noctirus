@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { db } from "../lib/firebase-admin.js";
 import { requireRole, verificarToken } from "../middlewares/auth.js";
+import { limiteTriagem } from "../middlewares/rateLimit.js";
 import { buscarAdvogadosCompativeis } from "../services/matching.js";
 import {
   CATEGORIAS_POR_AREA,
@@ -42,6 +43,7 @@ triagemRouter.post(
   "/triagem/classificar",
   verificarToken,
   requireRole("cliente"),
+  limiteTriagem,
   async (req, res) => {
     const { respostas, descricao, compartilharComAdvogado } = req.body;
 
