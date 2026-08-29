@@ -2,12 +2,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
 import { api } from "../../lib/api";
+import { useTitulo } from "../../lib/useTitulo";
 import { useAuth } from "../auth/AuthContext";
 
 // Autoatendimento de dados pessoais (LGPD, art. 18) — antes só o admin conseguia apagar
 // uma conta (DELETE /admin/users/:uid) e não existia jeito nenhum de baixar os próprios
 // dados. Aqui o próprio titular faz as duas coisas sem precisar pedir pra ninguém.
 export function MeusDadosPage() {
+  useTitulo("Meus dados");
   const { logout } = useAuth();
   const navigate = useNavigate();
 

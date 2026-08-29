@@ -4,11 +4,13 @@ import { Button } from "../../components/Button/Button";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
 import { useCarregar } from "../../lib/useCarregar";
+import { useTitulo } from "../../lib/useTitulo";
 import { AdminNav } from "./AdminNav";
 
 const LABEL_STATUS = { aberta: "Aberta", em_analise: "Em análise", resolvida: "Resolvida" };
 
 export function AdminDenunciasPage() {
+  useTitulo("Admin — Denúncias");
   const { dado: denuncias, erro, setErro, recarregar } = useCarregar(() => api.get("/admin/denuncias"));
   const [decisoes, setDecisoes] = useState({});
 

@@ -4,11 +4,13 @@ import { Button } from "../../components/Button/Button";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
 import { useCarregar } from "../../lib/useCarregar";
+import { useTitulo } from "../../lib/useTitulo";
 import { AdminNav } from "./AdminNav";
 
 const CNA_URL = "https://cna.oab.org.br/";
 
 export function AdminAdvogadosPage() {
+  useTitulo("Admin — Advogados");
   const { dado: advogados, erro, setErro, recarregar } = useCarregar(() => api.get("/admin/advogados"));
   const [copiadoUid, setCopiadoUid] = useState(null);
 

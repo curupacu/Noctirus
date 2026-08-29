@@ -4,10 +4,12 @@ import { BotaoGoogle } from "../../components/BotaoGoogle/BotaoGoogle";
 import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
 import { Logo } from "../../components/Logo/Logo";
+import { useTitulo } from "../../lib/useTitulo";
 import { useAuth } from "./AuthContext";
 import { rotaInicial } from "./rotaInicial";
 
 export function LoginPage() {
+  useTitulo("Entrar");
   const { login, loginComGoogle } = useAuth();
   const navigate = useNavigate();
 

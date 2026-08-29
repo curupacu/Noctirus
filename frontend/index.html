@@ -80,6 +80,23 @@
         }
       } catch {}
     </script>
+
+    <!-- Google Analytics (GA4) — só carrega no domínio de produção, pra não misturar
+         acesso local/dev nos relatórios. send_page_view: false porque é uma SPA: o
+         pageview de cada rota é disparado na mão pelo useTitulo (ver frontend/src/lib/useTitulo.js). -->
+    <script>
+      (function () {
+        if (location.hostname !== "nocturis.com.br") return;
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () { window.dataLayer.push(arguments); };
+        gtag("js", new Date());
+        gtag("config", "G-9D7ZMLJ58K", { send_page_view: false });
+        var s = document.createElement("script");
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=G-9D7ZMLJ58K";
+        document.head.appendChild(s);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

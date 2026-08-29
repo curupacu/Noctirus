@@ -3,6 +3,7 @@ import { Link, useLocation, useParams } from "react-router-dom";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { ChatThread } from "../../components/ChatThread/ChatThread";
 import { api } from "../../lib/api";
+import { useTitulo } from "../../lib/useTitulo";
 
 // Categorias de resposta do advogado — precisa bater exatamente com MENSAGENS_ADVOGADO
 // no backend (routes/conversas.js).
@@ -24,6 +25,7 @@ export function ConversaPage() {
   // Nome vem da lista (ConversasPage manda via state) — não existe endpoint pra buscar
   // nome de qualquer usuário por uid, só o que a própria conversa já resolveu.
   const nome = location.state?.nome || "Cliente";
+  useTitulo(`Conversa — ${nome}`);
 
   const [triagem, setTriagem] = useState(null);
 

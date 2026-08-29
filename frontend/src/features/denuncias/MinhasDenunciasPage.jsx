@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
+import { useTitulo } from "../../lib/useTitulo";
 
 const LABEL_STATUS = { aberta: "Aberta", em_analise: "Em análise", resolvida: "Resolvida" };
 
 export function MinhasDenunciasPage() {
+  useTitulo("Minhas denúncias");
   const [denuncias, setDenuncias] = useState(null);
   const [erro, setErro] = useState(null);
 

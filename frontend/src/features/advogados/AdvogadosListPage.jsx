@@ -3,6 +3,7 @@ import { AdvogadoCard } from "../../components/AdvogadoCard/AdvogadoCard";
 import { Input } from "../../components/Input/Input";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
+import { useTitulo } from "../../lib/useTitulo";
 
 const AREAS = [
   { value: "", label: "Todas" },
@@ -11,6 +12,7 @@ const AREAS = [
 ];
 
 export function AdvogadosListPage() {
+  useTitulo("Advogados");
   const [area, setArea] = useState("");
   const [categorias, setCategorias] = useState([]);
   const [catalogoCategorias, setCatalogoCategorias] = useState(null);

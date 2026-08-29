@@ -6,6 +6,7 @@ import { Loading } from "../../components/Loading/Loading";
 import { OwlIllustration } from "../../components/OwlIllustration/OwlIllustration";
 import { api } from "../../lib/api";
 import { useCarregar } from "../../lib/useCarregar";
+import { useTitulo } from "../../lib/useTitulo";
 
 const LABEL_AREA = {
   civel: "Cível",
@@ -23,6 +24,7 @@ async function buscarPainel() {
 }
 
 export function PainelPage() {
+  useTitulo("Painel");
   const { dado, erro } = useCarregar(buscarPainel);
 
   if (erro) return <p role="alert">{erro}</p>;

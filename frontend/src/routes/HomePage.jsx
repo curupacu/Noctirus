@@ -2,8 +2,11 @@ import { Link } from "react-router-dom";
 import { Button } from "../components/Button/Button";
 import { Logo } from "../components/Logo/Logo";
 import { OwlMark } from "../components/OwlMark/OwlMark";
+import { useTitulo } from "../lib/useTitulo";
 
 export function HomePage() {
+  useTitulo();
+
   return (
     <main className="splash">
       <OwlMark className="splash__owl-mark" />

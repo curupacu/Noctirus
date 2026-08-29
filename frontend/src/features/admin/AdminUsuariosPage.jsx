@@ -3,11 +3,13 @@ import { Button } from "../../components/Button/Button";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
 import { useCarregar } from "../../lib/useCarregar";
+import { useTitulo } from "../../lib/useTitulo";
 import { AdminNav } from "./AdminNav";
 
 const LABEL_ROLE = { cliente: "Cliente", advogado: "Advogado" };
 
 export function AdminUsuariosPage() {
+  useTitulo("Admin — Usuários");
   const { dado: usuarios, erro, setErro, recarregar } = useCarregar(() => api.get("/admin/users"));
 
   async function suspender(uid, suspensoAtual) {

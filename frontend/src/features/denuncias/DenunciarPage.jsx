@@ -3,8 +3,10 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
 import { api } from "../../lib/api";
+import { useTitulo } from "../../lib/useTitulo";
 
 export function DenunciarPage() {
+  useTitulo("Denunciar");
   const [searchParams] = useSearchParams();
   const alvoId = searchParams.get("alvoId") || null;
   const alvoNome = searchParams.get("alvoNome");

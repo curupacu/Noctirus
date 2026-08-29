@@ -4,6 +4,7 @@ import { ChatThread } from "../../components/ChatThread/ChatThread";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
 import { useCarregar } from "../../lib/useCarregar";
+import { useTitulo } from "../../lib/useTitulo";
 
 const LABEL_AREA = { civel: "cível", trabalhista: "trabalhista" };
 
@@ -29,6 +30,8 @@ export function ContatoAdvogadoPage() {
   const [searchParams] = useSearchParams();
   const triagemId = searchParams.get("triagemId");
   const { dado: advogado, erro } = useCarregar(() => api.get(`/advogados/${uid}`), [uid]);
+
+  useTitulo(advogado ? `Contato — ${advogado.nome}` : "Contato");
 
   function logarContato(canal) {
     api.post(`/advogados/${uid}/contato`, { canal }).catch(() => {});
