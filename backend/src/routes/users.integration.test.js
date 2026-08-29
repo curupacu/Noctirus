@@ -15,6 +15,20 @@ vi.mock("../lib/firebase-admin.js", () => ({
   },
 }));
 
+// Fake do Cloudinary — os testes não devem depender de rede nem gastar cota de
+// verdade. `upload_stream` chama o callback com uma URL fixa assim que o stream
+// termina, imitando o formato de resposta real (secure_url).
+const URL_FOTO_FAKE = "https://res.cloudinary.com/fake/image/upload/fake.jpg";
+vi.mock("../lib/cloudinary.js", () => ({
+  cloudinary: {
+    uploader: {
+      upload_stream: (_opcoes, callback) => ({
+        end: () => callback(null, { secure_url: URL_FOTO_FAKE }),
+      }),
+    },
+  },
+}));
+
 import { criarFakeFirebase } from "../test-utils/fakeFirebase.js";
 
 const request = (await import("supertest")).default;
@@ -64,6 +78,52 @@ describe("PUT /users/me", () => {
     const usuario = (await cell.fake.db.collection("users").doc("u1").get()).data();
     expect(usuario.nome).toBe("Fulano Editado");
     expect(usuario.telefone).toBe("11999999999");
+  });
+});
+
+describe("POST /users/me/foto", () => {
+  it("recusa sem token", async () => {
+    const resposta = await request(app).post("/users/me/foto");
+    expect(resposta.status).toBe(401);
+  });
+
+  it("recusa advogado (usa a própria rota, /advogados/:uid/foto)", async () => {
+    const token = cell.fake.criarToken({ uid: "a1", role: "advogado" });
+    const resposta = await request(app)
+      .post("/users/me/foto")
+      .set("Authorization", `Bearer ${token}`)
+      .attach("foto", Buffer.from("bytes-de-imagem-fake"), { filename: "foto.jpg", contentType: "image/jpeg" });
+    expect(resposta.status).toBe(403);
+  });
+
+  it("recusa sem arquivo nenhum", async () => {
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    const resposta = await request(app).post("/users/me/foto").set("Authorization", `Bearer ${token}`);
+    expect(resposta.status).toBe(400);
+  });
+
+  it("recusa arquivo que não é imagem", async () => {
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    const resposta = await request(app)
+      .post("/users/me/foto")
+      .set("Authorization", `Bearer ${token}`)
+      .attach("foto", Buffer.from("não é imagem"), { filename: "arquivo.txt", contentType: "text/plain" });
+    expect(resposta.status).toBe(400);
+  });
+
+  it("faz upload e salva a url no próprio cadastro", async () => {
+    cell.fake.db._seed("users", "c1", { role: "cliente", nome: "Cliente" });
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    const resposta = await request(app)
+      .post("/users/me/foto")
+      .set("Authorization", `Bearer ${token}`)
+      .attach("foto", Buffer.from("bytes-de-imagem-fake"), { filename: "foto.jpg", contentType: "image/jpeg" });
+
+    expect(resposta.status).toBe(200);
+    expect(resposta.body.foto).toBe(URL_FOTO_FAKE);
+
+    const usuario = (await cell.fake.db.collection("users").doc("c1").get()).data();
+    expect(usuario.foto).toBe(URL_FOTO_FAKE);
   });
 });
 

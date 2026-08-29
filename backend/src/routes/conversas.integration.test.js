@@ -446,4 +446,38 @@ describe("GET /conversas/minhas", () => {
       ultimoRemetente: "advogado",
     });
   });
+
+  it("resolve a foto do outro lado na coleção certa por papel", async () => {
+    // Foto de advogado mora em "advogados" (pública); foto de cliente mora no próprio
+    // doc de "users" — são coleções diferentes, então tem que resolver direito nos dois
+    // sentidos da mesma conversa, não só num deles.
+    semearPar();
+    cell.fake.db._seed("advogados", "a1", { areasAtuacao: ["trabalhista"], foto: "https://foto-advogado.jpg" });
+    cell.fake.db._seed("users", "c1", {
+      nome: "Cliente Um",
+      role: "cliente",
+      email: "cliente-um@example.com",
+      foto: "https://foto-cliente.jpg",
+    });
+    cell.fake.db._seed("mensagensChat", "m1", {
+      conversaId: "c1_a1",
+      clienteId: "c1",
+      advogadoId: "a1",
+      remetente: "cliente",
+      texto: "Olá!",
+      createdAt: "2026-08-18T10:00:00.000Z",
+    });
+
+    const tokenAdvogado = cell.fake.criarToken({ uid: "a1", role: "advogado" });
+    const comoAdvogado = await request(app)
+      .get("/conversas/minhas")
+      .set("Authorization", `Bearer ${tokenAdvogado}`);
+    expect(comoAdvogado.body[0].foto).toBe("https://foto-cliente.jpg");
+
+    const tokenCliente = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    const comoCliente = await request(app)
+      .get("/conversas/minhas")
+      .set("Authorization", `Bearer ${tokenCliente}`);
+    expect(comoCliente.body[0].foto).toBe("https://foto-advogado.jpg");
+  });
 });
