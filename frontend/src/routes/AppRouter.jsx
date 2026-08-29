@@ -24,6 +24,7 @@ import { MinhasTriagensPage } from "../features/triagem/MinhasTriagensPage";
 import { ResultadoPage } from "../features/triagem/ResultadoPage";
 import { TriagemPage } from "../features/triagem/TriagemPage";
 import { HomePage } from "./HomePage";
+import { NaoEncontradaPage } from "./NaoEncontradaPage";
 import { PrivacidadePage } from "./PrivacidadePage";
 
 export function AppRouter() {
@@ -166,6 +167,7 @@ export function AppRouter() {
             </RotaProtegida>
           }
         />
+        <Route path="*" element={<NaoEncontradaPage />} />
       </Routes>
       <BottomNav />
     </BrowserRouter>

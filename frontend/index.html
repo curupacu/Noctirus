@@ -71,6 +71,59 @@
       }
     </script>
 
+    <!-- FAQPage: mesmo conteúdo da seção "Perguntas frequentes" da Home (ver
+         frontend/src/routes/HomePage.jsx) — duplicado de propósito, é a única forma do
+         Google ler isso sem esperar o React montar. Precisa manter os dois em sincronia
+         se as perguntas mudarem. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "A Nocturis é gratuita?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Sim, pra quem busca um advogado. Você descreve seu caso, faz a triagem e vê advogados compatíveis sem pagar nada e sem precisar criar conta."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Como funciona a triagem por IA?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Você descreve seu problema com suas próprias palavras. A IA identifica se é uma questão cível ou trabalhista e sugere advogados com a especialidade certa na sua região."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Meus dados estão seguros?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Sim. Só guardamos o que é necessário pra te atender e nunca vendemos seus dados a ninguém. Você pode baixar ou apagar tudo quando quiser, direto no seu perfil."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Como eu falo com o advogado?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Direto: a Nocturis te dá o WhatsApp ou e-mail do advogado e vocês combinam por lá, sem intermediário nem taxa por contato."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Preciso criar conta pra ver os advogados?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Não. Dá pra ver a lista de advogados sem cadastro — só crie conta se quiser fazer a triagem guiada ou salvar seus contatos."
+            }
+          }
+        ]
+      }
+    </script>
+
     <script>
       // Aplica o tema salvo antes do React montar, pra não piscar o tema errado
       // (ver frontend/src/lib/theme.js, mesma chave/lógica).

@@ -4,6 +4,34 @@ import { Logo } from "../components/Logo/Logo";
 import { OwlMark } from "../components/OwlMark/OwlMark";
 import { useTitulo } from "../lib/useTitulo";
 
+const FAQ = [
+  {
+    pergunta: "A Nocturis é gratuita?",
+    resposta:
+      "Sim, pra quem busca um advogado. Você descreve seu caso, faz a triagem e vê advogados compatíveis sem pagar nada e sem precisar criar conta.",
+  },
+  {
+    pergunta: "Como funciona a triagem por IA?",
+    resposta:
+      "Você descreve seu problema com suas próprias palavras. A IA identifica se é uma questão cível ou trabalhista e sugere advogados com a especialidade certa na sua região.",
+  },
+  {
+    pergunta: "Meus dados estão seguros?",
+    resposta:
+      "Sim. Só guardamos o que é necessário pra te atender e nunca vendemos seus dados a ninguém. Você pode baixar ou apagar tudo quando quiser, direto no seu perfil.",
+  },
+  {
+    pergunta: "Como eu falo com o advogado?",
+    resposta:
+      "Direto: a Nocturis te dá o WhatsApp ou e-mail do advogado e vocês combinam por lá, sem intermediário nem taxa por contato.",
+  },
+  {
+    pergunta: "Preciso criar conta pra ver os advogados?",
+    resposta:
+      "Não. Dá pra ver a lista de advogados sem cadastro — só crie conta se quiser fazer a triagem guiada ou salvar seus contatos.",
+  },
+];
+
 export function HomePage() {
   useTitulo();
 
@@ -39,6 +67,18 @@ export function HomePage() {
       >
         Ver advogados sem criar conta
       </Link>
+
+      <section className="faq" aria-labelledby="faq-heading">
+        <h2 id="faq-heading" className="faq__heading">
+          Perguntas frequentes
+        </h2>
+        {FAQ.map(({ pergunta, resposta }) => (
+          <details key={pergunta} className="faq__item">
+            <summary>{pergunta}</summary>
+            <p>{resposta}</p>
+          </details>
+        ))}
+      </section>
     </main>
   );
 }
