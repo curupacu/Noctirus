@@ -30,6 +30,7 @@ export function CadastroPage() {
   const [areasAtuacao, setAreasAtuacao] = useState([]);
   const [categoriasPorArea, setCategoriasPorArea] = useState(null);
   const [especialidades, setEspecialidades] = useState([]);
+  const [aceitouPoliticaPrivacidade, setAceitouPoliticaPrivacidade] = useState(false);
   const [erro, setErro] = useState(null);
   const [enviando, setEnviando] = useState(false);
 
@@ -73,6 +74,7 @@ export function CadastroPage() {
         role,
         nome,
         telefone,
+        aceitouPoliticaPrivacidade,
         ...(role === "advogado"
           ? {
               oab: { numero: oabNumero, uf: oabUf },
@@ -233,9 +235,26 @@ export function CadastroPage() {
             </>
           )}
 
+          <label style={{ display: "flex", alignItems: "flex-start", gap: "8px", fontSize: "var(--font-size-sm)" }}>
+            <input
+              type="checkbox"
+              checked={aceitouPoliticaPrivacidade}
+              onChange={(e) => setAceitouPoliticaPrivacidade(e.target.checked)}
+              required
+              style={{ marginTop: "3px" }}
+            />
+            <span>
+              Li e aceito a{" "}
+              <Link to="/privacidade" target="_blank" rel="noreferrer">
+                política de privacidade
+              </Link>
+              .
+            </span>
+          </label>
+
           {erro && <p role="alert">{erro}</p>}
 
-          <Button type="submit" disabled={enviando}>
+          <Button type="submit" disabled={enviando || !aceitouPoliticaPrivacidade}>
             {enviando ? "Criando conta..." : "Criar conta"}
           </Button>
         </form>

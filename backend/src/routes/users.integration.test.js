@@ -67,6 +67,86 @@ describe("PUT /users/me", () => {
   });
 });
 
+describe("GET /users/me/dados", () => {
+  it("recusa sem token", async () => {
+    const resposta = await request(app).get("/users/me/dados");
+    expect(resposta.status).toBe(401);
+  });
+
+  it("404 quando o cadastro não existe", async () => {
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    const resposta = await request(app).get("/users/me/dados").set("Authorization", `Bearer ${token}`);
+    expect(resposta.status).toBe(404);
+  });
+
+  it("junta cadastro, triagens, contatos e feedbacks enviados do cliente", async () => {
+    cell.fake.db._seed("users", "c1", { role: "cliente", nome: "Cliente" });
+    cell.fake.db._seed("triagens", "t1", { clienteId: "c1", descricao: "Fui demitido" });
+    cell.fake.db._seed("contatosCliente", "c1_a1", { clienteId: "c1", advogadoId: "a1" });
+    cell.fake.db._seed("feedbacks", "f1", { autorId: "c1", advogadoId: "a1", nota: 5 });
+    cell.fake.db._seed("mensagensChat", "m1", { clienteId: "c1", advogadoId: "a1", texto: "Olá!" });
+
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    const resposta = await request(app).get("/users/me/dados").set("Authorization", `Bearer ${token}`);
+
+    expect(resposta.status).toBe(200);
+    expect(resposta.body.cadastro.nome).toBe("Cliente");
+    expect(resposta.body.triagens).toHaveLength(1);
+    expect(resposta.body.contatosFeitos).toHaveLength(1);
+    expect(resposta.body.feedbacksEnviados).toHaveLength(1);
+    expect(resposta.body.mensagensChat).toHaveLength(1);
+    expect(resposta.body.perfilAdvogado).toBeUndefined();
+  });
+
+  it("junta perfil, currículo, contatos e feedbacks recebidos do advogado", async () => {
+    cell.fake.db._seed("users", "a1", { role: "advogado", nome: "Advogado" });
+    cell.fake.db._seed("advogados", "a1", { areasAtuacao: ["civel"] });
+    cell.fake.db._seed("curriculos", "a1", { formacao: ["Direito - USP"] });
+    cell.fake.db._seed("contatos", "ct1", { advogadoId: "a1", canal: "whatsapp" });
+    cell.fake.db._seed("feedbacks", "f1", { advogadoId: "a1", autorId: "c1", nota: 4 });
+
+    const token = cell.fake.criarToken({ uid: "a1", role: "advogado" });
+    const resposta = await request(app).get("/users/me/dados").set("Authorization", `Bearer ${token}`);
+
+    expect(resposta.status).toBe(200);
+    expect(resposta.body.perfilAdvogado.areasAtuacao).toEqual(["civel"]);
+    expect(resposta.body.curriculo.formacao).toEqual(["Direito - USP"]);
+    expect(resposta.body.contatosRecebidos).toHaveLength(1);
+    expect(resposta.body.feedbacksRecebidos).toHaveLength(1);
+    expect(resposta.body.triagens).toBeUndefined();
+  });
+});
+
+describe("DELETE /users/me", () => {
+  it("recusa sem token", async () => {
+    const resposta = await request(app).delete("/users/me");
+    expect(resposta.status).toBe(401);
+  });
+
+  it("cliente apaga a própria conta (Auth + Firestore)", async () => {
+    cell.fake.db._seed("users", "c1", { role: "cliente" });
+    cell.fake.auth._registrarUsuario("c1");
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+
+    const resposta = await request(app).delete("/users/me").set("Authorization", `Bearer ${token}`);
+    expect(resposta.status).toBe(200);
+    expect((await cell.fake.db.collection("users").doc("c1").get()).exists).toBe(false);
+  });
+
+  it("advogado apaga a própria conta junto com advogados/curriculos", async () => {
+    cell.fake.db._seed("users", "a1", { role: "advogado" });
+    cell.fake.db._seed("advogados", "a1", { areasAtuacao: [] });
+    cell.fake.db._seed("curriculos", "a1", { formacao: [] });
+    cell.fake.auth._registrarUsuario("a1");
+    const token = cell.fake.criarToken({ uid: "a1", role: "advogado" });
+
+    const resposta = await request(app).delete("/users/me").set("Authorization", `Bearer ${token}`);
+    expect(resposta.status).toBe(200);
+    expect((await cell.fake.db.collection("advogados").doc("a1").get()).exists).toBe(false);
+    expect((await cell.fake.db.collection("curriculos").doc("a1").get()).exists).toBe(false);
+  });
+});
+
 describe("GET /admin/users", () => {
   it("recusa quem não é admin", async () => {
     const token = cell.fake.criarToken({ uid: "u1", role: "cliente" });

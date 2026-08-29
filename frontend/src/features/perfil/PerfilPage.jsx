@@ -205,6 +205,12 @@ export function PerfilPage() {
               <span className="advogado-row__chevron" aria-hidden="true">›</span>
             </Link>
           </li>
+          <li>
+            <Link to="/meus-dados" className="list-row">
+              <span className="list-row__title">Meus dados</span>
+              <span className="advogado-row__chevron" aria-hidden="true">›</span>
+            </Link>
+          </li>
         </ul>
       </main>
     );
@@ -264,6 +270,12 @@ export function PerfilPage() {
             <li>
               <Link to="/minhas-denuncias" className="list-row">
                 <span className="list-row__title">Minhas denúncias</span>
+                <span className="advogado-row__chevron" aria-hidden="true">›</span>
+              </Link>
+            </li>
+            <li>
+              <Link to="/meus-dados" className="list-row">
+                <span className="list-row__title">Meus dados</span>
                 <span className="advogado-row__chevron" aria-hidden="true">›</span>
               </Link>
             </li>
