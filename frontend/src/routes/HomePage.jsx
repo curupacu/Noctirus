@@ -79,6 +79,14 @@ export function HomePage() {
           </details>
         ))}
       </section>
+
+      {/* Só aparece no mobile (ver index.css) — sem isso, quem rola até o FAQ perde de
+          vista o CTA principal, que só existe lá em cima no topo da tela. */}
+      <div className="home-cta-fixa">
+        <Link to="/cadastro">
+          <Button>Criar conta</Button>
+        </Link>
+      </div>
     </main>
   );
 }

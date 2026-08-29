@@ -1107,3 +1107,41 @@ a.list-row:hover .advogado-row__chevron {
   margin: var(--space-sm) 0 0;
   color: var(--color-text-muted);
 }
+
+/* CTA fixo da Home no mobile — some no desktop, onde o CTA do topo já está sempre à
+   vista. No celular, quem rola até o FAQ perde de vista os botões do topo; essa barra
+   mantém "Criar conta" alcançável em qualquer ponto da rolagem. Mesmo padrão visual do
+   .bottom-nav (fixed/bottom/shadow-up), mas só aparece na Home (nunca logado — Home é
+   tela de vitrine, BottomNav não existe aqui, então não tem conflito de z-index).
+   Seletor "main.splash > .home-cta-fixa" (não só ".home-cta-fixa") de propósito: precisa
+   empatar em especificidade com "main.splash > *:not(.splash__owl-mark)" (que força
+   position:relative em todo filho direto da splash) pra ganhar no desempate por ordem —
+   com só a classe, o position:fixed era sobrescrito de volta pra relative. */
+.home-cta-fixa {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  main.splash > .home-cta-fixa {
+    display: block;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    padding: var(--space-md) var(--space-lg);
+    padding-bottom: calc(var(--space-md) + env(safe-area-inset-bottom));
+    background: var(--bg-section);
+    border-top: 1px solid var(--color-border);
+    box-shadow: var(--shadow-up);
+  }
+
+  .home-cta-fixa .button {
+    width: 100%;
+  }
+
+  /* Sem isso, a última pergunta do FAQ fica embaixo da barra fixa. */
+  main.splash {
+    padding-bottom: calc(72px + var(--space-xl));
+  }
+}
