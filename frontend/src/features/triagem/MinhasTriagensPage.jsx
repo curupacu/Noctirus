@@ -4,6 +4,7 @@ import { AreaIcon } from "../../components/AreaIcon/AreaIcon";
 import { Button } from "../../components/Button/Button";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
+import { useTitulo } from "../../lib/useTitulo";
 
 const LABEL_AREA = {
   civel: "Cível",
@@ -12,6 +13,7 @@ const LABEL_AREA = {
 };
 
 export function MinhasTriagensPage() {
+  useTitulo("Minhas triagens");
   const [triagens, setTriagens] = useState(null);
   const [erro, setErro] = useState(null);
 

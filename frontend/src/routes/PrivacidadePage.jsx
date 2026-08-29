@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
+import { useTitulo } from "../lib/useTitulo";
 
 // Política de privacidade (LGPD, Lei 13.709/18) — pública, sem exigir login, linkada no
 // checkbox de consentimento do cadastro (ver CadastroPage). Escrita em termos simples de
 // propósito: o público da Nocturis não é jurídico especializado em proteção de dados.
 export function PrivacidadePage() {
+  useTitulo("Política de privacidade");
+
   return (
     <main>
       <span className="eyebrow">Nocturis</span>
@@ -53,7 +56,11 @@ export function PrivacidadePage() {
           <strong>Cloudinary</strong> — guarda a foto de perfil de advogados que fazem upload;
         </li>
         <li>
-          <strong>Resend</strong> — envia o e-mail de notificação de resposta no chat.
+          <strong>Resend</strong> — envia o e-mail de notificação de resposta no chat;
+        </li>
+        <li>
+          <strong>Google Analytics</strong> — mede quantas pessoas visitam o site e quais
+          páginas usam, de forma agregada (não associamos isso ao seu nome ou e-mail).
         </li>
       </ul>
 

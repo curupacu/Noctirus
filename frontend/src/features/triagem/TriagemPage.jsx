@@ -5,10 +5,12 @@ import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
 import { Loading } from "../../components/Loading/Loading";
 import { ProgressSteps } from "../../components/ProgressSteps/ProgressSteps";
 import { api } from "../../lib/api";
+import { useTitulo } from "../../lib/useTitulo";
 
 const STEPS = ["Situação", "Detalhes", "Descrição"];
 
 export function TriagemPage() {
+  useTitulo("Nova triagem");
   const [arvore, setArvore] = useState(null);
   const [respostas, setRespostas] = useState({});
   const [descricao, setDescricao] = useState("");

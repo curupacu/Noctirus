@@ -4,6 +4,7 @@ import { AdvogadoCard } from "../../components/AdvogadoCard/AdvogadoCard";
 import { Loading } from "../../components/Loading/Loading";
 import { OwlMark } from "../../components/OwlMark/OwlMark";
 import { api } from "../../lib/api";
+import { useTitulo } from "../../lib/useTitulo";
 
 const LABEL_AREA = {
   civel: "Cível",
@@ -12,6 +13,7 @@ const LABEL_AREA = {
 };
 
 export function ResultadoPage() {
+  useTitulo("Resultado da triagem");
   const { id } = useParams();
   const location = useLocation();
   const [resultado, setResultado] = useState(location.state?.resultado || null);

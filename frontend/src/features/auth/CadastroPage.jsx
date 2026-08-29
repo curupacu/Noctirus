@@ -7,6 +7,7 @@ import { Input } from "../../components/Input/Input";
 import { Logo } from "../../components/Logo/Logo";
 import { api } from "../../lib/api";
 import { auth } from "../../lib/firebase";
+import { useTitulo } from "../../lib/useTitulo";
 import { useAuth } from "./AuthContext";
 import { rotaInicial } from "./rotaInicial";
 
@@ -16,6 +17,7 @@ const AREAS = [
 ];
 
 export function CadastroPage() {
+  useTitulo("Criar conta");
   const { cadastrar, loginComGoogle, atualizarRole } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();

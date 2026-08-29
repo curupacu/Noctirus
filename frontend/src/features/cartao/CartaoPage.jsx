@@ -6,6 +6,7 @@ import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
 import { useCarregar } from "../../lib/useCarregar";
+import { useTitulo } from "../../lib/useTitulo";
 import { useAuth } from "../auth/AuthContext";
 import "./cartao.css";
 import { CartaoVerso, TEMPLATES } from "./templates";
@@ -14,6 +15,7 @@ const LABEL_AREA = { civel: "Cível", trabalhista: "Trabalhista" };
 const CHAVE_TEMPLATE = "nocturis:cartao:template";
 
 export function CartaoPage() {
+  useTitulo("Cartão de visita");
   const { user } = useAuth();
   const [templateId, setTemplateId] = useState(
     () => localStorage.getItem(CHAVE_TEMPLATE) || TEMPLATES[0].id,

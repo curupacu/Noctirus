@@ -7,6 +7,7 @@ import { Loading } from "../../components/Loading/Loading";
 import { PerfilCompletude } from "../../components/PerfilCompletude/PerfilCompletude";
 import { useAuth } from "../auth/AuthContext";
 import { api } from "../../lib/api";
+import { useTitulo } from "../../lib/useTitulo";
 
 // Dashboard do advogado (rotaInicial já manda ele pra cá) — antes essa tela era o
 // dashboard E o formulário de edição juntos, rolando um dentro do outro (achado do
@@ -14,6 +15,7 @@ import { api } from "../../lib/api";
 // editar de verdade é em /perfil/editar (ver EditarPerfilPage). Cliente e admin não
 // mudam — pra eles /perfil já era só um formulário pequeno, sem esse problema.
 export function PerfilPage() {
+  useTitulo("Meu perfil");
   const { user, role } = useAuth();
 
   const [dadosUsuario, setDadosUsuario] = useState(null);

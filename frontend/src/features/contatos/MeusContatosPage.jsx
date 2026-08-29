@@ -3,12 +3,14 @@ import { Avatar } from "../../components/Avatar/Avatar";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
 import { useCarregar } from "../../lib/useCarregar";
+import { useTitulo } from "../../lib/useTitulo";
 
 // Mesma lista de STATUS_CONTATO_CLIENTE do backend (backend/src/routes/contatos.js) —
 // duplicado de propósito, é só rótulo de UI, não vale um endpoint só pra isso.
 const STATUS_OPCOES = ["Chamei no WhatsApp", "Mandei e-mail", "Aguardando resposta", "Já conversamos"];
 
 export function MeusContatosPage() {
+  useTitulo("Meus contatos");
   const { dado: contatos, setDado: setContatos, erro, setErro } = useCarregar(() => api.get("/contatos/meus"));
 
   async function marcarStatus(advogadoId, status) {

@@ -3,6 +3,7 @@ import { Avatar } from "../../components/Avatar/Avatar";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
 import { useCarregar } from "../../lib/useCarregar";
+import { useTitulo } from "../../lib/useTitulo";
 import { useAuth } from "../auth/AuthContext";
 import { FeedbackForm } from "./FeedbackForm";
 
@@ -41,6 +42,12 @@ export function AdvogadoPublicoPage() {
     ]);
     return { advogado, curriculo, catalogoCategorias: perguntas.categorias };
   }, [uid]);
+
+  useTitulo(
+    dado?.advogado
+      ? `${dado.advogado.nome} — ${dado.advogado.localizacao?.cidade || "?"}/${dado.advogado.localizacao?.uf || "?"}`
+      : "Advogado",
+  );
 
   if (erro) return <p role="alert">{erro}</p>;
   if (!dado) return <Loading>Carregando...</Loading>;

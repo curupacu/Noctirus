@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
+import { useTitulo } from "../../lib/useTitulo";
 
 const LABEL_REMETENTE = { cliente: "Cliente", advogado: "Você" };
 
@@ -10,6 +11,7 @@ const LABEL_REMETENTE = { cliente: "Cliente", advogado: "Você" };
 // contatado (pedido do usuário, 18/08). Cada linha é a última mensagem trocada com um
 // cliente; abrir leva pro chatzinho de verdade (ConversaPage).
 export function ConversasPage() {
+  useTitulo("Conversas");
   const [conversas, setConversas] = useState(null);
   const [erro, setErro] = useState(null);
 

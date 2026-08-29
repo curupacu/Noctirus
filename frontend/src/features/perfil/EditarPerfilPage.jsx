@@ -8,10 +8,12 @@ import { Loading } from "../../components/Loading/Loading";
 import { useAuth } from "../auth/AuthContext";
 import { CurriculoForm } from "../curriculo/CurriculoForm";
 import { api } from "../../lib/api";
+import { useTitulo } from "../../lib/useTitulo";
 
 // Formulário de edição do advogado — antes vivia dentro de /perfil junto com o
 // dashboard; separado pra /perfil/editar a pedido do usuário (18/08/2026).
 export function EditarPerfilPage() {
+  useTitulo("Editar perfil");
   const { user } = useAuth();
 
   const [dadosUsuario, setDadosUsuario] = useState(null);
