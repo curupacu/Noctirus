@@ -1058,3 +1058,52 @@ a.list-row:hover .advogado-row__chevron {
 
 /* Visual simples: Home, Login e Cadastro usam o mesmo tema (claro/escuro) do resto do
    app, sem um visual "vitrine" fixo à parte. */
+
+/* FAQ da Home — <details>/<summary> nativo em vez de um acordeão em JS: zero estado pra
+   gerenciar, funciona sem JS carregado ainda, e cada pergunta some/aparece sozinha (não
+   precisa fechar as outras na mão). */
+.faq {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.faq__heading {
+  font-size: var(--font-size-xl);
+  margin: 0;
+}
+
+.faq__item {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: var(--space-md) var(--space-lg);
+}
+
+.faq__item summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--color-text);
+  list-style: none;
+}
+
+.faq__item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq__item summary::after {
+  content: "+";
+  float: right;
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+.faq__item[open] summary::after {
+  content: "−";
+}
+
+.faq__item p {
+  margin: var(--space-sm) 0 0;
+  color: var(--color-text-muted);
+}
