@@ -9,6 +9,6 @@
   },
   "devDependencies": {
     "concurrently": "^9.1.0",
-    "firebase-admin": "^14.1.0"
+    "firebase-admin": "^14.3.0"
   }
 }
