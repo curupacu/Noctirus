@@ -5,6 +5,7 @@ import express from "express";
 // de derrubar o processo inteiro com um erro não tratado (aconteceu com um erro do
 // Firestore durante os testes da triagem — sem isso, um único erro tirava o backend do ar).
 import "express-async-errors";
+import * as Sentry from "@sentry/node";
 import helmet from "helmet";
 import { limiteGeral } from "./middlewares/rateLimit.js";
 import { advogadosRouter } from "./routes/advogados.js";
@@ -64,6 +65,10 @@ app.use(triagemRouter);
 app.use(denunciasRouter);
 app.use(contatosRouter);
 app.use(conversasRouter);
+
+// Reporta pro Sentry antes do handler de sempre — sem SENTRY_DSN configurada
+// (instrument.js não chamou Sentry.init) isso vira um no-op, não quebra nada.
+Sentry.setupExpressErrorHandler(app);
 
 app.use((err, _req, res, _next) => {
   console.error(err);
