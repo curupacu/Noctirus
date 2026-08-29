@@ -1,10 +1,12 @@
 import { Router } from "express";
 import multer from "multer";
+import { z } from "zod";
 import { cloudinary } from "../lib/cloudinary.js";
 import { db } from "../lib/firebase-admin.js";
 import { requireRole, tentarVerificarToken, verificarToken } from "../middlewares/auth.js";
+import { validarBody } from "../middlewares/validar.js";
 import { buscarAdvogadosCompativeis } from "../services/matching.js";
-import { TODAS_CATEGORIAS } from "../services/triagem.js";
+import { AREAS_VALIDAS, TODAS_CATEGORIAS } from "../services/triagem.js";
 
 export const advogadosRouter = Router();
 
@@ -78,10 +80,21 @@ advogadosRouter.get("/advogados/:uid", async (req, res) => {
   });
 });
 
+const schemaEditarAdvogado = z.object({
+  areasAtuacao: z.array(z.enum(AREAS_VALIDAS)).optional(),
+  especialidades: z.array(z.string()).optional(),
+  localizacao: z
+    .object({ cidade: z.string().trim().max(100).optional(), uf: z.string().trim().max(2).optional() })
+    .optional(),
+  whatsapp: z.string().trim().max(20).optional(),
+  bio: z.string().max(1000).optional(),
+});
+
 advogadosRouter.put(
   "/advogados/:uid",
   verificarToken,
   requireRole("advogado"),
+  validarBody(schemaEditarAdvogado),
   async (req, res) => {
     const { uid } = req.params;
     if (uid !== req.user.uid) {
@@ -96,7 +109,7 @@ advogadosRouter.put(
     }
     if (localizacao !== undefined) campos.localizacao = localizacao;
     if (whatsapp !== undefined) campos["contatos.whatsapp"] = whatsapp;
-    if (bio !== undefined) campos.bio = String(bio).trim().slice(0, 240);
+    if (bio !== undefined) campos.bio = bio.trim().slice(0, 240);
 
     if (Object.keys(campos).length === 0) {
       return res.status(400).json({ erro: "Nenhum campo para atualizar" });

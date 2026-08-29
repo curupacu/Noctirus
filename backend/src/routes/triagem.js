@@ -1,7 +1,9 @@
 import { Router } from "express";
+import { z } from "zod";
 import { db } from "../lib/firebase-admin.js";
 import { requireRole, verificarToken } from "../middlewares/auth.js";
 import { limiteTriagem } from "../middlewares/rateLimit.js";
+import { validarBody } from "../middlewares/validar.js";
 import { buscarAdvogadosCompativeis } from "../services/matching.js";
 import {
   CATEGORIAS_POR_AREA,
@@ -29,6 +31,19 @@ async function somarContadorDeSugestoes(advogados) {
   );
 }
 
+// descricao sem teto de tamanho ia direto pro prompt da IA (custo/tempo de chamada
+// proporcional ao texto) e pro Firestore sem limite nenhum. respostas é um objeto livre
+// (chave = id da pergunta), mas cada valor precisa ser texto curto, não estrutura arbitrária.
+const schemaTriagem = z.object({
+  respostas: z.record(z.string(), z.string().max(500)).optional().default({}),
+  descricao: z
+    .string()
+    .trim()
+    .min(10, "Descreva o problema com pelo menos 10 caracteres")
+    .max(3000),
+  compartilharComAdvogado: z.boolean().optional().default(false),
+});
+
 triagemRouter.get("/triagem/perguntas", (_req, res) => {
   res.json({
     principal: PERGUNTA_PRINCIPAL,
@@ -44,14 +59,11 @@ triagemRouter.post(
   verificarToken,
   requireRole("cliente"),
   limiteTriagem,
+  validarBody(schemaTriagem),
   async (req, res) => {
     const { respostas, descricao, compartilharComAdvogado } = req.body;
 
-    if (!descricao || descricao.trim().length < 10) {
-      return res.status(400).json({ erro: "Descreva o problema com pelo menos 10 caracteres" });
-    }
-
-    const resultado = await classificar({ respostas: respostas || {}, descricao });
+    const resultado = await classificar({ respostas, descricao });
     const advogados = await buscarAdvogadosCompativeis(
       resultado.areaClassificada === "indefinido"
         ? {}
@@ -60,7 +72,7 @@ triagemRouter.post(
 
     const triagem = {
       clienteId: req.user.uid,
-      respostas: respostas || {},
+      respostas,
       descricao,
       // Opt-in explícito do cliente pra descrição do caso poder aparecer pro advogado
       // que ele vier a contatar (ver POST /conversas/:comUid/mensagens) — falso por

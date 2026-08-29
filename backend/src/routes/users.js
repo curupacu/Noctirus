@@ -1,8 +1,15 @@
 import { Router } from "express";
+import { z } from "zod";
 import { auth, db } from "../lib/firebase-admin.js";
 import { requireRole, verificarToken } from "../middlewares/auth.js";
+import { validarBody } from "../middlewares/validar.js";
 
 export const usersRouter = Router();
+
+const schemaAtualizarPerfil = z.object({
+  nome: z.string().trim().min(1).max(150).optional(),
+  telefone: z.string().trim().max(20).optional(),
+});
 
 usersRouter.get("/users/me", verificarToken, async (req, res) => {
   const doc = await db.collection("users").doc(req.user.uid).get();
@@ -12,19 +19,24 @@ usersRouter.get("/users/me", verificarToken, async (req, res) => {
   res.json({ uid: doc.id, ...doc.data() });
 });
 
-usersRouter.put("/users/me", verificarToken, async (req, res) => {
-  const { nome, telefone } = req.body;
-  const campos = {};
-  if (nome !== undefined) campos.nome = nome;
-  if (telefone !== undefined) campos.telefone = telefone;
+usersRouter.put(
+  "/users/me",
+  verificarToken,
+  validarBody(schemaAtualizarPerfil),
+  async (req, res) => {
+    const { nome, telefone } = req.body;
+    const campos = {};
+    if (nome !== undefined) campos.nome = nome;
+    if (telefone !== undefined) campos.telefone = telefone;
 
-  if (Object.keys(campos).length === 0) {
-    return res.status(400).json({ erro: "Nenhum campo para atualizar" });
-  }
+    if (Object.keys(campos).length === 0) {
+      return res.status(400).json({ erro: "Nenhum campo para atualizar" });
+    }
 
-  await db.collection("users").doc(req.user.uid).update(campos);
-  res.json({ ok: true });
-});
+    await db.collection("users").doc(req.user.uid).update(campos);
+    res.json({ ok: true });
+  },
+);
 
 // Gerenciar clientes e advogados (Sprint 8) — admins não aparecem aqui, moderação não se
 // aplica entre admins.

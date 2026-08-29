@@ -62,6 +62,27 @@ describe("POST /triagem/classificar", () => {
     expect(resposta.status).toBe(400);
   });
 
+  it("recusa descrição longa demais (teto de custo/tamanho pro prompt da IA)", async () => {
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    const resposta = await request(app)
+      .post("/triagem/classificar")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ descricao: "a".repeat(3001) });
+    expect(resposta.status).toBe(400);
+  });
+
+  it("recusa respostas com valor que não seja texto curto", async () => {
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    const resposta = await request(app)
+      .post("/triagem/classificar")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        respostas: { situacao: "a".repeat(501) },
+        descricao: "Fui demitido sem justa causa e não pagaram minhas horas extras.",
+      });
+    expect(resposta.status).toBe(400);
+  });
+
   it("classifica pelo fallback de regras e grava a triagem vinculada ao cliente", async () => {
     const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
     const resposta = await request(app)

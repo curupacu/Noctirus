@@ -48,6 +48,33 @@ describe("POST /denuncias", () => {
     expect(resposta.status).toBe(400);
   });
 
+  // O frontend (AdminDenunciasPage) renderiza provaUrl direto num <a href> — sem validar
+  // o protocolo, um valor "javascript:..." executava no navegador do admin ao clicar.
+  it("recusa provaUrl que não seja um link http(s)", async () => {
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    const resposta = await request(app)
+      .post("/denuncias")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        descricao: "Cobrou por um serviço que nunca prestou.",
+        provaUrl: "javascript:alert(document.cookie)",
+      });
+    expect(resposta.status).toBe(400);
+  });
+
+  it("aceita provaUrl http(s) válida", async () => {
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    const resposta = await request(app)
+      .post("/denuncias")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        descricao: "Cobrou por um serviço que nunca prestou.",
+        provaUrl: "https://exemplo.com/print.png",
+      });
+    expect(resposta.status).toBe(201);
+    expect(resposta.body.provaUrl).toBe("https://exemplo.com/print.png");
+  });
+
   it("registra a denúncia vinculada ao autor logado", async () => {
     const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
     const resposta = await request(app)
