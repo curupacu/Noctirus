@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { BotaoGoogle } from "../../components/BotaoGoogle/BotaoGoogle";
 import { Button } from "../../components/Button/Button";
 import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
 import { Input } from "../../components/Input/Input";
 import { Logo } from "../../components/Logo/Logo";
 import { api } from "../../lib/api";
+import { auth } from "../../lib/firebase";
 import { useAuth } from "./AuthContext";
 import { rotaInicial } from "./rotaInicial";
 
@@ -14,8 +16,9 @@ const AREAS = [
 ];
 
 export function CadastroPage() {
-  const { cadastrar, atualizarRole } = useAuth();
+  const { cadastrar, loginComGoogle, atualizarRole } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [role, setRole] = useState("cliente");
   const [nome, setNome] = useState("");
@@ -31,12 +34,39 @@ export function CadastroPage() {
   const [categoriasPorArea, setCategoriasPorArea] = useState(null);
   const [especialidades, setEspecialidades] = useState([]);
   const [aceitouPoliticaPrivacidade, setAceitouPoliticaPrivacidade] = useState(false);
+  // Preenchido quando o cadastro vem via Google — pula e-mail/senha, porque o Firebase já
+  // autenticou a pessoa (ver loginComGoogle/BotaoGoogle abaixo).
+  const [contaGoogle, setContaGoogle] = useState(null);
   const [erro, setErro] = useState(null);
   const [enviando, setEnviando] = useState(false);
 
   useEffect(() => {
     api.get("/triagem/perguntas").then((dados) => setCategoriasPorArea(dados.categorias));
   }, []);
+
+  // Chegou aqui vindo do botão "Entrar com Google" da LoginPage (conta sem role ainda) —
+  // já está autenticado, não precisa abrir o popup de novo.
+  useEffect(() => {
+    if (location.state?.viaGoogle && auth.currentUser) {
+      setContaGoogle(auth.currentUser);
+      setNome(auth.currentUser.displayName || "");
+    }
+  }, [location.state]);
+
+  async function cadastrarComGoogle() {
+    setErro(null);
+    try {
+      const { user, role: roleExistente } = await loginComGoogle();
+      if (roleExistente) {
+        navigate(rotaInicial(roleExistente));
+        return;
+      }
+      setContaGoogle(user);
+      setNome(user.displayName || "");
+    } catch {
+      setErro("Não foi possível conectar com o Google");
+    }
+  }
 
   function alternarArea(area) {
     setAreasAtuacao((atual) =>
@@ -66,9 +96,14 @@ export function CadastroPage() {
     setErro(null);
     setEnviando(true);
 
+    // Só cria (e só desfaz em caso de erro) uma conta nova por e-mail/senha. A conta do
+    // Google já existia antes desse formulário — se completar-cadastro falhar, não faz
+    // sentido apagar o login Google da pessoa, só o cadastro na Nocturis não terminou.
     let usuarioCriado = null;
     try {
-      usuarioCriado = await cadastrar(email, senha);
+      if (!contaGoogle) {
+        usuarioCriado = await cadastrar(email, senha);
+      }
 
       await api.post("/auth/completar-cadastro", {
         role,
@@ -138,24 +173,45 @@ export function CadastroPage() {
             </div>
           </div>
 
+          {!contaGoogle && (
+            <>
+              <BotaoGoogle onClick={cadastrarComGoogle} style={{ width: "100%" }}>
+                Cadastrar com Google
+              </BotaoGoogle>
+              <p className="text-muted" style={{ textAlign: "center", margin: 0 }}>
+                ou
+              </p>
+            </>
+          )}
+
+          {contaGoogle && (
+            <p className="text-muted">
+              Conectado como <strong>{contaGoogle.email}</strong> via Google.
+            </p>
+          )}
+
           <Input label="Nome" id="nome" value={nome} onChange={(e) => setNome(e.target.value)} required />
-          <Input
-            label="E-mail"
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <Input
-            label="Senha"
-            id="senha"
-            type="password"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            minLength={6}
-            required
-          />
+          {!contaGoogle && (
+            <>
+              <Input
+                label="E-mail"
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <Input
+                label="Senha"
+                id="senha"
+                type="password"
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
+                minLength={6}
+                required
+              />
+            </>
+          )}
           <Input
             label="Telefone"
             id="telefone"

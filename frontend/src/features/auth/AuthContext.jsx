@@ -1,7 +1,9 @@
 import {
   createUserWithEmailAndPassword,
+  GoogleAuthProvider,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
 } from "firebase/auth";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -42,6 +44,19 @@ export function AuthProvider({ children }) {
     return roleLogado;
   }
 
+  // Login e cadastro com Google usam o mesmo método do Firebase — pra conta nova, o
+  // signInWithPopup já cria o usuário na Auth sozinho (não existe "conta não encontrada"
+  // com provider federado). Por isso role vem null pra quem é novo: quem chamou decide se
+  // manda pra dentro do app (role existe) ou pra completar o cadastro (role null).
+  async function loginComGoogle() {
+    const provider = new GoogleAuthProvider();
+    const credencial = await signInWithPopup(auth, provider);
+    const tokenResult = await credencial.user.getIdTokenResult();
+    const roleLogado = tokenResult.claims.role || null;
+    setRole(roleLogado);
+    return { user: credencial.user, role: roleLogado };
+  }
+
   async function logout() {
     await signOut(auth);
   }
@@ -56,7 +71,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, role, loading, cadastrar, login, logout, atualizarRole }}
+      value={{ user, role, loading, cadastrar, login, loginComGoogle, logout, atualizarRole }}
     >
       {children}
     </AuthContext.Provider>
