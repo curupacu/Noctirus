@@ -74,7 +74,7 @@ export function PrivacidadePage() {
       </div>
       <p className="text-muted">
         Dúvida sobre seus dados? Fale com a gente pelo{" "}
-        <a href="mailto:contato@nocturis.com.br">contato@nocturis.com.br</a>.
+        <a href="mailto:aggremtec@gmail.com">aggremtec@gmail.com</a>.
       </p>
     </main>
   );
