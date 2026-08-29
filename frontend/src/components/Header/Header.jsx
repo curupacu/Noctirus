@@ -4,13 +4,16 @@ import { useAuth } from "../../features/auth/AuthContext";
 import { rotaInicial } from "../../features/auth/rotaInicial";
 import { TELAS_VITRINE } from "../../lib/telasVitrine";
 import { useTheme } from "../../lib/theme";
+import { useNotificacoes } from "../../lib/useNotificacoes";
 import { Button } from "../Button/Button";
+import { NotificationBell } from "../NotificationBell/NotificationBell";
 import { ThemeToggle } from "../ThemeToggle/ThemeToggle";
 import "./Header.css";
 
 export function Header() {
   const { user, role, loading, logout } = useAuth();
   const { tema, alternarTema } = useTheme();
+  const { notificacoes, naoLidas, marcarComoLida } = useNotificacoes(user?.uid);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -34,6 +37,11 @@ export function Header() {
           <>
             {user ? (
               <>
+                <NotificationBell
+                  notificacoes={notificacoes}
+                  naoLidas={naoLidas}
+                  marcarComoLida={marcarComoLida}
+                />
                 <span className="avatar-placeholder site-header__avatar">
                   {(user.email || "?").charAt(0).toUpperCase()}
                 </span>

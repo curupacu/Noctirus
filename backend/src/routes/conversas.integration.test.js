@@ -262,6 +262,45 @@ describe("notificação por e-mail quando o advogado responde", () => {
   });
 });
 
+describe("notificação em tempo real (sininho) quando alguém manda mensagem", () => {
+  it("cliente manda mensagem → notifica o advogado", async () => {
+    semearPar();
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    await request(app)
+      .post("/conversas/a1/mensagens")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ texto: "Olá!" });
+
+    const snapshot = await cell.fake.db.collection("notificacoes").get();
+    expect(snapshot.docs).toHaveLength(1);
+    expect(snapshot.docs[0].data()).toMatchObject({
+      destinatarioId: "a1",
+      tipo: "nova_mensagem",
+      texto: "Cliente Um: Olá!",
+      link: "/conversas/c1",
+      lida: false,
+    });
+  });
+
+  it("advogado responde → notifica o cliente", async () => {
+    semearPar();
+    const token = cell.fake.criarToken({ uid: "a1", role: "advogado" });
+    await request(app)
+      .post("/conversas/c1/mensagens")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ texto: "Combinado!" });
+
+    const snapshot = await cell.fake.db.collection("notificacoes").get();
+    expect(snapshot.docs).toHaveLength(1);
+    expect(snapshot.docs[0].data()).toMatchObject({
+      destinatarioId: "c1",
+      tipo: "nova_mensagem",
+      texto: "Advogado Um: Combinado!",
+      link: "/advogados/a1/contato",
+    });
+  });
+});
+
 describe("GET /conversas/:comUid/triagem", () => {
   it("recusa sem token", async () => {
     const resposta = await request(app).get("/conversas/c1/triagem");

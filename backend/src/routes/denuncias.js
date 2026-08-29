@@ -3,6 +3,7 @@ import { z } from "zod";
 import { db } from "../lib/firebase-admin.js";
 import { requireRole, verificarToken } from "../middlewares/auth.js";
 import { validarBody } from "../middlewares/validar.js";
+import { criarNotificacao } from "../services/notificacoes.js";
 
 export const denunciasRouter = Router();
 
@@ -120,6 +121,21 @@ denunciasRouter.patch(
     }
 
     await db.collection("denuncias").doc(id).update(campos);
+
+    if (status === "resolvida") {
+      try {
+        const denunciaDoc = await db.collection("denuncias").doc(id).get();
+        await criarNotificacao({
+          destinatarioId: denunciaDoc.data().autorId,
+          tipo: "denuncia_resolvida",
+          texto: "Sua denúncia foi analisada — veja a decisão.",
+          link: "/minhas-denuncias",
+        });
+      } catch (erro) {
+        console.error("denuncias: falha ao criar notificação —", erro.message || erro);
+      }
+    }
+
     res.json({ ok: true });
   },
 );

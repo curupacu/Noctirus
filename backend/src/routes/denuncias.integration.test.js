@@ -173,4 +173,28 @@ describe("PATCH /admin/denuncias/:id", () => {
     expect(denuncia.status).toBe("resolvida");
     expect(denuncia.decisao).toBe("Denúncia procedente.");
   });
+
+  it("resolver notifica o autor (sininho), mas marcar em análise não notifica", async () => {
+    cell.fake.db._seed("denuncias", "d1", { status: "aberta", autorId: "c1" });
+    const token = cell.fake.criarToken({ uid: "adm1", role: "admin" });
+
+    await request(app)
+      .patch("/admin/denuncias/d1")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ status: "em_analise" });
+    expect((await cell.fake.db.collection("notificacoes").get()).docs).toHaveLength(0);
+
+    await request(app)
+      .patch("/admin/denuncias/d1")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ status: "resolvida" });
+
+    const snapshot = await cell.fake.db.collection("notificacoes").get();
+    expect(snapshot.docs).toHaveLength(1);
+    expect(snapshot.docs[0].data()).toMatchObject({
+      destinatarioId: "c1",
+      tipo: "denuncia_resolvida",
+      link: "/minhas-denuncias",
+    });
+  });
 });
