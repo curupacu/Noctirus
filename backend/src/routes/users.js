@@ -1,5 +1,7 @@
 import { Router } from "express";
+import multer from "multer";
 import { z } from "zod";
+import { cloudinary } from "../lib/cloudinary.js";
 import { auth, db } from "../lib/firebase-admin.js";
 import { requireRole, verificarToken } from "../middlewares/auth.js";
 import { validarBody } from "../middlewares/validar.js";
@@ -10,6 +12,32 @@ const schemaAtualizarPerfil = z.object({
   nome: z.string().trim().min(1).max(150).optional(),
   telefone: z.string().trim().max(20).optional(),
 });
+
+// Mesma foto de perfil que já existia só pro advogado (ver POST /advogados/:uid/foto) —
+// pedido do usuário pra cliente também poder colocar a dele (29/08/2026). Fica no doc de
+// "users" (não em "advogados"), então só faz sentido pra quem não tem doc em "advogados".
+const uploadFoto = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (!file.mimetype.startsWith("image/")) {
+      return cb(new Error("Envie um arquivo de imagem"));
+    }
+    cb(null, true);
+  },
+}).single("foto");
+
+function tratarUploadFoto(req, res, next) {
+  uploadFoto(req, res, (erro) => {
+    if (erro instanceof multer.MulterError && erro.code === "LIMIT_FILE_SIZE") {
+      return res.status(400).json({ erro: "Imagem muito grande (máximo 5MB)" });
+    }
+    if (erro) {
+      return res.status(400).json({ erro: erro.message || "Não foi possível processar a imagem" });
+    }
+    next();
+  });
+}
 
 usersRouter.get("/users/me", verificarToken, async (req, res) => {
   const doc = await db.collection("users").doc(req.user.uid).get();
@@ -35,6 +63,34 @@ usersRouter.put(
 
     await db.collection("users").doc(req.user.uid).update(campos);
     res.json({ ok: true });
+  },
+);
+
+usersRouter.post(
+  "/users/me/foto",
+  verificarToken,
+  requireRole("cliente"),
+  tratarUploadFoto,
+  async (req, res) => {
+    if (!req.file) {
+      return res.status(400).json({ erro: "Nenhuma imagem enviada" });
+    }
+
+    const resultado = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: "nocturis/clientes",
+          public_id: req.user.uid,
+          overwrite: true,
+          transformation: [{ width: 400, height: 400, crop: "fill", gravity: "face" }],
+        },
+        (erro, resultado) => (erro ? reject(erro) : resolve(resultado)),
+      );
+      stream.end(req.file.buffer);
+    });
+
+    await db.collection("users").doc(req.user.uid).update({ foto: resultado.secure_url });
+    res.json({ foto: resultado.secure_url });
   },
 );
 

@@ -243,9 +243,21 @@ conversasRouter.get(
     const conversas = await Promise.all(
       [...ultimaPorConversa.entries()].map(async ([outroId, ultima]) => {
         const usuarioDoc = await db.collection("users").doc(outroId).get();
+        // Foto do advogado mora em "advogados" (foto pública, ver POST /advogados/:uid/foto);
+        // foto do cliente mora no próprio doc de "users" (ver POST /users/me/foto). Quem
+        // pergunta "quem é o outro lado" sempre sabe o próprio papel, então dá pra saber
+        // direto qual coleção checar sem descobrir o papel do outroId primeiro.
+        let foto = null;
+        if (req.user.role === "cliente") {
+          const advogadoDoc = await db.collection("advogados").doc(outroId).get();
+          foto = advogadoDoc.exists ? advogadoDoc.data().foto || null : null;
+        } else {
+          foto = usuarioDoc.exists ? usuarioDoc.data().foto || null : null;
+        }
         return {
           comUid: outroId,
           nome: usuarioDoc.exists ? usuarioDoc.data().nome : null,
+          foto,
           ultimaMensagem: ultima.texto,
           ultimoRemetente: ultima.remetente,
           ultimoEm: ultima.createdAt,

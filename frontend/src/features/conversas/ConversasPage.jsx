@@ -41,8 +41,12 @@ export function ConversasPage() {
         <ul className="list-plain">
           {conversas.map((c) => (
             <li key={c.comUid}>
-              <Link to={`/conversas/${c.comUid}`} state={{ nome: c.nome }} className="list-row">
-                <Avatar nome={c.nome} seed={c.comUid} />
+              <Link
+                to={`/conversas/${c.comUid}`}
+                state={{ nome: c.nome, foto: c.foto }}
+                className="list-row"
+              >
+                <Avatar nome={c.nome} foto={c.foto} seed={c.comUid} />
                 <span className="list-row__info">
                   <span className="list-row__title">{c.nome || "Cliente"}</span>
                   <span className="list-row__meta">
