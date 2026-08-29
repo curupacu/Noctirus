@@ -266,6 +266,9 @@ const TIMEOUT_MS = 5000;
 const TIMEOUT_MS_GROQ = 4000;
 const CONFIANCA_MINIMA = 0.5;
 export const TODAS_CATEGORIAS = Object.values(CATEGORIAS_POR_AREA).flatMap((lista) => lista.map((c) => c.valor));
+// Áreas de atuação que um advogado pode escolher — não inclui "indefinido", que é só
+// resultado possível da classificação da triagem, nunca uma opção de cadastro.
+export const AREAS_VALIDAS = Object.keys(CATEGORIAS_POR_AREA);
 
 let clienteGeminiInstance = null;
 function clienteGemini() {

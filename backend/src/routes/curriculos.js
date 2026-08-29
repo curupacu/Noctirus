@@ -1,10 +1,23 @@
 import { Router } from "express";
+import { z } from "zod";
 import { db } from "../lib/firebase-admin.js";
 import { requireRole, verificarToken } from "../middlewares/auth.js";
+import { validarBody } from "../middlewares/validar.js";
 
 export const curriculosRouter = Router();
 
 const CAMPOS = ["formacao", "especializacoes", "cursos", "experiencias"];
+
+// Antes só checava "é array" — dava pra mandar um item de 50KB ou uma lista com milhares
+// de entradas, sem limite nenhum de tamanho do documento no Firestore. Cada item é uma
+// linha curta de texto livre (ex.: "Direito - USP (2015)"), não um texto longo.
+const listaDeLinhas = z.array(z.string().trim().max(200)).max(50).optional();
+const schemaCurriculo = z.object({
+  formacao: listaDeLinhas,
+  especializacoes: listaDeLinhas,
+  cursos: listaDeLinhas,
+  experiencias: listaDeLinhas,
+});
 
 curriculosRouter.get("/curriculos/:uid", async (req, res) => {
   const doc = await db.collection("curriculos").doc(req.params.uid).get();
@@ -18,6 +31,7 @@ curriculosRouter.put(
   "/curriculos/:uid",
   verificarToken,
   requireRole("advogado"),
+  validarBody(schemaCurriculo),
   async (req, res) => {
     const { uid } = req.params;
     if (uid !== req.user.uid) {
@@ -26,12 +40,7 @@ curriculosRouter.put(
 
     const campos = {};
     for (const campo of CAMPOS) {
-      if (req.body[campo] !== undefined) {
-        if (!Array.isArray(req.body[campo])) {
-          return res.status(400).json({ erro: `Campo '${campo}' deve ser uma lista` });
-        }
-        campos[campo] = req.body[campo];
-      }
+      if (req.body[campo] !== undefined) campos[campo] = req.body[campo];
     }
 
     if (Object.keys(campos).length === 0) {

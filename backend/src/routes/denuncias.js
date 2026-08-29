@@ -1,8 +1,23 @@
 import { Router } from "express";
+import { z } from "zod";
 import { db } from "../lib/firebase-admin.js";
 import { requireRole, verificarToken } from "../middlewares/auth.js";
+import { validarBody } from "../middlewares/validar.js";
 
 export const denunciasRouter = Router();
+
+// provaUrl aceitava qualquer string e o frontend renderiza direto num `<a href>`
+// (AdminDenunciasPage) — sem checar o protocolo, um valor tipo "javascript:..." rodava
+// no navegador do admin ao clicar em "Ver prova". http(s) only.
+const schemaDenuncia = z.object({
+  alvoId: z.string().trim().min(1).max(200).optional().nullable(),
+  descricao: z.string().trim().min(10, "Descreva a denúncia com pelo menos 10 caracteres").max(2000),
+  provaUrl: z
+    .url({ protocol: /^https?$/, message: "Deve ser um link http(s) válido" })
+    .max(2000)
+    .optional()
+    .nullable(),
+});
 
 // Registrar denúncia (RF011) — cliente ou advogado denunciando outro usuário da
 // plataforma. Sem upload de prova no MVP (Storage saiu do free tier — decisão registrada
@@ -12,12 +27,9 @@ denunciasRouter.post(
   "/denuncias",
   verificarToken,
   requireRole("cliente", "advogado"),
+  validarBody(schemaDenuncia),
   async (req, res) => {
     const { alvoId, descricao, provaUrl } = req.body;
-
-    if (!descricao || descricao.trim().length < 10) {
-      return res.status(400).json({ erro: "Descreva a denúncia com pelo menos 10 caracteres" });
-    }
 
     const denuncia = {
       autorId: req.user.uid,

@@ -99,6 +99,20 @@ describe("POST /auth/completar-cadastro", () => {
     expect(resposta.status).toBe(409);
   });
 
+  it("recusa área de atuação fora das válidas (civel/trabalhista)", async () => {
+    const token = cell.fake.criarToken({ uid: "u3", role: null });
+    const resposta = await request(app)
+      .post("/auth/completar-cadastro")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        role: "advogado",
+        nome: "Advogado Teste",
+        oab: { numero: "123456", uf: "SP" },
+        areasAtuacao: ["penal"],
+      });
+    expect(resposta.status).toBe(400);
+  });
+
   it("cria um advogado com sucesso, filtrando especialidades fora da taxonomia", async () => {
     const token = cell.fake.criarToken({ uid: "u3", role: null, email: "a@example.com" });
     const resposta = await request(app)
