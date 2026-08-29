@@ -86,5 +86,15 @@ service cloud.firestore {
         (request.auth.uid == resource.data.advogadoId || papel() == "admin");
       allow write: if false;
     }
+
+    // Notificação em tempo real (sininho) — só o backend cria (ver routes/conversas.js e
+    // routes/denuncias.js), o frontend lê direto do Firestore com onSnapshot (sem round-trip
+    // pela API a cada notificação nova) e só pode marcar como lida, nunca mudar o conteúdo.
+    match /notificacoes/{id} {
+      allow read: if dono(resource.data.destinatarioId);
+      allow update: if dono(resource.data.destinatarioId) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["lida"]);
+      allow create, delete: if false;
+    }
   }
 }

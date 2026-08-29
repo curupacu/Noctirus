@@ -3,6 +3,7 @@ import { enviarEmail } from "../lib/email.js";
 import { templateNovaResposta } from "../lib/emailTemplates.js";
 import { db } from "../lib/firebase-admin.js";
 import { requireRole, verificarToken } from "../middlewares/auth.js";
+import { criarNotificacao } from "../services/notificacoes.js";
 
 export const conversasRouter = Router();
 
@@ -136,8 +137,22 @@ conversasRouter.post(
 
     const ref = await db.collection("mensagensChat").add(mensagem);
 
+    // Notificação (sininho, tempo real) e e-mail são extras — nunca podem derrubar o
+    // envio da mensagem em si se falharem.
+    try {
+      const remetenteDoc = await db.collection("users").doc(req.user.uid).get();
+      const remetenteNome = remetenteDoc.data()?.nome || (souCliente ? "Um cliente" : "Um advogado");
+      await criarNotificacao({
+        destinatarioId: souCliente ? advogadoId : clienteId,
+        tipo: "nova_mensagem",
+        texto: `${remetenteNome}: ${texto}`,
+        link: souCliente ? `/conversas/${clienteId}` : `/advogados/${advogadoId}/contato`,
+      });
+    } catch (erro) {
+      console.error("conversas: falha ao criar notificação —", erro.message || erro);
+    }
+
     if (!souCliente) {
-      // Notificação é um extra, não pode derrubar o envio da mensagem se falhar.
       try {
         await notificarClienteSeNecessario({ conversaId: mensagem.conversaId, clienteId, advogadoId });
       } catch (erro) {

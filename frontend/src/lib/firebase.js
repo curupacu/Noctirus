@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -12,3 +13,7 @@ const firebaseConfig = {
 
 export const firebaseApp = initializeApp(firebaseConfig);
 export const auth = getAuth(firebaseApp);
+// Só pro sininho de notificação (onSnapshot em tempo real) — o resto do app fala com o
+// Firestore só através da API (Admin SDK no backend), essa é a única leitura direta do
+// cliente, liberada nas firestore.rules (ver database/firestore.rules).
+export const db = getFirestore(firebaseApp);
