@@ -38,6 +38,78 @@ usersRouter.put(
   },
 );
 
+// Direito de acesso/portabilidade (LGPD, art. 18) — o titular baixa tudo que a Nocturis
+// tem sobre ele sem precisar pedir pro admin. Junta o próprio cadastro com tudo que
+// referencia o uid nas outras coleções (como cliente e/ou como advogado, dependendo do
+// papel), igual o admin já enxerga espalhado em telas diferentes, só que num lugar só.
+usersRouter.get("/users/me/dados", verificarToken, async (req, res) => {
+  const { uid, role } = req.user;
+
+  const usuarioDoc = await db.collection("users").doc(uid).get();
+  if (!usuarioDoc.exists) {
+    return res.status(404).json({ erro: "Cadastro não encontrado" });
+  }
+
+  const paraLista = (snapshot) => snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+  const dados = { cadastro: { uid, ...usuarioDoc.data() } };
+
+  if (role === "advogado") {
+    const [advogadoDoc, curriculoDoc, contatosRecebidos, feedbacksRecebidos] = await Promise.all([
+      db.collection("advogados").doc(uid).get(),
+      db.collection("curriculos").doc(uid).get(),
+      db.collection("contatos").where("advogadoId", "==", uid).get(),
+      db.collection("feedbacks").where("advogadoId", "==", uid).get(),
+    ]);
+    dados.perfilAdvogado = advogadoDoc.exists ? advogadoDoc.data() : null;
+    dados.curriculo = curriculoDoc.exists ? curriculoDoc.data() : null;
+    dados.contatosRecebidos = paraLista(contatosRecebidos);
+    dados.feedbacksRecebidos = paraLista(feedbacksRecebidos);
+  }
+
+  if (role === "cliente") {
+    const [triagens, contatosFeitos, feedbacksEnviados] = await Promise.all([
+      db.collection("triagens").where("clienteId", "==", uid).get(),
+      db.collection("contatosCliente").where("clienteId", "==", uid).get(),
+      db.collection("feedbacks").where("autorId", "==", uid).get(),
+    ]);
+    dados.triagens = paraLista(triagens);
+    dados.contatosFeitos = paraLista(contatosFeitos);
+    dados.feedbacksEnviados = paraLista(feedbacksEnviados);
+  }
+
+  const [mensagensEnviadas, denunciasFeitas] = await Promise.all([
+    db.collection("mensagensChat").where(role === "cliente" ? "clienteId" : "advogadoId", "==", uid).get(),
+    db.collection("denuncias").where("autorId", "==", uid).get(),
+  ]);
+  dados.mensagensChat = paraLista(mensagensEnviadas);
+  dados.denunciasFeitas = paraLista(denunciasFeitas);
+
+  res.json(dados);
+});
+
+// Direito de eliminação (LGPD, art. 18, VI) — o próprio titular apaga a conta, sem
+// depender de um admin fazer isso por ele (antes só existia DELETE /admin/users/:uid).
+// Mesmo efeito da remoção feita pelo admin: sai da Auth e do Firestore (users +
+// advogados/curriculos, se for o caso). Não apaga registros que também são dado de
+// terceiros (mensagens de chat, feedback que ele deixou, denúncia que registrou) — apagar
+// esses de vez destruiria o histórico do outro lado da conversa/moderação; ver
+// docs/ROADMAP.md pra anonimização completa como item de LGPD mais robusto.
+usersRouter.delete("/users/me", verificarToken, async (req, res) => {
+  const { uid, role } = req.user;
+
+  const batch = db.batch();
+  batch.delete(db.collection("users").doc(uid));
+  if (role === "advogado") {
+    batch.delete(db.collection("advogados").doc(uid));
+    batch.delete(db.collection("curriculos").doc(uid));
+  }
+  await batch.commit();
+  await ignorarSeUsuarioNaoExisteNaAuth(auth.deleteUser(uid));
+
+  res.json({ ok: true });
+});
+
 // Gerenciar clientes e advogados (Sprint 8) — admins não aparecem aqui, moderação não se
 // aplica entre admins.
 usersRouter.get("/admin/users", verificarToken, requireRole("admin"), async (_req, res) => {

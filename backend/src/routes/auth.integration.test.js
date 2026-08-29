@@ -59,8 +59,17 @@ describe("POST /auth/completar-cadastro", () => {
     const resposta = await request(app)
       .post("/auth/completar-cadastro")
       .set("Authorization", `Bearer ${token}`)
-      .send({ role: "cliente", nome: "X" });
+      .send({ role: "cliente", nome: "X", aceitouPoliticaPrivacidade: true });
     expect(resposta.status).toBe(409);
+  });
+
+  it("recusa sem aceitar a política de privacidade", async () => {
+    const token = cell.fake.criarToken({ uid: "u1", role: null });
+    const resposta = await request(app)
+      .post("/auth/completar-cadastro")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ role: "cliente", nome: "Cliente Teste" });
+    expect(resposta.status).toBe(400);
   });
 
   it("cria um cliente com sucesso, sem criar advogados/curriculos", async () => {
@@ -68,7 +77,12 @@ describe("POST /auth/completar-cadastro", () => {
     const resposta = await request(app)
       .post("/auth/completar-cadastro")
       .set("Authorization", `Bearer ${token}`)
-      .send({ role: "cliente", nome: "Cliente Teste", telefone: "11999999999" });
+      .send({
+        role: "cliente",
+        nome: "Cliente Teste",
+        telefone: "11999999999",
+        aceitouPoliticaPrivacidade: true,
+      });
 
     expect(resposta.status).toBe(201);
     expect(resposta.body).toEqual({ role: "cliente" });
@@ -95,7 +109,12 @@ describe("POST /auth/completar-cadastro", () => {
     const resposta = await request(app)
       .post("/auth/completar-cadastro")
       .set("Authorization", `Bearer ${token}`)
-      .send({ role: "advogado", nome: "Advogado Teste", oab: { numero: "123456", uf: "SP" } });
+      .send({
+        role: "advogado",
+        nome: "Advogado Teste",
+        oab: { numero: "123456", uf: "SP" },
+        aceitouPoliticaPrivacidade: true,
+      });
     expect(resposta.status).toBe(409);
   });
 
@@ -126,6 +145,7 @@ describe("POST /auth/completar-cadastro", () => {
         especialidades: ["horas_extras", "categoria_inventada"],
         localizacao: { cidade: "São Paulo", uf: "SP" },
         whatsapp: "11988887777",
+        aceitouPoliticaPrivacidade: true,
       });
 
     expect(resposta.status).toBe(201);

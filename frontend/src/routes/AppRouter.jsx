@@ -11,6 +11,7 @@ import { CadastroPage } from "../features/auth/CadastroPage";
 import { LoginPage } from "../features/auth/LoginPage";
 import { RotaProtegida } from "../features/auth/RotaProtegida";
 import { CartaoPage } from "../features/cartao/CartaoPage";
+import { MeusDadosPage } from "../features/conta/MeusDadosPage";
 import { MeusContatosPage } from "../features/contatos/MeusContatosPage";
 import { ConversaPage } from "../features/conversas/ConversaPage";
 import { ConversasPage } from "../features/conversas/ConversasPage";
@@ -23,6 +24,7 @@ import { MinhasTriagensPage } from "../features/triagem/MinhasTriagensPage";
 import { ResultadoPage } from "../features/triagem/ResultadoPage";
 import { TriagemPage } from "../features/triagem/TriagemPage";
 import { HomePage } from "./HomePage";
+import { PrivacidadePage } from "./PrivacidadePage";
 
 export function AppRouter() {
   return (
@@ -32,6 +34,7 @@ export function AppRouter() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/cadastro" element={<CadastroPage />} />
+        <Route path="/privacidade" element={<PrivacidadePage />} />
         <Route path="/advogados" element={<AdvogadosListPage />} />
         <Route path="/advogados/:uid" element={<AdvogadoPublicoPage />} />
         <Route path="/advogados/:uid/contato" element={<ContatoAdvogadoPage />} />
@@ -112,6 +115,14 @@ export function AppRouter() {
           element={
             <RotaProtegida papeis={["advogado"]}>
               <ConversaPage />
+            </RotaProtegida>
+          }
+        />
+        <Route
+          path="/meus-dados"
+          element={
+            <RotaProtegida papeis={["cliente", "advogado"]}>
+              <MeusDadosPage />
             </RotaProtegida>
           }
         />

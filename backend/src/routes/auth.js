@@ -14,6 +14,11 @@ const schemaCompletarCadastro = z.object({
   role: z.enum(PAPEIS_PERMITIDOS, { message: "Papel inválido (use 'cliente' ou 'advogado')" }),
   nome: z.string().trim().min(1, "Nome é obrigatório").max(150),
   telefone: z.string().trim().max(20).optional().default(""),
+  // Consentimento explícito (LGPD, art. 8º) — sem isso marcado, a conta não é criada.
+  // A tela de cadastro precisa linkar pra política de privacidade perto dessa opção.
+  aceitouPoliticaPrivacidade: z.literal(true, {
+    message: "É preciso aceitar a política de privacidade pra criar a conta",
+  }),
   // oab tem formato próprio (numero/uf) validado por validarFormatoOab, ver abaixo —
   // aqui só garante que é um objeto, não valida os campos internos pra não duplicar regra.
   oab: z.object({ numero: z.unknown().optional(), uf: z.unknown().optional() }).optional(),
@@ -60,6 +65,7 @@ authRouter.post(
       telefone,
       status: "ativo",
       createdAt: new Date().toISOString(),
+      consentimentoPrivacidadeEm: new Date().toISOString(),
     });
 
     if (role === "advogado") {
