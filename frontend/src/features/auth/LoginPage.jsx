@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { BotaoGoogle } from "../../components/BotaoGoogle/BotaoGoogle";
 import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
 import { Logo } from "../../components/Logo/Logo";
@@ -7,7 +8,7 @@ import { useAuth } from "./AuthContext";
 import { rotaInicial } from "./rotaInicial";
 
 export function LoginPage() {
-  const { login } = useAuth();
+  const { login, loginComGoogle } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -29,6 +30,26 @@ export function LoginPage() {
     }
   }
 
+  // Conta Google sem role (primeira vez por aqui) — manda completar o cadastro em vez de
+  // travar num erro; o Firebase já criou a conta sozinho, não tem "não encontrado" com
+  // provider federado. viaGoogle no state evita pedir pra logar de novo lá na CadastroPage.
+  async function entrarComGoogle() {
+    setErro(null);
+    setEnviando(true);
+    try {
+      const { role: roleLogado } = await loginComGoogle();
+      if (roleLogado) {
+        navigate(rotaInicial(roleLogado));
+      } else {
+        navigate("/cadastro", { state: { viaGoogle: true } });
+      }
+    } catch {
+      setErro("Não foi possível entrar com o Google");
+    } finally {
+      setEnviando(false);
+    }
+  }
+
   return (
     <main className="auth-screen">
       <Link to="/" className="auth-screen__close" aria-label="Voltar para o início">
@@ -41,6 +62,19 @@ export function LoginPage() {
           <h1>Entrar</h1>
           <p>Bem-vindo(a) de volta.</p>
         </div>
+
+        <div className="auth-screen__form step-enter" style={{ animationDelay: "120ms" }}>
+          <BotaoGoogle onClick={entrarComGoogle} disabled={enviando} style={{ width: "100%" }}>
+            Entrar com Google
+          </BotaoGoogle>
+        </div>
+
+        <p
+          className="text-muted step-enter"
+          style={{ animationDelay: "140ms", textAlign: "center", margin: "16px 0" }}
+        >
+          ou
+        </p>
 
         <form
           className="auth-screen__form step-enter"
