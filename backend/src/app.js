@@ -19,6 +19,14 @@ import { usersRouter } from "./routes/users.js";
 
 export const app = express();
 
+// Render fica atrás de 1 proxy reverso, que seta X-Forwarded-For com o IP real do
+// cliente. Sem confiar nesse hop, o Express usa o IP do proxy pra tudo — o
+// express-rate-limit então trata todo mundo como o mesmo "usuário" (rate limit
+// efetivamente por IP do Render, não por visitante) e loga erro a cada requisição
+// (achado nos logs de produção, 29/08). `1` = confia só no primeiro hop, não na cadeia
+// inteira — importa pra não permitir que o próprio cliente falsifique X-Forwarded-For.
+app.set("trust proxy", 1);
+
 // Sem restrição de origem, qualquer site do mundo podia chamar a API com o token de
 // alguém (ex.: página maliciosa fazendo o navegador da vítima usar a sessão dela contra
 // a própria conta). ALLOWED_ORIGINS é opcional em dev — sem ela, libera qualquer origem
