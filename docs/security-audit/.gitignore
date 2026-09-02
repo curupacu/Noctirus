@@ -1,0 +1,4 @@
+# Gráficos intermediários gerados por gerar_relatorio.py — já embutidos no PDF final,
+# não precisam ficar versionados.
+_chart_donut.png
+_chart_bar.png
