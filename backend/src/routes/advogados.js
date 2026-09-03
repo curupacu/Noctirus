@@ -11,12 +11,16 @@ export const advogadosRouter = Router();
 // Upload de foto de perfil (achado da auditoria de UX, 29/07: advogados sem foto real
 // recebem 17x menos contato — ver docs/ROADMAP.md pra decisão anterior de adiar isso).
 // Memória, não disco — o arquivo só existe no processo até subir pro Cloudinary.
+// Só formatos raster — nunca SVG, que pode embutir <script> e virar XSS armazenado se
+// algum dia a URL for aberta como documento (achado da auditoria de segurança, F3).
+const MIMETYPES_FOTO_PERMITIDOS = ["image/jpeg", "image/png", "image/webp"];
+
 const uploadFoto = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
-    if (!file.mimetype.startsWith("image/")) {
-      return cb(new Error("Envie um arquivo de imagem"));
+    if (!MIMETYPES_FOTO_PERMITIDOS.includes(file.mimetype)) {
+      return cb(new Error("Envie uma imagem JPEG, PNG ou WebP"));
     }
     cb(null, true);
   },

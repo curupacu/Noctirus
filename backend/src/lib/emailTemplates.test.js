@@ -31,6 +31,18 @@ describe("templateNovaResposta", () => {
     expect(html).not.toContain("res.cloudinary.com");
   });
 
+  // Achado da auditoria de segurança (F2): o nome do advogado ia sem escape pro HTML do
+  // e-mail — um nome com marcação HTML chegava intacto na caixa de entrada do cliente.
+  it("escapa HTML no nome do advogado (evita injeção no e-mail)", () => {
+    const html = templateNovaResposta({
+      advogadoNome: '<img src=x onerror="alert(1)">',
+      advogadoFoto: null,
+      linkConversa: "https://nocturis.com.br/advogados/a1/contato",
+    });
+    expect(html).not.toContain("<img src=x onerror");
+    expect(html).toContain("&lt;img src=x onerror=&quot;alert(1)&quot;&gt;");
+  });
+
   it("é HTML válido o bastante pra ter doctype e não vazar chaves de template", () => {
     const html = templateNovaResposta({
       advogadoNome: "Alguém",

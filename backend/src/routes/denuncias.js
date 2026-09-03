@@ -4,6 +4,17 @@ import { requireRole, verificarToken } from "../middlewares/auth.js";
 
 export const denunciasRouter = Router();
 
+// Só aceita link http(s) de verdade — sem isso, um valor tipo "javascript:..." em
+// provaUrl vira execução de script na sessão de quem clicar no link (achado da auditoria
+// de segurança, F1: o admin é quem clica em "Ver prova" pra revisar a denúncia).
+function urlDeProvaValida(url) {
+  try {
+    return ["http:", "https:"].includes(new URL(url).protocol);
+  } catch {
+    return false;
+  }
+}
+
 // Registrar denúncia (RF011) — cliente ou advogado denunciando outro usuário da
 // plataforma. Sem upload de prova no MVP (Storage saiu do free tier — decisão registrada
 // em docs/ROADMAP.md); `provaUrl` aceita opcionalmente um link já hospedado em outro
@@ -17,6 +28,9 @@ denunciasRouter.post(
 
     if (!descricao || descricao.trim().length < 10) {
       return res.status(400).json({ erro: "Descreva a denúncia com pelo menos 10 caracteres" });
+    }
+    if (provaUrl && !urlDeProvaValida(provaUrl)) {
+      return res.status(400).json({ erro: "O link da prova precisa começar com http:// ou https://" });
     }
 
     const denuncia = {

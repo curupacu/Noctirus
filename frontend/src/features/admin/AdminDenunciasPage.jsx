@@ -7,6 +7,17 @@ import { AdminNav } from "./AdminNav";
 
 const LABEL_STATUS = { aberta: "Aberta", em_analise: "Em análise", resolvida: "Resolvida" };
 
+// Defesa em profundidade (achado da auditoria de segurança, F1): o backend já rejeita
+// provaUrl fora de http(s), mas confere de novo aqui antes de renderizar o link, caso
+// exista algum registro antigo salvo antes dessa validação existir.
+function urlDeProvaValida(url) {
+  try {
+    return ["http:", "https:"].includes(new URL(url).protocol);
+  } catch {
+    return false;
+  }
+}
+
 export function AdminDenunciasPage() {
   const [denuncias, setDenuncias] = useState(null);
   const [erro, setErro] = useState(null);
@@ -100,7 +111,7 @@ export function AdminDenunciasPage() {
               )}
             </p>
             <p>{d.descricao}</p>
-            {d.provaUrl && (
+            {d.provaUrl && urlDeProvaValida(d.provaUrl) && (
               <p>
                 <a href={d.provaUrl} target="_blank" rel="noreferrer">
                   Ver prova

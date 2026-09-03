@@ -15,7 +15,7 @@ authRouter.post("/auth/completar-cadastro", verificarToken, async (req, res) => 
   if (!PAPEIS_PERMITIDOS.includes(role)) {
     return res.status(400).json({ erro: "Papel inválido (use 'cliente' ou 'advogado')" });
   }
-  if (!nome) {
+  if (!String(nome || "").trim()) {
     return res.status(400).json({ erro: "Nome é obrigatório" });
   }
 
@@ -38,7 +38,9 @@ authRouter.post("/auth/completar-cadastro", verificarToken, async (req, res) => 
 
   await db.collection("users").doc(uid).set({
     role,
-    nome,
+    // Capado igual bio/comentario de feedback — sem isso, o nome ia inteiro (sem limite)
+    // pro HTML do e-mail de notificação (achado da auditoria de segurança, F2).
+    nome: String(nome).trim().slice(0, 120),
     email,
     telefone: telefone || "",
     status: "ativo",

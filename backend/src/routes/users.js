@@ -15,7 +15,7 @@ usersRouter.get("/users/me", verificarToken, async (req, res) => {
 usersRouter.put("/users/me", verificarToken, async (req, res) => {
   const { nome, telefone } = req.body;
   const campos = {};
-  if (nome !== undefined) campos.nome = nome;
+  if (nome !== undefined) campos.nome = String(nome).trim().slice(0, 120);
   if (telefone !== undefined) campos.telefone = telefone;
 
   if (Object.keys(campos).length === 0) {
