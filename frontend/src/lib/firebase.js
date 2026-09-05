@@ -4,12 +4,11 @@ import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  // Domínio próprio, não o *.firebaseapp.com padrão — com domínios diferentes, o Firebase
-  // depende de um iframe entre os dois domínios pra sincronizar a sessão, e navegador com
-  // bloqueio de storage entre domínios (Safari, PWA instalado) simplesmente não guarda o
-  // login (achado do usuário, 29/08: login "some" toda vez que fecha o site/app). Precisa
-  // estar na lista de domínios autorizados do Auth (Firebase Console) — já estava, de
-  // quando o login com Google foi configurado.
+  // Fica em *.firebaseapp.com (não o domínio próprio) de propósito — testado trocar pro
+  // domínio próprio em 29/08 achando que resolvia o bug de sessão sumindo, mas quebrou o
+  // login com Google (nocturis.com.br/__/auth/handler cai na nossa 404 em vez da página
+  // de callback do Firebase — as URLs reservadas /__/auth/** não são servidas em domínio
+  // customizado do jeito que a documentação sugere). Revertido no mesmo dia.
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
