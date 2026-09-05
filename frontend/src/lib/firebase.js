@@ -20,8 +20,11 @@ export const firebaseApp = initializeApp(firebaseConfig);
 export const auth = getAuth(firebaseApp);
 // browserLocalPersistence já é o padrão do SDK, mas fica explícito de propósito — depois
 // do bug de sessão sumindo, não vale deixar isso implícito esperando que ninguém mude sem
-// perceber.
-setPersistence(auth, browserLocalPersistence);
+// perceber. .catch() só pra não virar unhandled rejection silenciosa se IndexedDB estiver
+// bloqueado nesse navegador (o que seria, aliás, uma pista e tanto pro bug).
+setPersistence(auth, browserLocalPersistence).catch((err) => {
+  console.error("Falha ao configurar persistência de sessão", err);
+});
 // Só pro sininho de notificação (onSnapshot em tempo real) — o resto do app fala com o
 // Firestore só através da API (Admin SDK no backend), essa é a única leitura direta do
 // cliente, liberada nas firestore.rules (ver database/firestore.rules).
