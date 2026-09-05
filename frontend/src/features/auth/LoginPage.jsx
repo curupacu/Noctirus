@@ -8,10 +8,23 @@ import { useTitulo } from "../../lib/useTitulo";
 import { useAuth } from "./AuthContext";
 import { rotaInicial } from "./rotaInicial";
 
+// Diagnóstico temporário do bug de sessão sumindo sozinha (ver AuthContext.jsx) — lê uma
+// vez só na primeira renderização, senão reaparecia de novo cada vez que o React
+// re-renderiza essa tela (ex.: digitando no formulário).
+function lerDiagnosticoSessao() {
+  try {
+    const bruto = localStorage.getItem("nocturis-diag-sessao");
+    return bruto ? JSON.parse(bruto) : null;
+  } catch {
+    return null;
+  }
+}
+
 export function LoginPage() {
   useTitulo("Entrar");
   const { login, loginComGoogle } = useAuth();
   const navigate = useNavigate();
+  const [diagnostico] = useState(lerDiagnosticoSessao);
 
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -110,6 +123,18 @@ export function LoginPage() {
         <p className="auth-screen__footer step-enter" style={{ animationDelay: "220ms" }}>
           Não tem conta? <Link to="/cadastro">Criar conta</Link>
         </p>
+
+        {diagnostico && (
+          <div
+            className="card"
+            style={{ marginTop: 24, fontSize: "12px", wordBreak: "break-word" }}
+          >
+            <strong>Diagnóstico da sessão (temporário)</strong>
+            <pre style={{ whiteSpace: "pre-wrap", margin: "8px 0 0" }}>
+              {JSON.stringify(diagnostico, null, 2)}
+            </pre>
+          </div>
+        )}
       </div>
     </main>
   );
