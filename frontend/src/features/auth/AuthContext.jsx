@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react";
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
@@ -6,7 +7,7 @@ import {
   signInWithPopup,
   signOut,
 } from "firebase/auth";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { auth } from "../../lib/firebase";
 
 const AuthContext = createContext(null);
@@ -15,18 +16,51 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
+  // Diagnóstico temporário do bug de sessão sumindo sozinha no mobile (achado do usuário,
+  // 29/08) — distingue logout pedido de verdade de o Firebase reportar "sem sessão"
+  // sozinho. Remover essa ref e o bloco de Sentry.captureMessage assim que a causa for
+  // confirmada.
+  const logoutExplicito = useRef(false);
 
   useEffect(() => {
     return onAuthStateChanged(auth, async (firebaseUser) => {
       if (!firebaseUser) {
+        if (!logoutExplicito.current) {
+          try {
+            const dbs = await indexedDB.databases();
+            Sentry.captureMessage("diagnostico-sessao: onAuthStateChanged sem usuário", {
+              level: "warning",
+              extra: {
+                indexedDbNomes: dbs.map((d) => d.name),
+                temFirebaseDb: dbs.some((d) => d.name?.includes("firebaseLocalStorageDb")),
+                userAgent: navigator.userAgent,
+                standalone: window.matchMedia("(display-mode: standalone)").matches,
+              },
+            });
+          } catch (err) {
+            console.error("Falha no diagnóstico de sessão", err);
+          }
+        }
+        logoutExplicito.current = false;
         setUser(null);
         setRole(null);
         setLoading(false);
         return;
       }
-      const tokenResult = await firebaseUser.getIdTokenResult();
+      // O Firebase já confirmou que existe sessão salva — marca como logado ANTES de
+      // buscar o papel, não depois. O ID token dura só 1h, então reabrir o app depois de
+      // um tempo sempre precisa renovar ele por rede; sem isso, uma renovação que falha
+      // (rede instável logo ao abrir o app — bem mais comum no celular saindo de "app
+      // fechado" do que no PC com wifi já estabilizado) travava em "Carregando..." pra
+      // sempre e nunca marcava como logado, parecendo que a sessão tinha sumido de vez
+      // (achado do usuário, 29/08: login "some" toda vez que fecha o app no Android).
       setUser(firebaseUser);
-      setRole(tokenResult.claims.role || null);
+      try {
+        const tokenResult = await firebaseUser.getIdTokenResult();
+        setRole(tokenResult.claims.role || null);
+      } catch (err) {
+        console.error("Falha ao renovar o token de sessão", err);
+      }
       setLoading(false);
     });
   }, []);
@@ -58,6 +92,7 @@ export function AuthProvider({ children }) {
   }
 
   async function logout() {
+    logoutExplicito.current = true;
     await signOut(auth);
   }
 
