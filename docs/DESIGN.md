@@ -102,17 +102,22 @@ Esse era o problema das telas antigas (cartão branco-no-branco).
 
 ---
 
-## 4. Tokens (substituir o conteúdo de tokens.css por estes)
+## 4. Tokens (estado real em produção — espelha `frontend/src/styles/tokens.css`)
+
+> **Atualização (05/09):** esta seção antes só listava os valores do design original
+> (escuro fixo em tudo). Desde 29/07 o app abre no **tema claro por padrão**, com escuro
+> opcional via `ThemeToggle` — então os tokens de fundo/superfície/texto abaixo agora têm
+> DOIS valores (claro e escuro), não um só. As constantes de marca (ink-9xx, gold, cream,
+> brown, area-*) continuam fixas nos dois temas, como sempre foram.
 
 ```css
 :root {
-  /* Fundos — escada de profundidade (quase-preto -> marrom), CHAPADOS */
-  --ink-950: #14120F;   /* fundo BASE da tela (atrás de tudo) */
-  --ink-900: #1E1913;   /* seções */
-  --ink-850: #2A2118;   /* cards comuns (sólido, SEM degradê) */
-  --ink-800: #37291C;   /* hover / elevado */
-  --surface-warm: #61402C; /* superfície de DESTAQUE (card resultado, header) — usar pouco */
-  --border:  #47382A;   /* borda fininha 1px */
+  /* Constantes da marca — NÃO trocam entre claro/escuro. */
+  --ink-950: #14120F;
+  --ink-900: #1E1913;
+  --ink-850: #2A2118;
+  --ink-800: #37291C;
+  --surface-warm: #61402C; /* header e card de destaque — mesma cor nos dois temas */
 
   /* Marrons da coruja — só em detalhes (ícones, tags, divisórias) */
   --brown-400: #C89B6A;
@@ -125,10 +130,10 @@ Esse era o problema das telas antigas (cartão branco-no-branco).
   --gold:     #D9A23A;   /* botão principal, eyebrow, 1 palavra no título, ícone/bico */
   --gold-dim: #B98527;   /* hover do dourado */
 
-  /* Texto — creme quente, NUNCA branco puro */
-  --cream:       #F3ECDF;   /* título / texto principal */
-  --cream-dim:   #B3A994;   /* secundário */
-  --cream-faint: #7E7566;   /* legenda / placeholder */
+  /* Creme — texto sobre fundo escuro (header, cards de destaque, tema escuro) */
+  --cream:       #F3ECDF;
+  --cream-dim:   #B3A994;
+  --cream-faint: #7E7566;
 
   /* Apoio (usar pouco) */
   --green: #7FB98A;   /* sucesso / verificado */
@@ -145,14 +150,44 @@ Esse era o problema das telas antigas (cartão branco-no-branco).
   --font-display: "Fraunces", Georgia, serif;        /* títulos — combina com a logo */
   --font-body: "IBM Plex Sans", system-ui, sans-serif; /* texto / UI — era Inter até 19/08 */
 
-  /* Forma — cantos discretos */
+  /* Forma — cantos discretos. Sombra quase nula de propósito: profundidade vem da
+     borda de 1px, não de sombra (ver seção 5). */
   --radius: 12px;
   --radius-sm: 8px;
-  --shadow: 0 10px 28px -14px rgba(0,0,0,0.75);
+  --shadow: none;
+
+  /* --- Tema CLARO (padrão da aplicação) --- */
+  --bg: #FAF7F1;         /* fundo da tela */
+  --bg-section: #F1EAD9; /* seções/faixas dentro da tela */
+  --surface: #FFFFFF;    /* card — branco puro sobre fundo creme, não branco-no-branco */
+  --surface-hover: #F1EDE4;
+  --border: #E4E0D7;
+  --text: #221B12;
+  --text-dim: #5B4C36;
+  --text-faint: #8A7B60;
+}
+
+/* Tema ESCURO — ligado pelo ThemeToggle no Header, guardado em localStorage
+   (ver frontend/src/lib/theme.js). Só os tokens de superfície/texto trocam; dourado,
+   marrom e --surface-warm ficam fixos nos dois temas, de propósito, pra manter a
+   identidade da marca constante independente do tema escolhido. */
+:root[data-theme="dark"] {
+  --bg: #14120F;
+  --bg-section: #1E1913;
+  --surface: #2A2118;
+  --surface-hover: #37291C;
+  --border: #47382A;
+  --text: #F3ECDF;
+  --text-dim: #B3A994;
+  --text-faint: #7E7566;
 }
 ```
 
 Importar as fontes no `index.html` (Google Fonts): `Fraunces` (títulos) e `IBM Plex Sans` (corpo).
+
+**Exceção deliberada — telas de vitrine:** Home, Login e Cadastro ficam sempre no fundo
+escuro (`--ink-950`, fixo via `main.splash`/`main.auth-screen` em `index.css`), sem
+`ThemeToggle` — são a "vitrine" da marca e não seguem a escolha de tema do resto do app.
 
 ---
 
