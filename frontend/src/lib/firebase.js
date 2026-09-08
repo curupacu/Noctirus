@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { browserLocalPersistence, getAuth, setPersistence } from "firebase/auth";
+import { getAuth, indexedDBLocalPersistence, setPersistence } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -18,11 +18,15 @@ const firebaseConfig = {
 
 export const firebaseApp = initializeApp(firebaseConfig);
 export const auth = getAuth(firebaseApp);
-// browserLocalPersistence já é o padrão do SDK, mas fica explícito de propósito — depois
-// do bug de sessão sumindo, não vale deixar isso implícito esperando que ninguém mude sem
-// perceber. .catch() só pra não virar unhandled rejection silenciosa se IndexedDB estiver
-// bloqueado nesse navegador (o que seria, aliás, uma pista e tanto pro bug).
-setPersistence(auth, browserLocalPersistence).catch((err) => {
+// Era browserLocalPersistence (achando que era "o padrão mais seguro do SDK") — na
+// verdade essa suposição estava errada e era a causa provável do bug de sessão sumindo:
+// o SDK moderno já usa indexedDB como padrão por ser bem mais confiável que localStorage
+// em PWA/app fechado no Android (localStorage é mais sujeito a eviction do navegador).
+// Diagnóstico do usuário em 08/09 achou o indexedDB (firebaseLocalStorageDb) intacto na
+// hora que a sessão "sumiu" — ou seja, o dado sobrevivia, só não era mais a fonte de
+// verdade porque a gente tinha forçado localStorage explicitamente. Ficando explícito
+// mesmo assim, só que agora com o valor certo.
+setPersistence(auth, indexedDBLocalPersistence).catch((err) => {
   console.error("Falha ao configurar persistência de sessão", err);
 });
 // Só pro sininho de notificação (onSnapshot em tempo real) — o resto do app fala com o
