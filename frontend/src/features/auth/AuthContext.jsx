@@ -28,14 +28,20 @@ export function AuthProvider({ children }) {
         if (!logoutExplicito.current) {
           try {
             const dbs = await indexedDB.databases();
+            const diagnostico = {
+              quando: new Date().toISOString(),
+              indexedDbNomes: dbs.map((d) => d.name),
+              temFirebaseDb: dbs.some((d) => d.name?.includes("firebaseLocalStorageDb")),
+              userAgent: navigator.userAgent,
+              standalone: window.matchMedia("(display-mode: standalone)").matches,
+            };
+            // localStorage (síncrono, local, não depende de rede nem do Sentry estar de
+            // pé) — a LoginPage mostra isso na tela pra dar pra mandar print. Além disso,
+            // manda pro Sentry também, se estiver disponível.
+            localStorage.setItem("nocturis-diag-sessao", JSON.stringify(diagnostico));
             Sentry.captureMessage("diagnostico-sessao: onAuthStateChanged sem usuário", {
               level: "warning",
-              extra: {
-                indexedDbNomes: dbs.map((d) => d.name),
-                temFirebaseDb: dbs.some((d) => d.name?.includes("firebaseLocalStorageDb")),
-                userAgent: navigator.userAgent,
-                standalone: window.matchMedia("(display-mode: standalone)").matches,
-              },
+              extra: diagnostico,
             });
           } catch (err) {
             console.error("Falha no diagnóstico de sessão", err);
