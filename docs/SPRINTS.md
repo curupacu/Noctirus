@@ -24,7 +24,8 @@ substituído — assim os sprints seguintes não carregam código morto.
 - 🗂️ Chat de mensagens prontas e "Meus contatos" **ficam por enquanto** — são substituídos no
   Sprint 5, junto com o fluxo novo de contato (tirar antes deixaria o cliente sem jeito de
   falar com o advogado).
-- 🧹 Contas de teste visíveis ao público ("Advogado Teste", "Ratinho Silva"): renomear ou apagar.
+- 🧹 Banco: "Ratinho Silva", 5 denúncias e 1 avaliação antigas apagados (07/10). "Advogado Teste"
+  fica por enquanto (decisão do time) — ainda aparece em 1º na Home.
 
 **Pronto quando:** nenhuma tela/rota de denúncia ou suspensão sobrar, testes passando.
 
