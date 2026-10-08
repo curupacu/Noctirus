@@ -277,7 +277,8 @@ export function HomePage() {
     const trilho = carrossel.current;
     if (!trilho) return;
     const cartao = trilho.querySelector("li");
-    const passo = cartao ? cartao.getBoundingClientRect().width + 20 : trilho.clientWidth;
+    const espaco = parseFloat(getComputedStyle(trilho).columnGap) || 0;
+    const passo = cartao ? cartao.getBoundingClientRect().width + espaco : trilho.clientWidth;
     trilho.scrollBy({ left: sentido * passo, behavior: "smooth" });
   }
 

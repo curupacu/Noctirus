@@ -942,8 +942,31 @@ main.home {
     margin-top: 48px;
   }
 
+  /* Dois advogados por vez no celular. Com um cartão quase da largura da tela, as fotos
+     do seed (128px) esticavam quase 3x e ficavam borradas; com ~160px de largura esticam
+     bem menos. Info mais compacta pra não cobrir o rosto. */
   .home-team__track {
-    grid-auto-columns: 78%;
+    grid-auto-columns: calc((100% - 12px) / 2);
+    gap: 12px;
+  }
+
+  .home-lawyer__info {
+    left: 6px;
+    right: 6px;
+    bottom: 6px;
+    padding: 7px 8px;
+  }
+
+  .home-lawyer__name {
+    font-size: 13px;
+  }
+
+  .home-lawyer__meta {
+    font-size: 11px;
+  }
+
+  .home-lawyer__initial {
+    font-size: 48px;
   }
 
   .home-why__photo img {
