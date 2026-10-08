@@ -962,3 +962,15 @@ a.list-row:hover .advogado-row__chevron {
 a.list-row:hover .advogado-row__chevron {
   transform: translateX(3px);
 }
+
+/* Botão com cara de link — ação secundária dentro de um texto (ex.: "Mudar pra Cível" na
+   triagem), sem o peso visual de um botão de verdade. */
+.link-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--gold-ink);
+  text-decoration: underline;
+  cursor: pointer;
+}

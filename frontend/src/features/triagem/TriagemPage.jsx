@@ -7,48 +7,83 @@ import { ProgressSteps } from "../../components/ProgressSteps/ProgressSteps";
 import { api } from "../../lib/api";
 import { useTitulo } from "../../lib/useTitulo";
 
-const STEPS = ["Situação", "Detalhes", "Descrição"];
+const STEPS = ["Conte o caso", "Detalhes", "Advogados"];
 
+const AREAS = {
+  trabalhista: {
+    label: "Trabalhista",
+    descricao: "Emprego, demissão, salário, direitos de quem trabalha ou contrata",
+  },
+  civel: {
+    label: "Cível",
+    descricao: "Compras, contratos, dívidas, aluguel, família, herança, acidentes",
+  },
+};
+
+// Uma pergunta aberta (RF005): o cliente responde com as próprias palavras. O exemplo da
+// pergunta aparece dentro do campo, e o contador avisa quando ainda falta texto.
+function PerguntaAberta({ pergunta, valor, onChange }) {
+  const tamanho = valor.trim().length;
+  const falta = Math.max(0, pergunta.minimo - tamanho);
+  const longa = pergunta.maximo > 500;
+
+  return (
+    <div className="input-group step-enter">
+      <label className="input-label" htmlFor={`p-${pergunta.id}`}>
+        {pergunta.pergunta}
+      </label>
+      <textarea
+        id={`p-${pergunta.id}`}
+        className="input"
+        rows={longa ? 5 : 2}
+        placeholder={pergunta.ajuda}
+        value={valor}
+        maxLength={pergunta.maximo}
+        onChange={(e) => onChange(e.target.value)}
+      />
+      {tamanho > 0 && falta > 0 && (
+        <p className="char-counter text-muted">Escreva mais um pouco ({falta} caracteres)</p>
+      )}
+    </div>
+  );
+}
+
+function completas(perguntas, respostas) {
+  return perguntas.every((p) => (respostas[p.id] || "").trim().length >= p.minimo);
+}
+
+// Triagem em duas etapas (RF005–RF007). Etapa 1: perguntas comuns a todo caso → o sistema
+// identifica a área (POST /triagem/area). Etapa 2: perguntas da área → identifica a
+// especialidade, grava a triagem e mostra os advogados (POST /triagem/classificar).
 export function TriagemPage() {
   useTitulo("Nova triagem");
-  const [arvore, setArvore] = useState(null);
-  const [respostas, setRespostas] = useState({});
-  const [descricao, setDescricao] = useState("");
+  const navigate = useNavigate();
+  const [perguntas, setPerguntas] = useState(null);
+  const [etapa, setEtapa] = useState(1);
+  const [etapa1, setEtapa1] = useState({});
+  const [etapa2, setEtapa2] = useState({});
+  // Área sugerida pela etapa 1 ("indefinido" quando não deu pra identificar) e área que vale
+  // pra etapa 2 — o cliente pode trocar se a sugestão não fizer sentido pra ele.
+  const [areaSugerida, setAreaSugerida] = useState(null);
+  const [area, setArea] = useState(null);
   const [compartilharComAdvogado, setCompartilharComAdvogado] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    api.get("/triagem/perguntas").then(setArvore).catch((err) => setErro(err.message));
+    api.get("/triagem/perguntas").then(setPerguntas).catch((err) => setErro(err.message));
   }, []);
 
-  function escolherSituacao(valor) {
-    // Muda a área muda qual é a segunda pergunta — descarta a resposta anterior dela.
-    setRespostas({ situacao: valor });
-  }
-
-  function responderSegundaEtapa(perguntaId, valor) {
-    setRespostas((r) => ({ ...r, [perguntaId]: valor }));
-  }
-
-  async function enviar(e) {
+  async function identificarArea(e) {
     e.preventDefault();
     setErro(null);
-
-    if (descricao.trim().length < 10) {
-      setErro("Descreva o problema com pelo menos 10 caracteres.");
-      return;
-    }
-
     setEnviando(true);
     try {
-      const resultado = await api.post("/triagem/classificar", {
-        respostas,
-        descricao,
-        compartilharComAdvogado,
-      });
-      navigate(`/triagem/${resultado.id}`, { state: { resultado } });
+      const resultado = await api.post("/triagem/area", { etapa1 });
+      setAreaSugerida(resultado.area);
+      setArea(resultado.area === "indefinido" ? null : resultado.area);
+      setEtapa(2);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       setErro(err.message);
     } finally {
@@ -56,115 +91,136 @@ export function TriagemPage() {
     }
   }
 
-  if (!arvore && !erro) return <Loading>Carregando...</Loading>;
+  async function enviar(e) {
+    e.preventDefault();
+    setErro(null);
+    setEnviando(true);
+    try {
+      const resultado = await api.post("/triagem/classificar", {
+        etapa1,
+        area,
+        etapa2,
+        compartilharComAdvogado,
+      });
+      navigate(`/triagem/${resultado.id}`, { state: { resultado } });
+    } catch (err) {
+      setErro(err.message);
+      setEnviando(false);
+    }
+  }
 
-  const perguntaSegundaEtapa = arvore && arvore.segundaEtapa[respostas.situacao];
+  function trocarArea(nova) {
+    setArea(nova);
+    setEtapa2({});
+  }
 
-  const currentIndex = !respostas.situacao
-    ? 0
-    : perguntaSegundaEtapa && !respostas[perguntaSegundaEtapa.id]
-      ? 1
-      : 2;
+  if (!perguntas && !erro) return <Loading>Carregando...</Loading>;
+  if (!perguntas) return <p role="alert">{erro}</p>;
 
-  // Resumo do que já foi respondido — aparece só quando dá pra escrever a descrição,
-  // pra pessoa conferir antes de enviar (sem isso, as respostas somem de vista assim que
-  // a pergunta seguinte aparece na tela).
-  const respostasEscolhidas =
-    currentIndex === 2 && arvore
-      ? [
-          arvore.principal.opcoes.find((o) => o.valor === respostas.situacao)?.label,
-          perguntaSegundaEtapa?.opcoes.find((o) => o.valor === respostas[perguntaSegundaEtapa.id])?.label,
-        ].filter(Boolean)
-      : [];
+  const perguntasEtapa2 = area ? perguntas.etapa2[area] : [];
+  const outraArea = area === "civel" ? "trabalhista" : "civel";
 
   return (
     <main>
       <span className="eyebrow">
-        Passo {currentIndex + 1} de {STEPS.length}
+        Passo {etapa} de {STEPS.length}
       </span>
       <h1>Triagem</h1>
       <p className="text-muted">
-        Responda as perguntas e descreva seu caso com suas próprias palavras. Você pode fazer
-        uma nova triagem sempre que tiver outro problema.
+        {etapa === 1
+          ? "Conte o que está acontecendo com suas palavras. Não precisa saber nada de Direito."
+          : "Agora algumas perguntas sobre o seu tipo de caso, pra achar o advogado certo."}
       </p>
 
-      <ProgressSteps steps={STEPS} currentIndex={currentIndex} />
+      <ProgressSteps steps={STEPS} currentIndex={etapa - 1} />
 
-      <form className="card stack" onSubmit={enviar}>
-        {arvore && (
-          <div className="input-group step-enter">
-            <label className="input-label">{arvore.principal.pergunta}</label>
-            <div className="choice-grid">
-              {arvore.principal.opcoes.map((opcao) => (
-                <ChoiceCard
-                  key={opcao.valor}
-                  type="radio"
-                  name={arvore.principal.id}
-                  label={opcao.label}
-                  checked={respostas.situacao === opcao.valor}
-                  onChange={() => escolherSituacao(opcao.valor)}
-                />
-              ))}
-            </div>
+      {etapa === 1 && (
+        <form className="card stack" onSubmit={identificarArea}>
+          {perguntas.etapa1.map((p) => (
+            <PerguntaAberta
+              key={p.id}
+              pergunta={p}
+              valor={etapa1[p.id] || ""}
+              onChange={(valor) => setEtapa1((atual) => ({ ...atual, [p.id]: valor }))}
+            />
+          ))}
+
+          <div className="form-cta-sticky">
+            <Button type="submit" disabled={enviando || !completas(perguntas.etapa1, etapa1)}>
+              {enviando ? "Entendendo seu caso..." : "Continuar"}
+            </Button>
+            {erro && <p role="alert">{erro}</p>}
           </div>
-        )}
+        </form>
+      )}
 
-        {perguntaSegundaEtapa && (
-          <div className="input-group step-enter" key={perguntaSegundaEtapa.id}>
-            <label className="input-label">{perguntaSegundaEtapa.pergunta}</label>
-            <div className="choice-grid">
-              {perguntaSegundaEtapa.opcoes.map((opcao) => (
-                <ChoiceCard
-                  key={opcao.valor}
-                  type="radio"
-                  name={perguntaSegundaEtapa.id}
-                  label={opcao.label}
-                  checked={respostas[perguntaSegundaEtapa.id] === opcao.valor}
-                  onChange={() => responderSegundaEtapa(perguntaSegundaEtapa.id, opcao.valor)}
-                />
-              ))}
+      {etapa === 2 && (
+        <form className="card stack" onSubmit={enviar}>
+          {areaSugerida !== "indefinido" && area && (
+            <div className="stack step-enter" style={{ gap: "var(--space-xs)" }}>
+              <p style={{ margin: 0 }}>
+                Pelo que você contou, seu caso é da área <strong>{AREAS[area].label}</strong>.
+              </p>
+              <p className="text-muted" style={{ margin: 0 }}>
+                {area === areaSugerida ? "Não parece certo? " : "Você trocou a área sugerida. "}
+                <button type="button" className="link-button" onClick={() => trocarArea(outraArea)}>
+                  Mudar pra {AREAS[outraArea].label}
+                </button>
+              </p>
             </div>
+          )}
+
+          {areaSugerida === "indefinido" && (
+            <div className="input-group step-enter">
+              <label className="input-label">
+                Não conseguimos identificar a área só com isso. Seu problema é mais parecido com:
+              </label>
+              <div className="choice-grid">
+                {Object.entries(AREAS).map(([valor, { label, descricao }]) => (
+                  <ChoiceCard
+                    key={valor}
+                    type="radio"
+                    name="area"
+                    label={label}
+                    description={descricao}
+                    checked={area === valor}
+                    onChange={() => trocarArea(valor)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {perguntasEtapa2.map((p) => (
+            <PerguntaAberta
+              key={`${area}-${p.id}`}
+              pergunta={p}
+              valor={etapa2[p.id] || ""}
+              onChange={(valor) => setEtapa2((atual) => ({ ...atual, [p.id]: valor }))}
+            />
+          ))}
+
+          {area && (
+            <ChoiceCard
+              type="checkbox"
+              label="Deixar minhas respostas visíveis pro advogado que eu contatar"
+              description="Só depois que você mandar mensagem — ajuda o advogado a entender o caso antes de responder. Fica desligado até você marcar."
+              checked={compartilharComAdvogado}
+              onChange={() => setCompartilharComAdvogado((v) => !v)}
+            />
+          )}
+
+          <div className="form-cta-sticky">
+            <Button type="submit" disabled={enviando || !area || !completas(perguntasEtapa2, etapa2)}>
+              {enviando ? "Procurando advogados..." : "Ver advogados"}
+            </Button>
+            <Button type="button" variant="secondary" disabled={enviando} onClick={() => setEtapa(1)}>
+              Voltar
+            </Button>
+            {erro && <p role="alert">{erro}</p>}
           </div>
-        )}
-
-        {respostasEscolhidas.length > 0 && (
-          <ul className="chip-list step-enter" aria-label="Respostas escolhidas até agora">
-            {respostasEscolhidas.map((label) => (
-              <li key={label} className="chip">
-                {label}
-              </li>
-            ))}
-          </ul>
-        )}
-
-        <div className="input-group">
-          <label className="input-label" htmlFor="descricao">
-            Descreva seu caso
-          </label>
-          <textarea
-            id="descricao"
-            className="input"
-            rows={6}
-            value={descricao}
-            onChange={(e) => setDescricao(e.target.value)}
-          />
-        </div>
-
-        <ChoiceCard
-          type="checkbox"
-          label="Deixar a descrição do caso visível pro advogado que eu contatar"
-          description="Só depois que você mandar mensagem — ajuda o advogado a entender o caso antes de responder. Fica desligado até você marcar."
-          checked={compartilharComAdvogado}
-          onChange={() => setCompartilharComAdvogado((v) => !v)}
-        />
-
-        <div className="form-cta-sticky">
-          <Button type="submit" disabled={enviando}>
-            {enviando ? "Classificando..." : "Enviar"}
-          </Button>
-          {erro && <p role="alert">{erro}</p>}
-        </div>
-      </form>
+        </form>
+      )}
     </main>
   );
 }

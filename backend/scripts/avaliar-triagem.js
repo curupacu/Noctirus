@@ -6,9 +6,8 @@
 // Precisa de GEMINI_API_KEY no .env — sem ela, `classificar()` cai direto no fallback por
 // regras (RNF003) e o relatório mostra "origem: regras" pra todo mundo.
 //
-// Os casos usam só `descricao` (sem respostas guiadas) de propósito: é o caminho que mais
-// depende da qualidade do prompt, já que a árvore de perguntas sozinha já resolve a área
-// na maioria dos casos reais.
+// Os casos usam só um texto livre por caso (em vez das respostas separadas por pergunta)
+// pra manter a lista curta — é o mesmo texto que a IA recebe, só sem os rótulos das perguntas.
 import "dotenv/config";
 import { classificar } from "../src/services/triagem.js";
 
@@ -142,7 +141,13 @@ async function main() {
 
   for (const [indice, caso] of CASOS.entries()) {
     if (indice > 0) await esperar(INTERVALO_ENTRE_CHAMADAS_MS);
-    const resultado = await classificar({ respostas: {}, descricao: caso.descricao });
+    // Mesmo caminho da triagem de verdade: etapa 1 decide a área, etapa 2 (com a área
+    // fixa) decide a especialidade. Aqui as duas etapas usam o mesmo texto do caso.
+    const etapa1 = await classificar({ descricao: caso.descricao });
+    const resultado =
+      etapa1.areaClassificada === "indefinido"
+        ? etapa1
+        : await classificar({ descricao: caso.descricao, areaFixa: etapa1.areaClassificada });
 
     const areaOk = resultado.areaClassificada === caso.areaEsperada;
     const categoriaOk =

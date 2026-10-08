@@ -19,9 +19,10 @@ export const limiteGeral = rateLimit({
 // Mais rígido: /triagem/classificar chama IA paga (Gemini/Groq) a cada requisição —
 // sem isso, uma conta comprometida ou um script consegue estourar a cota/custo de API
 // só repetindo a mesma chamada.
+// Cada triagem completa faz 2 chamadas (etapa 1 + etapa 2), então 30 = ~15 triagens.
 export const limiteTriagem = rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 15,
+  limit: 30,
   standardHeaders: true,
   legacyHeaders: false,
   skip: () => emTeste,

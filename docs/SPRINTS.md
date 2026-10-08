@@ -63,7 +63,7 @@ substituído — assim os sprints seguintes não carregam código morto.
 > histórico de toda decisão; regras de transição (só recusa quem está em análise, só revoga
 > quem está aprovado). Banco: os 30 advogados fictícios do seed foram aprovados (07/10).
 
-## Sprint 3 — Triagem em duas etapas (RF005–RF007)
+## Sprint 3 — Triagem em duas etapas (RF005–RF007) ✅ código feito em 08/10
 
 - ✏️ **Etapa 1 — perguntas comuns a todos os casos**, respondidas com as próprias palavras
   (ex.: o que aconteceu, com quem é o problema, quando aconteceu). A IA identifica a **área**
@@ -78,6 +78,10 @@ substituído — assim os sprints seguintes não carregam código morto.
 - 📝 **Conteúdo das perguntas**: rascunho meu, revisão do time.
 
 **Pronto quando:** os casos de teste continuam batendo área e especialidade nas duas etapas.
+
+> Resultado em 08/10 (`npm run avaliar-triagem`, IA de verdade): **20/20 área e 20/20
+> especialidade**. Perguntas rascunhadas pelo Claude em `backend/src/services/triagem.js`
+> (`PERGUNTAS_ETAPA1`/`PERGUNTAS_ETAPA2`) — **falta a revisão do time**.
 
 ## Sprint 4 — Resultado com localização (RF008, RF009)
 
