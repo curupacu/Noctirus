@@ -35,6 +35,7 @@ Um documento por advogado, id = `uid` (mesmo doc de `users`, papel `"advogado"`)
 | `situacaoOab` | `"em_analise" \| "aprovado" \| "recusado" \| "revogado"` | Nasce `em_analise`; só o admin muda (`PATCH /advogados/:uid/situacao-oab`). Substituiu o antigo `verificado: boolean` (migração em `database/seed/migrar-situacao-oab.js`). |
 | `situacaoOabMotivo` | string ou `null` | Obrigatório pra recusar/revogar — o advogado vê. |
 | `situacaoOabAtualizadaEm`, `situacaoOabPor` | string ISO, uid | Quando e qual admin mudou a situação. |
+| `historicoOab` | `{ situacao, motivo, em, por }[]` | Toda mudança de situação, na ordem (cadastro, decisões do admin, correção da OAB recusada). |
 | `vezesSugerido` | number | Contador de quantas triagens sugeriram esse advogado — prova social honesta, incrementado em `POST /triagem/classificar`. |
 
 ## `curriculos`

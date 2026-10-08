@@ -86,6 +86,9 @@ authRouter.post(
         situacaoOabMotivo: null,
         situacaoOabAtualizadaEm: new Date().toISOString(),
         situacaoOabPor: null,
+        historicoOab: [
+          { situacao: "em_analise", motivo: null, em: new Date().toISOString(), por: uid },
+        ],
       });
       await db.collection("curriculos").doc(uid).set({
         formacao: [],

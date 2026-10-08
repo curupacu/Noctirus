@@ -6,8 +6,7 @@ sem precisar de nenhuma credencial real do Firebase ou do Gemini pra rodar.
 
 ## Números (19/08)
 
-- **164 testes**, em **13 arquivos**, 100% passando (outubro/2026, depois de remover denúncias,
-  suspensão e avaliação no Sprint 0).
+- **185 testes**, em **13 arquivos**, 100% passando (outubro/2026, depois dos Sprints 0–2).
 - Framework: [Vitest](https://vitest.dev/) (`backend/package.json`).
 - Rodar: `npm test` na raiz (delega pro backend) ou `npm test` dentro de `backend/`.
 - Tempo total: ~8s.
@@ -57,7 +56,7 @@ Nenhum teste toca Firebase ou Gemini de verdade:
 | Arquivo | Área coberta |
 | --- | --- |
 | `auth.integration.test.js` | `POST /auth/completar-cadastro` — papel inválido, nome ausente, cadastro duplicado, OAB com formato inválido ou já cadastrada, criação de cliente e de advogado com sucesso (filtrando especialidades fora da taxonomia). |
-| `advogados.integration.test.js` | Listagem pública (sem token), filtro por área, 404 de advogado inexistente, edição do próprio perfil (recusando editar o de outro), upload de foto (recusa sem token/arquivo/tipo errado, sucesso), aprovação de OAB restrita a admin, listagem admin. |
+| `advogados.integration.test.js` | Listagem pública (sem token), filtro por área, 404 de advogado inexistente, edição do próprio perfil (recusando editar o de outro), upload de foto (recusa sem token/arquivo/tipo errado, sucesso), perfil público só pra OAB aprovada, validação de OAB pelo admin (transições, motivo obrigatório pra recusar/revogar, histórico, aviso por sininho e e-mail mesmo se o e-mail falhar), correção da OAB recusada pelo advogado. |
 | `users.integration.test.js` | `GET/PUT /users/me`, foto do cliente (só JPEG/PNG/WebP), exportação dos próprios dados (LGPD) e exclusão da própria conta (Auth + Firestore, incluindo `advogados`/`curriculos` quando aplicável). |
 | `curriculos.integration.test.js` | Leitura pública do currículo, edição restrita ao próprio advogado, validação de campo que deveria ser lista, atualização com sucesso. |
 | `triagem.integration.test.js` | `GET /triagem/perguntas` sem token, `POST /triagem/classificar` (papel cliente obrigatório, descrição curta rejeitada, classificação por fallback quando não há `GEMINI_API_KEY`, contador `vezesSugerido` incrementado, opt-in `compartilharComAdvogado` falso por padrão), histórico e detalhe da triagem restritos ao próprio cliente (404 pra triagem de outro, sem vazar dado). |
