@@ -3,6 +3,7 @@ import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   onAuthStateChanged,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
@@ -97,6 +98,14 @@ export function AuthProvider({ children }) {
     return { user: credencial.user, role: roleLogado };
   }
 
+  // Recuperação de senha: o próprio Firebase manda o e-mail com o link de redefinição (em
+  // português, por causa do languageCode) e, depois de trocar a senha, o link "Continuar"
+  // da página do Firebase traz a pessoa de volta pro login da Nocturis.
+  async function recuperarSenha(email) {
+    auth.languageCode = "pt-BR";
+    await sendPasswordResetEmail(auth, email, { url: `${window.location.origin}/login` });
+  }
+
   async function logout() {
     logoutExplicito.current = true;
     await signOut(auth);
@@ -112,7 +121,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, role, loading, cadastrar, login, loginComGoogle, logout, atualizarRole }}
+      value={{ user, role, loading, cadastrar, login, loginComGoogle, recuperarSenha, logout, atualizarRole }}
     >
       {children}
     </AuthContext.Provider>
