@@ -41,10 +41,9 @@ substituído — assim os sprints seguintes não carregam código morto.
 
 **Pronto quando:** cliente novo informa cidade/UF; advogado novo nasce "em análise".
 
-> ⚠️ **No deploy:** o banco já tem a `situacaoOab` (migração rodada em 07/10, sem apagar o
-> `verificado`, pra não quebrar o site no ar). **Depois** de subir o código novo, rodar
-> `migrar-situacao-oab.js --remover-verificado` pra apagar o campo antigo. Clientes antigos
-> sem cidade veem um aviso no painel pedindo pra completar.
+> ✅ **No ar desde 08/10** (Sprints 0–6 subiram juntos: push → Render, regras do Firestore,
+> Hosting). Campo antigo `verificado` já removido do banco. Clientes antigos sem cidade veem
+> um aviso no painel pedindo pra completar.
 
 ## Sprint 2 — Validação da OAB pelo admin (RF011, RF009) ✅ código feito em 07/10
 
