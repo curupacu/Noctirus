@@ -16,12 +16,15 @@ const schemaAtualizarPerfil = z.object({
 // Mesma foto de perfil que já existia só pro advogado (ver POST /advogados/:uid/foto) —
 // pedido do usuário pra cliente também poder colocar a dele (29/08/2026). Fica no doc de
 // "users" (não em "advogados"), então só faz sentido pra quem não tem doc em "advogados".
+// Só formatos raster, nunca SVG (pode embutir <script>) — mesma regra de advogados.js.
+const MIMETYPES_FOTO_PERMITIDOS = ["image/jpeg", "image/png", "image/webp"];
+
 const uploadFoto = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
-    if (!file.mimetype.startsWith("image/")) {
-      return cb(new Error("Envie um arquivo de imagem"));
+    if (!MIMETYPES_FOTO_PERMITIDOS.includes(file.mimetype)) {
+      return cb(new Error("Envie uma imagem JPEG, PNG ou WebP"));
     }
     cb(null, true);
   },

@@ -179,6 +179,21 @@ describe("POST /advogados/:uid/foto", () => {
     expect(resposta.status).toBe(400);
   });
 
+  // Achado da auditoria de segurança (F3): SVG pode embutir <script>. Só formato raster
+  // é aceito, mesmo que o navegador identifique o arquivo como "image/*".
+  it("recusa SVG (pode conter script embutido)", async () => {
+    semear("a1");
+    const token = cell.fake.criarToken({ uid: "a1", role: "advogado" });
+    const resposta = await request(app)
+      .post("/advogados/a1/foto")
+      .set("Authorization", `Bearer ${token}`)
+      .attach("foto", Buffer.from("<svg onload=\"alert(1)\"></svg>"), {
+        filename: "foto.svg",
+        contentType: "image/svg+xml",
+      });
+    expect(resposta.status).toBe(400);
+  });
+
   it("faz upload e salva a url no advogado", async () => {
     semear("a1");
     const token = cell.fake.criarToken({ uid: "a1", role: "advogado" });

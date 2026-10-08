@@ -17,6 +17,14 @@ const CORES = {
   inkOnAccent: "#14120F",
 };
 
+// Escapa dado de usuário antes de entrar no HTML do e-mail — diferente do frontend em
+// React, aqui a string é montada à mão, então nada escapa sozinho (achado da auditoria
+// de segurança, F2: um nome com marcação HTML ia direto pro e-mail do cliente).
+function escapeHtml(valor) {
+  const mapa = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+  return String(valor ?? "").replace(/[&<>"']/g, (c) => mapa[c]);
+}
+
 function iniciais(nome) {
   return (nome || "?")
     .trim()
@@ -40,7 +48,9 @@ function avatarHtml({ nome, foto }) {
 }
 
 export function templateNovaResposta({ advogadoNome, advogadoFoto, linkConversa }) {
-  const nome = advogadoNome || "Um advogado";
+  const nome = escapeHtml(advogadoNome || "Um advogado");
+  const foto = advogadoFoto ? escapeHtml(advogadoFoto) : null;
+  const link = escapeHtml(linkConversa);
   return `<!doctype html>
 <html lang="pt-BR">
   <head>
@@ -66,7 +76,7 @@ export function templateNovaResposta({ advogadoNome, advogadoFoto, linkConversa 
             </tr>
             <tr>
               <td align="center" style="padding:32px 32px 8px;">
-                ${avatarHtml({ nome, foto: advogadoFoto })}
+                ${avatarHtml({ nome, foto })}
               </td>
             </tr>
             <tr>
@@ -88,7 +98,7 @@ export function templateNovaResposta({ advogadoNome, advogadoFoto, linkConversa 
                 <table role="presentation" cellpadding="0" cellspacing="0">
                   <tr>
                     <td align="center" style="border-radius:8px;background:${CORES.gold};">
-                      <a href="${linkConversa}" target="_blank" style="display:inline-block;padding:14px 32px;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;font-size:15px;font-weight:700;color:${CORES.inkOnAccent};text-decoration:none;">
+                      <a href="${link}" target="_blank" style="display:inline-block;padding:14px 32px;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;font-size:15px;font-weight:700;color:${CORES.inkOnAccent};text-decoration:none;">
                         Ver mensagem →
                       </a>
                     </td>
