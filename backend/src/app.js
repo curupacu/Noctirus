@@ -13,7 +13,6 @@ import { authRouter } from "./routes/auth.js";
 import { contatosRouter } from "./routes/contatos.js";
 import { conversasRouter } from "./routes/conversas.js";
 import { curriculosRouter } from "./routes/curriculos.js";
-import { denunciasRouter } from "./routes/denuncias.js";
 import { healthRouter } from "./routes/health.js";
 import { triagemRouter } from "./routes/triagem.js";
 import { usersRouter } from "./routes/users.js";
@@ -62,7 +61,6 @@ app.use(usersRouter);
 app.use(advogadosRouter);
 app.use(curriculosRouter);
 app.use(triagemRouter);
-app.use(denunciasRouter);
 app.use(contatosRouter);
 app.use(conversasRouter);
 

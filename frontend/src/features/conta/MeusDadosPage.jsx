@@ -73,8 +73,7 @@ export function MeusDadosPage() {
         <h2>Baixar meus dados</h2>
       </div>
       <p className="text-muted">
-        Gera um arquivo com seu cadastro, triagens, contatos, conversas, feedback e denúncias
-        que você registrou.
+        Gera um arquivo com seu cadastro, triagens, contatos e conversas.
       </p>
       <div className="actions">
         <Button variant="secondary" onClick={baixarMeusDados} disabled={baixando}>
@@ -86,9 +85,8 @@ export function MeusDadosPage() {
         <h2>Excluir minha conta</h2>
       </div>
       <p className="text-muted">
-        Remove seu cadastro definitivamente. Mensagens de chat, feedback e denúncias que
-        envolvem outra pessoa não são apagados junto, porque também são registro do outro
-        lado da conversa/moderação.
+        Remove seu cadastro definitivamente. Mensagens de chat que envolvem outra pessoa não
+        são apagadas junto, porque também são registro do outro lado da conversa.
       </p>
       <div className="actions">
         <Button variant="secondary" onClick={excluirMinhaConta} disabled={excluindo}>

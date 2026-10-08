@@ -4,8 +4,6 @@ import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
 import { useCarregar } from "../../lib/useCarregar";
 import { useTitulo } from "../../lib/useTitulo";
-import { useAuth } from "../auth/AuthContext";
-import { FeedbackForm } from "./FeedbackForm";
 
 const LABEL_AREA = {
   civel: "Cível",
@@ -31,7 +29,6 @@ function ListaOuVazio({ titulo, itens }) {
 
 export function AdvogadoPublicoPage() {
   const { uid } = useParams();
-  const { role } = useAuth();
   const [searchParams] = useSearchParams();
   const triagemId = searchParams.get("triagemId");
   const { dado, erro } = useCarregar(async () => {
@@ -54,9 +51,8 @@ export function AdvogadoPublicoPage() {
 
   const { advogado, curriculo, catalogoCategorias } = dado;
 
-  const suspenso = advogado.status === "suspenso";
-  const whatsapp = !suspenso && advogado.contatos?.whatsapp;
-  const email = !suspenso && advogado.contatos?.email;
+  const whatsapp = advogado.contatos?.whatsapp;
+  const email = advogado.contatos?.email;
   const rotulosEspecialidades = (advogado.especialidades || []).map((valor) => {
     const todas = Object.values(catalogoCategorias || {}).flat();
     return todas.find((c) => c.valor === valor)?.label || valor;
@@ -74,7 +70,6 @@ export function AdvogadoPublicoPage() {
       </section>
 
       <div className="actions">
-        {suspenso && <span className="badge badge--danger">Suspenso da plataforma</span>}
         <span className={`badge${advogado.verificado ? " badge--seal" : ""}`}>
           {advogado.verificado && (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -114,10 +109,7 @@ export function AdvogadoPublicoPage() {
         </>
       )}
 
-      {suspenso && (
-        <p className="text-muted">Este advogado está suspenso e não pode ser contatado pela plataforma.</p>
-      )}
-      {!suspenso && (whatsapp || email) && (
+      {(whatsapp || email) && (
         <div className="actions">
           <Link
             to={`/advogados/${uid}/contato${triagemId ? `?triagemId=${triagemId}` : ""}`}
@@ -127,16 +119,7 @@ export function AdvogadoPublicoPage() {
           </Link>
         </div>
       )}
-      {!suspenso && !whatsapp && !email && <p className="text-muted">Nenhum contato cadastrado.</p>}
-
-      {role === "cliente" && (
-        <>
-          <div className="section-heading">
-            <h2>Feedback</h2>
-          </div>
-          <FeedbackForm uid={uid} />
-        </>
-      )}
+      {!whatsapp && !email && <p className="text-muted">Nenhum contato cadastrado.</p>}
 
       <div className="section-heading">
         <h2>Currículo</h2>
@@ -145,12 +128,6 @@ export function AdvogadoPublicoPage() {
       <ListaOuVazio titulo="Especializações" itens={curriculo?.especializacoes} />
       <ListaOuVazio titulo="Cursos" itens={curriculo?.cursos} />
       <ListaOuVazio titulo="Experiências" itens={curriculo?.experiencias} />
-
-      <p className="text-muted resultado-proximos-passos">
-        <Link to={`/denunciar?alvoId=${uid}&alvoNome=${encodeURIComponent(advogado.nome || "")}`}>
-          Denunciar este advogado
-        </Link>
-      </p>
     </main>
   );
 }

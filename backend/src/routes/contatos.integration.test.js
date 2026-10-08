@@ -54,9 +54,9 @@ describe("GET /contatos/meus", () => {
       advogadoId: "a1",
       ultimoContatoEm: "2026-08-03T00:00:00.000Z",
     });
-    cell.fake.db._seed("users", "a1", { nome: "Advogada Um", status: "ativo" });
+    cell.fake.db._seed("users", "a1", { nome: "Advogada Um" });
     cell.fake.db._seed("advogados", "a1", { foto: "https://foto/a1.jpg" });
-    cell.fake.db._seed("users", "a2", { nome: "Advogado Dois", status: "suspenso" });
+    cell.fake.db._seed("users", "a2", { nome: "Advogado Dois" });
 
     const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
     const resposta = await request(app).get("/contatos/meus").set("Authorization", `Bearer ${token}`);
@@ -67,14 +67,12 @@ describe("GET /contatos/meus", () => {
     expect(resposta.body[0]).toMatchObject({
       advogadoId: "a2",
       advogadoNome: "Advogado Dois",
-      advogadoSuspenso: true,
     });
     expect(resposta.body[1]).toMatchObject({
       advogadoId: "a1",
       advogadoNome: "Advogada Um",
       advogadoFoto: "https://foto/a1.jpg",
       status: "Chamei no WhatsApp",
-      advogadoSuspenso: false,
     });
   });
 });
