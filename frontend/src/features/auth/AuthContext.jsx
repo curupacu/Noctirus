@@ -17,11 +17,20 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
-  // Diagnóstico temporário do bug de sessão sumindo sozinha no mobile (achado do usuário,
-  // 29/08) — distingue logout pedido de verdade de o Firebase reportar "sem sessão"
-  // sozinho. Remover essa ref e o bloco de Sentry.captureMessage assim que a causa for
-  // confirmada.
+  // Diagnóstico do bug de sessão sumindo sozinha no mobile (achado do usuário, 29/08) —
+  // distingue logout pedido de verdade de o Firebase reportar "sem sessão" sozinho, e avisa
+  // o Sentry. O painel que mostrava isso na tela de login saiu em outubro/2026; remover essa
+  // ref e o Sentry.captureMessage quando o Sentry parar de registrar o aviso.
   const logoutExplicito = useRef(false);
+
+  useEffect(() => {
+    // Limpa o registro que o painel de diagnóstico (já removido) lia.
+    try {
+      localStorage.removeItem("nocturis-diag-sessao");
+    } catch {
+      // sem localStorage (aba privada etc.) — nada a limpar
+    }
+  }, []);
 
   useEffect(() => {
     return onAuthStateChanged(auth, async (firebaseUser) => {
@@ -36,10 +45,6 @@ export function AuthProvider({ children }) {
               userAgent: navigator.userAgent,
               standalone: window.matchMedia("(display-mode: standalone)").matches,
             };
-            // localStorage (síncrono, local, não depende de rede nem do Sentry estar de
-            // pé) — a LoginPage mostra isso na tela pra dar pra mandar print. Além disso,
-            // manda pro Sentry também, se estiver disponível.
-            localStorage.setItem("nocturis-diag-sessao", JSON.stringify(diagnostico));
             Sentry.captureMessage("diagnostico-sessao: onAuthStateChanged sem usuário", {
               level: "warning",
               extra: diagnostico,

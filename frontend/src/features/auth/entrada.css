@@ -1,0 +1,518 @@
+/* Telas de entrada (login, cadastro, recuperar senha) — redesign de outubro/2026 com base
+   nas referências do time (kit "Scribblr"): botões em pílula, campos com linha embaixo,
+   cadastro em etapas com barra de progresso, chips pra escolher áreas. No celular é uma
+   coluna só; no computador ganha um painel da marca à esquerda (marrom com as linhas curvas
+   da Home). Ver docs/DESIGN.md, "Telas do app". */
+main.entrada {
+  --entrada-marrom: var(--brown);
+  --entrada-marrom-hover: var(--brown-deep);
+  --entrada-linha: #d9cdb8;
+  --entrada-chip-borda: #c9a98a;
+
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 100vh;
+  min-height: 100dvh;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  background: #fffdf8;
+}
+
+/* ---------- painel da marca (só no computador) ---------- */
+.entrada__painel {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  main.entrada {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  }
+
+  .entrada__painel {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 48px;
+    background: var(--entrada-marrom);
+    color: #f6eedf;
+  }
+
+  .entrada__painel .linhas-fundo {
+    position: absolute;
+    inset: 0;
+  }
+
+  .entrada__painel > * {
+    position: relative;
+  }
+
+  .entrada__painel-logo {
+    height: 36px;
+    width: auto;
+    color: #f6eedf;
+  }
+
+  .entrada__painel-frase {
+    max-width: 14em;
+    margin: 0;
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: clamp(30px, 3vw, 42px);
+    line-height: 1.2;
+    color: #f6eedf;
+  }
+
+  .entrada__painel-risco {
+    display: block;
+    width: 56px;
+    height: 3px;
+    margin: 24px 0 16px;
+    background: var(--gold);
+  }
+
+  .entrada__painel-texto {
+    max-width: 26em;
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #e6d8bf;
+  }
+
+  .entrada__painel-rodape {
+    font-size: 13px;
+    color: #e6d8bf;
+  }
+}
+
+/* ---------- coluna do formulário ---------- */
+.entrada__coluna {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 16px 24px 32px;
+}
+
+@media (min-width: 900px) {
+  .entrada__coluna {
+    justify-content: center;
+    padding: 48px 32px;
+  }
+}
+
+.entrada__topo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 48px;
+  margin-bottom: 16px;
+}
+
+.entrada__voltar {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-left: -10px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.entrada__voltar:hover {
+  background: var(--surface-hover);
+}
+
+.entrada__voltar svg {
+  width: 22px;
+  height: 22px;
+}
+
+.entrada__progresso {
+  flex: 1;
+  max-width: 200px;
+  height: 8px;
+  margin: 0 auto;
+  border-radius: var(--radius-full);
+  background: #eee6d8;
+  overflow: hidden;
+}
+
+.entrada__progresso span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--entrada-marrom);
+  transition: width 0.3s ease;
+}
+
+.entrada__logo {
+  align-self: flex-start;
+  height: 30px;
+  width: auto;
+  margin-bottom: 28px;
+  color: var(--text);
+}
+
+@media (min-width: 900px) {
+  .entrada__logo {
+    display: none;
+  }
+}
+
+.entrada__titulo {
+  margin: 0 0 8px;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(26px, 6vw, 32px);
+  line-height: 1.2;
+  letter-spacing: normal;
+  color: var(--text);
+}
+
+.entrada__sub {
+  margin: 0 0 28px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text-dim);
+}
+
+.entrada__form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Erro de validação/servidor */
+.entrada [role="alert"] {
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #f7e6df;
+  color: #8b4332;
+  font-size: 14px;
+}
+
+/* ---------- campos com linha embaixo ---------- */
+.entrada .input-group {
+  gap: 4px;
+}
+
+.entrada .input-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.entrada .input {
+  min-height: 44px;
+  padding: 8px 0;
+  border: 0;
+  border-bottom: 1.5px solid var(--entrada-linha);
+  border-radius: 0;
+  background: transparent;
+  font-size: 16px;
+}
+
+.entrada .input:focus {
+  outline: none;
+  border-bottom-color: var(--entrada-marrom);
+  box-shadow: 0 1.5px 0 var(--entrada-marrom);
+}
+
+.entrada select.input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235e4e3b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 2px center;
+  background-size: 18px;
+  padding-right: 24px;
+}
+
+/* Cidade + UF e Número + UF da OAB lado a lado até no celular — a UF só precisa de uma
+   coluna estreita. */
+.entrada .row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 96px;
+  gap: 16px;
+}
+
+/* Campo de senha com o olho de mostrar/esconder */
+.campo-senha {
+  position: relative;
+}
+
+.campo-senha .input {
+  padding-right: 44px;
+}
+
+.campo-senha__olho {
+  position: absolute;
+  right: -10px;
+  bottom: 0;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: none;
+  color: var(--text-dim);
+  cursor: pointer;
+}
+
+.campo-senha__olho svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ---------- botões em pílula ---------- */
+.entrada .button {
+  width: 100%;
+  min-height: 52px;
+  border-radius: var(--radius-full);
+  font-size: 15px;
+}
+
+.entrada .button--primary {
+  background: var(--entrada-marrom);
+  color: #fffdf8;
+  box-shadow: 0 6px 16px rgba(118, 80, 57, 0.22);
+}
+
+.entrada .button--primary:hover:not(:disabled) {
+  background: var(--entrada-marrom-hover);
+}
+
+.entrada .button--light {
+  background: #fffdf8;
+  border: 1.5px solid #e4dccd;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.entrada .button--secondary {
+  background: #f3ece2;
+  border-color: transparent;
+  color: var(--entrada-marrom);
+}
+
+/* "ou" entre o Google e o formulário */
+.entrada__ou {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 24px 0;
+  font-size: 13px;
+  color: var(--text-faint);
+}
+
+.entrada__ou::before,
+.entrada__ou::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--entrada-linha);
+}
+
+.entrada__link {
+  color: var(--entrada-marrom);
+  font-weight: 600;
+}
+
+.entrada__esqueci {
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin: -12px 0 -8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--entrada-marrom);
+}
+
+.entrada__rodape {
+  margin: 28px 0 0;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+
+/* Botão fixo no pé da tela no celular, como na referência */
+.entrada__acoes {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+@media (max-width: 899px) {
+  .entrada__acoes--fixas {
+    position: sticky;
+    bottom: 0;
+    margin: 32px -24px -32px;
+    padding: 16px 24px calc(16px + env(safe-area-inset-bottom));
+    background: #fffdf8;
+    border-top: 1px solid #efe7da;
+  }
+}
+
+/* ---------- opções grandes (cliente / advogado) ---------- */
+.entrada .choice-card {
+  padding: 18px 20px;
+  border-radius: 18px;
+  border: 1.5px solid #e4dccd;
+  background: #fffdf8;
+}
+
+.entrada .choice-card--checked {
+  border-color: var(--entrada-marrom);
+  background: #f6eee4;
+}
+
+.entrada .choice-card--checked .choice-card__check {
+  background: var(--entrada-marrom);
+  border-color: var(--entrada-marrom);
+  color: #fffdf8;
+}
+
+/* ---------- chips (áreas e especialidades) ---------- */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chip-opcao {
+  min-height: 40px;
+  padding: 8px 16px;
+  border: 1.5px solid var(--entrada-chip-borda);
+  border-radius: var(--radius-full);
+  background: transparent;
+  font: 600 14px/1.2 var(--font-body);
+  color: var(--entrada-marrom);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.chip-opcao[aria-pressed="true"] {
+  background: var(--entrada-marrom);
+  border-color: var(--entrada-marrom);
+  color: #fffdf8;
+}
+
+.chips__grupo {
+  margin: 20px 0 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Consentimento da política de privacidade */
+.entrada__consentimento {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 44px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-dim);
+  cursor: pointer;
+}
+
+.entrada__consentimento input {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 1px 0 0;
+  accent-color: var(--entrada-marrom);
+}
+
+/* ---------- modal de sucesso ---------- */
+.entrada-sucesso {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(38, 28, 20, 0.55);
+}
+
+.entrada-sucesso__cartao {
+  width: min(340px, 100%);
+  padding: 36px 28px 32px;
+  border-radius: 28px;
+  background: #fffdf8;
+  text-align: center;
+}
+
+.entrada-sucesso__icone {
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 20px;
+  border-radius: var(--radius-full);
+  background: var(--entrada-marrom);
+  color: #fffdf8;
+}
+
+.entrada-sucesso__icone svg {
+  width: 44px;
+  height: 44px;
+}
+
+.entrada-sucesso__titulo {
+  margin: 0 0 8px;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 22px;
+  color: var(--entrada-marrom);
+}
+
+.entrada-sucesso__texto {
+  margin: 0 0 24px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-dim);
+}
+
+.entrada-sucesso__girando {
+  width: 32px;
+  height: 32px;
+  margin: 0 auto;
+  border: 3px solid #eee6d8;
+  border-top-color: var(--entrada-marrom);
+  border-radius: var(--radius-full);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .entrada-sucesso__girando {
+    animation: entrada-girar 0.9s linear infinite;
+  }
+
+  .entrada__passo {
+    animation: entrada-entrar 0.25s ease both;
+  }
+}
+
+@keyframes entrada-girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes entrada-entrar {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+}

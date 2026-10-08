@@ -2,9 +2,9 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
-import { Logo } from "../../components/Logo/Logo";
 import { useTitulo } from "../../lib/useTitulo";
 import { useAuth } from "./AuthContext";
+import { EntradaLayout, LogoEntrada } from "./EntradaLayout";
 
 // "Esqueci minha senha": manda o link de redefinição por e-mail (Firebase Auth). A mensagem
 // de sucesso é sempre a mesma, exista ou não conta com aquele e-mail — dizer "esse e-mail
@@ -38,42 +38,36 @@ export function RecuperarSenhaPage() {
   }
 
   return (
-    <main className="auth-screen">
-      <Link to="/login" className="auth-screen__close" aria-label="Voltar para o login">
-        ×
-      </Link>
+    <EntradaLayout voltar="/login" rotuloVoltar="Voltar para o login">
+      <LogoEntrada />
+      <h1 className="entrada__titulo">{enviado ? "Confira seu e-mail" : "Esqueceu a senha?"}</h1>
 
-      <div className="auth-screen__inner">
-        <Logo className="auth-screen__logo step-enter" />
-        <div className="auth-screen__header step-enter" style={{ animationDelay: "80ms" }}>
-          <h1>Recuperar senha</h1>
-          <p>
-            {enviado
-              ? "Pronto! Confira seu e-mail."
-              : "Informe o e-mail da sua conta e enviamos um link pra você criar uma senha nova."}
+      {enviado ? (
+        <div className="entrada__form entrada__passo" role="status">
+          <p className="entrada__sub" style={{ margin: 0 }}>
+            Se existir uma conta com <strong>{email.trim()}</strong>, você vai receber em alguns minutos
+            um link pra criar uma senha nova. Olhe também a caixa de spam.
           </p>
+          <Link to="/login" className="button button--primary">
+            Voltar pro login
+          </Link>
+          <Button variant="secondary" onClick={() => setEnviado(false)}>
+            Não chegou? Enviar de novo
+          </Button>
         </div>
-
-        {enviado ? (
-          <div className="auth-screen__form step-enter" role="status">
-            <p>
-              Se existir uma conta com <strong>{email.trim()}</strong>, você vai receber em alguns minutos um
-              e-mail com o link pra criar uma senha nova. Olhe também a caixa de spam.
-            </p>
-            <Link to="/login" className="button button--primary">
-              Voltar pro login
-            </Link>
-            <button type="button" className="link-button" onClick={() => setEnviado(false)}>
-              Não chegou? Enviar de novo
-            </button>
-          </div>
-        ) : (
-          <form className="auth-screen__form step-enter" style={{ animationDelay: "160ms" }} onSubmit={enviar}>
+      ) : (
+        <>
+          <p className="entrada__sub">
+            Sem problema. Informe o e-mail da sua conta e enviamos um link pra você criar uma senha
+            nova.
+          </p>
+          <form className="entrada__form" onSubmit={enviar}>
             <Input
               label="E-mail"
               id="email"
               type="email"
               autoComplete="email"
+              placeholder="seu@email.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
@@ -83,12 +77,15 @@ export function RecuperarSenhaPage() {
               {enviando ? "Enviando..." : "Enviar link"}
             </Button>
           </form>
-        )}
+        </>
+      )}
 
-        <p className="auth-screen__footer step-enter" style={{ animationDelay: "220ms" }}>
-          Lembrou? <Link to="/login">Entrar</Link>
-        </p>
-      </div>
-    </main>
+      <p className="entrada__rodape">
+        Lembrou a senha?{" "}
+        <Link to="/login" className="entrada__link">
+          Entrar
+        </Link>
+      </p>
+    </EntradaLayout>
   );
 }

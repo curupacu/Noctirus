@@ -3,28 +3,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { BotaoGoogle } from "../../components/BotaoGoogle/BotaoGoogle";
 import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
-import { Logo } from "../../components/Logo/Logo";
 import { useTitulo } from "../../lib/useTitulo";
 import { useAuth } from "./AuthContext";
+import { CampoSenha, EntradaLayout, LogoEntrada } from "./EntradaLayout";
 import { rotaInicial } from "./rotaInicial";
-
-// Diagnóstico temporário do bug de sessão sumindo sozinha (ver AuthContext.jsx) — lê uma
-// vez só na primeira renderização, senão reaparecia de novo cada vez que o React
-// re-renderiza essa tela (ex.: digitando no formulário).
-function lerDiagnosticoSessao() {
-  try {
-    const bruto = localStorage.getItem("nocturis-diag-sessao");
-    return bruto ? JSON.parse(bruto) : null;
-  } catch {
-    return null;
-  }
-}
 
 export function LoginPage() {
   useTitulo("Entrar");
   const { login, loginComGoogle } = useAuth();
   const navigate = useNavigate();
-  const [diagnostico] = useState(lerDiagnosticoSessao);
 
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -66,79 +53,54 @@ export function LoginPage() {
   }
 
   return (
-    <main className="auth-screen">
-      <Link to="/" className="auth-screen__close" aria-label="Voltar para o início">
-        ×
-      </Link>
+    <EntradaLayout voltar="/" rotuloVoltar="Voltar para o início">
+      <LogoEntrada />
+      <h1 className="entrada__titulo">Que bom te ver de novo</h1>
+      <p className="entrada__sub">Entre pra acompanhar sua triagem e seus pedidos de contato.</p>
 
-      <div className="auth-screen__inner">
-        <Logo className="auth-screen__logo step-enter" />
-        <div className="auth-screen__header step-enter" style={{ animationDelay: "80ms" }}>
-          <h1>Entrar</h1>
-          <p>Bem-vindo(a) de volta.</p>
-        </div>
+      <BotaoGoogle onClick={entrarComGoogle} disabled={enviando}>
+        Continuar com Google
+      </BotaoGoogle>
 
-        <div className="auth-screen__form step-enter" style={{ animationDelay: "120ms" }}>
-          <BotaoGoogle onClick={entrarComGoogle} disabled={enviando} style={{ width: "100%" }}>
-            Entrar com Google
-          </BotaoGoogle>
-        </div>
+      <p className="entrada__ou">ou entre com e-mail</p>
 
-        <p
-          className="text-muted step-enter"
-          style={{ animationDelay: "140ms", textAlign: "center", margin: "16px 0" }}
-        >
-          ou
-        </p>
+      <form className="entrada__form" onSubmit={entrar}>
+        <Input
+          label="E-mail"
+          id="email"
+          type="email"
+          autoComplete="email"
+          placeholder="seu@email.com"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <CampoSenha
+          label="Senha"
+          id="senha"
+          autoComplete="current-password"
+          placeholder="Sua senha"
+          value={senha}
+          onChange={(e) => setSenha(e.target.value)}
+          required
+        />
+        <Link to="/recuperar-senha" state={{ email }} className="entrada__esqueci">
+          Esqueci minha senha
+        </Link>
 
-        <form
-          className="auth-screen__form step-enter"
-          style={{ animationDelay: "160ms" }}
-          onSubmit={entrar}
-        >
-          <Input
-            label="E-mail"
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <Input
-            label="Senha"
-            id="senha"
-            type="password"
-            value={senha}
-            onChange={(e) => setSenha(e.target.value)}
-            required
-          />
-          <Link to="/recuperar-senha" state={{ email }} className="auth-screen__esqueci">
-            Esqueci minha senha
-          </Link>
+        {erro && <p role="alert">{erro}</p>}
 
-          {erro && <p role="alert">{erro}</p>}
+        <Button type="submit" disabled={enviando}>
+          {enviando ? "Entrando..." : "Entrar"}
+        </Button>
+      </form>
 
-          <Button type="submit" disabled={enviando}>
-            {enviando ? "Entrando..." : "Entrar"}
-          </Button>
-        </form>
-
-        <p className="auth-screen__footer step-enter" style={{ animationDelay: "220ms" }}>
-          Não tem conta? <Link to="/cadastro">Criar conta</Link>
-        </p>
-
-        {diagnostico && (
-          <div
-            className="card"
-            style={{ marginTop: 24, fontSize: "12px", wordBreak: "break-word" }}
-          >
-            <strong>Diagnóstico da sessão (temporário)</strong>
-            <pre style={{ whiteSpace: "pre-wrap", margin: "8px 0 0" }}>
-              {JSON.stringify(diagnostico, null, 2)}
-            </pre>
-          </div>
-        )}
-      </div>
-    </main>
+      <p className="entrada__rodape">
+        Ainda não tem conta?{" "}
+        <Link to="/cadastro" className="entrada__link">
+          Criar conta grátis
+        </Link>
+      </p>
+    </EntradaLayout>
   );
 }
