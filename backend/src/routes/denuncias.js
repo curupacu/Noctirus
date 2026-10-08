@@ -22,7 +22,7 @@ const schemaDenuncia = z.object({
 
 // Registrar denúncia (RF011) — cliente ou advogado denunciando outro usuário da
 // plataforma. Sem upload de prova no MVP (Storage saiu do free tier — decisão registrada
-// em docs/ROADMAP.md); `provaUrl` aceita opcionalmente um link já hospedado em outro
+// em docs/historico/ROADMAP-julho-2026.md); `provaUrl` aceita opcionalmente um link já hospedado em outro
 // lugar (ex.: print num serviço externo), mas não há endpoint de upload aqui.
 denunciasRouter.post(
   "/denuncias",
