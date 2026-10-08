@@ -111,6 +111,18 @@ describe("POST /users/me/foto", () => {
     expect(resposta.status).toBe(400);
   });
 
+  it("recusa SVG (pode conter script embutido)", async () => {
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+    const resposta = await request(app)
+      .post("/users/me/foto")
+      .set("Authorization", `Bearer ${token}`)
+      .attach("foto", Buffer.from('<svg onload="alert(1)"></svg>'), {
+        filename: "foto.svg",
+        contentType: "image/svg+xml",
+      });
+    expect(resposta.status).toBe(400);
+  });
+
   it("faz upload e salva a url no próprio cadastro", async () => {
     cell.fake.db._seed("users", "c1", { role: "cliente", nome: "Cliente" });
     const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
