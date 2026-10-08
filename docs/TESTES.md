@@ -6,7 +6,7 @@ sem precisar de nenhuma credencial real do Firebase ou do Gemini pra rodar.
 
 ## Números (19/08)
 
-- **185 testes**, em **13 arquivos**, 100% passando (outubro/2026, depois dos Sprints 0–2).
+- **194 testes**, em **13 arquivos**, 100% passando (outubro/2026, depois dos Sprints 0–3).
 - Framework: [Vitest](https://vitest.dev/) (`backend/package.json`).
 - Rodar: `npm test` na raiz (delega pro backend) ou `npm test` dentro de `backend/`.
 - Tempo total: ~8s.
@@ -47,7 +47,7 @@ Nenhum teste toca Firebase ou Gemini de verdade:
 | Arquivo | O que verifica |
 | --- | --- |
 | `services/oab.test.js` | Validação de formato de OAB — limites de dígitos (4 a 7), UF válida/inválida, maiúscula/minúscula, campos ausentes. |
-| `services/triagem.test.js` | `classificarPorRegras` (fallback que garante que a triagem nunca trava, RNF003): classificação por área a partir da pergunta guiada e de palavras-chave na descrição, detecção de subcategoria, sugestão de tipo de advogado (trabalhador vs empregador). Checagem estrutural da taxonomia: 33 categorias (17 cíveis + 16 trabalhistas), sem valor duplicado entre áreas, todo item com valor e rótulo não vazios. |
+| `services/triagem.test.js` | `classificarPorRegras` (fallback que garante que a triagem nunca trava, RNF003): área por palavras-chave (etapa 1), especialidade com a área fixa da etapa 2 sem trocar de área, sugestão de tipo de advogado (trabalhador vs empregador). Perguntas das duas etapas (ids únicos, limites de tamanho) e `montarDescricao`. Com a IA mockada: área fixa é respeitada mesmo se a IA responder outra. Checagem estrutural da taxonomia: 33 categorias (17 cíveis + 16 trabalhistas), sem valor duplicado entre áreas, todo item com valor e rótulo não vazios. |
 | `services/matching.test.js` | `buscarAdvogadosCompativeis` com um Firestore falso: filtro por área/UF/cidade (com correspondência parcial e case-insensitive), priorização por especialidade compatível sem excluir quem não tem. |
 | `middlewares/auth.test.js` | `requireRole` — autorização por papel: libera quando o papel bate (único ou entre vários permitidos), 403 quando não bate ou quando não há usuário autenticado. |
 
@@ -59,7 +59,7 @@ Nenhum teste toca Firebase ou Gemini de verdade:
 | `advogados.integration.test.js` | Listagem pública (sem token), filtro por área, 404 de advogado inexistente, edição do próprio perfil (recusando editar o de outro), upload de foto (recusa sem token/arquivo/tipo errado, sucesso), perfil público só pra OAB aprovada, validação de OAB pelo admin (transições, motivo obrigatório pra recusar/revogar, histórico, aviso por sininho e e-mail mesmo se o e-mail falhar), correção da OAB recusada pelo advogado. |
 | `users.integration.test.js` | `GET/PUT /users/me`, foto do cliente (só JPEG/PNG/WebP), exportação dos próprios dados (LGPD) e exclusão da própria conta (Auth + Firestore, incluindo `advogados`/`curriculos` quando aplicável). |
 | `curriculos.integration.test.js` | Leitura pública do currículo, edição restrita ao próprio advogado, validação de campo que deveria ser lista, atualização com sucesso. |
-| `triagem.integration.test.js` | `GET /triagem/perguntas` sem token, `POST /triagem/classificar` (papel cliente obrigatório, descrição curta rejeitada, classificação por fallback quando não há `GEMINI_API_KEY`, contador `vezesSugerido` incrementado, opt-in `compartilharComAdvogado` falso por padrão), histórico e detalhe da triagem restritos ao próprio cliente (404 pra triagem de outro, sem vazar dado). |
+| `triagem.integration.test.js` | `GET /triagem/perguntas` sem token (as duas etapas), `POST /triagem/area` (etapa 1: todas as perguntas obrigatórias, devolve a área e as perguntas da etapa 2 sem gravar nada, `indefinido` quando não dá pra identificar), `POST /triagem/classificar` (etapa 2: área obrigatória e perguntas dela respondidas, área corrigida pelo cliente é respeitada, grava as duas etapas, contador `vezesSugerido`, opt-in `compartilharComAdvogado` falso por padrão), histórico e detalhe da triagem restritos ao próprio cliente (404 pra triagem de outro, sem vazar dado). |
 | `contatos.integration.test.js` | `GET /contatos/meus` (rastreio pessoal do cliente), `PATCH`/`DELETE` de status de um contato. |
 | `conversas.integration.test.js` | Chat de mensagens pré-definidas: recusa texto fora da lista fixa por papel, envio válido dos dois lados, vínculo (ou não) de `triagemId` a uma mensagem — só aceita triagem do próprio cliente, ignora id inexistente ou de outro cliente sem derrubar o envio —, listagem de uma conversa em ordem cronológica, `GET /conversas/minhas` (última mensagem por conversa), `GET /conversas/:comUid/triagem` (só advogado; retorna `null` sem opt-in do cliente ou sem vínculo, retorna área+descrição só com as duas condições batendo). Notificação por e-mail: só a resposta do advogado notifica (nunca o cliente), só a primeira de uma sequência sem resposta do cliente, cliente sem e-mail cadastrado não quebra o envio, falha no envio do e-mail não derruba a resposta da rota. |
 | `health.integration.test.js` | `GET /health` responde 200. |

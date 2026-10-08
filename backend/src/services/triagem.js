@@ -1,61 +1,93 @@
 import { GoogleGenAI } from "@google/genai";
 import Groq from "groq-sdk";
 
-// Primeira pergunta guiada (RF008) — sempre feita. A segunda pergunta depende da
-// resposta desta (ver PERGUNTAS_SEGUNDA_ETAPA), porque "qual é o seu papel" só faz
-// sentido pra caso trabalhista — pra família/herança ou consumo, o que importa é o
-// assunto específico, não um "papel".
-export const PERGUNTA_PRINCIPAL = {
-  id: "situacao",
-  pergunta: "Qual situação descreve melhor o seu problema?",
-  opcoes: [
-    { valor: "trabalho", label: "Emprego, demissão, salário ou algo do meu trabalho" },
-    { valor: "contrato_consumo", label: "Contrato, compra, dívida ou problema com uma empresa" },
-    { valor: "familia_heranca", label: "Família, herança, pensão ou divórcio" },
-    { valor: "outro", label: "Nenhuma das opções acima / não sei" },
+// Triagem em duas etapas (RF005): todas as perguntas são abertas, respondidas com as
+// palavras do próprio cliente. A etapa 1 é igual pra todo mundo e serve pra identificar a
+// ÁREA (RF006); a etapa 2 depende da área identificada e serve pra identificar a
+// ESPECIALIDADE (RF007). O texto das perguntas mora só aqui — o frontend lê de
+// GET /triagem/perguntas, então revisar uma pergunta é mudar uma linha deste arquivo.
+// `ajuda` vira o exemplo dentro do campo; `minimo` é o tamanho mínimo da resposta.
+export const PERGUNTAS_ETAPA1 = [
+  {
+    id: "oque",
+    pergunta: "O que aconteceu?",
+    ajuda: "Conte com suas palavras, do jeito que você contaria pra um amigo.",
+    minimo: 20,
+    maximo: 2000,
+  },
+  {
+    id: "envolvidos",
+    pergunta: "Com quem é o problema?",
+    ajuda: "Ex.: a empresa onde trabalho ou trabalhei, uma loja, um banco, meu ex-marido, um vizinho.",
+    minimo: 3,
+    maximo: 300,
+  },
+  {
+    id: "quando",
+    pergunta: "Quando isso aconteceu (ou começou)?",
+    ajuda: "Ex.: mês passado, faz dois anos, ainda está acontecendo.",
+    minimo: 2,
+    maximo: 200,
+  },
+];
+
+export const PERGUNTAS_ETAPA2 = {
+  trabalhista: [
+    {
+      id: "vinculo",
+      pergunta: "Como era (ou é) o seu trabalho lá?",
+      ajuda: "Ex.: carteira assinada há 3 anos como vendedor; trabalhava sem registro; sou o dono da empresa.",
+      minimo: 3,
+      maximo: 500,
+    },
+    {
+      id: "saida",
+      pergunta: "Você ainda trabalha lá? Se saiu, como foi a saída?",
+      ajuda: "Ex.: fui mandado embora sem justa causa; pedi demissão; ainda trabalho lá.",
+      minimo: 3,
+      maximo: 500,
+    },
+    {
+      id: "direitos",
+      pergunta: "O que você acha que não foi pago ou não foi respeitado?",
+      ajuda: "Ex.: rescisão, FGTS, horas extras, férias, fui humilhado pelo chefe, sofri um acidente.",
+      minimo: 3,
+      maximo: 1000,
+    },
+  ],
+  civel: [
+    {
+      id: "assunto",
+      pergunta: "Sobre o que é o problema?",
+      ajuda: "Ex.: uma compra, uma dívida, aluguel, pensão, divórcio, herança, plano de saúde, acidente de carro.",
+      minimo: 3,
+      maximo: 500,
+    },
+    {
+      id: "documentos",
+      pergunta: "Existe contrato, nota fiscal, boleto ou outro documento envolvido? Qual?",
+      ajuda: "Ex.: tenho o contrato de aluguel; tenho a nota fiscal; não tenho nada por escrito.",
+      minimo: 2,
+      maximo: 500,
+    },
+    {
+      id: "objetivo",
+      pergunta: "O que você gostaria que fosse resolvido?",
+      ajuda: "Ex.: receber meu dinheiro de volta, regularizar a pensão, dividir os bens.",
+      minimo: 3,
+      maximo: 500,
+    },
   ],
 };
 
-// Chaveado pelo valor escolhido em "situacao". "outro" não tem segunda pergunta —
-// nesse caso a classificação depende só da descrição livre.
-export const PERGUNTAS_SEGUNDA_ETAPA = {
-  trabalho: {
-    id: "papel",
-    pergunta: "Qual é o seu papel nessa situação?",
-    opcoes: [
-      { valor: "empregado", label: "Sou (ou fui) empregado" },
-      { valor: "empregador", label: "Sou empregador" },
-    ],
-  },
-  familia_heranca: {
-    id: "tipo_familia",
-    pergunta: "Qual é o assunto principal?",
-    opcoes: [
-      { valor: "divorcio", label: "Divórcio ou separação" },
-      { valor: "pensao", label: "Pensão alimentícia" },
-      { valor: "guarda", label: "Guarda de filhos" },
-      { valor: "uniao_estavel", label: "União estável" },
-      { valor: "heranca", label: "Herança ou partilha de bens" },
-      { valor: "testamento", label: "Testamento" },
-      { valor: "outro", label: "Outro assunto de família" },
-    ],
-  },
-  contrato_consumo: {
-    id: "tipo_consumo",
-    pergunta: "Qual é o assunto principal?",
-    opcoes: [
-      { valor: "compra_defeituosa", label: "Compra com defeito ou serviço mal feito" },
-      { valor: "cobranca_indevida", label: "Cobrança indevida ou dívida" },
-      { valor: "emprestimo", label: "Empréstimo ou financiamento" },
-      { valor: "aluguel", label: "Aluguel ou imóvel" },
-      { valor: "plano_saude", label: "Plano de saúde" },
-      { valor: "banco_cartao", label: "Banco ou cartão de crédito" },
-      { valor: "acidente_transito", label: "Acidente de trânsito" },
-      { valor: "erro_medico", label: "Erro médico" },
-      { valor: "outro", label: "Outro assunto de contrato/consumo" },
-    ],
-  },
-};
+// Junta perguntas e respostas num texto só ("Pergunta: resposta"), que é o que vai pra IA
+// e o que fica salvo em `descricao` (o advogado lê isso quando o cliente autoriza).
+export function montarDescricao(perguntas, respostas = {}) {
+  return perguntas
+    .filter((p) => (respostas[p.id] || "").trim())
+    .map((p) => `${p.pergunta} ${respostas[p.id].trim()}`)
+    .join("\n");
+}
 
 // Taxonomia fixa de subcategorias por área (não é texto livre — mantém o
 // vocabulário controlado pra dar pra usar em matching mais pra frente). O cliente
@@ -160,34 +192,13 @@ const PALAVRAS_POR_CATEGORIA = {
   estabilidade_gestante: ["gestante", "gravida", "grávida", "estabilidade", "acidentaria", "acidentária"],
 };
 
-// Segunda etapa mapeia direto pra uma categoria, quando o valor escolhido já diz o
-// assunto (ex.: "pensão" → categoria "familia"). "outro" não mapeia — nesse caso só a
-// descrição decide.
-const CATEGORIA_DA_SEGUNDA_ETAPA = {
-  divorcio: "familia_divorcio",
-  pensao: "familia_pensao",
-  guarda: "familia_guarda",
-  uniao_estavel: "familia_uniao_estavel",
-  heranca: "heranca_inventario",
-  testamento: "heranca_testamento",
-  compra_defeituosa: "consumo_produto_servico",
-  cobranca_indevida: "dividas_cobranca",
-  emprestimo: "emprestimo_financiamento",
-  aluguel: "aluguel_imoveis",
-  plano_saude: "plano_saude",
-  banco_cartao: "banco_cartao",
-  acidente_transito: "acidente_transito",
-  erro_medico: "erro_medico",
-};
-
 function contarOcorrencias(texto, palavras) {
   const alvo = texto.toLowerCase();
   return palavras.reduce((total, palavra) => (alvo.includes(palavra) ? total + 1 : total), 0);
 }
 
-// Detecta subcategorias dentro da área já classificada, cruzando palavras-chave da
-// descrição com a resposta da segunda etapa (quando ela já aponta uma categoria).
-function detectarCategorias({ area, respostas, descricao }) {
+// Detecta subcategorias dentro da área já classificada pelas palavras-chave da descrição.
+function detectarCategorias({ area, descricao }) {
   const categoriasDaArea = CATEGORIAS_POR_AREA[area];
   if (!categoriasDaArea) return [];
 
@@ -199,12 +210,6 @@ function detectarCategorias({ area, respostas, descricao }) {
     if (palavras.some((palavra) => alvo.includes(palavra))) {
       encontradas.add(valor);
     }
-  }
-
-  const respostaSegundaEtapa = respostas.tipo_familia || respostas.tipo_consumo;
-  const categoriaDireta = CATEGORIA_DA_SEGUNDA_ETAPA[respostaSegundaEtapa];
-  if (categoriaDireta && categoriasDaArea.some((c) => c.valor === categoriaDireta)) {
-    encontradas.add(categoriaDireta);
   }
 
   if (encontradas.size === 0) {
@@ -220,9 +225,15 @@ const LABEL_CATEGORIA = Object.fromEntries(
     .map(({ valor, label }) => [valor, label]),
 );
 
-function sugerirTipoAdvogado({ area, respostas, categorias }) {
+// Quem descreve o caso do lado do patrão costuma dizer isso com essas palavras.
+const PALAVRAS_EMPREGADOR = [
+  "sou empregador", "sou o dono", "sou dono", "sou a dona", "minha empresa", "meu funcionario",
+  "meu funcionário", "meus funcionarios", "meus funcionários", "minha funcionaria", "minha funcionária",
+];
+
+function sugerirTipoAdvogado({ area, descricao, categorias }) {
   if (area === "trabalhista") {
-    const base = respostas.papel === "empregador"
+    const base = contarOcorrencias(descricao, PALAVRAS_EMPREGADOR) > 0
       ? "Advogado trabalhista para empregador"
       : "Advogado trabalhista para direitos do trabalhador";
     const principal = categorias.find((c) => c !== "outro_trabalhista");
@@ -236,26 +247,23 @@ function sugerirTipoAdvogado({ area, respostas, categorias }) {
 }
 
 // Fallback usado se a IA falhar, demorar mais de 5s, ou vier com baixa confiança (RNF003).
-export function classificarPorRegras({ respostas = {}, descricao = "" }) {
-  let area = "indefinido";
+// `areaFixa` vem da etapa 2: a área já foi decidida na etapa 1, aqui só falta a especialidade.
+export function classificarPorRegras({ descricao = "", areaFixa } = {}) {
+  let area = areaFixa || "indefinido";
 
-  if (respostas.situacao === "trabalho") {
-    area = "trabalhista";
-  } else if (["contrato_consumo", "familia_heranca"].includes(respostas.situacao)) {
-    area = "civel";
-  } else {
+  if (!areaFixa) {
     const pontosTrabalhista = contarOcorrencias(descricao, PALAVRAS_TRABALHISTA);
     const pontosCivel = contarOcorrencias(descricao, PALAVRAS_CIVEL);
     if (pontosTrabalhista > pontosCivel) area = "trabalhista";
     else if (pontosCivel > pontosTrabalhista) area = "civel";
   }
 
-  const categorias = area === "indefinido" ? [] : detectarCategorias({ area, respostas, descricao });
+  const categorias = area === "indefinido" ? [] : detectarCategorias({ area, descricao });
 
   return {
     areaClassificada: area,
     categorias,
-    tipoAdvogadoSugerido: sugerirTipoAdvogado({ area, respostas, categorias }),
+    tipoAdvogadoSugerido: sugerirTipoAdvogado({ area, descricao, categorias }),
     origem: "regras",
   };
 }
@@ -287,29 +295,44 @@ function clienteGroq() {
 // Prompt compartilhado pelas duas IAs (Gemini é a principal, Groq é o fallback antes das
 // regras — ver RNF003 e o histórico de cota do Gemini no CLAUDE.md). Cada provedor pede o
 // JSON de um jeito diferente (responseSchema vs. JSON mode), mas a instrução é a mesma.
-function construirPromptTriagem({ respostas, descricao }) {
+function construirPromptTriagem({ descricao, areaFixa }) {
+  const instrucaoArea = areaFixa
+    ? [
+        `A área do caso já foi identificada na primeira etapa: area = "${areaFixa}". Não mude a área.`,
+        "Agora identifique a especialidade: escolha 'categorias' só entre estas opções, da mais pra menos aplicável:",
+        `Categorias (${areaFixa}): ${CATEGORIAS_POR_AREA[areaFixa].map((c) => c.valor).join(", ")}`,
+      ]
+    : [
+        'Se o caso não for cível nem trabalhista, ou faltar informação, use area = "indefinido" e categorias = [].',
+        "Escolha 'categorias' só entre estas opções, e só as que realmente se aplicam ao caso:",
+        `Categorias cíveis: ${CATEGORIAS_POR_AREA.civel.map((c) => c.valor).join(", ")}`,
+        `Categorias trabalhistas: ${CATEGORIAS_POR_AREA.trabalhista.map((c) => c.valor).join(", ")}`,
+      ];
   return [
     "Você é um triador jurídico de uma plataforma que só atende as áreas cível e trabalhista.",
     "A IA orienta, não decide sozinha — responda SOMENTE com o JSON pedido, sem texto fora dele.",
-    'Se o caso não for cível nem trabalhista, ou faltar informação, use area = "indefinido" e categorias = [].',
-    "Escolha 'categorias' só entre estas opções, e só as que realmente se aplicam ao caso:",
-    `Categorias cíveis: ${CATEGORIAS_POR_AREA.civel.map((c) => c.valor).join(", ")}`,
-    `Categorias trabalhistas: ${CATEGORIAS_POR_AREA.trabalhista.map((c) => c.valor).join(", ")}`,
-    `Respostas do questionário guiado: ${JSON.stringify(respostas)}`,
-    `Descrição do cliente: ${descricao}`,
+    ...instrucaoArea,
+    `Respostas do cliente:\n${descricao}`,
   ].join("\n");
 }
 
-function interpretarRespostaIA(dados) {
+function interpretarRespostaIA(dados, areaFixa) {
   if (!["civel", "trabalhista", "indefinido"].includes(dados.area)) {
     throw new Error("Resposta da IA fora do formato esperado");
   }
 
-  const categoriasValidas = (CATEGORIAS_POR_AREA[dados.area] || []).map((c) => c.valor);
-  const categorias = (dados.categorias || []).filter((c) => categoriasValidas.includes(c));
+  const area = areaFixa || dados.area;
+  const categoriasValidas = (CATEGORIAS_POR_AREA[area] || []).map((c) => c.valor);
+  const outro = area === "civel" ? "outro_civel" : "outro_trabalhista";
+  let categorias = (dados.categorias || []).filter((c) => categoriasValidas.includes(c));
+  // A IA às vezes manda "outro" junto com a especialidade certa (visto rodando
+  // scripts/avaliar-triagem.js em 08/10) — "outro" só fica quando não sobra nada específico.
+  if (categorias.some((c) => c !== outro)) categorias = categorias.filter((c) => c !== outro);
+  // Área conhecida sempre sai com pelo menos uma especialidade (mesma regra do fallback).
+  if (area !== "indefinido" && categorias.length === 0) categorias = [outro];
 
   return {
-    areaClassificada: dados.area,
+    areaClassificada: area,
     categorias,
     tipoAdvogadoSugerido: dados.tipoAdvogadoSugerido,
     confianca: dados.confianca,
@@ -317,13 +340,13 @@ function interpretarRespostaIA(dados) {
   };
 }
 
-async function classificarPorIA({ respostas, descricao }) {
+async function classificarPorIA({ descricao, areaFixa }) {
   const ai = clienteGemini();
   if (!ai) throw new Error("GEMINI_API_KEY não configurada");
 
   const resposta = await ai.models.generateContent({
     model: MODELO_GEMINI,
-    contents: construirPromptTriagem({ respostas, descricao }),
+    contents: construirPromptTriagem({ descricao, areaFixa }),
     config: {
       responseMimeType: "application/json",
       responseSchema: {
@@ -341,18 +364,18 @@ async function classificarPorIA({ respostas, descricao }) {
   });
 
   const dados = JSON.parse(resposta.text);
-  return { ...interpretarRespostaIA(dados), origem: "ia", provedor: "gemini" };
+  return { ...interpretarRespostaIA(dados, areaFixa), origem: "ia", provedor: "gemini" };
 }
 
 // Segunda opinião antes de cair pro fallback por regras — só é chamada quando o Gemini
 // falha, estoura o tempo ou vem com baixa confiança. Free tier do Groq (openai/gpt-oss-120b,
 // ~1.000 req/dia) é uma margem bem maior do que a cota que o Gemini vinha entregando.
-async function classificarPorGroq({ respostas, descricao }) {
+async function classificarPorGroq({ descricao, areaFixa }) {
   const groq = clienteGroq();
   if (!groq) throw new Error("GROQ_API_KEY não configurada");
 
   const prompt = [
-    construirPromptTriagem({ respostas, descricao }),
+    construirPromptTriagem({ descricao, areaFixa }),
     "Responda só com um JSON contendo exatamente estes campos: " +
       'area ("civel", "trabalhista" ou "indefinido"), categorias (lista de strings), ' +
       "tipoAdvogadoSugerido (string), confianca (número de 0 a 1) e justificativa (string).",
@@ -365,7 +388,7 @@ async function classificarPorGroq({ respostas, descricao }) {
   });
 
   const dados = JSON.parse(resposta.choices[0].message.content);
-  return { ...interpretarRespostaIA(dados), origem: "ia", provedor: "groq" };
+  return { ...interpretarRespostaIA(dados, areaFixa), origem: "ia", provedor: "groq" };
 }
 
 function comTimeout(promessa, ms) {
@@ -375,27 +398,28 @@ function comTimeout(promessa, ms) {
   ]);
 }
 
-async function classificarPorGroqOuRegras({ respostas, descricao }) {
+async function classificarPorGroqOuRegras({ descricao, areaFixa }) {
   try {
-    const resultado = await comTimeout(classificarPorGroq({ respostas, descricao }), TIMEOUT_MS_GROQ);
+    const resultado = await comTimeout(classificarPorGroq({ descricao, areaFixa }), TIMEOUT_MS_GROQ);
     if (resultado.confianca < CONFIANCA_MINIMA) {
-      return classificarPorRegras({ respostas, descricao });
+      return classificarPorRegras({ descricao, areaFixa });
     }
     return resultado;
   } catch (erro) {
     console.error("triagem: Groq falhou, usando fallback por regras —", erro.message || erro);
-    return classificarPorRegras({ respostas, descricao });
+    return classificarPorRegras({ descricao, areaFixa });
   }
 }
 
 // Orquestra Gemini → Groq → regras: se o Gemini falhar, estourar o tempo ou vier com baixa
 // confiança, tenta o Groq como segunda opinião antes de cair pro fallback por regras — a
-// triagem nunca trava (RNF003).
-export async function classificar({ respostas, descricao }) {
+// triagem nunca trava (RNF003). Sem `areaFixa` identifica a área (etapa 1); com ela,
+// identifica a especialidade dentro dessa área (etapa 2).
+export async function classificar({ descricao, areaFixa }) {
   try {
-    const resultado = await comTimeout(classificarPorIA({ respostas, descricao }), TIMEOUT_MS);
+    const resultado = await comTimeout(classificarPorIA({ descricao, areaFixa }), TIMEOUT_MS);
     if (resultado.confianca < CONFIANCA_MINIMA) {
-      return classificarPorGroqOuRegras({ respostas, descricao });
+      return classificarPorGroqOuRegras({ descricao, areaFixa });
     }
     return resultado;
   } catch (erro) {
@@ -404,6 +428,6 @@ export async function classificar({ respostas, descricao }) {
     // req/min) na maioria das chamadas. Loga o motivo real (sem derrubar a triagem, que
     // continua caindo no Groq e depois no fallback por regras normalmente — RNF003).
     console.error("triagem: Gemini falhou, tentando Groq —", erro.message || erro);
-    return classificarPorGroqOuRegras({ respostas, descricao });
+    return classificarPorGroqOuRegras({ descricao, areaFixa });
   }
 }

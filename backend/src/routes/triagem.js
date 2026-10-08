@@ -6,10 +6,12 @@ import { limiteTriagem } from "../middlewares/rateLimit.js";
 import { validarBody } from "../middlewares/validar.js";
 import { buscarAdvogadosCompativeis } from "../services/matching.js";
 import {
+  AREAS_VALIDAS,
   CATEGORIAS_POR_AREA,
   classificar,
-  PERGUNTA_PRINCIPAL,
-  PERGUNTAS_SEGUNDA_ETAPA,
+  montarDescricao,
+  PERGUNTAS_ETAPA1,
+  PERGUNTAS_ETAPA2,
 } from "../services/triagem.js";
 
 export const triagemRouter = Router();
@@ -31,54 +33,112 @@ async function somarContadorDeSugestoes(advogados) {
   );
 }
 
-// descricao sem teto de tamanho ia direto pro prompt da IA (custo/tempo de chamada
-// proporcional ao texto) e pro Firestore sem limite nenhum. respostas é um objeto livre
-// (chave = id da pergunta), mas cada valor precisa ser texto curto, não estrutura arbitrária.
-const schemaTriagem = z.object({
-  respostas: z.record(z.string(), z.string().max(500)).optional().default({}),
-  descricao: z
-    .string()
-    .trim()
-    .min(10, "Descreva o problema com pelo menos 10 caracteres")
-    .max(3000),
-  compartilharComAdvogado: z.boolean().optional().default(false),
-});
+// Valida as respostas de uma etapa contra a lista de perguntas dela: toda pergunta precisa
+// ser respondida (restrição do caso de uso "Realizar triagem jurídica"), dentro do tamanho
+// mínimo/máximo — o máximo é também o teto de custo do prompt da IA.
+function validarRespostas(perguntas, respostas, ctx, prefixo) {
+  for (const p of perguntas) {
+    const valor = respostas?.[p.id];
+    const texto = typeof valor === "string" ? valor.trim() : "";
+    if (texto.length < p.minimo) {
+      ctx.addIssue({
+        code: "custom",
+        path: [prefixo, p.id],
+        message: `Responda "${p.pergunta}" com pelo menos ${p.minimo} caracteres`,
+      });
+    } else if (texto.length > p.maximo) {
+      ctx.addIssue({ code: "custom", path: [prefixo, p.id], message: `Resposta longa demais (máx. ${p.maximo})` });
+    }
+  }
+}
+
+const respostasTexto = z.record(z.string(), z.string().max(3000)).default({});
+
+const schemaEtapa1 = z
+  .object({ etapa1: respostasTexto })
+  .superRefine((dados, ctx) => validarRespostas(PERGUNTAS_ETAPA1, dados.etapa1, ctx, "etapa1"));
+
+// A área vem do cliente porque ele pode corrigir a que a IA sugeriu na etapa 1 (ou escolher,
+// quando a IA não conseguiu identificar) — a etapa 2 só faz sentido com uma área definida.
+const schemaClassificar = z
+  .object({
+    etapa1: respostasTexto,
+    area: z.enum(AREAS_VALIDAS, { message: "Escolha a área: cível ou trabalhista" }),
+    etapa2: respostasTexto,
+    compartilharComAdvogado: z.boolean().optional().default(false),
+  })
+  .superRefine((dados, ctx) => {
+    validarRespostas(PERGUNTAS_ETAPA1, dados.etapa1, ctx, "etapa1");
+    validarRespostas(PERGUNTAS_ETAPA2[dados.area] || [], dados.etapa2, ctx, "etapa2");
+  });
+
+// Guarda só as respostas das perguntas que existem (nada de chave arbitrária no banco).
+function somenteDasPerguntas(perguntas, respostas) {
+  return Object.fromEntries(perguntas.map((p) => [p.id, respostas[p.id].trim()]));
+}
 
 triagemRouter.get("/triagem/perguntas", (_req, res) => {
   res.json({
-    principal: PERGUNTA_PRINCIPAL,
-    segundaEtapa: PERGUNTAS_SEGUNDA_ETAPA,
+    etapa1: PERGUNTAS_ETAPA1,
+    etapa2: PERGUNTAS_ETAPA2,
     categorias: CATEGORIAS_POR_AREA,
   });
 });
 
-// Triagem é sempre vinculada ao cliente logado (clienteId) — o mesmo cliente pode
-// descrever mais de um caso ao longo do tempo, cada um vira um documento próprio.
+// Etapa 1 (RF006): identifica a área a partir das respostas comuns. Não grava nada — a
+// triagem só é salva no fim da etapa 2, com tudo junto.
+triagemRouter.post(
+  "/triagem/area",
+  verificarToken,
+  requireRole("cliente"),
+  limiteTriagem,
+  validarBody(schemaEtapa1),
+  async (req, res) => {
+    const descricao = montarDescricao(PERGUNTAS_ETAPA1, req.body.etapa1);
+    const resultado = await classificar({ descricao });
+    const area = resultado.areaClassificada;
+
+    res.json({
+      area,
+      origem: resultado.origem,
+      justificativa: resultado.justificativa || null,
+      perguntas: PERGUNTAS_ETAPA2[area] || null,
+    });
+  },
+);
+
+// Etapa 2 (RF007/RF008): com a área definida, identifica a especialidade, grava a triagem
+// e devolve os advogados compatíveis. Triagem é sempre vinculada ao cliente logado — o mesmo
+// cliente pode ter várias ao longo do tempo, cada uma vira um documento próprio.
 triagemRouter.post(
   "/triagem/classificar",
   verificarToken,
   requireRole("cliente"),
   limiteTriagem,
-  validarBody(schemaTriagem),
+  validarBody(schemaClassificar),
   async (req, res) => {
-    const { respostas, descricao, compartilharComAdvogado } = req.body;
+    const { area, compartilharComAdvogado } = req.body;
+    const etapa1 = somenteDasPerguntas(PERGUNTAS_ETAPA1, req.body.etapa1);
+    const etapa2 = somenteDasPerguntas(PERGUNTAS_ETAPA2[area], req.body.etapa2);
+    const descricao = [
+      montarDescricao(PERGUNTAS_ETAPA1, etapa1),
+      montarDescricao(PERGUNTAS_ETAPA2[area], etapa2),
+    ].join("\n");
 
-    const resultado = await classificar({ respostas, descricao });
-    const advogados = await buscarAdvogadosCompativeis(
-      resultado.areaClassificada === "indefinido"
-        ? {}
-        : { area: resultado.areaClassificada, categorias: resultado.categorias },
-    );
+    const resultado = await classificar({ descricao, areaFixa: area });
+    const advogados = await buscarAdvogadosCompativeis({ area, categorias: resultado.categorias });
 
     const triagem = {
       clienteId: req.user.uid,
-      respostas,
+      respostas: { etapa1, etapa2 },
       descricao,
       // Opt-in explícito do cliente pra descrição do caso poder aparecer pro advogado
       // que ele vier a contatar (ver POST /conversas/:comUid/mensagens) — falso por
       // padrão, dado sensível não vaza sem escolha ativa.
       compartilharComAdvogado: Boolean(compartilharComAdvogado),
-      areaClassificada: resultado.areaClassificada,
+      areaClassificada: area,
+      // Especialidade principal (RF007) + as demais que também se aplicam ao caso.
+      especialidade: resultado.categorias[0] || null,
       categorias: resultado.categorias || [],
       tipoAdvogadoSugerido: resultado.tipoAdvogadoSugerido,
       origem: resultado.origem,

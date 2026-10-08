@@ -15,7 +15,15 @@ vi.mock("groq-sdk", () => ({
   }),
 }));
 
-const { CATEGORIAS_POR_AREA, TODAS_CATEGORIAS, classificar, classificarPorRegras } = await import("./triagem.js");
+const {
+  CATEGORIAS_POR_AREA,
+  TODAS_CATEGORIAS,
+  PERGUNTAS_ETAPA1,
+  PERGUNTAS_ETAPA2,
+  classificar,
+  classificarPorRegras,
+  montarDescricao,
+} = await import("./triagem.js");
 
 function respostaGemini(dados) {
   return { text: JSON.stringify(dados) };
@@ -29,88 +37,82 @@ function respostaGroq(dados) {
 // confiança (RNF003) — é literalmente o que garante que a triagem nunca trava. Merece
 // mais cobertura do que o caminho da IA, que depende de uma chave externa.
 describe("classificarPorRegras", () => {
-  it("classifica como trabalhista quando a primeira pergunta aponta trabalho", () => {
+  it("identifica a área trabalhista pelas palavras-chave (etapa 1)", () => {
     const resultado = classificarPorRegras({
-      respostas: { situacao: "trabalho", papel: "empregado" },
-      descricao: "qualquer coisa",
+      descricao: "Fui demitido sem justa causa e não pagaram minhas horas extras.",
     });
     expect(resultado.areaClassificada).toBe("trabalhista");
     expect(resultado.origem).toBe("regras");
   });
 
-  it("classifica como cível quando a primeira pergunta aponta contrato/consumo", () => {
-    const resultado = classificarPorRegras({
-      respostas: { situacao: "contrato_consumo" },
-      descricao: "qualquer coisa",
-    });
+  it("identifica a área cível pelas palavras-chave (etapa 1)", () => {
+    const resultado = classificarPorRegras({ descricao: "Comprei um produto com defeito e a loja não quer trocar." });
     expect(resultado.areaClassificada).toBe("civel");
   });
 
-  it("classifica como cível quando a primeira pergunta aponta família/herança", () => {
-    const resultado = classificarPorRegras({
-      respostas: { situacao: "familia_heranca" },
-      descricao: "qualquer coisa",
-    });
-    expect(resultado.areaClassificada).toBe("civel");
-  });
-
-  it("sem pergunta guiada, cai pra palavras-chave da descrição (trabalhista)", () => {
-    const resultado = classificarPorRegras({
-      respostas: { situacao: "outro" },
-      descricao: "Fui demitido sem justa causa e não pagaram minhas horas extras.",
-    });
-    expect(resultado.areaClassificada).toBe("trabalhista");
-  });
-
-  it("sem pergunta guiada, cai pra palavras-chave da descrição (cível)", () => {
-    const resultado = classificarPorRegras({
-      respostas: { situacao: "outro" },
-      descricao: "Comprei um produto com defeito e a loja não quer trocar.",
-    });
-    expect(resultado.areaClassificada).toBe("civel");
-  });
-
-  it("fica indefinido quando não há pergunta guiada nem palavra-chave reconhecível", () => {
-    const resultado = classificarPorRegras({
-      respostas: { situacao: "outro" },
-      descricao: "preciso de ajuda com uma coisa",
-    });
+  it("fica indefinido quando não há palavra-chave reconhecível", () => {
+    const resultado = classificarPorRegras({ descricao: "preciso de ajuda com uma coisa" });
     expect(resultado.areaClassificada).toBe("indefinido");
     expect(resultado.categorias).toEqual([]);
   });
 
+  it("com área fixa (etapa 2), respeita a área e só procura a especialidade dentro dela", () => {
+    const resultado = classificarPorRegras({
+      descricao: "Comprei um produto com defeito, mas o problema é com a empresa onde trabalho.",
+      areaFixa: "trabalhista",
+    });
+    expect(resultado.areaClassificada).toBe("trabalhista");
+    expect(resultado.categorias.every((c) => CATEGORIAS_POR_AREA.trabalhista.some((t) => t.valor === c))).toBe(true);
+  });
+
   it("detecta subcategorias específicas a partir da descrição", () => {
     const resultado = classificarPorRegras({
-      respostas: { situacao: "trabalho", papel: "empregado" },
       descricao: "Fui demitido sem justa causa e não pagaram minhas horas extras.",
+      areaFixa: "trabalhista",
     });
     expect(resultado.categorias).toContain("demissao_sem_justa_causa");
     expect(resultado.categorias).toContain("horas_extras");
   });
 
   it("sempre tem pelo menos uma categoria quando a área é conhecida, mesmo sem palavra-chave específica", () => {
-    const resultado = classificarPorRegras({
-      respostas: { situacao: "trabalho", papel: "empregado" },
-      descricao: "problema no trabalho",
-    });
-    expect(resultado.categorias.length).toBeGreaterThan(0);
-    expect(resultado.categorias).toContain("outro_trabalhista");
+    const resultado = classificarPorRegras({ descricao: "problema no trabalho", areaFixa: "trabalhista" });
+    expect(resultado.categorias).toEqual(["outro_trabalhista"]);
   });
 
-  it("sugere advogado pra empregador quando a resposta indica isso", () => {
+  it("sugere advogado pra empregador quando o cliente se descreve como patrão", () => {
     const resultado = classificarPorRegras({
-      respostas: { situacao: "trabalho", papel: "empregador" },
-      descricao: "quero demitir um funcionário",
+      descricao: "Sou o dono de uma padaria e meu funcionário entrou na justiça.",
+      areaFixa: "trabalhista",
     });
     expect(resultado.tipoAdvogadoSugerido).toMatch(/empregador/i);
   });
 
-  it("sugere advogado pro trabalhador por padrão (sem resposta de papel)", () => {
-    const resultado = classificarPorRegras({
-      respostas: { situacao: "trabalho" },
-      descricao: "não recebi minhas verbas",
-    });
+  it("sugere advogado pro trabalhador por padrão", () => {
+    const resultado = classificarPorRegras({ descricao: "não recebi minhas verbas", areaFixa: "trabalhista" });
     expect(resultado.tipoAdvogadoSugerido).toMatch(/trabalhador/i);
+  });
+});
+
+describe("perguntas da triagem", () => {
+  it("etapa 1 é a mesma pra todo mundo e etapa 2 existe pras duas áreas", () => {
+    expect(PERGUNTAS_ETAPA1.length).toBeGreaterThan(0);
+    expect(Object.keys(PERGUNTAS_ETAPA2).sort()).toEqual(["civel", "trabalhista"]);
+  });
+
+  it("toda pergunta tem id único, texto, exemplo e limites de tamanho", () => {
+    const todas = [...PERGUNTAS_ETAPA1, ...PERGUNTAS_ETAPA2.civel, ...PERGUNTAS_ETAPA2.trabalhista];
+    for (const p of todas) {
+      expect(p.id && p.pergunta && p.ajuda).toBeTruthy();
+      expect(p.minimo).toBeLessThan(p.maximo);
+    }
+    for (const lista of [PERGUNTAS_ETAPA1, PERGUNTAS_ETAPA2.civel, PERGUNTAS_ETAPA2.trabalhista]) {
+      expect(new Set(lista.map((p) => p.id)).size).toBe(lista.length);
+    }
+  });
+
+  it("montarDescricao junta pergunta + resposta e ignora as vazias", () => {
+    const texto = montarDescricao(PERGUNTAS_ETAPA1, { oque: "Fui demitido", quando: "  " });
+    expect(texto).toBe("O que aconteceu? Fui demitido");
   });
 });
 
@@ -163,7 +165,7 @@ describe("classificar (orquestração Gemini → Groq → regras)", () => {
       }),
     );
 
-    const resultado = await classificar({ respostas: {}, descricao: "Faço muitas horas extras e nunca recebo por elas." });
+    const resultado = await classificar({ descricao: "Faço muitas horas extras e nunca recebo por elas." });
 
     expect(resultado.origem).toBe("ia");
     expect(resultado.provedor).toBe("gemini");
@@ -183,7 +185,7 @@ describe("classificar (orquestração Gemini → Groq → regras)", () => {
       }),
     );
 
-    const resultado = await classificar({ respostas: {}, descricao: "Comprei um produto com defeito e a loja não troca." });
+    const resultado = await classificar({ descricao: "Comprei um produto com defeito e a loja não troca." });
 
     expect(resultado.origem).toBe("ia");
     expect(resultado.provedor).toBe("groq");
@@ -204,7 +206,7 @@ describe("classificar (orquestração Gemini → Groq → regras)", () => {
       }),
     );
 
-    const resultado = await classificar({ respostas: {}, descricao: "Meu plano de saúde negou um exame urgente." });
+    const resultado = await classificar({ descricao: "Meu plano de saúde negou um exame urgente." });
 
     expect(resultado.provedor).toBe("groq");
     expect(resultado.categorias).toContain("plano_saude");
@@ -215,7 +217,6 @@ describe("classificar (orquestração Gemini → Groq → regras)", () => {
     groqCreateMock.mockRejectedValueOnce(new Error("erro de rede"));
 
     const resultado = await classificar({
-      respostas: { situacao: "trabalho", papel: "empregado" },
       descricao: "Fui demitido sem justa causa e não pagaram minhas horas extras.",
     });
 
@@ -228,11 +229,61 @@ describe("classificar (orquestração Gemini → Groq → regras)", () => {
     generateContentMock.mockRejectedValueOnce(new Error("erro de rede"));
 
     const resultado = await classificar({
-      respostas: { situacao: "contrato_consumo" },
       descricao: "Comprei um produto com defeito e a loja não quer trocar.",
     });
 
     expect(resultado.origem).toBe("regras");
     expect(groqCreateMock).not.toHaveBeenCalled();
+  });
+});
+
+describe("classificar com área fixa (etapa 2)", () => {
+  beforeEach(() => {
+    process.env.GEMINI_API_KEY = "fake-gemini-key";
+    generateContentMock.mockReset();
+  });
+
+  afterEach(() => {
+    delete process.env.GEMINI_API_KEY;
+  });
+
+  it("mantém a área da etapa 1 mesmo se a IA responder outra, e descarta categoria de outra área", async () => {
+    generateContentMock.mockResolvedValueOnce(
+      respostaGemini({
+        area: "civel",
+        categorias: ["consumo_produto_servico", "horas_extras"],
+        tipoAdvogadoSugerido: "Advogado",
+        confianca: 0.9,
+        justificativa: "x",
+      }),
+    );
+
+    const resultado = await classificar({ descricao: "Faço hora extra e não recebo.", areaFixa: "trabalhista" });
+    expect(resultado.areaClassificada).toBe("trabalhista");
+    expect(resultado.categorias).toEqual(["horas_extras"]);
+  });
+
+  it("tira o \"outro\" quando a IA já achou uma especialidade de verdade", async () => {
+    generateContentMock.mockResolvedValueOnce(
+      respostaGemini({
+        area: "civel",
+        categorias: ["plano_saude", "outro_civel"],
+        tipoAdvogadoSugerido: "x",
+        confianca: 0.9,
+        justificativa: "x",
+      }),
+    );
+    const resultado = await classificar({ descricao: "O plano negou meu exame.", areaFixa: "civel" });
+    expect(resultado.categorias).toEqual(["plano_saude"]);
+  });
+
+  it("o prompt avisa a IA que a área já foi decidida", async () => {
+    generateContentMock.mockResolvedValueOnce(
+      respostaGemini({ area: "civel", categorias: [], tipoAdvogadoSugerido: "x", confianca: 0.9, justificativa: "x" }),
+    );
+
+    const resultado = await classificar({ descricao: "Meu aluguel subiu demais.", areaFixa: "civel" });
+    expect(generateContentMock.mock.calls[0][0].contents).toContain('area = "civel"');
+    expect(resultado.categorias).toEqual(["outro_civel"]);
   });
 });

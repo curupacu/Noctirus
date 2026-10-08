@@ -51,7 +51,7 @@ export function ConversaPage() {
           <p className="text-muted" style={{ marginBottom: 0 }}>
             <strong>Área:</strong> {LABEL_AREA[triagem.areaClassificada] || triagem.areaClassificada}
           </p>
-          <p style={{ marginBottom: 0 }}>{triagem.descricao}</p>
+          <p style={{ marginBottom: 0, whiteSpace: "pre-line" }}>{triagem.descricao}</p>
         </div>
       )}
 
