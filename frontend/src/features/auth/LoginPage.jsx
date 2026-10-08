@@ -112,6 +112,9 @@ export function LoginPage() {
             onChange={(e) => setSenha(e.target.value)}
             required
           />
+          <Link to="/recuperar-senha" state={{ email }} className="auth-screen__esqueci">
+            Esqueci minha senha
+          </Link>
 
           {erro && <p role="alert">{erro}</p>}
 

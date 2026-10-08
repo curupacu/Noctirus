@@ -8,6 +8,7 @@ import { AdvogadosListPage } from "../features/advogados/AdvogadosListPage";
 import { ContatoAdvogadoPage } from "../features/advogados/ContatoAdvogadoPage";
 import { CadastroPage } from "../features/auth/CadastroPage";
 import { LoginPage } from "../features/auth/LoginPage";
+import { RecuperarSenhaPage } from "../features/auth/RecuperarSenhaPage";
 import { RotaProtegida } from "../features/auth/RotaProtegida";
 import { CartaoPage } from "../features/cartao/CartaoPage";
 import { MeusDadosPage } from "../features/conta/MeusDadosPage";
@@ -31,6 +32,7 @@ export function AppRouter() {
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/cadastro" element={<CadastroPage />} />
+        <Route path="/recuperar-senha" element={<RecuperarSenhaPage />} />
         <Route path="/privacidade" element={<PrivacidadePage />} />
         <Route path="/advogados" element={<AdvogadosListPage />} />
         <Route path="/advogados/:uid" element={<AdvogadoPublicoPage />} />

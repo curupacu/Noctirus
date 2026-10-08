@@ -580,6 +580,17 @@ main.auth-screen {
   text-align: center;
 }
 
+/* "Esqueci minha senha" — alinhado à direita, logo abaixo do campo de senha. */
+.auth-screen__esqueci {
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: calc(-1 * var(--space-sm));
+  font-size: var(--font-size-sm);
+  color: var(--gold-ink);
+}
+
 .showcase {
   max-width: 480px;
   margin: 0 auto;
