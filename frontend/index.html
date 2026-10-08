@@ -13,7 +13,7 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <!-- manifest.webmanifest é gerado pelo vite-plugin-pwa (ver vite.config.js) e injetado
          automaticamente no build — não precisa de <link rel="manifest"> manual aqui. -->
-    <meta name="theme-color" content="#61402c" />
+    <meta name="theme-color" content="#765039" />
 
     <!-- "Adicionar à Tela de Início" no Safari/iOS não lê o manifest.webmanifest (suporte
          parcial) — precisa dessas meta tags pra abrir sem a barra do navegador e com o
@@ -26,7 +26,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap"
       rel="stylesheet"
     />
 
@@ -93,7 +93,7 @@
             "name": "A Nocturis é gratuita?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Sim, pra quem busca um advogado. Você descreve seu caso, faz a triagem e vê advogados compatíveis sem pagar nada e sem precisar criar conta."
+              "text": "Sim, pra quem busca um advogado. A triagem e a busca de advogados não custam nada — você só precisa criar uma conta grátis pra fazer a triagem."
             }
           },
           {
@@ -101,7 +101,7 @@
             "name": "Como funciona a triagem por IA?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Você descreve seu problema com suas próprias palavras. A IA identifica se é uma questão cível ou trabalhista e sugere advogados com a especialidade certa na sua região."
+              "text": "Você descreve seu problema com suas próprias palavras. A IA identifica se é uma questão cível ou trabalhista e sugere advogados com a especialidade certa."
             }
           },
           {
@@ -130,16 +130,6 @@
           }
         ]
       }
-    </script>
-
-    <script>
-      // Aplica o tema salvo antes do React montar, pra não piscar o tema errado
-      // (ver frontend/src/lib/theme.js, mesma chave/lógica).
-      try {
-        if (localStorage.getItem("nocturis-theme") === "dark") {
-          document.documentElement.setAttribute("data-theme", "dark");
-        }
-      } catch {}
     </script>
 
     <!-- Google Analytics (GA4) — só carrega no domínio de produção, pra não misturar

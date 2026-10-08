@@ -1,252 +1,134 @@
-# DESIGN.md — Nocturis (reformulação visual)
+# DESIGN.md — Nocturis
 
-> **Status (07/08): executado, com desvios aprovados pelo usuário.** Este documento
-> descrevia a visão original — escuro fixo em toda tela. Na prática o time decidiu
-> (29/07) abrir o app no **tema claro por padrão** com escuro opcional, e depois (07/08)
-> uma direção híbrida: **Home/Login/Cadastro ficam sempre escuras** ("vitrine" da marca,
-> fundo `--ink-950` fixo via `main.splash`/`main.auth-screen` no `index.css`, sem
-> `ThemeToggle` nessas 3 telas), o resto do app segue o tema claro/escuro escolhido pelo
-> usuário. A paleta também mudou (ver seção 4, valores atualizados) depois de feedback de
-> que o dourado original (`#F2D98A`) lia como "pastel"/"catarro" e a borda (`#DBCBA3`) como
-> "cinza estranho" — e o card virou branco puro (`#FFFFFF`) sobre fundo creme, um desvio
-> deliberado da regra "nunca card branco" abaixo (aqui não é branco-sobre-branco, o fundo
-> continua creme). O resto das regras deste documento (dourado com parcimônia, cantos
-> discretos, sem degradê, sombra discreta) continua valendo e foi seguido.
+> **Visual atual: redesign de outubro/2026.** Depois da banca (início de outubro), que
+> rejeitou o visual escuro, o time adotou uma direção nova baseada no protótipo de alta da
+> landing page feito no Figma: marrom da marca, creme, caramelo e dourado, títulos em serifa,
+> cantos quase retos e fotos de banco de imagem. **Não existe mais modo escuro nem modo
+> claro**: o site tem um padrão só. As versões anteriores deste documento (escuro fixo de
+> julho, híbrido claro/escuro de agosto) estão no histórico do git.
 
-Estética-alvo: **app jurídico noturno e sóbrio** — fundo escuro quente, texto quase
-branco, marrons da coruja nos detalhes, amarelo-dourado só nos acentos. Serifada
-elegante nos títulos, combinando com a logo. Sério e premium, com cara de app mobile
-(NÃO landing page de escritório).
+## 1. Plano do redesign
 
-Este documento é a fonte de verdade do visual **original** — pra paleta e tokens
-realmente em produção hoje, ver `frontend/src/styles/tokens.css` (comentado) ou a seção 4
-abaixo, já atualizada.
+O redesign é feito direto no código, em etapas pequenas, com aprovação a cada passo:
 
-> **Atualização (19/08):** `--font-body` trocada de Inter pra **IBM Plex Sans** — Inter
-> virou a fonte mais comum de produto novo em 2026 (~90% dos projetos, achado numa
-> pesquisa de tipografia), o que a torna "invisível" como escolha de marca em vez de
-> neutra. `--font-display` (Fraunces) continua igual, já era uma escolha pouco comum.
-> Também foram adicionados `--area-civel`/`--area-civel-bg` (verde-petróleo) e
-> `--area-trabalhista`/`--area-trabalhista-bg` (terracota) — cor própria por área no
-> `AreaIcon`, que antes vivia só na família dourada (sem hue semântico nenhum de
-> categoria). Ver seção 4 pros valores exatos.
+1. **Home (landing)** — refeita seguindo o protótipo de alta do Figma. Não muda nenhuma
+   funcionalidade, só o visual e alguns textos.
+2. **Funcionalidades novas** — implementar os requisitos revisados depois da banca
+   (triagem em duas etapas, pedido de contato com aceite do advogado, quadro de casos do
+   advogado, validação de OAB com recusa/revogação). Essas mudanças mexem nas mesmas telas
+   internas, por isso vêm antes do visual delas.
+3. **Demais telas** — login, cadastro, painéis e telas internas ganham o visual novo
+   depois que a funcionalidade delas estiver no lugar.
 
----
+| Tela | Situação |
+| --- | --- |
+| Home (landing) | Refeita seguindo o protótipo de alta (07/10) |
+| Login e Cadastro | Depois das funcionalidades |
+| Painel do cliente | Depois das funcionalidades |
+| Painel do advogado (quadro de casos) | A desenhar junto com a funcionalidade |
+| Demais telas internas | Pegaram só a paleta nova, layout antigo |
 
-## 0. Contexto importante sobre a logo e o fundo
+As telas de celular do Figma (abertura, login, painel do cliente) servem de referência de
+layout, **mas não de cor de fundo**: o fundo preto e o amarelo-claro delas foram descartados.
 
-- A logo (coruja + "Nocturis") tem **fundo transparente** — o cinza que aparece em
-  alguns exports é só o canvas do Figma, **não é cor da marca**. Ignore esse cinza.
-- Portanto o fundo do app é uma ESCOLHA nossa, e a escolha está fixada nos tokens
-  abaixo (`--ink-950`). Não use o cinza do Figma.
-- Por que o fundo é quente e não cinza neutro: a coruja tem marrom e amarelo (cores
-  quentes). Fundo frio/cinza "briga" com ela e a deixa sem vida; fundo escuro e quente
-  faz o marrom e o amarelo brilharem. Preto puro também não — some com o marrom escuro
-  da coruja. Por isso: carvão quente escuro.
+## 2. Paleta (espelha `frontend/src/styles/tokens.css`)
 
-**Decisão da equipe: dois fundos em camadas** (isto cria profundidade, é intencional):
-- `#14120F` (quase-preto quente) = **fundo BASE da tela**, atrás de tudo.
-- `#61402C` (marrom médio quente) = **superfície ELEVADA em destaque** — só em cards de
-  destaque, header e no card de resultado da triagem. NÃO usar como fundo de tela inteira.
-- Cards comuns usam um marrom intermediário (`--ink-850` nos tokens), entre os dois.
+| Token | Valor | Uso |
+| --- | --- | --- |
+| `--brown` | `#765039` | Cor principal da marca. Hero, seção "Sobre", rodapé, cabeçalho |
+| `--brown-deep` | `#5C3E2B` | Hover do marrom |
+| `--brown-ink` | `#3B281C` | Texto e botões escuros sobre o caramelo |
+| `--gold` | `#D9A41E` | Botão principal, marcadores, barras de destaque |
+| `--gold-dim` | `#C08F17` | Hover do dourado |
+| `--gold-ink` | `#87600A` | Dourado escurecido pra texto/link sobre fundo claro |
+| `--cream` | `#F6EEDF` | Texto sobre o marrom |
+| `--bg` | `#FAF6EE` | Fundo das telas internas |
+| `--surface` | `#FFFFFF` | Cartões das telas internas |
+| `--border` | `#E6DED0` | Linhas e bordas |
+| `--text` | `#2A1F16` | Texto principal |
+| `--text-dim` | `#5E4E3B` | Texto secundário |
 
-Por que assim: o card "flutua" sobre o fundo mais escuro — é o visual em camadas das
-referências premium. Tudo na mesma cor fica chapado e sem graça.
+Cores próprias da Home (variáveis locais em `routes/HomePage.css`, prefixo `--home-`):
 
-Cuidado de contraste: `#61402C` é claro; texto creme sobre ele funciona, mas confira que
-fica legível. Se um texto pequeno ficar lavado, escureça o fundo daquele card ou clareie
-o texto. Nunca texto marrom-médio sobre marrom-médio.
+| Variável | Valor | Onde |
+| --- | --- | --- |
+| `--home-cream` | `#F5EDD2` | Fundo de "Serviços", pergunta aberta do FAQ, barra fixa do celular |
+| `--home-card` | `#FFFCF2` | Cartões de assunto |
+| `--home-tan` | `#CBA576` | Fundo de "Advogados cadastrados" |
+| `--home-dark` | `#261C14` | Fundo das perguntas frequentes (marrom quase preto, nunca preto puro) |
+| `--home-on-brown-dim` | `#E6D8BF` | Texto secundário sobre o marrom (contraste ≥ 4,5:1) |
 
----
+**Regras de cor**
 
-## 1. Referências (o que seguir e o que evitar)
+- **Um padrão só**, sem alternância de tema.
+- **Dourado com parcimônia**: botão principal, marcadores pequenos, a barra fina em cima dos
+  cartões, o risco embaixo do título do hero. Nunca fundo de área grande.
+- **Dourado puro não serve pra texto sobre fundo claro** (some no creme). Pra texto e link,
+  usar `--gold-ink`.
+- **Nada de preto puro.** O tom mais escuro é o marrom `#261C14` do FAQ.
+- Degradê só onde não tem outro jeito; a regra é cor chapada.
 
-Baseado em sites de advocacia premium (fundo escuro + dourado + serifada):
+## 3. Textura: linhas curvas no fundo
 
-FAZER:
-- Fundo escuro CHAPADO (carvão quente), o mesmo em todas as telas.
-- Cards de cor SÓLIDA com borda fininha de 1px.
-- Dourado com PARCIMÔNIA: botão principal, uma linha de "eyebrow", uma palavra no
-  título. O resto é creme/cinza. A contenção é o que dá sofisticação.
-- Cantos DISCRETOS (8–12px). Botão de canto sutil, não pílula.
-- Advogado com FOTO real (ou placeholder neutro), nunca inicial em fundo dourado.
-- Sombra preta e discreta. Ícones SVG (sem emoji). Muito espaço pra respirar.
+O hero e a seção "Sobre" têm linhas curvas finas, quase invisíveis, no fundo marrom (detalhe
+do protótipo). É um SVG (`LinhasFundo` em `HomePage.jsx`) esticado na faixa inteira, traço
+creme com 8% de opacidade e espessura fixa (`vector-effect: non-scaling-stroke`). Não pode
+ficar mais forte que isso: a ideia é sentir a textura sem perceber que ela está ali.
 
-NÃO FAZER (erros das telas antigas):
-- Fundo branco ou card branco sobre fundo branco. NUNCA.
-- Degradê em card ou brilho colorido (glow). Card é cor chapada.
-- Dourado espalhado (título inteiro dourado, chips dourados, avatar dourado). Errado.
-- Pílulas muito arredondadas (border-radius 999px em tudo). Deixa "app fofo", não sério.
-- Emoji na interface. Cores berrantes (azul/vermelho vivos).
+## 4. Tipografia
 
----
+- **Títulos**: Libre Baskerville (`--font-serif`), peso 400.
+- **Corpo e interface**: IBM Plex Sans (`--font-body`).
+- Rótulos pequenos acima dos títulos: Plex 12px, 600, maiúsculas, espaçamento 0,12em.
+- As duas fontes vêm do Google Fonts no `frontend/index.html`.
 
-## 2. Logo
+## 5. Forma
 
-A equipe fornece a logo em SVG. Colocar os arquivos em `frontend/src/assets/`:
-- `logo-nocturis.svg` — versão completa (coruja + nome).
-- `logo-icon.svg` — versão só-coruja (ícone).
+- **Cantos quase retos**: `--radius-sharp` (3px) em botões, cartões, fotos e campos. Só é
+  redondo o que é círculo de verdade (botões de seta, ícone do FAQ, avatar).
+- Profundidade por borda de 1px; sombra só na foto do hero, que "flutua" sobre o marrom.
+- Ícones em SVG de traço, sem emoji.
 
-Uso:
-- Versão completa: tela de abertura/login e topo da Home.
-- Só-coruja: header das telas internas e favicon.
-- Usar o SVG COMO ESTÁ, via `<img src=...>` (a logo é colorida e fixa, não precisa de
-  SVG inline nem trocar cor por CSS). NÃO recriar a coruja em CSS, NÃO redesenhar.
+## 6. Fotos
 
----
+- Fotos de banco de imagem do **Unsplash** (licença gratuita, uso comercial liberado, crédito
+  não obrigatório; mesmo assim o rodapé diz "Fotos: Unsplash"). Servidas direto da CDN do
+  Unsplash, recortadas pelo próprio link (`fotoUnsplash()` em `HomePage.jsx`).
+- **Foto de banco nunca representa um advogado cadastrado.** Os cartões de "Advogados
+  cadastrados" usam só a foto real de cada perfil (ou a inicial, se não tiver).
+- Não usar Freepik/Storyset sem dar o crédito que o plano grátis exige.
 
-## 3. Regra de ouro
+## 7. Home (landing page)
 
-NUNCA branco (#FFF) como fundo, nunca card branco. Todo fundo é carvão; texto é creme.
-Esse era o problema das telas antigas (cartão branco-no-branco).
+| # | Seção | Fundo | Conteúdo |
+| --- | --- | --- | --- |
+| 1 | Hero | `#765039` + linhas curvas | Navegação, título serifado, risco dourado, botão "Criar conta", foto em retrato |
+| 2 | Serviços | `#F5EDD2` | Foto + "Como funciona" e 8 cartões de assunto (borda dourada em cima) |
+| 3 | Advogados | `#CBA576` | Carrossel com até 8 advogados reais da API (`GET /advogados`), setas redondas |
+| 4 | Sobre | `#765039` + linhas curvas | Título, foto e 3 textos que trocam pelas setas (o problema, pra quem procura, pra quem advoga) |
+| 5 | Perguntas | `#261C14` | FAQ numerado (mesmo texto do JSON-LD do `index.html`) + foto |
+| 6 | Rodapé | `#765039` | Links e aviso de que a Nocturis não presta serviço jurídico |
 
----
+- Os assuntos dos cartões vêm da taxonomia real da triagem (`backend/src/services/triagem.js`).
+  A Home nunca promete uma área que o sistema não classifica.
+- **Sem depoimento inventado.** A plataforma ainda não tem cliente real; a seção 4 explica o
+  problema que o projeto resolve.
+- Usuário logado vê "Meu painel" no lugar de "Entrar"/"Criar conta".
+- No celular aparece uma barra fixa com "Criar conta grátis" no rodapé da tela (só deslogado).
+- Se a API de advogados falhar, a seção 3 mostra só o link "Ver todos os advogados".
 
-## 4. Tokens (estado real em produção — espelha `frontend/src/styles/tokens.css`)
+## 8. Pendências
 
-> **Atualização (05/09):** esta seção antes só listava os valores do design original
-> (escuro fixo em tudo). Desde 29/07 o app abre no **tema claro por padrão**, com escuro
-> opcional via `ThemeToggle` — então os tokens de fundo/superfície/texto abaixo agora têm
-> DOIS valores (claro e escuro), não um só. As constantes de marca (ink-9xx, gold, cream,
-> brown, area-*) continuam fixas nos dois temas, como sempre foram.
+- **Conta "Advogado Teste" no banco**: tem OAB verificada e foto (um desenho), então aparece
+  em primeiro no carrossel da Home. Renomear ou remover do banco antes de apresentar.
+- **Fotos do seed em baixa resolução**: os advogados fictícios usam fotos de 128px do
+  randomuser.me, que ficam levemente borradas nos cartões grandes da Home.
+- **Cor por área** (`--area-civel` verde, `--area-trabalhista` terracota no `AreaIcon`): o
+  verde destoa da paleta nova. Decidir na etapa das telas internas.
 
-```css
-:root {
-  /* Constantes da marca — NÃO trocam entre claro/escuro. */
-  --ink-950: #14120F;
-  --ink-900: #1E1913;
-  --ink-850: #2A2118;
-  --ink-800: #37291C;
-  --surface-warm: #61402C; /* header e card de destaque — mesma cor nos dois temas */
+## 9. Antes de dizer que uma tela terminou
 
-  /* Marrons da coruja — só em detalhes (ícones, tags, divisórias) */
-  --brown-400: #C89B6A;
-  --brown-600: #8A5E38;
-  --brown-800: #4A3420;
-
-  /* Amarelo-dourado (olhos da coruja) — só acentos.
-     Valores atualizados em 07/08 — os originais (#F2D98A/#D8B95E) liam como pastel/
-     "catarro" numa área grande de botão; versão mais densa/saturada. */
-  --gold:     #D9A23A;   /* botão principal, eyebrow, 1 palavra no título, ícone/bico */
-  --gold-dim: #B98527;   /* hover do dourado */
-
-  /* Creme — texto sobre fundo escuro (header, cards de destaque, tema escuro) */
-  --cream:       #F3ECDF;
-  --cream-dim:   #B3A994;
-  --cream-faint: #7E7566;
-
-  /* Apoio (usar pouco) */
-  --green: #7FB98A;   /* sucesso / verificado */
-  --red:   #C77B5E;   /* erro / denúncia */
-
-  /* Cor por área (cível/trabalhista), adicionada 19/08 — antes as duas viviam só na
-     família dourada, sem hue semântico de categoria nenhum, só o ícone diferenciava. */
-  --area-civel: #3D5C4E;
-  --area-civel-bg: #DCE6DE;
-  --area-trabalhista: #8B4332;
-  --area-trabalhista-bg: #EDDAD2;
-
-  /* Tipografia */
-  --font-display: "Fraunces", Georgia, serif;        /* títulos — combina com a logo */
-  --font-body: "IBM Plex Sans", system-ui, sans-serif; /* texto / UI — era Inter até 19/08 */
-
-  /* Forma — cantos discretos. Sombra quase nula de propósito: profundidade vem da
-     borda de 1px, não de sombra (ver seção 5). */
-  --radius: 12px;
-  --radius-sm: 8px;
-  --shadow: none;
-
-  /* --- Tema CLARO (padrão da aplicação) --- */
-  --bg: #FAF7F1;         /* fundo da tela */
-  --bg-section: #F1EAD9; /* seções/faixas dentro da tela */
-  --surface: #FFFFFF;    /* card — branco puro sobre fundo creme, não branco-no-branco */
-  --surface-hover: #F1EDE4;
-  --border: #E4E0D7;
-  --text: #221B12;
-  --text-dim: #5B4C36;
-  --text-faint: #8A7B60;
-}
-
-/* Tema ESCURO — ligado pelo ThemeToggle no Header, guardado em localStorage
-   (ver frontend/src/lib/theme.js). Só os tokens de superfície/texto trocam; dourado,
-   marrom e --surface-warm ficam fixos nos dois temas, de propósito, pra manter a
-   identidade da marca constante independente do tema escolhido. */
-:root[data-theme="dark"] {
-  --bg: #14120F;
-  --bg-section: #1E1913;
-  --surface: #2A2118;
-  --surface-hover: #37291C;
-  --border: #47382A;
-  --text: #F3ECDF;
-  --text-dim: #B3A994;
-  --text-faint: #7E7566;
-}
-```
-
-Importar as fontes no `index.html` (Google Fonts): `Fraunces` (títulos) e `IBM Plex Sans` (corpo).
-
-**Exceção deliberada — telas de vitrine:** Home, Login e Cadastro ficam sempre no fundo
-escuro (`--ink-950`, fixo via `main.splash`/`main.auth-screen` em `index.css`), sem
-`ThemeToggle` — são a "vitrine" da marca e não seguem a escolha de tema do resto do app.
-
----
-
-## 5. Regras visuais (aplicar em todos os componentes)
-
-- **Títulos:** `--font-display` (Fraunces). No máximo UMA palavra em `--gold` itálico
-  para destaque; o resto em `--cream`.
-- **Corpo/UI:** `--font-body` (Inter).
-- **Cards comuns:** fundo `--ink-850` chapado, borda 1px `--border`, `--radius`, `--shadow`.
-  PROIBIDO degradê e brilho colorido.
-- **Cards de destaque** (resultado da triagem, header): fundo `--surface-warm` (#61402C)
-  chapado, mesma borda e raio. Usar com parcimônia — 1 por tela no máximo. Conferir que o
-  texto creme em cima fica legível.
-- **Botão primário:** fundo `--gold`, texto `--ink-950`, `--radius-sm` (canto discreto).
-  Hover: `--gold-dim`.
-- **Botão secundário:** transparente, borda `--border`, texto `--cream`. Hover: fundo `--ink-800`.
-- **Inputs:** fundo `--ink-850`, borda `--border`, texto `--cream`, placeholder
-  `--cream-faint`. Foco: borda `--gold` + leve sombra.
-- **Advogado:** FOTO em círculo ou quadrado arredondado. Sem foto no seed → placeholder
-  cinza neutro (`--ink-800`) com ícone de pessoa. Nunca inicial em fundo dourado.
-- **Dourado com parcimônia:** por tela, o dourado só em poucos lugares (1 botão principal
-  + 1 ou 2 acentos). Se estiver dourado demais, está errado — reduza.
-- **Espaçamento:** generoso; padding lateral mínimo 20px; respiro entre seções.
-- **Ícones:** SVG (lucide ou similar). Sem emoji.
-- **Estados obrigatórios:** hover, foco visível (borda dourada), carregando, vazio, erro.
-  Textos de erro objetivos ("Descreva a denúncia com pelo menos 10 caracteres"), não vagos.
-
----
-
-## 6. Tarefa
-
-Repagine TODAS as páginas usando os tokens e regras acima — apenas CSS e classes, SEM
-mudar lógica, rotas ou nomes de função:
-Home, Login, Cadastro, Triagem, Resultado da triagem, Lista de advogados, Perfil do
-advogado, Currículo, Denúncia, Minhas denúncias, Painel admin (usuários/advogados/
-denúncias), Perfil.
-
-Aplique a MESMA cara em todas, de forma consistente — nunca uma tela num estilo e outra
-noutro. Coloque a logo completa no login/home e o ícone da coruja no header interno.
-
-**Fluxo obrigatório:**
-1. ANTES de tocar em qualquer arquivo, me mostre um PLANO curto: quais páginas, como vai
-   aplicar os tokens, e a abordagem da navbar/header. Espere eu aprovar.
-2. Só depois, aplique em todas as páginas de uma vez.
-
----
-
-## 7. Antes de dizer que terminou
-
-- Tire um SCREENSHOT de cada página e verifique você mesmo: nenhum fundo branco, nenhum
-  card branco-no-branco, nenhum degradê em card, dourado usado com parcimônia, contraste
-  legível (creme sobre carvão), foco visível.
-- LISTE cada arquivo que você alterou. Nada de "pronto" vago.
-- Deploy é `firebase deploy` de verdade — commit no git NÃO é deploy. Confirme a URL no ar.
-
----
-
-## 8. Prioridade (se faltar tempo)
-
-Faça primeiro as telas que a banca vê: **Resultado da triagem, Triagem, Lista de
-advogados, Login**. Painel admin e denúncias depois. Melhor 4 telas redondas que 10 pela
-metade — não deixe nenhuma pela metade dizendo que acabou.
+- Conferir no navegador em desktop e em celular (375px), sem rolagem lateral.
+- Conferir contraste: texto pequeno com pelo menos 4,5:1.
+- Listar os arquivos alterados.
+- Deploy é `firebase deploy` de verdade; commit no git não é deploy.
