@@ -21,6 +21,8 @@ export function ResultadoPage() {
   const [catalogoCategorias, setCatalogoCategorias] = useState(null);
   const [categorias, setCategorias] = useState(resultado?.categorias || []);
   const [advogados, setAdvogados] = useState(resultado?.advogados || null);
+  // Cidade/UF do cliente usada no filtro (RF008); null = cadastro antigo sem cidade.
+  const [regiao, setRegiao] = useState(resultado?.regiao ?? null);
 
   // Pequena pausa (com a coruja de loading) antes de revelar a lista de advogados —
   // mesmo com a resposta pronta na hora, um instante de "procurando" faz o resultado
@@ -59,6 +61,7 @@ export function ResultadoPage() {
         setResultado(dados);
         setCategorias(dados.categorias || []);
         setAdvogados(dados.advogados || []);
+        setRegiao(dados.regiao ?? null);
       })
       .catch((err) => setErro(err.message));
   }, [id, resultado]);
@@ -69,13 +72,16 @@ export function ResultadoPage() {
 
   // Marcar/desmarcar categorias reordena a lista de advogados abaixo, priorizando quem
   // tem `especialidades` compatíveis com o que o cliente ajustou — senão os pills ficavam
-  // clicáveis sem nenhum efeito visível.
+  // clicáveis sem nenhum efeito visível. Recalcula pela própria triagem (não pela lista
+  // pública), que é quem sabe a cidade do cliente.
   useEffect(() => {
     if (!resultado || resultado.areaClassificada === "indefinido") return;
-    const params = new URLSearchParams({ area: resultado.areaClassificada });
-    if (categorias.length) params.set("categorias", categorias.join(","));
-    api.get(`/advogados?${params.toString()}`).then(setAdvogados);
-  }, [categorias, resultado]);
+    const params = new URLSearchParams({ categorias: categorias.join(",") });
+    api.get(`/triagem/${id}?${params.toString()}`).then((dados) => {
+      setAdvogados(dados.advogados || []);
+      setRegiao(dados.regiao ?? null);
+    });
+  }, [categorias, resultado, id]);
 
   if (erro) return <p role="alert">{erro}</p>;
   if (!resultado) return <Loading>Carregando...</Loading>;
@@ -139,9 +145,42 @@ export function ResultadoPage() {
       <div className="section-heading">
         <h2>Advogados compatíveis</h2>
       </div>
+      {regiao && resultado.areaClassificada !== "indefinido" && (
+        <p className="text-muted">
+          Advogados que atendem em {regiao.uf}
+          {regiao.cidade ? `, começando pelos de ${regiao.cidade}` : ""}.
+        </p>
+      )}
+      {!regiao && resultado.areaClassificada !== "indefinido" && (
+        <div className="card stack">
+          <strong>Informe sua cidade pra ver advogados perto de você</strong>
+          <p className="text-muted" style={{ margin: 0 }}>
+            Por enquanto mostramos advogados de todos os estados.
+          </p>
+          <Link to="/perfil" className="button button--secondary">
+            Informar minha cidade
+          </Link>
+        </div>
+      )}
       {advogados && revelando && <Loading>Revelando advogados compatíveis...</Loading>}
       {advogados && !revelando && advogados.length === 0 && (
-        <p className="text-muted">Nenhum advogado compatível encontrado ainda.</p>
+        <div className="card stack">
+          <strong>
+            {resultado.areaClassificada === "indefinido"
+              ? "Não deu pra identificar a área do seu caso."
+              : `Ainda não temos advogado ${(LABEL_AREA[resultado.areaClassificada] || "").toLowerCase()} aprovado${regiao ? ` em ${regiao.uf}` : ""}.`}
+          </strong>
+          <p className="text-muted" style={{ margin: 0 }}>
+            {resultado.areaClassificada === "indefinido"
+              ? "Tente uma nova triagem contando um pouco mais sobre o que aconteceu."
+              : "A Nocturis ainda está crescendo na sua região. Você pode ver advogados da mesma área em outros estados."}
+          </p>
+          {resultado.areaClassificada !== "indefinido" && (
+            <Link to={`/advogados?area=${resultado.areaClassificada}`} className="button button--secondary">
+              Ver advogados de outros estados
+            </Link>
+          )}
+        </div>
       )}
       {advogados && !revelando && advogados.length > 0 && (
         <>

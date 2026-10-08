@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { AdvogadoCard } from "../../components/AdvogadoCard/AdvogadoCard";
 import { Input } from "../../components/Input/Input";
 import { Loading } from "../../components/Loading/Loading";
@@ -13,7 +14,12 @@ const AREAS = [
 
 export function AdvogadosListPage() {
   useTitulo("Advogados");
-  const [area, setArea] = useState("");
+  // `?area=` vem do resultado da triagem ("ver advogados de outros estados").
+  const [searchParams] = useSearchParams();
+  const [area, setArea] = useState(() => {
+    const inicial = searchParams.get("area");
+    return AREAS.some((a) => a.value === inicial) ? inicial : "";
+  });
   const [categorias, setCategorias] = useState([]);
   const [catalogoCategorias, setCatalogoCategorias] = useState(null);
   const [cidade, setCidade] = useState("");

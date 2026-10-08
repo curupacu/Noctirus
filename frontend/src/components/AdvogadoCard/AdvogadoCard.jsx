@@ -42,6 +42,7 @@ export function AdvogadoCard({ advogado, catalogoEspecialidades = {}, triagemId 
           </span>
           <span className="advogado-card__badges">
             {oabAprovada(advogado) && <SeloOab advogado={advogado} />}
+            {advogado.mesmaCidade && <span className="badge">Na sua cidade</span>}
             {advogado.especialidadesCompativeis > 0 && <span className="badge">Atua no assunto</span>}
             {advogado.vezesSugerido > 0 && (
               <span className="badge">

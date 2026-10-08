@@ -7,13 +7,27 @@ import { db } from "../lib/firebase-admin.js";
 // só reordena, colocando primeiro quem tem `especialidades` que batem com o caso. Filtrar
 // de verdade zeraria resultados fácil (seed tem só 30 advogados pra 33 categorias x 14
 // estados); reordenar mantém sempre alguém pra contatar, mas prioriza quem é mais aderente.
+// Compara cidade sem diferenciar maiúscula nem acento ("São Paulo" = "sao paulo").
+function normalizarCidade(cidade) {
+  return String(cidade || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase();
+}
+
 // `somenteAprovados` (padrão) deixa de fora quem não teve a OAB aprovada pelo admin — o
 // cliente só vê advogado aprovado (RF009). Só a fila do admin passa `false`.
+//
+// `perto` é a localização do cliente no resultado da triagem (RF008): fica só quem atende
+// no mesmo estado, e quem é da mesma cidade vem primeiro (marcado com `mesmaCidade`).
+// Diferente de `cidade`/`uf` (filtro manual da listagem pública), que só filtram.
 export async function buscarAdvogadosCompativeis({
   area,
   cidade,
   uf,
   categorias,
+  perto,
   somenteAprovados = true,
 } = {}) {
   const snapshot = await db.collection("advogados").get();
@@ -45,15 +59,32 @@ export async function buscarAdvogadosCompativeis({
     );
   }
 
-  if (categorias?.length) {
+  if (perto?.uf) {
+    const ufCliente = String(perto.uf).toUpperCase();
+    const cidadeCliente = normalizarCidade(perto.cidade);
     advogados = advogados
+      .filter((adv) => adv.localizacao?.uf?.toUpperCase() === ufCliente)
       .map((adv) => ({
         ...adv,
-        especialidadesCompativeis: (adv.especialidades || []).filter((e) =>
-          categorias.includes(e),
-        ).length,
-      }))
-      .sort((a, b) => b.especialidadesCompativeis - a.especialidadesCompativeis);
+        mesmaCidade: Boolean(cidadeCliente) && normalizarCidade(adv.localizacao?.cidade) === cidadeCliente,
+      }));
+  }
+
+  if (categorias?.length) {
+    advogados = advogados.map((adv) => ({
+      ...adv,
+      especialidadesCompativeis: (adv.especialidades || []).filter((e) => categorias.includes(e)).length,
+    }));
+  }
+
+  // Mesma cidade primeiro; dentro disso, quem atende mais das especialidades do caso.
+  // (sort é estável: sem nenhum dos dois critérios, a ordem original fica.)
+  if (perto?.uf || categorias?.length) {
+    advogados.sort(
+      (a, b) =>
+        Number(b.mesmaCidade || 0) - Number(a.mesmaCidade || 0) ||
+        (b.especialidadesCompativeis || 0) - (a.especialidadesCompativeis || 0),
+    );
   }
 
   return advogados;

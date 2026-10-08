@@ -83,7 +83,7 @@ substituído — assim os sprints seguintes não carregam código morto.
 > especialidade**. Perguntas rascunhadas pelo Claude em `backend/src/services/triagem.js`
 > (`PERGUNTAS_ETAPA1`/`PERGUNTAS_ETAPA2`) — **falta a revisão do time**.
 
-## Sprint 4 — Resultado com localização (RF008, RF009)
+## Sprint 4 — Resultado com localização (RF008, RF009) ✅ código feito em 08/10
 
 - ✏️ Filtro por **especialidade + localização do cliente**: primeiro quem é da mesma cidade,
   depois do mesmo estado; dizer isso claramente na tela.
@@ -92,6 +92,12 @@ substituído — assim os sprints seguintes não carregam código morto.
 - ➖ Botões de WhatsApp/e-mail direto no perfil (passam a aparecer só depois do aceite, Sprint 5).
 
 **Pronto quando:** cliente de SP não recebe advogado de Curitiba sem aviso.
+
+> Feito: só advogados do estado do cliente, a cidade dele primeiro (selo "Na sua cidade"),
+> depois quem atende o assunto. Sem advogado no estado: aviso + link pros outros estados.
+> Cliente antigo sem cidade vê todos e um aviso pra informar. Os botões de WhatsApp/e-mail
+> no perfil ficam até o Sprint 5, junto com o pedido de contato (tirar antes deixaria o
+> cliente sem como falar com o advogado).
 
 ## Sprint 5 — Pedido de contato (RF010, RF013, RF014)
 

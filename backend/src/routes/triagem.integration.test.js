@@ -182,6 +182,81 @@ describe("POST /triagem/classificar (etapa 2)", () => {
   });
 });
 
+describe("resultado filtrado pela região do cliente (RF008)", () => {
+  function semearAdvogado(uid, cidade, uf, especialidades = []) {
+    cell.fake.db._seed("advogados", uid, {
+      areasAtuacao: ["trabalhista"],
+      localizacao: { cidade, uf },
+      especialidades,
+      situacaoOab: "aprovado",
+    });
+    cell.fake.db._seed("users", uid, { nome: uid });
+  }
+
+  const CORPO = { etapa1: ETAPA1, area: "trabalhista", etapa2: ETAPA2_TRABALHISTA };
+
+  it("mostra só advogados do estado do cliente, a cidade dele primeiro", async () => {
+    cell.fake.db._seed("users", "c1", { role: "cliente", localizacao: { cidade: "Campinas", uf: "SP" } });
+    semearAdvogado("capital", "São Paulo", "SP");
+    semearAdvogado("campinas", "Campinas", "SP");
+    semearAdvogado("rio", "Rio de Janeiro", "RJ");
+
+    const resposta = await request(app)
+      .post("/triagem/classificar")
+      .set("Authorization", `Bearer ${tokenCliente()}`)
+      .send(CORPO);
+
+    expect(resposta.status).toBe(201);
+    expect(resposta.body.regiao).toEqual({ cidade: "Campinas", uf: "SP" });
+    expect(resposta.body.advogados.map((a) => a.uid)).toEqual(["campinas", "capital"]);
+    const triagem = (await cell.fake.db.collection("triagens").doc(resposta.body.id).get()).data();
+    expect(triagem.regiaoCliente).toEqual({ cidade: "Campinas", uf: "SP" });
+  });
+
+  it("nenhum advogado no estado do cliente → lista vazia (a tela avisa)", async () => {
+    cell.fake.db._seed("users", "c1", { role: "cliente", localizacao: { cidade: "Manaus", uf: "AM" } });
+    semearAdvogado("capital", "São Paulo", "SP");
+
+    const resposta = await request(app)
+      .post("/triagem/classificar")
+      .set("Authorization", `Bearer ${tokenCliente()}`)
+      .send(CORPO);
+    expect(resposta.body.advogados).toEqual([]);
+  });
+
+  it("cliente antigo sem cidade vê a área inteira e regiao null", async () => {
+    cell.fake.db._seed("users", "c1", { role: "cliente" });
+    semearAdvogado("capital", "São Paulo", "SP");
+    semearAdvogado("rio", "Rio de Janeiro", "RJ");
+
+    const resposta = await request(app)
+      .post("/triagem/classificar")
+      .set("Authorization", `Bearer ${tokenCliente()}`)
+      .send(CORPO);
+    expect(resposta.body.regiao).toBeNull();
+    expect(resposta.body.advogados).toHaveLength(2);
+  });
+
+  it("GET /triagem/:id?categorias recalcula a ordem com as especialidades marcadas (só as da área)", async () => {
+    cell.fake.db._seed("users", "c1", { role: "cliente", localizacao: { cidade: "Santos", uf: "SP" } });
+    semearAdvogado("generalista", "Santos", "SP");
+    semearAdvogado("fgts", "Santos", "SP", ["fgts_multa"]);
+    cell.fake.db._seed("triagens", "t1", {
+      clienteId: "c1",
+      areaClassificada: "trabalhista",
+      categorias: ["horas_extras"],
+    });
+
+    const resposta = await request(app)
+      .get("/triagem/t1?categorias=fgts_multa,plano_saude")
+      .set("Authorization", `Bearer ${tokenCliente()}`);
+
+    expect(resposta.status).toBe(200);
+    expect(resposta.body.advogados.map((a) => a.uid)).toEqual(["fgts", "generalista"]);
+    expect(resposta.body.advogados[0].especialidadesCompativeis).toBe(1);
+  });
+});
+
 describe("GET /triagem/historico", () => {
   it("recusa sem token", async () => {
     const resposta = await request(app).get("/triagem/historico");

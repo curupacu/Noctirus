@@ -154,4 +154,46 @@ describe("buscarAdvogadosCompativeis", () => {
     const resultado = await buscarAdvogadosCompativeis();
     expect(resultado[0].especialidadesCompativeis).toBeUndefined();
   });
+
+  describe("perto (região do cliente no resultado da triagem)", () => {
+    function advogado(cidade, uf, especialidades = []) {
+      return { areasAtuacao: ["civel"], localizacao: { cidade, uf }, especialidades };
+    }
+
+    it("só traz quem atende no mesmo estado do cliente", async () => {
+      preparar({
+        advogados: { sp: advogado("Campinas", "SP"), rj: advogado("Rio de Janeiro", "RJ") },
+        users: { sp: BASE_USER, rj: BASE_USER },
+      });
+      const resultado = await buscarAdvogadosCompativeis({ perto: { cidade: "São Paulo", uf: "sp" } });
+      expect(resultado.map((a) => a.uid)).toEqual(["sp"]);
+    });
+
+    it("mesma cidade vem primeiro, sem diferenciar acento nem maiúscula", async () => {
+      preparar({
+        advogados: { campinas: advogado("Campinas", "SP"), capital: advogado("SAO PAULO", "SP") },
+        users: { campinas: BASE_USER, capital: BASE_USER },
+      });
+      const resultado = await buscarAdvogadosCompativeis({ perto: { cidade: "São Paulo", uf: "SP" } });
+      expect(resultado.map((a) => a.uid)).toEqual(["capital", "campinas"]);
+      expect(resultado[0].mesmaCidade).toBe(true);
+      expect(resultado[1].mesmaCidade).toBe(false);
+    });
+
+    it("dentro da mesma cidade, quem atende o assunto do caso vem antes", async () => {
+      preparar({
+        advogados: {
+          generalista: advogado("Santos", "SP"),
+          especialista: advogado("Santos", "SP", ["aluguel_imoveis"]),
+          outraCidade: advogado("Campinas", "SP", ["aluguel_imoveis"]),
+        },
+        users: { generalista: BASE_USER, especialista: BASE_USER, outraCidade: BASE_USER },
+      });
+      const resultado = await buscarAdvogadosCompativeis({
+        perto: { cidade: "Santos", uf: "SP" },
+        categorias: ["aluguel_imoveis"],
+      });
+      expect(resultado.map((a) => a.uid)).toEqual(["especialista", "generalista", "outraCidade"]);
+    });
+  });
 });
