@@ -472,6 +472,33 @@ fieldset label {
   }
 }
 
+/* Barra de ação do formulário: o botão principal ocupa o espaço e um secundário (ex.:
+   "Voltar" na etapa 2 da triagem) fica do lado; a mensagem de erro vai pra linha de baixo. */
+.form-cta-sticky {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.form-cta-sticky > .button:first-child {
+  flex: 1 1 auto;
+}
+
+.form-cta-sticky > [role="alert"] {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+/* Abas de navegação (quadro de casos, fila do admin) dividem a linha por igual no celular,
+   em vez de ficarem com larguras irregulares quando quebram linha. */
+@media (max-width: 640px) {
+  nav.pill-toggle > .pill-toggle__item {
+    flex: 1 1 auto;
+    padding-inline: var(--space-sm);
+  }
+}
+
 /* No máximo uma palavra em destaque por título (ver docs/DESIGN.md) */
 h1 .accent,
 h2 .accent {
@@ -594,6 +621,7 @@ main.auth-screen {
   background: var(--color-surface);
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-sm);
+  min-height: 44px; /* alvo mínimo de toque no celular */
   padding: var(--space-sm) var(--space-lg);
   cursor: pointer;
   transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;

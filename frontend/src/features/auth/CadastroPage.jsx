@@ -302,7 +302,7 @@ export function CadastroPage() {
               checked={aceitouPoliticaPrivacidade}
               onChange={(e) => setAceitouPoliticaPrivacidade(e.target.checked)}
               required
-              style={{ marginTop: "3px" }}
+              style={{ marginTop: "2px", width: "20px", height: "20px", flex: "none" }}
             />
             <span>
               Li e aceito a{" "}
