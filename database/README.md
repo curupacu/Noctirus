@@ -19,7 +19,15 @@ descartáveis, sem dado real em risco de poluir uma "produção" separada.
   Firestore, já que não existe cadastro público pra esse papel.
   Uso: `node database/seed/criar-admin.js <email> <senha> <nome>`.
 
-Ambos os scripts rodam a partir da **raiz do repo** (não daqui) e precisam de
+- `seed/demo-casos.js` — dados de demonstração pra apresentação: enche o quadro de casos de
+  um advogado (pedidos pendentes, casos em andamento e concluídos, com prioridade e anotação)
+  e o painel de um cliente (pedido aceito, pendente e recusado). Recebe os e-mails das duas
+  contas que vão ser usadas na apresentação; tudo que cria leva `demo: true` e
+  `--remover` apaga. Uso: `node database/seed/demo-casos.js <email-advogado> <email-cliente>`.
+- `seed/migrar-situacao-oab.js` — migração de outubro/2026 (`verificado` → `situacaoOab`),
+  já rodada; fica só como registro.
+
+Todos os scripts rodam a partir da **raiz do repo** (não daqui) e precisam de
 `GOOGLE_APPLICATION_CREDENTIALS` e `FIREBASE_PROJECT_ID` no ambiente, por exemplo:
 
 ```
