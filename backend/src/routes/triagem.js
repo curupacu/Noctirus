@@ -33,6 +33,23 @@ async function somarContadorDeSugestoes(advogados) {
   );
 }
 
+// Advogados do resultado da triagem: área + especialidades do caso + região do cliente
+// (RF008). Usa a cidade/UF atual do cadastro do cliente — quem acabou de informar a
+// cidade pelo aviso do painel já vê o resultado filtrado. Cliente antigo sem cidade vê
+// todo mundo da área (o frontend avisa que falta a cidade).
+async function advogadosDaTriagem({ clienteId, area, categorias }) {
+  const usuario = (await db.collection("users").doc(clienteId).get()).data();
+  const regiao = usuario?.localizacao?.uf ? usuario.localizacao : null;
+  if (area === "indefinido") return { advogados: [], regiao };
+
+  const advogados = await buscarAdvogadosCompativeis({
+    area,
+    categorias,
+    ...(regiao ? { perto: regiao } : {}),
+  });
+  return { advogados, regiao };
+}
+
 // Valida as respostas de uma etapa contra a lista de perguntas dela: toda pergunta precisa
 // ser respondida (restrição do caso de uso "Realizar triagem jurídica"), dentro do tamanho
 // mínimo/máximo — o máximo é também o teto de custo do prompt da IA.
@@ -126,7 +143,11 @@ triagemRouter.post(
     ].join("\n");
 
     const resultado = await classificar({ descricao, areaFixa: area });
-    const advogados = await buscarAdvogadosCompativeis({ area, categorias: resultado.categorias });
+    const { advogados, regiao } = await advogadosDaTriagem({
+      clienteId: req.user.uid,
+      area,
+      categorias: resultado.categorias,
+    });
 
     const triagem = {
       clienteId: req.user.uid,
@@ -144,6 +165,9 @@ triagemRouter.post(
       origem: resultado.origem,
       justificativa: resultado.justificativa || null,
       advogadosSugeridos: advogados.map((adv) => adv.uid),
+      // Região usada no filtro no momento da triagem (só registro — o resultado aberto de
+      // novo usa a cidade atual do cadastro).
+      regiaoCliente: regiao,
       createdAt: new Date().toISOString(),
     };
 
@@ -157,7 +181,7 @@ triagemRouter.post(
       vezesSugerido: (adv.vezesSugerido || 0) + 1,
     }));
 
-    res.status(201).json({ id: ref.id, ...triagem, advogados: advogadosAtualizados });
+    res.status(201).json({ id: ref.id, ...triagem, regiao, advogados: advogadosAtualizados });
   },
 );
 
@@ -183,11 +207,19 @@ triagemRouter.get("/triagem/:id", verificarToken, requireRole("cliente"), async 
   }
 
   const triagem = doc.data();
-  const advogados = await buscarAdvogadosCompativeis(
-    triagem.areaClassificada === "indefinido"
-      ? {}
-      : { area: triagem.areaClassificada, categorias: triagem.categorias },
-  );
+  // `?categorias=a,b` — o cliente marcou/desmarcou especialidades na tela de resultado e a
+  // lista é recalculada com elas (só vale categoria da área da triagem).
+  const daArea = (CATEGORIAS_POR_AREA[triagem.areaClassificada] || []).map((c) => c.valor);
+  const categorias =
+    typeof req.query.categorias === "string"
+      ? req.query.categorias.split(",").filter((c) => daArea.includes(c))
+      : triagem.categorias;
 
-  res.json({ id: doc.id, ...triagem, advogados });
+  const { advogados, regiao } = await advogadosDaTriagem({
+    clienteId: req.user.uid,
+    area: triagem.areaClassificada,
+    categorias,
+  });
+
+  res.json({ id: doc.id, ...triagem, regiao, advogados });
 });

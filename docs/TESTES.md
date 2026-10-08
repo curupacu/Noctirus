@@ -6,7 +6,7 @@ sem precisar de nenhuma credencial real do Firebase ou do Gemini pra rodar.
 
 ## Números (19/08)
 
-- **194 testes**, em **13 arquivos**, 100% passando (outubro/2026, depois dos Sprints 0–3).
+- **201 testes**, em **13 arquivos**, 100% passando (outubro/2026, depois dos Sprints 0–4).
 - Framework: [Vitest](https://vitest.dev/) (`backend/package.json`).
 - Rodar: `npm test` na raiz (delega pro backend) ou `npm test` dentro de `backend/`.
 - Tempo total: ~8s.

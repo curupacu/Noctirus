@@ -55,6 +55,7 @@ Um documento por triagem enviada (um cliente pode ter várias ao longo do tempo)
 | `clienteId` | string (uid) | |
 | `respostas` | `{ etapa1, etapa2 }` | Respostas abertas da triagem em duas etapas (outubro/2026), chaveadas pelo `id` de cada pergunta (`PERGUNTAS_ETAPA1`/`PERGUNTAS_ETAPA2` em `services/triagem.js`). Triagens antigas têm o formato anterior (múltipla escolha). |
 | `descricao` | string | Perguntas + respostas das duas etapas juntas, uma por linha — é o que vai pra IA e o que o advogado lê com o opt-in. |
+| `regiaoCliente` | `{ cidade, uf }` ou `null` | Cidade/UF do cliente usada no filtro na hora da triagem (RF008). Ao abrir o resultado de novo, vale a cidade atual do cadastro. |
 | `especialidade` | string ou `null` | Especialidade principal identificada na etapa 2 (RF007) — a primeira de `categorias`. |
 | `compartilharComAdvogado` | boolean | **Opt-in explícito** (padrão `false`) — só com isso `true` a descrição pode aparecer pro advogado contatado, ver `conversas.js` → `GET /conversas/:comUid/triagem`. |
 | `areaClassificada` | `"civel" \| "trabalhista" \| "indefinido"` | |
