@@ -8,7 +8,7 @@ descartáveis, sem dado real em risco de poluir uma "produção" separada.
 - `firestore.rules` — regras de segurança (nega tudo por padrão, libera por papel via custom claims).
 - `firestore.indexes.json` — índices compostos do Firestore.
 - [`schema.md`](schema.md) — modelo de dados por coleção (`users`, `advogados`, `curriculos`,
-  `triagens`, `contatos`, `contatosCliente`, `mensagensChat`).
+  `triagens`, `solicitacoes`, `notificacoes`).
 - `seed/lawyers.json` — 30 advogados fictícios (nome, OAB, áreas, especialidades, localização,
   currículo) cobrindo os 33 valores da taxonomia de categorias e 14 estados diferentes.
 - `seed/seed.js` — lê `lawyers.json` e cria, pra cada advogado, um documento em `users/`,

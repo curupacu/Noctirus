@@ -99,7 +99,7 @@ substituído — assim os sprints seguintes não carregam código morto.
 > no perfil ficam até o Sprint 5, junto com o pedido de contato (tirar antes deixaria o
 > cliente sem como falar com o advogado).
 
-## Sprint 5 — Pedido de contato (RF010, RF013, RF014)
+## Sprint 5 — Pedido de contato (RF010, RF013, RF014) ✅ código feito em 08/10
 
 - ➕ Coleção nova `solicitacoes` (cliente, advogado, triagem, autorização, situação
   `pendente | aceita | recusada`, datas).
@@ -115,6 +115,13 @@ substituído — assim os sprints seguintes não carregam código morto.
 - ✏️ Evitar pedido duplicado pendente pro mesmo advogado; regras e índices do Firestore.
 
 **Pronto quando:** o fluxo inteiro cliente → advogado → cliente funciona com notificações.
+
+> Feito também: WhatsApp/e-mail do advogado sumiram de todas as rotas públicas (lista,
+> perfil, resultado da triagem); selo "Em N triagens" e o contador `vezesSugerido` saíram
+> (sinal de popularidade — mesmo motivo de não ter "advogados em alta"); painel do cliente
+> com prateleiras (suas solicitações, advogados pro seu caso, advogados perto de você — em
+> ordem neutra que muda todo dia). Tela provisória `/solicitacoes` pro advogado responder;
+> o quadro de casos (Sprint 6) parte dela.
 
 ## Sprint 6 — Quadro de casos do advogado (RF012)
 

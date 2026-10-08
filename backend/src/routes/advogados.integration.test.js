@@ -122,6 +122,29 @@ describe("GET /advogados/:uid", () => {
     expect(resposta.body.erro).toBe("Perfil indisponível");
   });
 
+  it("perfil público não mostra WhatsApp/e-mail nem o histórico da OAB (RF010)", async () => {
+    semear("a1", {
+      advogado: {
+        situacaoOab: "aprovado",
+        contatos: { whatsapp: "11999999999", email: "a1@example.com" },
+        historicoOab: [{ situacao: "aprovado" }],
+      },
+    });
+    const resposta = await request(app).get("/advogados/a1");
+    expect(resposta.body.contatos).toBeUndefined();
+    expect(resposta.body.historicoOab).toBeUndefined();
+
+    const lista = await request(app).get("/advogados");
+    expect(lista.body[0].contatos).toBeUndefined();
+  });
+
+  it("o próprio advogado vê o perfil completo, com os contatos", async () => {
+    semear("a1", { advogado: { situacaoOab: "aprovado", contatos: { whatsapp: "11999999999" } } });
+    const dono = cell.fake.criarToken({ uid: "a1", role: "advogado" });
+    const resposta = await request(app).get("/advogados/a1").set("Authorization", `Bearer ${dono}`);
+    expect(resposta.body.contatos).toEqual({ whatsapp: "11999999999" });
+  });
+
   it("o próprio advogado e o admin veem o perfil mesmo em análise", async () => {
     semear("a1");
     const dono = cell.fake.criarToken({ uid: "a1", role: "advogado" });
@@ -380,98 +403,3 @@ describe("PUT /advogados/:uid corrigindo a OAB recusada", () => {
   });
 });
 
-describe("POST /advogados/:uid/contato", () => {
-  it("recusa canal inválido", async () => {
-    semear("a1");
-    const resposta = await request(app).post("/advogados/a1/contato").send({ canal: "telefone" });
-    expect(resposta.status).toBe(400);
-  });
-
-  it("404 quando o advogado não existe", async () => {
-    const resposta = await request(app).post("/advogados/nao-existe/contato").send({ canal: "whatsapp" });
-    expect(resposta.status).toBe(404);
-  });
-
-  it("registra o contato sem exigir token (RF008/RF010: perfil é público)", async () => {
-    semear("a1");
-    const resposta = await request(app).post("/advogados/a1/contato").send({ canal: "whatsapp" });
-    expect(resposta.status).toBe(201);
-
-    const snap = await cell.fake.db.collection("contatos").where("advogadoId", "==", "a1").get();
-    expect(snap.docs).toHaveLength(1);
-    expect(snap.docs[0].data().canal).toBe("whatsapp");
-  });
-
-  it("não cria contatosCliente quando anônimo", async () => {
-    semear("a1");
-    await request(app).post("/advogados/a1/contato").send({ canal: "whatsapp" });
-    const doc = await cell.fake.db.collection("contatosCliente").doc("c1_a1").get();
-    expect(doc.exists).toBe(false);
-  });
-
-  it("upserta contatosCliente quando o clique vem de um cliente logado", async () => {
-    semear("a1");
-    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
-    const resposta = await request(app)
-      .post("/advogados/a1/contato")
-      .set("Authorization", `Bearer ${token}`)
-      .send({ canal: "whatsapp" });
-    expect(resposta.status).toBe(201);
-
-    const doc = await cell.fake.db.collection("contatosCliente").doc("c1_a1").get();
-    expect(doc.exists).toBe(true);
-    expect(doc.data()).toMatchObject({ clienteId: "c1", advogadoId: "a1", status: null });
-  });
-
-  it("preserva o status já marcado ao contatar de novo o mesmo advogado", async () => {
-    semear("a1");
-    cell.fake.db._seed("contatosCliente", "c1_a1", {
-      clienteId: "c1",
-      advogadoId: "a1",
-      status: "Aguardando resposta",
-      criadoEm: "2026-08-01T00:00:00.000Z",
-      ultimoContatoEm: "2026-08-01T00:00:00.000Z",
-    });
-    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
-    await request(app)
-      .post("/advogados/a1/contato")
-      .set("Authorization", `Bearer ${token}`)
-      .send({ canal: "email" });
-
-    const doc = await cell.fake.db.collection("contatosCliente").doc("c1_a1").get();
-    expect(doc.data().status).toBe("Aguardando resposta");
-    expect(doc.data().criadoEm).toBe("2026-08-01T00:00:00.000Z");
-    expect(doc.data().ultimoContatoEm).not.toBe("2026-08-01T00:00:00.000Z");
-  });
-});
-
-describe("GET /advogados/:uid/metricas", () => {
-  it("recusa sem token", async () => {
-    const resposta = await request(app).get("/advogados/a1/metricas");
-    expect(resposta.status).toBe(401);
-  });
-
-  it("recusa ver métricas de outro advogado", async () => {
-    const token = cell.fake.criarToken({ uid: "a2", role: "advogado" });
-    const resposta = await request(app).get("/advogados/a1/metricas").set("Authorization", `Bearer ${token}`);
-    expect(resposta.status).toBe(403);
-  });
-
-  it("admin também pode ver", async () => {
-    const token = cell.fake.criarToken({ uid: "admin1", role: "admin" });
-    const resposta = await request(app).get("/advogados/a1/metricas").set("Authorization", `Bearer ${token}`);
-    expect(resposta.status).toBe(200);
-  });
-
-  it("soma contatos por canal", async () => {
-    cell.fake.db._seed("contatos", "c1", { advogadoId: "a1", canal: "whatsapp" });
-    cell.fake.db._seed("contatos", "c2", { advogadoId: "a1", canal: "whatsapp" });
-    cell.fake.db._seed("contatos", "c3", { advogadoId: "a1", canal: "email" });
-
-    const token = cell.fake.criarToken({ uid: "a1", role: "advogado" });
-    const resposta = await request(app).get("/advogados/a1/metricas").set("Authorization", `Bearer ${token}`);
-
-    expect(resposta.status).toBe(200);
-    expect(resposta.body.contatos).toEqual({ total: 3, whatsapp: 2, email: 1 });
-  });
-});

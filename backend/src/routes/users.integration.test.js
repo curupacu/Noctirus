@@ -173,11 +173,10 @@ describe("GET /users/me/dados", () => {
     expect(resposta.status).toBe(404);
   });
 
-  it("junta cadastro, triagens, contatos e mensagens do cliente", async () => {
+  it("junta cadastro, triagens e pedidos de contato do cliente", async () => {
     cell.fake.db._seed("users", "c1", { role: "cliente", nome: "Cliente" });
     cell.fake.db._seed("triagens", "t1", { clienteId: "c1", descricao: "Fui demitido" });
-    cell.fake.db._seed("contatosCliente", "c1_a1", { clienteId: "c1", advogadoId: "a1" });
-    cell.fake.db._seed("mensagensChat", "m1", { clienteId: "c1", advogadoId: "a1", texto: "Olá!" });
+    cell.fake.db._seed("solicitacoes", "s1", { clienteId: "c1", advogadoId: "a1", situacao: "pendente" });
 
     const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
     const resposta = await request(app).get("/users/me/dados").set("Authorization", `Bearer ${token}`);
@@ -185,16 +184,15 @@ describe("GET /users/me/dados", () => {
     expect(resposta.status).toBe(200);
     expect(resposta.body.cadastro.nome).toBe("Cliente");
     expect(resposta.body.triagens).toHaveLength(1);
-    expect(resposta.body.contatosFeitos).toHaveLength(1);
-    expect(resposta.body.mensagensChat).toHaveLength(1);
+    expect(resposta.body.solicitacoesFeitas).toHaveLength(1);
     expect(resposta.body.perfilAdvogado).toBeUndefined();
   });
 
-  it("junta perfil, currículo e contatos recebidos do advogado", async () => {
+  it("junta perfil, currículo e pedidos recebidos do advogado", async () => {
     cell.fake.db._seed("users", "a1", { role: "advogado", nome: "Advogado" });
     cell.fake.db._seed("advogados", "a1", { areasAtuacao: ["civel"] });
     cell.fake.db._seed("curriculos", "a1", { formacao: ["Direito - USP"] });
-    cell.fake.db._seed("contatos", "ct1", { advogadoId: "a1", canal: "whatsapp" });
+    cell.fake.db._seed("solicitacoes", "s1", { clienteId: "c1", advogadoId: "a1", situacao: "pendente" });
 
     const token = cell.fake.criarToken({ uid: "a1", role: "advogado" });
     const resposta = await request(app).get("/users/me/dados").set("Authorization", `Bearer ${token}`);
@@ -202,7 +200,7 @@ describe("GET /users/me/dados", () => {
     expect(resposta.status).toBe(200);
     expect(resposta.body.perfilAdvogado.areasAtuacao).toEqual(["civel"]);
     expect(resposta.body.curriculo.formacao).toEqual(["Direito - USP"]);
-    expect(resposta.body.contatosRecebidos).toHaveLength(1);
+    expect(resposta.body.solicitacoesRecebidas).toHaveLength(1);
     expect(resposta.body.triagens).toBeUndefined();
   });
 });

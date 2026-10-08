@@ -70,8 +70,7 @@ export function PerfilPage() {
   const [carregando, setCarregando] = useState(true);
   const [advogado, setAdvogado] = useState(null);
   const [curriculo, setCurriculo] = useState(null);
-  const [metricas, setMetricas] = useState(null);
-  const [conversas, setConversas] = useState(null);
+  const [solicitacoes, setSolicitacoes] = useState(null);
 
   useEffect(() => {
     async function carregar() {
@@ -98,8 +97,7 @@ export function PerfilPage() {
 
   useEffect(() => {
     if (!user || role !== "advogado") return;
-    api.get(`/advogados/${user.uid}/metricas`).then(setMetricas);
-    api.get("/conversas/minhas").then(setConversas);
+    api.get("/solicitacoes/recebidas").then(setSolicitacoes).catch(() => setSolicitacoes([]));
   }, [user, role]);
 
   async function salvarUsuario(e) {
@@ -153,7 +151,8 @@ export function PerfilPage() {
       { label: "Currículo", completo: curriculoPreenchido },
     ];
     const primeiroNome = (dadosUsuario.nome || dadosUsuario.email || "").split(" ")[0];
-    const conversasRecentes = (conversas || []).slice(0, 3);
+    const pendentes = (solicitacoes || []).filter((s) => s.situacao === "pendente");
+    const aceitos = (solicitacoes || []).filter((s) => s.situacao === "aceita");
 
     return (
       <main>
@@ -168,47 +167,36 @@ export function PerfilPage() {
 
         <div className="row">
           <div className="card">
-            <p className="text-muted">Contatos recebidos</p>
-            <p className="stat-numero">{metricas ? metricas.contatos.total : "—"}</p>
+            <p className="text-muted">Pedidos esperando resposta</p>
+            <p className="stat-numero">{solicitacoes ? pendentes.length : "—"}</p>
           </div>
           <div className="card">
-            <p className="text-muted">Conversas</p>
-            <p className="stat-numero">{conversas ? conversas.length : "—"}</p>
+            <p className="text-muted">Pedidos aceitos</p>
+            <p className="stat-numero">{solicitacoes ? aceitos.length : "—"}</p>
           </div>
         </div>
 
         <PerfilCompletude itens={itensCompletude} />
 
         <div className="section-heading">
-          <h2>Conversas recentes</h2>
-          {conversasRecentes.length > 0 && <Link to="/conversas">Ver todas</Link>}
+          <h2>Pedidos de contato</h2>
+          {solicitacoes && solicitacoes.length > 0 && <Link to="/solicitacoes">Ver todos</Link>}
         </div>
-        {conversas && conversas.length === 0 && (
-          <p className="text-muted">Ninguém te mandou mensagem ainda.</p>
+        {solicitacoes && pendentes.length === 0 && (
+          <p className="text-muted">Nenhum pedido esperando resposta.</p>
         )}
-        {conversasRecentes.length > 0 && (
-          <ul className="list-plain">
-            {conversasRecentes.map((c) => (
-              <li key={c.comUid}>
-                <Link
-                  to={`/conversas/${c.comUid}`}
-                  state={{ nome: c.nome, foto: c.foto }}
-                  className="list-row"
-                >
-                  <Avatar nome={c.nome} foto={c.foto} seed={c.comUid} />
-                  <span className="list-row__info">
-                    <span className="list-row__title">{c.nome || "Cliente"}</span>
-                    <span className="list-row__meta">
-                      {c.ultimoRemetente === "advogado" ? "Você" : "Cliente"}: {c.ultimaMensagem}
-                    </span>
-                  </span>
-                  <span className="advogado-row__chevron" aria-hidden="true">
-                    ›
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
+        {pendentes.length > 0 && (
+          <Link to="/solicitacoes" className="list-row">
+            <span className="list-row__info">
+              <span className="list-row__title">
+                {pendentes.length} pedido{pendentes.length === 1 ? "" : "s"} esperando sua resposta
+              </span>
+              <span className="list-row__meta">Leia o caso e aceite ou recuse</span>
+            </span>
+            <span className="advogado-row__chevron" aria-hidden="true">
+              ›
+            </span>
+          </Link>
         )}
 
         <div className="section-heading">
@@ -310,8 +298,8 @@ export function PerfilPage() {
         )}
         {role === "cliente" && (
           <li>
-            <Link to="/meus-contatos" className="list-row">
-              <span className="list-row__title">Meus contatos</span>
+            <Link to="/minhas-solicitacoes" className="list-row">
+              <span className="list-row__title">Minhas solicitações</span>
               <span className="advogado-row__chevron" aria-hidden="true">›</span>
             </Link>
           </li>

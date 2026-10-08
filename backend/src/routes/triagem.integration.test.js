@@ -158,27 +158,20 @@ describe("POST /triagem/classificar (etapa 2)", () => {
     expect(resposta.body.areaClassificada).toBe("civel");
   });
 
-  it("compartilharComAdvogado é falso por padrão, e vira true só com opt-in explícito", async () => {
-    const corpo = { etapa1: ETAPA1, area: "trabalhista", etapa2: ETAPA2_TRABALHISTA };
-    expect((await enviar(corpo)).body.compartilharComAdvogado).toBe(false);
-    expect((await enviar({ ...corpo, compartilharComAdvogado: true })).body.compartilharComAdvogado).toBe(true);
-  });
-
-  it("soma o contador de sugestão dos advogados compatíveis", async () => {
+  it("o resultado não traz o WhatsApp/e-mail dos advogados (só depois do aceite)", async () => {
     cell.fake.db._seed("advogados", "adv1", {
       areasAtuacao: ["trabalhista"],
       localizacao: {},
       especialidades: [],
       situacaoOab: "aprovado",
+      contatos: { whatsapp: "11999999999", email: "adv@example.com" },
     });
-    cell.fake.db._seed("users", "adv1", { nome: "Advogado Um", status: "ativo" });
+    cell.fake.db._seed("users", "adv1", { nome: "Advogado Um" });
 
     const resposta = await enviar({ etapa1: ETAPA1, area: "trabalhista", etapa2: ETAPA2_TRABALHISTA });
 
     expect(resposta.status).toBe(201);
-    expect(resposta.body.advogados.find((a) => a.uid === "adv1").vezesSugerido).toBe(1);
-    const advogado = (await cell.fake.db.collection("advogados").doc("adv1").get()).data();
-    expect(advogado.vezesSugerido).toBe(1);
+    expect(resposta.body.advogados.find((a) => a.uid === "adv1").contatos).toBeUndefined();
   });
 });
 

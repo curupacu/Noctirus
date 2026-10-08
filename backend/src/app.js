@@ -10,10 +10,9 @@ import helmet from "helmet";
 import { limiteGeral } from "./middlewares/rateLimit.js";
 import { advogadosRouter } from "./routes/advogados.js";
 import { authRouter } from "./routes/auth.js";
-import { contatosRouter } from "./routes/contatos.js";
-import { conversasRouter } from "./routes/conversas.js";
 import { curriculosRouter } from "./routes/curriculos.js";
 import { healthRouter } from "./routes/health.js";
+import { solicitacoesRouter } from "./routes/solicitacoes.js";
 import { triagemRouter } from "./routes/triagem.js";
 import { usersRouter } from "./routes/users.js";
 
@@ -61,8 +60,7 @@ app.use(usersRouter);
 app.use(advogadosRouter);
 app.use(curriculosRouter);
 app.use(triagemRouter);
-app.use(contatosRouter);
-app.use(conversasRouter);
+app.use(solicitacoesRouter);
 
 // Reporta pro Sentry antes do handler de sempre — sem SENTRY_DSN configurada
 // (instrument.js não chamou Sentry.init) isso vira um no-op, não quebra nada.

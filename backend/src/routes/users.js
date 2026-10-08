@@ -123,38 +123,33 @@ usersRouter.get("/users/me/dados", verificarToken, async (req, res) => {
   const dados = { cadastro: { uid, ...usuarioDoc.data() } };
 
   if (role === "advogado") {
-    const [advogadoDoc, curriculoDoc, contatosRecebidos] = await Promise.all([
+    const [advogadoDoc, curriculoDoc, solicitacoesRecebidas] = await Promise.all([
       db.collection("advogados").doc(uid).get(),
       db.collection("curriculos").doc(uid).get(),
-      db.collection("contatos").where("advogadoId", "==", uid).get(),
+      db.collection("solicitacoes").where("advogadoId", "==", uid).get(),
     ]);
     dados.perfilAdvogado = advogadoDoc.exists ? advogadoDoc.data() : null;
     dados.curriculo = curriculoDoc.exists ? curriculoDoc.data() : null;
-    dados.contatosRecebidos = paraLista(contatosRecebidos);
+    dados.solicitacoesRecebidas = paraLista(solicitacoesRecebidas);
   }
 
   if (role === "cliente") {
-    const [triagens, contatosFeitos] = await Promise.all([
+    const [triagens, solicitacoesFeitas] = await Promise.all([
       db.collection("triagens").where("clienteId", "==", uid).get(),
-      db.collection("contatosCliente").where("clienteId", "==", uid).get(),
+      db.collection("solicitacoes").where("clienteId", "==", uid).get(),
     ]);
     dados.triagens = paraLista(triagens);
-    dados.contatosFeitos = paraLista(contatosFeitos);
+    dados.solicitacoesFeitas = paraLista(solicitacoesFeitas);
   }
 
-  const mensagensEnviadas = await db
-    .collection("mensagensChat")
-    .where(role === "cliente" ? "clienteId" : "advogadoId", "==", uid)
-    .get();
-  dados.mensagensChat = paraLista(mensagensEnviadas);
 
   res.json(dados);
 });
 
 // Direito de eliminação (LGPD, art. 18, VI) — o próprio titular apaga a conta, sem
 // depender de um admin. Sai da Auth e do Firestore (users + advogados/curriculos, se for o
-// caso). Não apaga registros que também são dado de terceiros (mensagens de chat) — apagar
-// esses de vez destruiria o histórico do outro lado da conversa; ver
+// caso). Não apaga registros que também são dado de terceiros (pedidos de contato) — apagar
+// esses de vez destruiria o histórico do outro lado; ver
 // docs/historico/ROADMAP-julho-2026.md pra anonimização completa como item de LGPD mais robusto.
 usersRouter.delete("/users/me", verificarToken, async (req, res) => {
   const { uid, role } = req.user;

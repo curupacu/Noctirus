@@ -66,7 +66,6 @@ export function TriagemPage() {
   // pra etapa 2 — o cliente pode trocar se a sugestão não fizer sentido pra ele.
   const [areaSugerida, setAreaSugerida] = useState(null);
   const [area, setArea] = useState(null);
-  const [compartilharComAdvogado, setCompartilharComAdvogado] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState(null);
 
@@ -100,7 +99,6 @@ export function TriagemPage() {
         etapa1,
         area,
         etapa2,
-        compartilharComAdvogado,
       });
       navigate(`/triagem/${resultado.id}`, { state: { resultado } });
     } catch (err) {
@@ -199,16 +197,6 @@ export function TriagemPage() {
               onChange={(valor) => setEtapa2((atual) => ({ ...atual, [p.id]: valor }))}
             />
           ))}
-
-          {area && (
-            <ChoiceCard
-              type="checkbox"
-              label="Deixar minhas respostas visíveis pro advogado que eu contatar"
-              description="Só depois que você mandar mensagem — ajuda o advogado a entender o caso antes de responder. Fica desligado até você marcar."
-              checked={compartilharComAdvogado}
-              onChange={() => setCompartilharComAdvogado((v) => !v)}
-            />
-          )}
 
           <div className="form-cta-sticky">
             <Button type="submit" disabled={enviando || !area || !completas(perguntasEtapa2, etapa2)}>

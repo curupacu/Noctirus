@@ -4,7 +4,7 @@ import { db } from "../lib/firebase-admin.js";
 import { requireRole, verificarToken } from "../middlewares/auth.js";
 import { limiteTriagem } from "../middlewares/rateLimit.js";
 import { validarBody } from "../middlewares/validar.js";
-import { buscarAdvogadosCompativeis } from "../services/matching.js";
+import { buscarAdvogadosCompativeis, perfilPublico } from "../services/matching.js";
 import {
   AREAS_VALIDAS,
   CATEGORIAS_POR_AREA,
@@ -15,23 +15,6 @@ import {
 } from "../services/triagem.js";
 
 export const triagemRouter = Router();
-
-// Soma 1 no contador de "vezes sugerido" de cada advogado que apareceu como compatível
-// nessa triagem — vira prova social honesta no perfil/card (não é avaliação de cliente,
-// só frequência de match do algoritmo; achado da auditoria de UX, 29/07). Leitura +
-// escrita simples em vez de FieldValue.increment de propósito: é um contador de
-// popularidade, não crítico, e assim funciona igual contra o fake de testes.
-async function somarContadorDeSugestoes(advogados) {
-  await Promise.all(
-    advogados.map(async ({ uid }) => {
-      const doc = await db.collection("advogados").doc(uid).get();
-      if (!doc.exists) return;
-      await db.collection("advogados").doc(uid).update({
-        vezesSugerido: (doc.data().vezesSugerido || 0) + 1,
-      });
-    }),
-  );
-}
 
 // Advogados do resultado da triagem: área + especialidades do caso + região do cliente
 // (RF008). Usa a cidade/UF atual do cadastro do cliente — quem acabou de informar a
@@ -47,7 +30,7 @@ async function advogadosDaTriagem({ clienteId, area, categorias }) {
     categorias,
     ...(regiao ? { perto: regiao } : {}),
   });
-  return { advogados, regiao };
+  return { advogados: advogados.map(perfilPublico), regiao };
 }
 
 // Valida as respostas de uma etapa contra a lista de perguntas dela: toda pergunta precisa
@@ -82,7 +65,6 @@ const schemaClassificar = z
     etapa1: respostasTexto,
     area: z.enum(AREAS_VALIDAS, { message: "Escolha a área: cível ou trabalhista" }),
     etapa2: respostasTexto,
-    compartilharComAdvogado: z.boolean().optional().default(false),
   })
   .superRefine((dados, ctx) => {
     validarRespostas(PERGUNTAS_ETAPA1, dados.etapa1, ctx, "etapa1");
@@ -134,7 +116,7 @@ triagemRouter.post(
   limiteTriagem,
   validarBody(schemaClassificar),
   async (req, res) => {
-    const { area, compartilharComAdvogado } = req.body;
+    const { area } = req.body;
     const etapa1 = somenteDasPerguntas(PERGUNTAS_ETAPA1, req.body.etapa1);
     const etapa2 = somenteDasPerguntas(PERGUNTAS_ETAPA2[area], req.body.etapa2);
     const descricao = [
@@ -153,10 +135,6 @@ triagemRouter.post(
       clienteId: req.user.uid,
       respostas: { etapa1, etapa2 },
       descricao,
-      // Opt-in explícito do cliente pra descrição do caso poder aparecer pro advogado
-      // que ele vier a contatar (ver POST /conversas/:comUid/mensagens) — falso por
-      // padrão, dado sensível não vaza sem escolha ativa.
-      compartilharComAdvogado: Boolean(compartilharComAdvogado),
       areaClassificada: area,
       // Especialidade principal (RF007) + as demais que também se aplicam ao caso.
       especialidade: resultado.categorias[0] || null,
@@ -172,16 +150,7 @@ triagemRouter.post(
     };
 
     const ref = await db.collection("triagens").add(triagem);
-    await somarContadorDeSugestoes(advogados);
-
-    // Soma 1 na cópia que já foi buscada, pra resposta não voltar com o contador
-    // "atrasado" em relação ao que acabou de ser gravado.
-    const advogadosAtualizados = advogados.map((adv) => ({
-      ...adv,
-      vezesSugerido: (adv.vezesSugerido || 0) + 1,
-    }));
-
-    res.status(201).json({ id: ref.id, ...triagem, regiao, advogados: advogadosAtualizados });
+    res.status(201).json({ id: ref.id, ...triagem, regiao, advogados });
   },
 );
 
