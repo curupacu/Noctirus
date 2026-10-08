@@ -7,11 +7,14 @@ import { db } from "../lib/firebase-admin.js";
 // só reordena, colocando primeiro quem tem `especialidades` que batem com o caso. Filtrar
 // de verdade zeraria resultados fácil (seed tem só 30 advogados pra 33 categorias x 14
 // estados); reordenar mantém sempre alguém pra contatar, mas prioriza quem é mais aderente.
+// `somenteAprovados` (padrão) deixa de fora quem não teve a OAB aprovada pelo admin — o
+// cliente só vê advogado aprovado (RF009). Só a fila do admin passa `false`.
 export async function buscarAdvogadosCompativeis({
   area,
   cidade,
   uf,
   categorias,
+  somenteAprovados = true,
 } = {}) {
   const snapshot = await db.collection("advogados").get();
   let advogados = await Promise.all(
@@ -25,6 +28,9 @@ export async function buscarAdvogadosCompativeis({
     }),
   );
 
+  if (somenteAprovados) {
+    advogados = advogados.filter((adv) => adv.situacaoOab === "aprovado");
+  }
   if (area) {
     advogados = advogados.filter((adv) => adv.areasAtuacao?.includes(area));
   }

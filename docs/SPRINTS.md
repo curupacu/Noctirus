@@ -46,7 +46,7 @@ substituído — assim os sprints seguintes não carregam código morto.
 > `migrar-situacao-oab.js --remover-verificado` pra apagar o campo antigo. Clientes antigos
 > sem cidade veem um aviso no painel pedindo pra completar.
 
-## Sprint 2 — Validação da OAB pelo admin (RF011, RF009)
+## Sprint 2 — Validação da OAB pelo admin (RF011, RF009) ✅ código feito em 07/10
 
 - ➕ Fila de **cadastros pendentes** com número e UF da OAB, e link pro Cadastro Nacional dos
   Advogados (CNA) da OAB pra conferência manual.
@@ -58,6 +58,10 @@ substituído — assim os sprints seguintes não carregam código morto.
 - ➕ Aviso no painel do advogado mostrando a situação dele (e o motivo, se recusado).
 
 **Pronto quando:** só advogado aprovado aparece pro cliente, e o advogado é avisado de tudo.
+
+> Feito também: advogado recusado corrige a OAB pelo próprio perfil e volta pra análise;
+> histórico de toda decisão; regras de transição (só recusa quem está em análise, só revoga
+> quem está aprovado). Banco: os 30 advogados fictícios do seed foram aprovados (07/10).
 
 ## Sprint 3 — Triagem em duas etapas (RF005–RF007)
 

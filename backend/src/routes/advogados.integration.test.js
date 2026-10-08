@@ -19,6 +19,11 @@ vi.mock("../lib/firebase-admin.js", () => ({
 // verdade. `upload_stream` chama o callback com uma URL fixa assim que o stream
 // termina, imitando o formato de resposta real (secure_url).
 const URL_FOTO_FAKE = "https://res.cloudinary.com/fake/image/upload/fake.jpg";
+const enviarEmailMock = vi.hoisted(() => vi.fn().mockResolvedValue({ enviado: true }));
+vi.mock("../lib/email.js", () => ({
+  enviarEmail: (...args) => enviarEmailMock(...args),
+}));
+
 vi.mock("../lib/cloudinary.js", () => ({
   cloudinary: {
     uploader: {
@@ -72,16 +77,25 @@ describe("GET /admin/advogados", () => {
 
 describe("GET /advogados", () => {
   it("lista pública sem precisar de token", async () => {
-    semear("a1", { advogado: { areasAtuacao: ["civel"] } });
-    semear("a2", { advogado: { areasAtuacao: ["trabalhista"] } });
+    semear("a1", { advogado: { areasAtuacao: ["civel"], situacaoOab: "aprovado" } });
+    semear("a2", { advogado: { areasAtuacao: ["trabalhista"], situacaoOab: "aprovado" } });
     const resposta = await request(app).get("/advogados");
     expect(resposta.status).toBe(200);
     expect(resposta.body).toHaveLength(2);
   });
 
+  it("não lista advogado com OAB em análise, recusada ou revogada", async () => {
+    semear("a1", { advogado: { situacaoOab: "aprovado" } });
+    semear("a2", { advogado: { situacaoOab: "em_analise" } });
+    semear("a3", { advogado: { situacaoOab: "recusado" } });
+    semear("a4", { advogado: { situacaoOab: "revogado" } });
+    const resposta = await request(app).get("/advogados");
+    expect(resposta.body.map((a) => a.uid)).toEqual(["a1"]);
+  });
+
   it("filtra por área via query string", async () => {
-    semear("a1", { advogado: { areasAtuacao: ["civel"] } });
-    semear("a2", { advogado: { areasAtuacao: ["trabalhista"] } });
+    semear("a1", { advogado: { areasAtuacao: ["civel"], situacaoOab: "aprovado" } });
+    semear("a2", { advogado: { areasAtuacao: ["trabalhista"], situacaoOab: "aprovado" } });
     const resposta = await request(app).get("/advogados?area=trabalhista");
     expect(resposta.body.map((a) => a.uid)).toEqual(["a2"]);
   });
@@ -93,12 +107,27 @@ describe("GET /advogados/:uid", () => {
     expect(resposta.status).toBe(404);
   });
 
-  it("retorna advogado com nome/status resolvidos do users", async () => {
-    semear("a1", { usuario: { nome: "Fulano" } });
+  it("retorna advogado aprovado com o nome resolvido do users", async () => {
+    semear("a1", { usuario: { nome: "Fulano" }, advogado: { situacaoOab: "aprovado" } });
     const resposta = await request(app).get("/advogados/a1");
     expect(resposta.status).toBe(200);
     expect(resposta.body.nome).toBe("Fulano");
     expect(resposta.body.uid).toBe("a1");
+  });
+
+  it("perfil de advogado não aprovado fica indisponível pro público", async () => {
+    semear("a1");
+    const resposta = await request(app).get("/advogados/a1");
+    expect(resposta.status).toBe(404);
+    expect(resposta.body.erro).toBe("Perfil indisponível");
+  });
+
+  it("o próprio advogado e o admin veem o perfil mesmo em análise", async () => {
+    semear("a1");
+    const dono = cell.fake.criarToken({ uid: "a1", role: "advogado" });
+    const admin = cell.fake.criarToken({ uid: "admin1", role: "admin" });
+    expect((await request(app).get("/advogados/a1").set("Authorization", `Bearer ${dono}`)).status).toBe(200);
+    expect((await request(app).get("/advogados/a1").set("Authorization", `Bearer ${admin}`)).status).toBe(200);
   });
 });
 
@@ -211,6 +240,8 @@ describe("POST /advogados/:uid/foto", () => {
 });
 
 describe("PATCH /advogados/:uid/situacao-oab", () => {
+  beforeEach(() => enviarEmailMock.mockClear());
+
   async function mudar(uid, corpo, papel = "admin") {
     const token = cell.fake.criarToken({ uid: papel === "admin" ? "admin1" : uid, role: papel });
     return request(app)
@@ -219,22 +250,27 @@ describe("PATCH /advogados/:uid/situacao-oab", () => {
       .send(corpo);
   }
 
+  async function lerAdvogado(uid) {
+    return (await cell.fake.db.collection("advogados").doc(uid).get()).data();
+  }
+
   it("recusa quem não é admin", async () => {
     semear("a1");
     const resposta = await mudar("a1", { situacao: "aprovado" }, "advogado");
     expect(resposta.status).toBe(403);
   });
 
-  it("recusa situação que não existe", async () => {
+  it("recusa situação que não existe (ou voltar pra em_analise na mão)", async () => {
     semear("a1");
-    const resposta = await mudar("a1", { situacao: "verificado" });
-    expect(resposta.status).toBe(400);
+    expect((await mudar("a1", { situacao: "verificado" })).status).toBe(400);
+    expect((await mudar("a1", { situacao: "em_analise" })).status).toBe(400);
   });
 
   it("recusa recusar ou revogar sem motivo", async () => {
     semear("a1");
     expect((await mudar("a1", { situacao: "recusado" })).status).toBe(400);
-    expect((await mudar("a1", { situacao: "revogado", motivo: "x" })).status).toBe(400);
+    semear("a2", { advogado: { situacaoOab: "aprovado" } });
+    expect((await mudar("a2", { situacao: "revogado", motivo: "x" })).status).toBe(400);
   });
 
   it("devolve 404 pra advogado inexistente", async () => {
@@ -242,26 +278,105 @@ describe("PATCH /advogados/:uid/situacao-oab", () => {
     expect(resposta.status).toBe(404);
   });
 
-  it("admin aprova a OAB e fica registrado quem e quando", async () => {
+  it("não deixa revogar quem nem foi aprovado, nem recusar quem já foi aprovado", async () => {
     semear("a1");
+    expect((await mudar("a1", { situacao: "revogado", motivo: "Inscrição cancelada" })).status).toBe(409);
+    semear("a2", { advogado: { situacaoOab: "aprovado" } });
+    expect((await mudar("a2", { situacao: "recusado", motivo: "Número errado" })).status).toBe(409);
+  });
+
+  it("aprova, registra quem e quando, guarda no histórico e avisa o advogado", async () => {
+    semear("a1", { usuario: { email: "a1@example.com" } });
     const resposta = await mudar("a1", { situacao: "aprovado", motivo: "ignorado" });
 
     expect(resposta.status).toBe(200);
-    const advogado = (await cell.fake.db.collection("advogados").doc("a1").get()).data();
+    const advogado = await lerAdvogado("a1");
     expect(advogado.situacaoOab).toBe("aprovado");
     expect(advogado.situacaoOabMotivo).toBeNull();
     expect(advogado.situacaoOabPor).toBe("admin1");
-    expect(advogado.situacaoOabAtualizadaEm).toEqual(expect.any(String));
+    expect(advogado.historicoOab).toEqual([
+      { situacao: "aprovado", motivo: null, em: expect.any(String), por: "admin1" },
+    ]);
+
+    const notificacoes = await cell.fake.db.collection("notificacoes").where("destinatarioId", "==", "a1").get();
+    expect(notificacoes.docs).toHaveLength(1);
+    expect(notificacoes.docs[0].data().tipo).toBe("situacao_oab");
+    expect(enviarEmailMock).toHaveBeenCalledWith(
+      expect.objectContaining({ to: "a1@example.com", subject: "Sua OAB foi verificada na Nocturis" }),
+    );
   });
 
-  it("admin recusa com motivo", async () => {
-    semear("a1");
+  it("recusa com motivo e o motivo chega no aviso", async () => {
+    semear("a1", { usuario: { email: "a1@example.com" } });
     const resposta = await mudar("a1", { situacao: "recusado", motivo: "Número não encontrado no CNA" });
 
     expect(resposta.status).toBe(200);
+    expect((await lerAdvogado("a1")).situacaoOabMotivo).toBe("Número não encontrado no CNA");
+    const notificacoes = await cell.fake.db.collection("notificacoes").where("destinatarioId", "==", "a1").get();
+    expect(notificacoes.docs[0].data().texto).toContain("Número não encontrado no CNA");
+  });
+
+  it("revoga quem estava aprovado e acumula o histórico", async () => {
+    semear("a1", {
+      advogado: {
+        situacaoOab: "aprovado",
+        historicoOab: [{ situacao: "aprovado", motivo: null, em: "2026-10-01T00:00:00.000Z", por: "admin1" }],
+      },
+    });
+    const resposta = await mudar("a1", { situacao: "revogado", motivo: "Inscrição suspensa na OAB" });
+
+    expect(resposta.status).toBe(200);
+    const advogado = await lerAdvogado("a1");
+    expect(advogado.situacaoOab).toBe("revogado");
+    expect(advogado.historicoOab.map((h) => h.situacao)).toEqual(["aprovado", "revogado"]);
+  });
+
+  it("a decisão vale mesmo se o e-mail falhar", async () => {
+    enviarEmailMock.mockRejectedValueOnce(new Error("Resend fora do ar"));
+    semear("a1", { usuario: { email: "a1@example.com" } });
+    const resposta = await mudar("a1", { situacao: "aprovado" });
+    expect(resposta.status).toBe(200);
+    expect((await lerAdvogado("a1")).situacaoOab).toBe("aprovado");
+  });
+});
+
+describe("PUT /advogados/:uid corrigindo a OAB recusada", () => {
+  async function corrigir(uid, oab) {
+    const token = cell.fake.criarToken({ uid, role: "advogado" });
+    return request(app).put(`/advogados/${uid}`).set("Authorization", `Bearer ${token}`).send({ oab });
+  }
+
+  it("só aceita trocar a OAB depois de uma recusa", async () => {
+    semear("a1", { advogado: { situacaoOab: "aprovado", oab: { numero: "123456", uf: "SP" } } });
+    const resposta = await corrigir("a1", { numero: "654321", uf: "SP" });
+    expect(resposta.status).toBe(400);
+  });
+
+  it("recusa número em formato inválido", async () => {
+    semear("a1", { advogado: { situacaoOab: "recusado" } });
+    const resposta = await corrigir("a1", { numero: "12", uf: "SP" });
+    expect(resposta.status).toBe(400);
+  });
+
+  it("recusa OAB que já é de outro advogado", async () => {
+    semear("a1", { advogado: { situacaoOab: "recusado" } });
+    semear("a2", { advogado: { oab: { numero: "654321", uf: "SP" } } });
+    const resposta = await corrigir("a1", { numero: "654321", uf: "SP" });
+    expect(resposta.status).toBe(409);
+  });
+
+  it("troca a OAB e volta o cadastro pra análise, sem motivo antigo", async () => {
+    semear("a1", {
+      advogado: { situacaoOab: "recusado", situacaoOabMotivo: "Número errado", oab: { numero: "111111", uf: "SP" } },
+    });
+    const resposta = await corrigir("a1", { numero: "222222", uf: "rj" });
+
+    expect(resposta.status).toBe(200);
     const advogado = (await cell.fake.db.collection("advogados").doc("a1").get()).data();
-    expect(advogado.situacaoOab).toBe("recusado");
-    expect(advogado.situacaoOabMotivo).toBe("Número não encontrado no CNA");
+    expect(advogado.oab).toEqual({ numero: "222222", uf: "RJ" });
+    expect(advogado.situacaoOab).toBe("em_analise");
+    expect(advogado.situacaoOabMotivo).toBeNull();
+    expect(advogado.historicoOab.at(-1).situacao).toBe("em_analise");
   });
 });
 

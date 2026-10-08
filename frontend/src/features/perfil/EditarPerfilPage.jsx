@@ -28,6 +28,9 @@ export function EditarPerfilPage() {
   const [whatsapp, setWhatsapp] = useState("");
   const [cidade, setCidade] = useState("");
   const [uf, setUf] = useState("");
+  const [oabNumero, setOabNumero] = useState("");
+  const [oabUf, setOabUf] = useState("");
+  const [mensagemOab, setMensagemOab] = useState(null);
   const [categoriasPorArea, setCategoriasPorArea] = useState(null);
   const [especialidades, setEspecialidades] = useState([]);
   const [mensagem, setMensagem] = useState(null);
@@ -51,6 +54,8 @@ export function EditarPerfilPage() {
       setWhatsapp(dadosAdvogado.contatos?.whatsapp || "");
       setCidade(dadosAdvogado.localizacao?.cidade || "");
       setUf(dadosAdvogado.localizacao?.uf || "");
+      setOabNumero(dadosAdvogado.oab?.numero || "");
+      setOabUf(dadosAdvogado.oab?.uf || "");
       setEspecialidades(dadosAdvogado.especialidades || []);
       setCategoriasPorArea(perguntas.categorias);
       setCurriculo(dadosCurriculo);
@@ -116,6 +121,24 @@ export function EditarPerfilPage() {
     }
   }
 
+  // Só depois de uma recusa: o advogado corrige o número/UF e o cadastro volta pra análise.
+  async function reenviarOab(e) {
+    e.preventDefault();
+    setMensagemOab(null);
+    try {
+      await api.put(`/advogados/${user.uid}`, { oab: { numero: oabNumero, uf: oabUf } });
+      setAdvogado((atual) => ({
+        ...atual,
+        oab: { numero: oabNumero, uf: oabUf.toUpperCase() },
+        situacaoOab: "em_analise",
+        situacaoOabMotivo: null,
+      }));
+      setMensagemOab("Enviado! Sua OAB voltou pra análise — você recebe um aviso quando conferirmos.");
+    } catch (err) {
+      setMensagemOab(err.message);
+    }
+  }
+
   if (carregando || !dadosUsuario || !advogado) {
     return <Loading>Carregando perfil...</Loading>;
   }
@@ -164,10 +187,44 @@ export function EditarPerfilPage() {
         </div>
       </div>
 
+      {advogado.situacaoOab === "recusado" ? (
+        <form className="card stack" onSubmit={reenviarOab}>
+          <strong>Corrigir minha OAB</strong>
+          <p className="text-muted" style={{ margin: 0 }}>
+            Não conseguimos confirmar o número informado
+            {advogado.situacaoOabMotivo ? ` (${advogado.situacaoOabMotivo})` : ""}. Confira os dados
+            e envie de novo pra análise.
+          </p>
+          <div className="row">
+            <Input
+              label="Número da OAB"
+              id="oabNumero"
+              value={oabNumero}
+              onChange={(e) => setOabNumero(e.target.value)}
+              required
+            />
+            <Input
+              label="UF da OAB"
+              id="oabUf"
+              value={oabUf}
+              onChange={(e) => setOabUf(e.target.value)}
+              maxLength={2}
+              required
+            />
+          </div>
+          <Button type="submit">Reenviar pra análise</Button>
+          {mensagemOab && <p role="status">{mensagemOab}</p>}
+        </form>
+      ) : (
+        <>
+          <p className="text-muted">
+            OAB: {advogado.oab?.numero}/{advogado.oab?.uf} (não editável)
+          </p>
+          {mensagemOab && <p role="status">{mensagemOab}</p>}
+        </>
+      )}
+
       <form className="stack" onSubmit={salvarAdvogado}>
-        <p className="text-muted">
-          OAB: {advogado.oab?.numero}/{advogado.oab?.uf} (não editável)
-        </p>
 
         <div className="input-group">
           <label className="input-label" htmlFor="bio">

@@ -11,6 +11,44 @@ import { useAuth } from "../auth/AuthContext";
 import { api } from "../../lib/api";
 import { useTitulo } from "../../lib/useTitulo";
 
+// Enquanto a OAB não está aprovada o perfil não aparece pra nenhum cliente (RF009) — o
+// advogado precisa saber disso logo de cara, e o porquê quando foi recusado/revogado.
+function AvisoSituacaoOab({ advogado }) {
+  const situacao = advogado.situacaoOab || "em_analise";
+  if (situacao === "aprovado") return null;
+
+  const textos = {
+    em_analise: {
+      titulo: "Sua OAB está em análise",
+      texto:
+        "Estamos conferindo seu registro no Cadastro Nacional dos Advogados. Até lá, seu perfil não aparece pros clientes — você recebe um aviso assim que terminarmos.",
+    },
+    recusado: {
+      titulo: "Não conseguimos confirmar sua OAB",
+      texto: `Motivo: ${advogado.situacaoOabMotivo || "não informado"}. Corrija o número ou a UF e envie de novo.`,
+      link: { to: "/perfil/editar", label: "Corrigir minha OAB" },
+    },
+    revogado: {
+      titulo: "Sua aprovação foi revogada",
+      texto: `Motivo: ${advogado.situacaoOabMotivo || "não informado"}. Seu perfil não aparece mais pros clientes.`,
+    },
+  }[situacao];
+
+  return (
+    <div className="card stack" role="status">
+      <strong>{textos.titulo}</strong>
+      <p className="text-muted" style={{ margin: 0 }}>
+        {textos.texto}
+      </p>
+      {textos.link && (
+        <Link to={textos.link.to} className="button button--secondary">
+          {textos.link.label}
+        </Link>
+      )}
+    </div>
+  );
+}
+
 // Dashboard do advogado (rotaInicial já manda ele pra cá) — antes essa tela era o
 // dashboard E o formulário de edição juntos, rolando um dentro do outro (achado do
 // usuário, 18/08: "separar isso em duas telas"). Agora só leitura rápida + atalhos;
@@ -125,6 +163,8 @@ export function PerfilPage() {
         <p className="text-muted">
           <span className="badge">{dadosUsuario.role}</span> <SeloOab advogado={advogado} />
         </p>
+
+        <AvisoSituacaoOab advogado={advogado} />
 
         <div className="row">
           <div className="card">

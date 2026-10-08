@@ -7,7 +7,14 @@ import { schemaLocalizacao } from "../lib/localizacao.js";
 import { requireRole, tentarVerificarToken, verificarToken } from "../middlewares/auth.js";
 import { validarBody } from "../middlewares/validar.js";
 import { buscarAdvogadosCompativeis } from "../services/matching.js";
-import { SITUACOES_COM_MOTIVO, SITUACOES_OAB } from "../services/oab.js";
+import { avisarAdvogadoSobreOab } from "../services/avisosOab.js";
+import {
+  oabJaCadastrada,
+  podeMudarSituacao,
+  SITUACOES_COM_MOTIVO,
+  SITUACOES_OAB,
+  validarFormatoOab,
+} from "../services/oab.js";
 import { AREAS_VALIDAS, TODAS_CATEGORIAS } from "../services/triagem.js";
 
 export const advogadosRouter = Router();
@@ -48,7 +55,7 @@ advogadosRouter.get(
   verificarToken,
   requireRole("admin"),
   async (_req, res) => {
-    const advogados = await buscarAdvogadosCompativeis();
+    const advogados = await buscarAdvogadosCompativeis({ somenteAprovados: false });
     res.json(advogados);
   },
 );
@@ -67,7 +74,9 @@ advogadosRouter.get("/advogados", async (req, res) => {
   res.json(advogados);
 });
 
-advogadosRouter.get("/advogados/:uid", async (req, res) => {
+// Perfil público só existe pra advogado aprovado (RF009). O próprio advogado e o admin
+// continuam vendo o perfil em qualquer situação — o painel do advogado lê daqui.
+advogadosRouter.get("/advogados/:uid", tentarVerificarToken, async (req, res) => {
   const { uid } = req.params;
   const [advogadoDoc, usuarioDoc] = await Promise.all([
     db.collection("advogados").doc(uid).get(),
@@ -76,6 +85,11 @@ advogadosRouter.get("/advogados/:uid", async (req, res) => {
 
   if (!advogadoDoc.exists) {
     return res.status(404).json({ erro: "Advogado não encontrado" });
+  }
+
+  const podeVerSemAprovacao = req.user && (req.user.uid === uid || req.user.role === "admin");
+  if (advogadoDoc.data().situacaoOab !== "aprovado" && !podeVerSemAprovacao) {
+    return res.status(404).json({ erro: "Perfil indisponível" });
   }
 
   res.json({
@@ -89,6 +103,8 @@ const schemaEditarAdvogado = z.object({
   areasAtuacao: z.array(z.enum(AREAS_VALIDAS)).optional(),
   especialidades: z.array(z.string()).optional(),
   localizacao: schemaLocalizacao.optional(),
+  // Só aceito quando a OAB foi recusada: o advogado corrige e o cadastro volta pra análise.
+  oab: z.object({ numero: z.unknown(), uf: z.unknown() }).optional(),
   whatsapp: z.string().trim().max(20).optional(),
   bio: z.string().max(1000).optional(),
 });
@@ -104,8 +120,30 @@ advogadosRouter.put(
       return res.status(403).json({ erro: "Só é possível editar o próprio perfil" });
     }
 
-    const { areasAtuacao, especialidades, localizacao, whatsapp, bio } = req.body;
+    const { areasAtuacao, especialidades, localizacao, whatsapp, bio, oab } = req.body;
     const campos = {};
+
+    if (oab !== undefined) {
+      const atual = (await db.collection("advogados").doc(uid).get()).data();
+      if (atual?.situacaoOab !== "recusado") {
+        return res.status(400).json({ erro: "A OAB só pode ser corrigida depois de uma recusa" });
+      }
+      const erroFormato = validarFormatoOab(oab);
+      if (erroFormato) return res.status(400).json({ erro: erroFormato });
+      if (await oabJaCadastrada(oab, uid)) {
+        return res.status(409).json({ erro: "Essa OAB já está cadastrada" });
+      }
+      const agora = new Date().toISOString();
+      campos.oab = { numero: String(oab.numero), uf: String(oab.uf).toUpperCase() };
+      campos.situacaoOab = "em_analise";
+      campos.situacaoOabMotivo = null;
+      campos.situacaoOabAtualizadaEm = agora;
+      campos.situacaoOabPor = uid;
+      campos.historicoOab = [
+        ...(atual.historicoOab || []),
+        { situacao: "em_analise", motivo: "OAB corrigida e reenviada pelo advogado", em: agora, por: uid },
+      ];
+    }
     if (areasAtuacao !== undefined) campos.areasAtuacao = areasAtuacao;
     if (especialidades !== undefined) {
       campos.especialidades = especialidades.filter((e) => TODAS_CATEGORIAS.includes(e));
@@ -160,11 +198,14 @@ advogadosRouter.post(
 
 // Validação manual da OAB pelo admin (RF011) — não existe API pública gratuita da OAB, então
 // o admin confere o número no Cadastro Nacional dos Advogados e registra aqui a decisão.
-// Recusar ou revogar exige motivo, que o advogado vai ver. Notificação e regras de
-// transição entram no Sprint 2.
+// Recusar ou revogar exige motivo, que o advogado vai ver. Cada decisão fica no histórico
+// do advogado e ele é avisado pelo sininho e por e-mail.
 const schemaSituacaoOab = z
   .object({
-    situacao: z.enum(SITUACOES_OAB, { message: "Situação da OAB inválida" }),
+    situacao: z.enum(
+      SITUACOES_OAB.filter((s) => s !== "em_analise"),
+      { message: "Situação da OAB inválida" },
+    ),
     motivo: z.string().trim().max(500).optional().default(""),
   })
   .refine((dados) => !SITUACOES_COM_MOTIVO.includes(dados.situacao) || dados.motivo.length >= 5, {
@@ -186,12 +227,27 @@ advogadosRouter.patch(
       return res.status(404).json({ erro: "Advogado não encontrado" });
     }
 
+    const atual = advogadoDoc.data();
+    if (!podeMudarSituacao(atual.situacaoOab, situacao)) {
+      return res.status(409).json({
+        erro: `Não dá pra passar de "${atual.situacaoOab || "em_analise"}" pra "${situacao}"`,
+      });
+    }
+
+    const agora = new Date().toISOString();
+    const motivoFinal = SITUACOES_COM_MOTIVO.includes(situacao) ? motivo : null;
     await db.collection("advogados").doc(uid).update({
       situacaoOab: situacao,
-      situacaoOabMotivo: SITUACOES_COM_MOTIVO.includes(situacao) ? motivo : null,
-      situacaoOabAtualizadaEm: new Date().toISOString(),
+      situacaoOabMotivo: motivoFinal,
+      situacaoOabAtualizadaEm: agora,
       situacaoOabPor: req.user.uid,
+      historicoOab: [
+        ...(atual.historicoOab || []),
+        { situacao, motivo: motivoFinal, em: agora, por: req.user.uid },
+      ],
     });
+
+    await avisarAdvogadoSobreOab({ uid, situacao, motivo: motivoFinal });
     res.json({ ok: true });
   },
 );

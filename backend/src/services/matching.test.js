@@ -26,8 +26,13 @@ vi.mock("../lib/firebase-admin.js", () => ({
 
 const { buscarAdvogadosCompativeis } = await import("./matching.js");
 
+// Todo advogado dos testes nasce aprovado, a não ser que o teste diga outra coisa — a
+// busca só mostra aprovado por padrão.
 function preparar({ advogados, users }) {
-  state.data = { advogados, users };
+  const comSituacao = Object.fromEntries(
+    Object.entries(advogados).map(([uid, adv]) => [uid, { situacaoOab: "aprovado", ...adv }]),
+  );
+  state.data = { advogados: comSituacao, users };
 }
 
 beforeEach(() => {
@@ -37,6 +42,34 @@ beforeEach(() => {
 const BASE_USER = { nome: "Advogado Teste", status: "ativo" };
 
 describe("buscarAdvogadosCompativeis", () => {
+  it("só traz advogado com OAB aprovada (RF009)", async () => {
+    preparar({
+      advogados: {
+        aprovado: { areasAtuacao: [], localizacao: {} },
+        analise: { areasAtuacao: [], localizacao: {}, situacaoOab: "em_analise" },
+        recusado: { areasAtuacao: [], localizacao: {}, situacaoOab: "recusado" },
+        revogado: { areasAtuacao: [], localizacao: {}, situacaoOab: "revogado" },
+      },
+      users: { aprovado: BASE_USER, analise: BASE_USER, recusado: BASE_USER, revogado: BASE_USER },
+    });
+
+    const resultado = await buscarAdvogadosCompativeis();
+    expect(resultado.map((a) => a.uid)).toEqual(["aprovado"]);
+  });
+
+  it("traz todo mundo quando somenteAprovados é false (fila do admin)", async () => {
+    preparar({
+      advogados: {
+        aprovado: { areasAtuacao: [], localizacao: {} },
+        analise: { areasAtuacao: [], localizacao: {}, situacaoOab: "em_analise" },
+      },
+      users: { aprovado: BASE_USER, analise: BASE_USER },
+    });
+
+    const resultado = await buscarAdvogadosCompativeis({ somenteAprovados: false });
+    expect(resultado).toHaveLength(2);
+  });
+
   it("retorna todos quando nenhum filtro é passado", async () => {
     preparar({
       advogados: {
