@@ -29,14 +29,13 @@ Um documento por advogado, id = `uid` (mesmo doc de `users`, papel `"advogado"`)
 | `areasAtuacao` | `string[]` | `"civel"` e/ou `"trabalhista"`. |
 | `especialidades` | `string[]` | Subcategorias da mesma taxonomia usada na triagem (`services/triagem.js`, 33 valores). |
 | `localizacao` | `{ cidade, uf }` | Obrigatória; UF validada contra as 27 siglas (`backend/src/lib/localizacao.js`). |
-| `contatos` | `{ whatsapp, email }` | Canal direto, usado em `ContatoAdvogadoPage`. |
+| `contatos` | `{ whatsapp, email }` | **Privado**: só vai pro cliente depois que o advogado aceita o pedido de contato (RF010). Nunca sai nas rotas públicas (`perfilPublico()` em `services/matching.js`). |
 | `bio` | string | Texto livre, capado em 240 caracteres. |
 | `foto` | string (URL) | Cloudinary, opcional — sem foto usa avatar de iniciais no frontend. |
 | `situacaoOab` | `"em_analise" \| "aprovado" \| "recusado" \| "revogado"` | Nasce `em_analise`; só o admin muda (`PATCH /advogados/:uid/situacao-oab`). Substituiu o antigo `verificado: boolean` (migração em `database/seed/migrar-situacao-oab.js`). |
 | `situacaoOabMotivo` | string ou `null` | Obrigatório pra recusar/revogar — o advogado vê. |
 | `situacaoOabAtualizadaEm`, `situacaoOabPor` | string ISO, uid | Quando e qual admin mudou a situação. |
 | `historicoOab` | `{ situacao, motivo, em, por }[]` | Toda mudança de situação, na ordem (cadastro, decisões do admin, correção da OAB recusada). |
-| `vezesSugerido` | number | Contador de quantas triagens sugeriram esse advogado — prova social honesta, incrementado em `POST /triagem/classificar`. |
 
 ## `curriculos`
 
@@ -57,7 +56,6 @@ Um documento por triagem enviada (um cliente pode ter várias ao longo do tempo)
 | `descricao` | string | Perguntas + respostas das duas etapas juntas, uma por linha — é o que vai pra IA e o que o advogado lê com o opt-in. |
 | `regiaoCliente` | `{ cidade, uf }` ou `null` | Cidade/UF do cliente usada no filtro na hora da triagem (RF008). Ao abrir o resultado de novo, vale a cidade atual do cadastro. |
 | `especialidade` | string ou `null` | Especialidade principal identificada na etapa 2 (RF007) — a primeira de `categorias`. |
-| `compartilharComAdvogado` | boolean | **Opt-in explícito** (padrão `false`) — só com isso `true` a descrição pode aparecer pro advogado contatado, ver `conversas.js` → `GET /conversas/:comUid/triagem`. |
 | `areaClassificada` | `"civel" \| "trabalhista" \| "indefinido"` | |
 | `categorias` | `string[]` | Subcategorias identificadas. |
 | `tipoAdvogadoSugerido`, `justificativa` | string | |
@@ -65,43 +63,22 @@ Um documento por triagem enviada (um cliente pode ter várias ao longo do tempo)
 | `advogadosSugeridos` | `string[]` (uids) | Snapshot de quem foi sugerido no momento do envio. |
 | `createdAt` | string ISO | |
 
-## `contatos`
+## `solicitacoes`
 
-Log bruto e anônimo de cliques em "contatar" — usado só pra métrica agregada
-(`GET /advogados/:uid/metricas`), nunca listado individualmente pro advogado.
-
-| Campo | Tipo |
-| --- | --- |
-| `advogadoId` | string (uid) |
-| `canal` | `"whatsapp" \| "email"` |
-| `createdAt` | string ISO |
-
-## `contatosCliente`
-
-Rastreio pessoal do **cliente** sobre quem ele já contatou — id do documento é
-`${clienteId}_${advogadoId}` (upsert manual, não usa `{merge: true}` porque o fake de Firestore
-dos testes não suporta). Alimenta `/meus-contatos`.
+Pedido de contato do cliente a um advogado (RF010, RF013, RF014) — substituiu o chat de
+mensagens prontas, o "Meus contatos" e o log de cliques no WhatsApp/e-mail (outubro/2026).
+Só o backend cria e altera (`routes/solicitacoes.js`).
 
 | Campo | Tipo | Notas |
 | --- | --- | --- |
-| `clienteId`, `advogadoId` | string (uid) | |
-| `status` | string ou `null` | Tag livre que o cliente escolhe (`PATCH /contatos/meus/:advogadoId`), lista fixa em `STATUS_CONTATO_CLIENTE` (`contatos.js`). |
-| `criadoEm` | string ISO | Primeiro contato — preservado em contatos repetidos. |
-| `ultimoContatoEm` | string ISO | Atualizado a cada novo clique de contato. |
+| `clienteId`, `advogadoId`, `triagemId` | string | A triagem precisa ser do próprio cliente; o advogado precisa ter OAB aprovada. |
+| `autorizouCompartilharEm` | string ISO | Quando o cliente autorizou o envio das respostas da triagem — sem isso o pedido nem é criado. |
+| `area`, `especialidade`, `descricao` | string | Cópia do caso autorizado, no momento do pedido (o advogado lê isso). |
+| `situacao` | `"pendente" \| "aceita" \| "recusada"` | Um pedido pendente ou aceito por cliente+advogado; depois de recusado, pode pedir de novo. |
+| `createdAt`, `respondidaEm` | string ISO | |
 
-## `mensagensChat`
-
-Uma mensagem por documento — chat de mensagens pré-definidas entre cliente e advogado (nunca
-texto livre, ver `CLAUDE.md` → item 4 da sessão de 18/08 sobre o motivo/OAB art. 34 IV).
-
-| Campo | Tipo | Notas |
-| --- | --- | --- |
-| `conversaId` | string | `${clienteId}_${advogadoId}` — usado só pra query, não é chave de doc. |
-| `clienteId`, `advogadoId` | string (uid) | |
-| `remetente` | `"cliente" \| "advogado"` | |
-| `texto` | string | Precisa bater exatamente com uma das listas fixas em `conversas.js` (`mensagensCliente()` ou `MENSAGENS_ADVOGADO`) — validado no backend, não só no frontend. |
-| `triagemId` | string (opcional) | Só presente quando o cliente mandou a mensagem a partir do resultado de uma triagem específica; validado contra `triagens.clienteId` antes de gravar. |
-| `createdAt` | string ISO | |
+O que cada lado vê: o advogado vê o caso desde o pedido e o **nome** do cliente só depois de
+aceitar; o cliente vê o **WhatsApp/e-mail** do advogado só depois do aceite.
 
 ## Índices e regras
 

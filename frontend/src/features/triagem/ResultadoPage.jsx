@@ -185,8 +185,8 @@ export function ResultadoPage() {
       {advogados && !revelando && advogados.length > 0 && (
         <>
           <span className="eyebrow">
-            Sua triagem apareceu para {advogados.length} advogado{advogados.length === 1 ? "" : "s"}{" "}
-            compatíve{advogados.length === 1 ? "l" : "is"}
+            {advogados.length} advogado{advogados.length === 1 ? "" : "s"} compatíve
+            {advogados.length === 1 ? "l" : "is"} — escolha um e peça contato
           </span>
           <ul className="advogados-lista">
             {advogados.map((adv, i) => (

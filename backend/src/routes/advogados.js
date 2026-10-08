@@ -6,7 +6,7 @@ import { db } from "../lib/firebase-admin.js";
 import { schemaLocalizacao } from "../lib/localizacao.js";
 import { requireRole, tentarVerificarToken, verificarToken } from "../middlewares/auth.js";
 import { validarBody } from "../middlewares/validar.js";
-import { buscarAdvogadosCompativeis } from "../services/matching.js";
+import { buscarAdvogadosCompativeis, perfilPublico } from "../services/matching.js";
 import { avisarAdvogadoSobreOab } from "../services/avisosOab.js";
 import {
   oabJaCadastrada,
@@ -71,7 +71,7 @@ advogadosRouter.get("/advogados", async (req, res) => {
     uf,
     categorias: categorias ? categorias.split(",").filter(Boolean) : undefined,
   });
-  res.json(advogados);
+  res.json(advogados.map(perfilPublico));
 });
 
 // Perfil público só existe pra advogado aprovado (RF009). O próprio advogado e o admin
@@ -92,11 +92,9 @@ advogadosRouter.get("/advogados/:uid", tentarVerificarToken, async (req, res) =>
     return res.status(404).json({ erro: "Perfil indisponível" });
   }
 
-  res.json({
-    uid,
-    nome: usuarioDoc.exists ? usuarioDoc.data().nome : null,
-    ...advogadoDoc.data(),
-  });
+  const perfil = { uid, nome: usuarioDoc.exists ? usuarioDoc.data().nome : null, ...advogadoDoc.data() };
+  // O próprio advogado (painel/edição) e o admin veem tudo; o resto vê o perfil público.
+  res.json(podeVerSemAprovacao ? perfil : perfilPublico(perfil));
 });
 
 const schemaEditarAdvogado = z.object({
@@ -251,73 +249,3 @@ advogadosRouter.patch(
     res.json({ ok: true });
   },
 );
-
-const CANAIS_CONTATO = ["whatsapp", "email"];
-
-// Loga que alguém clicou em falar no WhatsApp/e-mail (RF010 complementado) — só
-// metadado (canal, quando), nunca o conteúdo de nenhuma conversa. Por isso não esbarra
-// em sigilo profissional da OAB (Estatuto, Lei 8.906/94, art. 7º XIX): a conversa em si
-// acontece inteiramente fora da plataforma, a Nocturis nunca tem acesso a ela. Público,
-// sem exigir token — navegar o perfil e clicar em contato não exige login (RF008/RF010).
-// tentarVerificarToken (não verificarToken) porque a rota continua funcionando anônima;
-// só quando o clique vem de um cliente logado é que também upsertamos contatosCliente,
-// pra alimentar GET /contatos/meus (pedido do usuário, 18/08: "advogados que você está
-// conversando"). O log bruto em `contatos` (usado nas métricas do advogado) não muda.
-advogadosRouter.post("/advogados/:uid/contato", tentarVerificarToken, async (req, res) => {
-  const { uid } = req.params;
-  const { canal } = req.body;
-
-  if (!CANAIS_CONTATO.includes(canal)) {
-    return res.status(400).json({ erro: `Canal deve ser um de: ${CANAIS_CONTATO.join(", ")}` });
-  }
-
-  const advogadoDoc = await db.collection("advogados").doc(uid).get();
-  if (!advogadoDoc.exists) {
-    return res.status(404).json({ erro: "Advogado não encontrado" });
-  }
-
-  const agora = new Date().toISOString();
-  await db.collection("contatos").add({
-    advogadoId: uid,
-    canal,
-    createdAt: agora,
-  });
-
-  if (req.user?.role === "cliente") {
-    const ref = db.collection("contatosCliente").doc(`${req.user.uid}_${uid}`);
-    const doc = await ref.get();
-    const existente = doc.exists ? doc.data() : null;
-    // Escreve o objeto completo (sem depender de `set(..., {merge:true})`) — preserva o
-    // `status`/`criadoEm` já marcados pelo cliente em contatos anteriores com esse mesmo
-    // advogado, só atualizando `ultimoContatoEm`.
-    await ref.set({
-      clienteId: req.user.uid,
-      advogadoId: uid,
-      status: existente?.status ?? null,
-      criadoEm: existente?.criadoEm ?? agora,
-      ultimoContatoEm: agora,
-    });
-  }
-
-  res.status(201).json({ ok: true });
-});
-
-// Métricas do próprio perfil (contatos recebidos por canal) — só o dono ou o
-// admin veem, mesmo padrão de autorização usado em PUT /advogados/:uid.
-advogadosRouter.get("/advogados/:uid/metricas", verificarToken, async (req, res) => {
-  const { uid } = req.params;
-  if (uid !== req.user.uid && req.user.role !== "admin") {
-    return res.status(403).json({ erro: "Só é possível ver as métricas do próprio perfil" });
-  }
-
-  const contatosSnap = await db.collection("contatos").where("advogadoId", "==", uid).get();
-  const contatos = contatosSnap.docs.map((doc) => doc.data());
-
-  res.json({
-    contatos: {
-      total: contatos.length,
-      whatsapp: contatos.filter((c) => c.canal === "whatsapp").length,
-      email: contatos.filter((c) => c.canal === "email").length,
-    },
-  });
-});

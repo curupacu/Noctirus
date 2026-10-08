@@ -6,7 +6,7 @@ sem precisar de nenhuma credencial real do Firebase ou do Gemini pra rodar.
 
 ## Números (19/08)
 
-- **201 testes**, em **13 arquivos**, 100% passando (outubro/2026, depois dos Sprints 0–4).
+- **166 testes**, em **12 arquivos**, 100% passando (outubro/2026, depois dos Sprints 0–5).
 - Framework: [Vitest](https://vitest.dev/) (`backend/package.json`).
 - Rodar: `npm test` na raiz (delega pro backend) ou `npm test` dentro de `backend/`.
 - Tempo total: ~8s.
@@ -37,7 +37,7 @@ Nenhum teste toca Firebase ou Gemini de verdade:
   `triagem.integration.test.js` apaga as duas chaves no `beforeEach` — apagar só a do
   Gemini não bastava mais depois que o Groq virou segunda camada (achado real, 19/08: o
   teste vazava pra API de verdade do Groq).
-- `lib/email.js` (Resend) é mockado em `conversas.integration.test.js`, pra testar a
+- `lib/email.js` (Resend) é mockado em `solicitacoes.integration.test.js` e `advogados.integration.test.js`, pra testar a
   notificação por e-mail quando o advogado responde sem depender de rede real.
 
 ## Cobertura por arquivo
@@ -60,8 +60,7 @@ Nenhum teste toca Firebase ou Gemini de verdade:
 | `users.integration.test.js` | `GET/PUT /users/me`, foto do cliente (só JPEG/PNG/WebP), exportação dos próprios dados (LGPD) e exclusão da própria conta (Auth + Firestore, incluindo `advogados`/`curriculos` quando aplicável). |
 | `curriculos.integration.test.js` | Leitura pública do currículo, edição restrita ao próprio advogado, validação de campo que deveria ser lista, atualização com sucesso. |
 | `triagem.integration.test.js` | `GET /triagem/perguntas` sem token (as duas etapas), `POST /triagem/area` (etapa 1: todas as perguntas obrigatórias, devolve a área e as perguntas da etapa 2 sem gravar nada, `indefinido` quando não dá pra identificar), `POST /triagem/classificar` (etapa 2: área obrigatória e perguntas dela respondidas, área corrigida pelo cliente é respeitada, grava as duas etapas, contador `vezesSugerido`, opt-in `compartilharComAdvogado` falso por padrão), histórico e detalhe da triagem restritos ao próprio cliente (404 pra triagem de outro, sem vazar dado). |
-| `contatos.integration.test.js` | `GET /contatos/meus` (rastreio pessoal do cliente), `PATCH`/`DELETE` de status de um contato. |
-| `conversas.integration.test.js` | Chat de mensagens pré-definidas: recusa texto fora da lista fixa por papel, envio válido dos dois lados, vínculo (ou não) de `triagemId` a uma mensagem — só aceita triagem do próprio cliente, ignora id inexistente ou de outro cliente sem derrubar o envio —, listagem de uma conversa em ordem cronológica, `GET /conversas/minhas` (última mensagem por conversa), `GET /conversas/:comUid/triagem` (só advogado; retorna `null` sem opt-in do cliente ou sem vínculo, retorna área+descrição só com as duas condições batendo). Notificação por e-mail: só a resposta do advogado notifica (nunca o cliente), só a primeira de uma sequência sem resposta do cliente, cliente sem e-mail cadastrado não quebra o envio, falha no envio do e-mail não derruba a resposta da rota. |
+| `solicitacoes.integration.test.js` | Pedido de contato (RF010/RF013/RF014): só cliente pede, autorização obrigatória, advogado sem OAB aprovada e triagem de outro cliente recusados, cópia do caso guardada, aviso pro advogado (sininho + e-mail, e o pedido vale mesmo se o e-mail falhar), sem pedido repetido enquanto pendente/aceito (pode pedir de novo depois de recusado). Aceitar/recusar só pelo advogado do pedido, uma vez, avisando o cliente. Cliente vê os próprios pedidos e o WhatsApp/e-mail só depois do aceite; advogado vê o caso e o nome do cliente só depois de aceitar. |
 | `health.integration.test.js` | `GET /health` responde 200. |
 
 ## O que não está coberto

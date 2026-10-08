@@ -11,10 +11,9 @@ import { LoginPage } from "../features/auth/LoginPage";
 import { RotaProtegida } from "../features/auth/RotaProtegida";
 import { CartaoPage } from "../features/cartao/CartaoPage";
 import { MeusDadosPage } from "../features/conta/MeusDadosPage";
-import { MeusContatosPage } from "../features/contatos/MeusContatosPage";
-import { ConversaPage } from "../features/conversas/ConversaPage";
-import { ConversasPage } from "../features/conversas/ConversasPage";
 import { PainelPage } from "../features/painel/PainelPage";
+import { MinhasSolicitacoesPage } from "../features/solicitacoes/MinhasSolicitacoesPage";
+import { SolicitacoesRecebidasPage } from "../features/solicitacoes/SolicitacoesRecebidasPage";
 import { EditarPerfilPage } from "../features/perfil/EditarPerfilPage";
 import { PerfilPage } from "../features/perfil/PerfilPage";
 import { MinhasTriagensPage } from "../features/triagem/MinhasTriagensPage";
@@ -35,7 +34,14 @@ export function AppRouter() {
         <Route path="/privacidade" element={<PrivacidadePage />} />
         <Route path="/advogados" element={<AdvogadosListPage />} />
         <Route path="/advogados/:uid" element={<AdvogadoPublicoPage />} />
-        <Route path="/advogados/:uid/contato" element={<ContatoAdvogadoPage />} />
+        <Route
+          path="/advogados/:uid/contato"
+          element={
+            <RotaProtegida papeis={["cliente"]}>
+              <ContatoAdvogadoPage />
+            </RotaProtegida>
+          }
+        />
         <Route
           path="/painel"
           element={
@@ -93,26 +99,18 @@ export function AppRouter() {
           }
         />
         <Route
-          path="/meus-contatos"
+          path="/minhas-solicitacoes"
           element={
             <RotaProtegida papeis={["cliente"]}>
-              <MeusContatosPage />
+              <MinhasSolicitacoesPage />
             </RotaProtegida>
           }
         />
         <Route
-          path="/conversas"
+          path="/solicitacoes"
           element={
             <RotaProtegida papeis={["advogado"]}>
-              <ConversasPage />
-            </RotaProtegida>
-          }
-        />
-        <Route
-          path="/conversas/:uid"
-          element={
-            <RotaProtegida papeis={["advogado"]}>
-              <ConversaPage />
+              <SolicitacoesRecebidasPage />
             </RotaProtegida>
           }
         />

@@ -22,8 +22,8 @@ export async function verificarToken(req, res, next) {
 }
 
 // Igual a verificarToken, mas nunca bloqueia — usado em rotas públicas que se comportam
-// diferente quando o cliente está logado (ex.: POST /advogados/:uid/contato passa a
-// rastrear qual cliente contatou qual advogado, só quando há token válido), sem exigir
+// diferente quando há alguém logado (ex.: GET /advogados/:uid mostra o perfil completo pro
+// próprio advogado e pro admin), sem exigir
 // login pra continuar funcionando pra quem navega anônimo.
 export async function tentarVerificarToken(req, _res, next) {
   const header = req.headers.authorization || "";

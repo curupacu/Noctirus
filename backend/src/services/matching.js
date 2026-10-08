@@ -89,3 +89,12 @@ export async function buscarAdvogadosCompativeis({
 
   return advogados;
 }
+
+// O que qualquer pessoa pode ver de um advogado. WhatsApp/e-mail só chegam ao cliente
+// depois que o advogado aceita o pedido de contato (RF010); histórico e autoria das
+// decisões da OAB são assunto do admin e do próprio advogado.
+export function perfilPublico(advogado) {
+  // eslint-disable-next-line no-unused-vars
+  const { contatos, historicoOab, situacaoOabPor, vezesSugerido, ...publico } = advogado;
+  return publico;
+}

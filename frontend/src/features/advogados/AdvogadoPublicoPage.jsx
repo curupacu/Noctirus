@@ -2,6 +2,7 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { Loading } from "../../components/Loading/Loading";
 import { SeloOab } from "../../components/SeloOab/SeloOab";
+import { useAuth } from "../auth/AuthContext";
 import { api } from "../../lib/api";
 import { useCarregar } from "../../lib/useCarregar";
 import { useTitulo } from "../../lib/useTitulo";
@@ -30,6 +31,7 @@ function ListaOuVazio({ titulo, itens }) {
 
 export function AdvogadoPublicoPage() {
   const { uid } = useParams();
+  const { user, role } = useAuth();
   const [searchParams] = useSearchParams();
   const triagemId = searchParams.get("triagemId");
   const { dado, erro } = useCarregar(async () => {
@@ -52,8 +54,6 @@ export function AdvogadoPublicoPage() {
 
   const { advogado, curriculo, catalogoCategorias } = dado;
 
-  const whatsapp = advogado.contatos?.whatsapp;
-  const email = advogado.contatos?.email;
   const rotulosEspecialidades = (advogado.especialidades || []).map((valor) => {
     const todas = Object.values(catalogoCategorias || {}).flat();
     return todas.find((c) => c.valor === valor)?.label || valor;
@@ -78,11 +78,6 @@ export function AdvogadoPublicoPage() {
         <span className="badge">
           {advogado.areasAtuacao?.map((a) => LABEL_AREA[a] || a).join(" · ") || "área não informada"}
         </span>
-        {advogado.vezesSugerido > 0 && (
-          <span className="badge">
-            Em {advogado.vezesSugerido} {advogado.vezesSugerido === 1 ? "triagem" : "triagens"}
-          </span>
-        )}
       </div>
 
       {rotulosEspecialidades.length > 0 && (
@@ -103,17 +98,34 @@ export function AdvogadoPublicoPage() {
         </>
       )}
 
-      {(whatsapp || email) && (
+      {/* O WhatsApp/e-mail não aparecem no perfil: o cliente pede contato e eles só são
+          liberados quando o advogado aceita (RF010). */}
+      {role === "cliente" && (
         <div className="actions">
           <Link
             to={`/advogados/${uid}/contato${triagemId ? `?triagemId=${triagemId}` : ""}`}
             className="button button--primary"
           >
-            Contatar advogado <span className="button__arrow">→</span>
+            Pedir contato <span className="button__arrow">→</span>
           </Link>
         </div>
       )}
-      {!whatsapp && !email && <p className="text-muted">Nenhum contato cadastrado.</p>}
+      {!user && (
+        <div className="card stack">
+          <p className="text-muted" style={{ margin: 0 }}>
+            Pra pedir contato, crie sua conta grátis e faça a triagem do seu caso — o advogado
+            recebe suas respostas e, se aceitar, você recebe o WhatsApp e o e-mail dele.
+          </p>
+          <div className="actions">
+            <Link to="/cadastro" className="button button--primary">
+              Criar conta grátis
+            </Link>
+            <Link to="/login" className="button button--secondary">
+              Entrar
+            </Link>
+          </div>
+        </div>
+      )}
 
       <div className="section-heading">
         <h2>Currículo</h2>
