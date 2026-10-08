@@ -123,7 +123,7 @@ substituído — assim os sprints seguintes não carregam código morto.
 > ordem neutra que muda todo dia). Tela provisória `/solicitacoes` pro advogado responder;
 > o quadro de casos (Sprint 6) parte dela.
 
-## Sprint 6 — Quadro de casos do advogado (RF012)
+## Sprint 6 — Quadro de casos do advogado (RF012) ✅ código feito em 08/10
 
 - ➕ **Quadro estilo Kanban** com as colunas **pendente**, **em andamento** e **concluído**.
   Aceitar um pedido move o caso de "pendente" pra "em andamento".

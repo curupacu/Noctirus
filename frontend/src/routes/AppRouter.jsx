@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import { AtualizacaoDisponivel } from "../components/AtualizacaoDisponivel/AtualizacaoDisponivel";
 import { BottomNav } from "../components/BottomNav/BottomNav";
 import { Header } from "../components/Header/Header";
@@ -13,7 +13,7 @@ import { CartaoPage } from "../features/cartao/CartaoPage";
 import { MeusDadosPage } from "../features/conta/MeusDadosPage";
 import { PainelPage } from "../features/painel/PainelPage";
 import { MinhasSolicitacoesPage } from "../features/solicitacoes/MinhasSolicitacoesPage";
-import { SolicitacoesRecebidasPage } from "../features/solicitacoes/SolicitacoesRecebidasPage";
+import { QuadroCasosPage } from "../features/casos/QuadroCasosPage";
 import { EditarPerfilPage } from "../features/perfil/EditarPerfilPage";
 import { PerfilPage } from "../features/perfil/PerfilPage";
 import { MinhasTriagensPage } from "../features/triagem/MinhasTriagensPage";
@@ -107,12 +107,15 @@ export function AppRouter() {
           }
         />
         <Route
-          path="/solicitacoes"
+          path="/casos"
           element={
             <RotaProtegida papeis={["advogado"]}>
-              <SolicitacoesRecebidasPage />
+              <QuadroCasosPage />
             </RotaProtegida>
           }
+        />
+        {/* Notificações antigas apontam pra /solicitacoes (antes do quadro de casos). */}
+        <Route path="/solicitacoes" element={<Navigate to="/casos" replace />}
         />
         <Route
           path="/meus-dados"

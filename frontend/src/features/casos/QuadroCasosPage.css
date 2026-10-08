@@ -1,0 +1,213 @@
+/* Quadro de casos do advogado (RF012). Três colunas no computador; no celular, uma coluna
+   por vez escolhida pelas abas. Visual provisório — ganha o acabamento final na fase de
+   UX/UI (docs/SPRINTS.md). */
+main.quadro {
+  max-width: 1120px;
+}
+
+.quadro__abas {
+  display: none;
+}
+
+.quadro__colunas {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-md);
+  align-items: start;
+  margin-top: var(--space-lg);
+}
+
+.quadro-coluna {
+  min-height: 240px;
+  padding: var(--space-md);
+  background: var(--bg-section);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.quadro-coluna--sobre {
+  border-color: var(--gold);
+  background: var(--surface-hover);
+}
+
+.quadro-coluna__titulo {
+  margin: 0 0 var(--space-sm);
+  font-size: var(--font-size-base);
+}
+
+.quadro-coluna__vazio {
+  font-size: var(--font-size-sm);
+}
+
+.quadro-coluna__lista {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+/* Cartão: a faixa da esquerda diz a prioridade — dourado (alta), marrom (média), borda
+   neutra (baixa). O texto "Prioridade x" repete a informação pra não depender de cor. */
+.quadro-cartao {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.quadro-cartao--alta {
+  border-left-color: var(--gold);
+}
+
+.quadro-cartao--media {
+  border-left-color: var(--brown-400);
+}
+
+.quadro-cartao[draggable="true"] {
+  cursor: grab;
+}
+
+.quadro-cartao__abrir {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  padding: var(--space-sm) var(--space-md);
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.quadro-cartao__prioridade {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.quadro-cartao--alta .quadro-cartao__prioridade {
+  color: var(--gold-ink);
+}
+
+.quadro-cartao__titulo {
+  font-size: var(--font-size-sm);
+}
+
+.quadro-cartao__meta {
+  font-size: var(--font-size-xs);
+  color: var(--text-dim);
+}
+
+.quadro-cartao__nota {
+  font-size: var(--font-size-xs);
+  color: var(--gold-ink);
+}
+
+.quadro-cartao__acoes {
+  display: flex;
+  gap: var(--space-xs);
+  padding: 0 var(--space-md) var(--space-sm);
+}
+
+.quadro-cartao__acoes .button {
+  flex: 1;
+  padding-inline: var(--space-sm);
+}
+
+.quadro__fora {
+  margin-top: var(--space-xl);
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.quadro__fora summary {
+  cursor: pointer;
+  color: var(--text-dim);
+}
+
+/* ---------- detalhe do caso ---------- */
+.quadro-detalhe {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.quadro-detalhe__fundo {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(38, 28, 20, 0.45);
+  cursor: pointer;
+}
+
+.quadro-detalhe__painel {
+  position: relative;
+  width: min(520px, 100%);
+  height: 100%;
+  overflow-y: auto;
+  padding: var(--space-lg);
+  background: var(--bg);
+  box-shadow: -8px 0 24px rgba(38, 28, 20, 0.18);
+}
+
+.quadro-detalhe__topo {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-md);
+  align-items: flex-start;
+}
+
+.quadro-detalhe__fechar {
+  border: 0;
+  background: none;
+  font-size: 28px;
+  line-height: 1;
+  color: var(--text-dim);
+  cursor: pointer;
+}
+
+.quadro-detalhe__respostas {
+  white-space: pre-line;
+  padding: var(--space-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.quadro-detalhe h3 {
+  margin: var(--space-lg) 0 var(--space-sm);
+  font-size: var(--font-size-base);
+}
+
+@media (max-width: 900px) {
+  .quadro__abas {
+    display: flex;
+    margin-top: var(--space-md);
+  }
+
+  .quadro__colunas {
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: var(--space-sm);
+  }
+
+  .quadro-coluna {
+    display: none;
+  }
+
+  .quadro-coluna--aba-ativa {
+    display: block;
+  }
+
+  .quadro-coluna__titulo {
+    display: none;
+  }
+
+  /* Abaixo do BottomNav fixo. */
+  .quadro-detalhe__painel {
+    padding-bottom: calc(var(--bottom-nav-height) + var(--space-lg));
+  }
+}
