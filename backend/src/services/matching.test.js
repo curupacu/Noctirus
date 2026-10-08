@@ -89,29 +89,6 @@ describe("buscarAdvogadosCompativeis", () => {
     expect(resultado.map((a) => a.uid)).toEqual(["a1"]);
   });
 
-  it("exclui advogados suspensos por padrão", async () => {
-    preparar({
-      advogados: {
-        a1: { areasAtuacao: [], localizacao: {} },
-        a2: { areasAtuacao: [], localizacao: {} },
-      },
-      users: { a1: BASE_USER, a2: { ...BASE_USER, status: "suspenso" } },
-    });
-
-    const resultado = await buscarAdvogadosCompativeis();
-    expect(resultado.map((a) => a.uid)).toEqual(["a1"]);
-  });
-
-  it("inclui suspensos quando incluirSuspensos é true (uso do admin)", async () => {
-    preparar({
-      advogados: { a1: { areasAtuacao: [], localizacao: {} } },
-      users: { a1: { ...BASE_USER, status: "suspenso" } },
-    });
-
-    const resultado = await buscarAdvogadosCompativeis({ incluirSuspensos: true });
-    expect(resultado.map((a) => a.uid)).toEqual(["a1"]);
-  });
-
   it("prioriza quem tem especialidade compatível, sem excluir quem não tem", async () => {
     preparar({
       advogados: {

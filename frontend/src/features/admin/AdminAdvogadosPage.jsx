@@ -5,7 +5,6 @@ import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
 import { useCarregar } from "../../lib/useCarregar";
 import { useTitulo } from "../../lib/useTitulo";
-import { AdminNav } from "./AdminNav";
 
 const CNA_URL = "https://cna.oab.org.br/";
 
@@ -42,7 +41,6 @@ export function AdminAdvogadosPage() {
     <main>
       <span className="eyebrow">Administração</span>
       <h1>Advogados cadastrados</h1>
-      <AdminNav />
 
       {advogados.length === 0 && <p className="text-muted">Nenhum advogado cadastrado.</p>}
 

@@ -40,9 +40,8 @@ export function ContatoAdvogadoPage() {
   if (erro) return <p role="alert">{erro}</p>;
   if (!advogado) return <Loading>Carregando...</Loading>;
 
-  const suspenso = advogado.status === "suspenso";
-  const whatsapp = !suspenso && advogado.contatos?.whatsapp;
-  const email = !suspenso && advogado.contatos?.email;
+  const whatsapp = advogado.contatos?.whatsapp;
+  const email = advogado.contatos?.email;
 
   return (
     <main>
@@ -57,24 +56,16 @@ export function ContatoAdvogadoPage() {
         </span>
       </div>
 
-      {suspenso && (
-        <p className="text-muted">Este advogado está suspenso e não pode ser contatado pela plataforma.</p>
-      )}
+      <div className="section-heading">
+        <h2>Conversa</h2>
+      </div>
+      <ChatThread
+        comUid={uid}
+        categorias={categoriasCliente(advogado)}
+        extra={triagemId ? { triagemId } : undefined}
+      />
 
-      {!suspenso && (
-        <>
-          <div className="section-heading">
-            <h2>Conversa</h2>
-          </div>
-          <ChatThread
-            comUid={uid}
-            categorias={categoriasCliente(advogado)}
-            extra={triagemId ? { triagemId } : undefined}
-          />
-        </>
-      )}
-
-      {!suspenso && (whatsapp || email) && (
+      {(whatsapp || email) && (
         <>
           <div className="section-heading">
             <h2>Contato direto</h2>
@@ -106,7 +97,7 @@ export function ContatoAdvogadoPage() {
         </>
       )}
 
-      {!suspenso && !whatsapp && !email && (
+      {!whatsapp && !email && (
         <p className="text-muted">Nenhum contato direto cadastrado ainda.</p>
       )}
 

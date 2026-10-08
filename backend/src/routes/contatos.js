@@ -18,7 +18,7 @@ export const STATUS_CONTATO_CLIENTE = [
 
 // Advogados que o cliente logado já contatou — populado por POST /advogados/:uid/contato
 // quando o clique acontece logado. Resolve nome/foto/status do advogado pra não expor o
-// documento cru (mesmo padrão de /triagem/:id e /admin/denuncias).
+// documento cru (mesmo padrão de /triagem/:id).
 contatosRouter.get("/contatos/meus", verificarToken, requireRole("cliente"), async (req, res) => {
   const snapshot = await db
     .collection("contatosCliente")
@@ -39,7 +39,6 @@ contatosRouter.get("/contatos/meus", verificarToken, requireRole("cliente"), asy
         ultimoContatoEm: dados.ultimoContatoEm,
         advogadoNome: usuarioDoc.exists ? usuarioDoc.data().nome : null,
         advogadoFoto: advogadoDoc.exists ? advogadoDoc.data().foto || null : null,
-        advogadoSuspenso: usuarioDoc.exists ? usuarioDoc.data().status === "suspenso" : false,
       };
     }),
   );

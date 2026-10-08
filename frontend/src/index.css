@@ -106,7 +106,7 @@ a:hover {
 
 /* Neutro por padrão — a maioria dos badges é rótulo de status (papel, "em análise"...),
    dourado sólido em tudo ia contra "dourado com parcimônia" (ver docs/DESIGN.md).
-   Variantes semânticas abaixo pra verificado/sucesso, suspenso/erro e o destaque dourado
+   Variantes semânticas abaixo pra verificado/sucesso, erro e o destaque dourado
    (usado só no badge de classificação da IA, que fica sobre o card de destaque). */
 .badge {
   display: inline-block;
@@ -220,25 +220,6 @@ a:hover {
   margin: 0;
   color: var(--color-text-muted);
   font-size: var(--font-size-sm);
-}
-
-.feedback-estrelas {
-  display: flex;
-  gap: var(--space-xs);
-}
-
-.feedback-estrelas__item {
-  background: none;
-  border: none;
-  padding: 0;
-  font-size: 1.6rem;
-  line-height: 1;
-  cursor: pointer;
-  transition: color 0.1s ease, transform 0.1s ease;
-}
-
-.feedback-estrelas__item:hover {
-  transform: scale(1.12);
 }
 
 .hero-block {
@@ -465,7 +446,7 @@ fieldset label {
 }
 
 @media (max-width: 480px) {
-  /* bottom: var(--bottom-nav-height), não 0 — essas telas (Triagem, Denunciar) só
+  /* bottom: var(--bottom-nav-height), não 0 — essas telas (Triagem) só
      existem logadas, então o BottomNav (fixed, z-index 20) sempre está por cima dos
      últimos 68px da viewport. Grudar em bottom:0 aqui escondia o botão de enviar atrás
      do menu (achado da auditoria de UX estática, 29/07). */

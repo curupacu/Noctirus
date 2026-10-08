@@ -67,10 +67,7 @@ export function MeusContatosPage() {
             <li key={c.advogadoId} className="card stack">
               <Link to={`/advogados/${c.advogadoId}`} className="media">
                 <Avatar nome={c.advogadoNome} foto={c.advogadoFoto} seed={c.advogadoId} />
-                <span className="stack" style={{ gap: 2 }}>
-                  <strong>{c.advogadoNome || "Advogado"}</strong>
-                  {c.advogadoSuspenso && <span className="badge badge--danger">Suspenso da plataforma</span>}
-                </span>
+                <strong>{c.advogadoNome || "Advogado"}</strong>
               </Link>
 
               <div className="pill-toggle">
@@ -88,9 +85,6 @@ export function MeusContatosPage() {
               </div>
 
               <div className="actions">
-                <Link to={`/advogados/${c.advogadoId}`} className="button button--secondary">
-                  Avaliar atendimento
-                </Link>
                 <button type="button" className="button button--secondary" onClick={() => remover(c.advogadoId)}>
                   Remover
                 </button>

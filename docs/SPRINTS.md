@@ -9,7 +9,7 @@ Legenda: ➕ adicionar · ✏️ mudar · ➖ retirar · ✅ já existe, só con
 
 ---
 
-## Sprint 0 — Limpeza (tirar o que saiu do escopo)
+## Sprint 0 — Limpeza (tirar o que saiu do escopo) ✅ código feito em 07/10
 
 Antes de construir coisa nova, tirar o que a banca considerou inviável e o que vai ser
 substituído — assim os sprints seguintes não carregam código morto.
@@ -125,6 +125,8 @@ substituído — assim os sprints seguintes não carregam código morto.
 ---
 
 ## Depois: UX/UI das telas internas
+
+0. Ajustes de responsividade no celular (pedido em 07/10), começando pela Home
 
 Com a funcionalidade no lugar, aplicar o visual da Home (paleta, serifa, cantos retos) tela
 por tela, na ordem da demonstração:

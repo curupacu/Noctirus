@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 // Hook compartilhado pro padrão repetido em quase toda tela do app: buscar um recurso na
 // API assim que a tela monta, guardar erro/estado de carregamento, e poder recarregar
-// depois de uma mutação (aprovar, suspender, remover, salvar...) sem reescrever o mesmo
+// depois de uma mutação (aprovar, salvar, remover...) sem reescrever o mesmo
 // try/catch em cada ação. `buscar` só precisa retornar uma Promise (ex.: `() =>
 // api.get("/admin/advogados")`). `deps` é opcional — só quando a tela precisa buscar de
 // novo sozinha ao trocar de parâmetro (ex.: `[uid]` na página de perfil do advogado, pra

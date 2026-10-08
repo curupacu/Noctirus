@@ -15,7 +15,7 @@ claim no token — o documento é a cópia legível/consultável.
 | --- | --- | --- |
 | `role` | `"cliente" \| "advogado" \| "admin"` | Admin não tem cadastro público — só via `database/seed/criar-admin.js`. |
 | `nome`, `email`, `telefone` | string | `telefone` opcional. |
-| `status` | `"ativo" \| "suspenso"` | Suspensão é uma ação de admin, ver `users.js`. |
+| `status` | `"ativo"` | Sempre `"ativo"`; a suspensão pelo admin foi removida em outubro/2026. |
 | `createdAt` | string ISO | |
 
 ## `advogados`
@@ -32,7 +32,6 @@ Um documento por advogado, id = `uid` (mesmo doc de `users`, papel `"advogado"`)
 | `bio` | string | Texto livre, capado em 240 caracteres. |
 | `foto` | string (URL) | Cloudinary, opcional — sem foto usa avatar de iniciais no frontend. |
 | `verificado` | boolean | Selo "OAB verificada", setado pelo admin. |
-| `status` | `"ativo" \| "suspenso"` | Advogado suspenso some da listagem/matching por padrão. |
 | `vezesSugerido` | number | Contador de quantas triagens sugeriram esse advogado — prova social honesta, incrementado em `POST /triagem/classificar`. |
 
 ## `curriculos`
@@ -96,29 +95,6 @@ texto livre, ver `CLAUDE.md` → item 4 da sessão de 18/08 sobre o motivo/OAB a
 | `remetente` | `"cliente" \| "advogado"` | |
 | `texto` | string | Precisa bater exatamente com uma das listas fixas em `conversas.js` (`mensagensCliente()` ou `MENSAGENS_ADVOGADO`) — validado no backend, não só no frontend. |
 | `triagemId` | string (opcional) | Só presente quando o cliente mandou a mensagem a partir do resultado de uma triagem específica; validado contra `triagens.clienteId` antes de gravar. |
-| `createdAt` | string ISO | |
-
-## `feedbacks`
-
-Avaliação do cliente sobre um advogado, depois de um contato.
-
-| Campo | Tipo | Notas |
-| --- | --- | --- |
-| `advogadoId`, `autorId` | string (uid) | |
-| `nota` | number (1–5) | |
-| `comentario` | string | Opcional, capado em 500 caracteres. |
-| `createdAt` | string ISO | Retorno pro advogado é sempre anônimo — `autorId` nunca é exposto em `GET /advogados/:uid/feedback`. |
-
-## `denuncias`
-
-| Campo | Tipo | Notas |
-| --- | --- | --- |
-| `autorId`, `autorTipo` | string | `autorTipo` é o papel de quem denunciou. |
-| `alvoId` | string ou `null` | Uid de quem foi denunciado, quando aplicável. |
-| `descricao` | string | Mínimo 10 caracteres. |
-| `provaUrl` | string ou `null` | Link opcional pra prova hospedada externamente — sem upload próprio (Storage fora do free tier). |
-| `status` | `"aberta" \| "resolvida"` | |
-| `decisao` | string ou `null` | Preenchido pelo admin ao resolver. |
 | `createdAt` | string ISO | |
 
 ## Índices e regras

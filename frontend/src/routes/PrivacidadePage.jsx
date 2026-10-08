@@ -31,7 +31,7 @@ export function PrivacidadePage() {
         <li>Classificar sua triagem (área do direito, advogados compatíveis);</li>
         <li>Mostrar seu perfil público, se você for advogado;</li>
         <li>Avisar por e-mail quando um advogado responde uma conversa;</li>
-        <li>Moderar a plataforma (denúncias, suspensão de contas problemáticas).</li>
+        <li>Conferir o registro na OAB de quem se cadastra como advogado.</li>
       </ul>
 
       <div className="section-heading">
@@ -72,8 +72,8 @@ export function PrivacidadePage() {
         momento, direto pela plataforma, sem precisar pedir pra ninguém — veja em{" "}
         <Link to="/perfil">Meu perfil → Meus dados</Link> depois de entrar na sua conta.
         Apagar a conta remove seu cadastro e, se você for advogado, seu perfil público e
-        currículo. Mensagens de chat, feedback e denúncias que envolvem outra pessoa não são
-        apagados junto, porque também são registro do outro lado da conversa/moderação.
+        currículo. Mensagens de chat que envolvem outra pessoa não são apagadas junto, porque
+        também são registro do outro lado da conversa.
       </p>
 
       <div className="section-heading">

@@ -24,9 +24,8 @@ service cloud.firestore {
       // quem quisesse ler direto pelo SDK do cliente.
       allow read: if dono(uid) || papel() == "admin";
       allow create: if dono(uid);
-      // Edição não pode trocar papel nem status — role só muda via custom claim (backend),
-      // e status só o admin muda (suspender/reativar). Sem essa segunda trava, um usuário
-      // suspenso conseguia se reativar sozinho escrevendo direto no próprio doc.
+      // Edição não pode trocar papel nem status — role só muda via custom claim (backend)
+      // e status só pelo backend/admin.
       allow update: if papel() == "admin" ||
         (dono(uid) &&
           request.resource.data.role == resource.data.role &&
@@ -59,15 +58,6 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // Denúncia só é criada pelo backend (RF011); leitura liberada pro autor e pro admin
-    // (moderação, Sprint 8). Sem update aqui — mudar status/decisão é ação de admin via
-    // Admin SDK.
-    match /denuncias/{id} {
-      allow read: if request.auth != null &&
-        (request.auth.uid == resource.data.autorId || papel() == "admin");
-      allow write: if false;
-    }
-
     // Contato: log de metadado (canal, quando) de quem clicou em falar com o advogado —
     // nunca o conteúdo de nenhuma conversa (essa acontece inteira fora da plataforma).
     // Só o backend cria (endpoint é público, sem exigir login); leitura só do próprio
@@ -78,17 +68,7 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // Feedback: avaliação privada do cliente sobre o atendimento. Nunca pública — só o
-    // próprio advogado avaliado ou o admin leem, e mesmo assim sem o autor exposto (ver
-    // routes/advogados.js).
-    match /feedbacks/{id} {
-      allow read: if request.auth != null &&
-        (request.auth.uid == resource.data.advogadoId || papel() == "admin");
-      allow write: if false;
-    }
-
-    // Notificação em tempo real (sininho) — só o backend cria (ver routes/conversas.js e
-    // routes/denuncias.js), o frontend lê direto do Firestore com onSnapshot (sem round-trip
+    // Notificação em tempo real (sininho) — só o backend cria (ver routes/conversas.js), o frontend lê direto do Firestore com onSnapshot (sem round-trip
     // pela API a cada notificação nova) e só pode marcar como lida, nunca mudar o conteúdo.
     match /notificacoes/{id} {
       allow read: if dono(resource.data.destinatarioId);

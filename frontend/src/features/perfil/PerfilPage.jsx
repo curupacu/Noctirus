@@ -29,7 +29,6 @@ export function PerfilPage() {
   const [advogado, setAdvogado] = useState(null);
   const [curriculo, setCurriculo] = useState(null);
   const [metricas, setMetricas] = useState(null);
-  const [feedbacks, setFeedbacks] = useState(null);
   const [conversas, setConversas] = useState(null);
 
   useEffect(() => {
@@ -56,7 +55,6 @@ export function PerfilPage() {
   useEffect(() => {
     if (!user || role !== "advogado") return;
     api.get(`/advogados/${user.uid}/metricas`).then(setMetricas);
-    api.get(`/advogados/${user.uid}/feedback`).then(setFeedbacks);
     api.get("/conversas/minhas").then(setConversas);
   }, [user, role]);
 
@@ -132,10 +130,6 @@ export function PerfilPage() {
             <p className="stat-numero">{metricas ? metricas.contatos.total : "—"}</p>
           </div>
           <div className="card">
-            <p className="text-muted">Feedback dos clientes</p>
-            <p className="stat-numero">{metricas ? (metricas.feedbacks.mediaNota ?? "—") : "—"}</p>
-          </div>
-          <div className="card">
             <p className="text-muted">Conversas</p>
             <p className="stat-numero">{conversas ? conversas.length : "—"}</p>
           </div>
@@ -199,41 +193,10 @@ export function PerfilPage() {
           </li>
         </ul>
 
-        {feedbacks && feedbacks.length > 0 && (
-          <>
-            <div className="section-heading">
-              <h2>Avaliações recentes</h2>
-            </div>
-            <ul className="list-plain">
-              {feedbacks.map((f) => (
-                <li key={f.id} className="card">
-                  <span aria-label={`Nota ${f.nota} de 5`}>
-                    {"★".repeat(f.nota)}
-                    <span className="text-muted">{"★".repeat(5 - f.nota)}</span>
-                  </span>
-                  {f.comentario && <p style={{ marginBottom: 0 }}>{f.comentario}</p>}
-                </li>
-              ))}
-            </ul>
-          </>
-        )}
-
         <div className="section-heading">
           <h2>Mais</h2>
         </div>
         <ul className="list-plain">
-          <li>
-            <Link to="/denunciar" className="list-row">
-              <span className="list-row__title">Denunciar um problema</span>
-              <span className="advogado-row__chevron" aria-hidden="true">›</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/minhas-denuncias" className="list-row">
-              <span className="list-row__title">Minhas denúncias</span>
-              <span className="advogado-row__chevron" aria-hidden="true">›</span>
-            </Link>
-          </li>
           <li>
             <Link to="/meus-dados" className="list-row">
               <span className="list-row__title">Meus dados</span>
@@ -309,26 +272,12 @@ export function PerfilPage() {
           </li>
         )}
         {role !== "admin" && (
-          <>
-            <li>
-              <Link to="/denunciar" className="list-row">
-                <span className="list-row__title">Denunciar um problema</span>
-                <span className="advogado-row__chevron" aria-hidden="true">›</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/minhas-denuncias" className="list-row">
-                <span className="list-row__title">Minhas denúncias</span>
-                <span className="advogado-row__chevron" aria-hidden="true">›</span>
-              </Link>
-            </li>
-            <li>
-              <Link to="/meus-dados" className="list-row">
-                <span className="list-row__title">Meus dados</span>
-                <span className="advogado-row__chevron" aria-hidden="true">›</span>
-              </Link>
-            </li>
-          </>
+          <li>
+            <Link to="/meus-dados" className="list-row">
+              <span className="list-row__title">Meus dados</span>
+              <span className="advogado-row__chevron" aria-hidden="true">›</span>
+            </Link>
+          </li>
         )}
       </ul>
     </main>

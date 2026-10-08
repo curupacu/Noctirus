@@ -7,15 +7,11 @@ import { db } from "../lib/firebase-admin.js";
 // só reordena, colocando primeiro quem tem `especialidades` que batem com o caso. Filtrar
 // de verdade zeraria resultados fácil (seed tem só 30 advogados pra 33 categorias x 14
 // estados); reordenar mantém sempre alguém pra contatar, mas prioriza quem é mais aderente.
-// `incluirSuspensos` é só pro admin (RF012–14) — a listagem pública e o matching da
-// triagem nunca devem oferecer alguém suspenso, senão suspender não teria efeito nenhum
-// pra quem usa o site.
 export async function buscarAdvogadosCompativeis({
   area,
   cidade,
   uf,
   categorias,
-  incluirSuspensos = false,
 } = {}) {
   const snapshot = await db.collection("advogados").get();
   let advogados = await Promise.all(
@@ -24,15 +20,10 @@ export async function buscarAdvogadosCompativeis({
       return {
         uid: doc.id,
         nome: usuarioDoc.exists ? usuarioDoc.data().nome : null,
-        status: usuarioDoc.exists ? usuarioDoc.data().status : null,
         ...doc.data(),
       };
     }),
   );
-
-  if (!incluirSuspensos) {
-    advogados = advogados.filter((adv) => adv.status !== "suspenso");
-  }
 
   if (area) {
     advogados = advogados.filter((adv) => adv.areasAtuacao?.includes(area));
