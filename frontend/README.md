@@ -29,12 +29,14 @@ todas dependem da API.
 
 ```
 src/
-  features/       auth, triagem, advogados, curriculo, perfil (dashboard do advogado em
-                  /perfil + formulário em /perfil/editar), painel (landing do cliente),
-                  conversas (chat do advogado), contatos (Meus Contatos do cliente), admin
-  components/     UI reutilizável — Button, Input, Select, ChoiceCard, BottomNav,
-                  ProgressSteps, Header, ChatThread, AdvogadoCard, AreaIcon, Avatar,
-                  PerfilCompletude, OwlIllustration
+  features/       auth, triagem (2 etapas + resultado), advogados (lista, perfil, pedir
+                  contato), solicitacoes (Minhas solicitações do cliente), casos (quadro do
+                  advogado), painel (cliente), perfil (dashboard do advogado em /perfil +
+                  formulário em /perfil/editar), curriculo, cartao, conta (LGPD), admin
+                  (validação de OAB)
+  components/     UI reutilizável — Button, Input, ChoiceCard, CampoLocalizacao, SeloOab,
+                  BottomNav, ProgressSteps, Header, NotificationBell, AdvogadoCard,
+                  AreaIcon, Avatar, PerfilCompletude, OwlIllustration
   lib/            cliente Firebase, cliente HTTP da API
   routes/         AppRouter (rotas) + HomePage
   styles/         tokens.css (design tokens)
@@ -56,8 +58,7 @@ Redesign de outubro/2026 em andamento, tela por tela (ver `docs/DESIGN.md`): um 
 sem modo escuro, tokens em `styles/tokens.css`. A Home já está no visual novo (estilos em
 `routes/HomePage.css`); as outras telas pegaram a paleta nova e ainda têm o layout antigo.
 
-`/perfil` do advogado é dashboard-only (saudação, estatísticas, completude de perfil,
-conversas recentes, atalhos); o formulário de edição (dados, foto, especialidades, currículo)
-vive à parte em `/perfil/editar`. O chat entre cliente e advogado (`ChatThread`) usa só
-mensagens pré-definidas por categoria — nunca texto livre, ver `database/schema.md` (coleção
-`mensagensChat`) pro porquê.
+`/perfil` do advogado é dashboard-only (situação da OAB, resumo do quadro de casos,
+completude de perfil, atalhos); o formulário de edição (dados, foto, especialidades,
+currículo, correção da OAB recusada) vive à parte em `/perfil/editar`. O quadro de casos
+fica em `/casos`.

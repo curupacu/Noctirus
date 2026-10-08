@@ -30,21 +30,24 @@ Endpoint de verificação: `GET /health`.
   antes do fallback por regras (só é chamada se o Gemini falhar/demorar/tiver baixa
   confiança). **Opcional**: sem ela, pula direto pro fallback por regras.
 - `GROQ_MODEL` — opcional, padrão `openai/gpt-oss-120b`.
-- `RESEND_API_KEY` — chave do [Resend](https://resend.com/api-keys), notifica o cliente por
-  e-mail quando o advogado responde no chat. **Opcional**: sem ela, só não manda o e-mail
-  (loga no console).
+- `RESEND_API_KEY` — chave do [Resend](https://resend.com/api-keys), manda os avisos por
+  e-mail (pedido de contato novo, resposta do advogado, decisão sobre a OAB). **Opcional**:
+  sem ela, só não manda o e-mail (loga no console).
 - `RESEND_FROM` — opcional, remetente padrão já assume `mail.nocturis.com.br` verificado.
 
 ## Estrutura
 
 ```
 src/
-  routes/        endpoints REST — auth, advogados, curriculos, triagem, users, health,
-                 contatos (rastreio pessoal do cliente), conversas (chat de mensagens
-                 pré-definidas), denuncias
-  services/      triagem.js (taxonomia + classificação IA/regras), oab.js, matching.js
-  middlewares/   verificação de token e papel
-  lib/           firebase-admin.js, email.js (notificação via Resend)
+  routes/        endpoints REST — auth, users, advogados (perfil, foto, validação de OAB),
+                 curriculos, triagem (etapas 1 e 2), solicitacoes (pedido de contato e
+                 quadro de casos), health
+  services/      triagem.js (perguntas, taxonomia, classificação IA/regras), matching.js
+                 (busca + perfil público), oab.js (situações e transições), avisosOab.js,
+                 notificacoes.js
+  middlewares/   verificação de token e papel, validação (Zod), limite de requisições
+  lib/           firebase-admin.js, email.js + emailTemplates.js (Resend), localizacao.js,
+                 cloudinary.js
 ```
 
 Modelo de dados por coleção: [`database/schema.md`](../database/schema.md).
@@ -52,5 +55,7 @@ Modelo de dados por coleção: [`database/schema.md`](../database/schema.md).
 ## Scripts úteis (fora do `npm run dev`)
 
 Rodados a partir da raiz do repo, não daqui — ver `database/README.md`:
-`database/seed/seed.js` (popula advogados fictícios) e
-`database/seed/criar-admin.js` (cria o usuário admin, sem cadastro público pra esse papel).
+`database/seed/seed.js` (popula advogados fictícios),
+`database/seed/criar-admin.js` (cria o usuário admin, sem cadastro público pra esse papel) e
+`database/seed/demo-casos.js` (dados de demonstração pra apresentação).
+`npm run avaliar-triagem` (daqui) mede o acerto da IA com 20 casos reais.

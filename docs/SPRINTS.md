@@ -138,15 +138,17 @@ substituído — assim os sprints seguintes não carregam código morto.
 
 **Pronto quando:** dá pra demonstrar um caso saindo de pendente até concluído.
 
-## Sprint 7 — Fechamento da parte funcional
+## Sprint 7 — Fechamento da parte funcional ✅ feito em 08/10
 
-- ✏️ "Meus dados" (LGPD) exportando as coleções novas.
-- ✏️ Seed de demonstração: alguns pedidos e casos em cada coluna, sem contas de teste.
-- ✏️ Docs: `README.md`, `database/schema.md`, `docs/TESTES.md`.
-- 📝 Lista do que mudar na **monografia**: requisitos, casos de uso (sai A.8–A.11, entram
-  solicitar contato e quadro de casos), DER/diagrama de classes com as coleções novas, resumo e
-  ODS 16.6 (que citam denúncias).
-- 🎬 Roteiro da demonstração pra banca, passo a passo.
+- ✅ "Meus dados" (LGPD) exportando as coleções novas (feito junto dos Sprints 5 e 6; as
+  anotações do advogado ficam fora do arquivo do cliente).
+- ✅ Dados de demonstração: `database/seed/demo-casos.js` enche o quadro do advogado (2
+  pendentes, 2 em andamento, 1 concluído) e o painel do cliente (pedido aceito, pendente e
+  recusado). Reaplicável antes de cada ensaio.
+- ✅ Docs: `README.md`, `backend/README.md`, `frontend/README.md`, `database/README.md`,
+  `database/schema.md`, `docs/TESTES.md`.
+- ✅ Roteiro da demonstração pra banca: [`docs/ROTEIRO_DEMO.md`](ROTEIRO_DEMO.md).
+- ➖ Lista de mudanças da monografia: o time já está fazendo por conta própria.
 
 ---
 
