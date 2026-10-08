@@ -3,8 +3,10 @@ import { Link } from "react-router-dom";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { Input } from "../../components/Input/Input";
 import { Button } from "../../components/Button/Button";
+import { CampoLocalizacao } from "../../components/CampoLocalizacao/CampoLocalizacao";
 import { Loading } from "../../components/Loading/Loading";
 import { PerfilCompletude } from "../../components/PerfilCompletude/PerfilCompletude";
+import { SeloOab } from "../../components/SeloOab/SeloOab";
 import { useAuth } from "../auth/AuthContext";
 import { api } from "../../lib/api";
 import { useTitulo } from "../../lib/useTitulo";
@@ -21,6 +23,8 @@ export function PerfilPage() {
   const [dadosUsuario, setDadosUsuario] = useState(null);
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [uf, setUf] = useState("");
   const [foto, setFoto] = useState("");
   const [enviandoFoto, setEnviandoFoto] = useState(false);
   const [erroFoto, setErroFoto] = useState(null);
@@ -37,6 +41,8 @@ export function PerfilPage() {
       setDadosUsuario(usuario);
       setNome(usuario.nome || "");
       setTelefone(usuario.telefone || "");
+      setCidade(usuario.localizacao?.cidade || "");
+      setUf(usuario.localizacao?.uf || "");
       setFoto(usuario.foto || "");
 
       if (role === "advogado") {
@@ -62,7 +68,11 @@ export function PerfilPage() {
     e.preventDefault();
     setMensagem(null);
     try {
-      await api.put("/users/me", { nome, telefone });
+      await api.put("/users/me", {
+        nome,
+        telefone,
+        ...(role === "cliente" ? { localizacao: { cidade, uf } } : {}),
+      });
       setMensagem("Dados salvos.");
     } catch (err) {
       setMensagem(err.message);
@@ -113,15 +123,7 @@ export function PerfilPage() {
           Olá, <em className="accent">{primeiroNome}</em>
         </h1>
         <p className="text-muted">
-          <span className="badge">{dadosUsuario.role}</span>{" "}
-          <span className={`badge${advogado.verificado ? " badge--seal" : ""}`}>
-            {advogado.verificado && (
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M20 6 9 17l-5-5" />
-              </svg>
-            )}
-            {advogado.verificado ? "OAB verificada" : "OAB em análise"}
-          </span>
+          <span className="badge">{dadosUsuario.role}</span> <SeloOab advogado={advogado} />
         </p>
 
         <div className="row">
@@ -246,6 +248,9 @@ export function PerfilPage() {
           value={telefone}
           onChange={(e) => setTelefone(e.target.value)}
         />
+        {role === "cliente" && (
+          <CampoLocalizacao cidade={cidade} uf={uf} onCidade={setCidade} onUf={setUf} required />
+        )}
         <Button type="submit">Salvar dados básicos</Button>
       </form>
 

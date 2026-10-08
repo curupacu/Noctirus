@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
+import { oabAprovada } from "../../lib/situacaoOab";
 import { Avatar } from "../Avatar/Avatar";
+import { SeloOab } from "../SeloOab/SeloOab";
 
 const LABEL_AREA = { civel: "Cível", trabalhista: "Trabalhista" };
 
@@ -39,14 +41,7 @@ export function AdvogadoCard({ advogado, catalogoEspecialidades = {}, triagemId 
             {advogado.localizacao?.cidade}/{advogado.localizacao?.uf}
           </span>
           <span className="advogado-card__badges">
-            {advogado.verificado && (
-              <span className="badge badge--seal">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M20 6 9 17l-5-5" />
-                </svg>
-                OAB verificada
-              </span>
-            )}
+            {oabAprovada(advogado) && <SeloOab advogado={advogado} />}
             {advogado.especialidadesCompativeis > 0 && <span className="badge">Atua no assunto</span>}
             {advogado.vezesSugerido > 0 && (
               <span className="badge">

@@ -44,6 +44,20 @@ export function PainelPage() {
         Este é o seu painel. Daqui você faz uma nova triagem ou acompanha as que já fez.
       </p>
 
+      {/* Conta criada antes da cidade/UF virar obrigatória (outubro/2026) — sem isso o
+          resultado da triagem não tem como mostrar advogados perto da pessoa. */}
+      {!usuario.localizacao?.cidade && (
+        <div className="card stack">
+          <strong>Falta informar sua cidade</strong>
+          <p className="text-muted" style={{ margin: 0 }}>
+            Com ela, mostramos primeiro os advogados que atendem perto de você.
+          </p>
+          <Link to="/perfil" className="button button--secondary">
+            Informar minha cidade
+          </Link>
+        </div>
+      )}
+
       <section className="hero-block hero-block--dark hero-cta">
         <OwlIllustration className="hero-block__owl-mark" />
         <span className="eyebrow">Novo caso?</span>

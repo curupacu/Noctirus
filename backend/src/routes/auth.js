@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import { auth, db } from "../lib/firebase-admin.js";
+import { schemaLocalizacao } from "../lib/localizacao.js";
 import { verificarToken } from "../middlewares/auth.js";
 import { validarBody } from "../middlewares/validar.js";
 import { oabJaCadastrada, validarFormatoOab } from "../services/oab.js";
@@ -23,10 +24,7 @@ const schemaCompletarCadastro = z.object({
   // aqui só garante que é um objeto, não valida os campos internos pra não duplicar regra.
   oab: z.object({ numero: z.unknown().optional(), uf: z.unknown().optional() }).optional(),
   areasAtuacao: z.array(z.enum(AREAS_VALIDAS)).optional().default([]),
-  localizacao: z
-    .object({ cidade: z.string().trim().max(100).optional(), uf: z.string().trim().max(2).optional() })
-    .optional()
-    .default({}),
+  localizacao: schemaLocalizacao,
   whatsapp: z.string().trim().max(20).optional().default(""),
   especialidades: z.array(z.string()).optional().default([]),
   bio: z.string().optional().default(""),
@@ -63,6 +61,9 @@ authRouter.post(
       nome,
       email,
       telefone,
+      // Cliente guarda a localização no próprio cadastro; a do advogado fica no doc de
+      // "advogados", que é o que a busca e o perfil público leem.
+      ...(role === "cliente" ? { localizacao } : {}),
       status: "ativo",
       createdAt: new Date().toISOString(),
       consentimentoPrivacidadeEm: new Date().toISOString(),
@@ -81,7 +82,10 @@ authRouter.post(
         // 29/07): o perfil só tinha dados estruturados, nada que soasse como a pessoa
         // falando. Opcional, capado pra não virar um textão na listagem.
         bio: bio.trim().slice(0, 240),
-        verificado: false,
+        situacaoOab: "em_analise",
+        situacaoOabMotivo: null,
+        situacaoOabAtualizadaEm: new Date().toISOString(),
+        situacaoOabPor: null,
       });
       await db.collection("curriculos").doc(uid).set({
         formacao: [],

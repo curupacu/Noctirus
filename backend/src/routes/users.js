@@ -2,6 +2,7 @@ import { Router } from "express";
 import multer from "multer";
 import { z } from "zod";
 import { cloudinary } from "../lib/cloudinary.js";
+import { schemaLocalizacao } from "../lib/localizacao.js";
 import { auth, db } from "../lib/firebase-admin.js";
 import { requireRole, verificarToken } from "../middlewares/auth.js";
 import { validarBody } from "../middlewares/validar.js";
@@ -11,6 +12,7 @@ export const usersRouter = Router();
 const schemaAtualizarPerfil = z.object({
   nome: z.string().trim().min(1).max(150).optional(),
   telefone: z.string().trim().max(20).optional(),
+  localizacao: schemaLocalizacao.optional(),
 });
 
 // Mesma foto de perfil que já existia só pro advogado (ver POST /advogados/:uid/foto) —
@@ -55,10 +57,17 @@ usersRouter.put(
   verificarToken,
   validarBody(schemaAtualizarPerfil),
   async (req, res) => {
-    const { nome, telefone } = req.body;
+    const { nome, telefone, localizacao } = req.body;
     const campos = {};
     if (nome !== undefined) campos.nome = nome;
     if (telefone !== undefined) campos.telefone = telefone;
+    if (localizacao !== undefined) {
+      // A localização do advogado vive no doc de "advogados" (PUT /advogados/:uid).
+      if (req.user.role !== "cliente") {
+        return res.status(400).json({ erro: "Advogado altera a cidade pelo próprio perfil profissional" });
+      }
+      campos.localizacao = localizacao;
+    }
 
     if (Object.keys(campos).length === 0) {
       return res.status(400).json({ erro: "Nenhum campo para atualizar" });

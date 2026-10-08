@@ -1,6 +1,7 @@
 import { Link, useParams, useSearchParams } from "react-router-dom";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { Loading } from "../../components/Loading/Loading";
+import { SeloOab } from "../../components/SeloOab/SeloOab";
 import { api } from "../../lib/api";
 import { useCarregar } from "../../lib/useCarregar";
 import { useTitulo } from "../../lib/useTitulo";
@@ -70,14 +71,7 @@ export function AdvogadoPublicoPage() {
       </section>
 
       <div className="actions">
-        <span className={`badge${advogado.verificado ? " badge--seal" : ""}`}>
-          {advogado.verificado && (
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M20 6 9 17l-5-5" />
-            </svg>
-          )}
-          {advogado.verificado ? "OAB verificada" : "OAB em análise"}
-        </span>
+        <SeloOab advogado={advogado} />
         <span className="badge">
           OAB {advogado.oab?.numero}/{advogado.oab?.uf}
         </span>

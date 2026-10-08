@@ -4,6 +4,7 @@ import { Logo } from "../components/Logo/Logo";
 import { useAuth } from "../features/auth/AuthContext";
 import { rotaInicial } from "../features/auth/rotaInicial";
 import { api } from "../lib/api";
+import { oabAprovada } from "../lib/situacaoOab";
 import { useCarregar } from "../lib/useCarregar";
 import { useTitulo } from "../lib/useTitulo";
 import "./HomePage.css";
@@ -228,7 +229,7 @@ function LinhasFundo() {
 // Home não ganha nenhuma regra nova, só mostra quem já está cadastrado. Na vitrine entra
 // primeiro quem tem OAB verificada e foto, que é o cartão que mais passa confiança.
 function pontuacaoVitrine(advogado) {
-  return (advogado.verificado ? 2 : 0) + (advogado.foto ? 1 : 0);
+  return (oabAprovada(advogado) ? 2 : 0) + (advogado.foto ? 1 : 0);
 }
 
 async function buscarAdvogadosDestaque() {
@@ -256,7 +257,7 @@ function CartaoAdvogado({ advogado }) {
         <span className="home-lawyer__meta">
           {[areas, cidade && uf ? `${cidade}/${uf}` : cidade].filter(Boolean).join(" — ")}
         </span>
-        {advogado.verificado && <span className="home-lawyer__badge">OAB verificada</span>}
+        {oabAprovada(advogado) && <span className="home-lawyer__badge">OAB verificada</span>}
       </span>
     </Link>
   );
