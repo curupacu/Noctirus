@@ -1,77 +1,71 @@
-/* Design tokens da Nocturis — tema claro (padrão) com alternância pra escuro via botão.
-   Fonte de verdade do visual: docs/DESIGN.md (paleta base marrom/dourado da coruja).
+/* Design tokens da Nocturis — um tema só (claro e quente), sem modo escuro (decisão de
+   07/10: a banca rejeitou o visual escuro e o time preferiu um padrão único).
+   Fonte de verdade do visual: docs/DESIGN.md.
    Os nomes --color-x, --font-x, --radius-x e --shadow-x abaixo são os que o resto do CSS
    consome; apontam pros tokens novos (--bg, --text, --gold, --cream...) pra não precisar
    reescrever seletor por seletor. */
 :root {
-  /* Constantes da marca — NÃO trocam entre claro/escuro. Usadas em botões/badges/acentos
-     dourados e nos poucos blocos propositalmente escuros em qualquer tema (header, hero
-     de destaque, painel de CTA escuro). */
+  /* Marrom da marca (#765039, escolhido em 07/10 — combina com a coruja) e seus tons.
+     Usado chapado em faixas inteiras: topo da Home, seções de destaque, rodapé. */
+  --brown: #765039;
+  --brown-deep: #5c3e2b;
+  --brown-ink: #3b281c;
+  --surface-warm: var(--brown); /* header e card de destaque */
+
   --ink-950: #14120f;
   --ink-900: #1e1913;
   --ink-850: #2a2118;
   --ink-800: #37291c;
-  --ink-on-accent: #14120f; /* texto/ícone sobre superfícies douradas ou vermelhas (sempre escuro) */
-  --surface-warm: #61402c; /* header e card de destaque — mesma cor nos dois temas */
+  --ink-on-accent: #1f1912; /* texto/ícone sobre superfícies douradas (sempre escuro) */
 
   --brown-400: #c89b6a;
   --brown-600: #8a5e38;
   --brown-800: #4a3420;
 
-  /* Dourado antigo (#F2D98A) era pastel claro demais — numa área grande (botão full-width,
-     pílula ativa) lia como desbotado em vez de rico (achado do usuário, 07/08: "meio
-     catarro"). Versão mais densa/saturada, tom de latão antigo. */
-  --gold: #d9a23a;
-  --gold-dim: #b98527;
+  /* Dourado chapado — sem degradê em lugar nenhum. --gold-ink é o mesmo tom escurecido
+     pra texto e link sobre fundo claro: o dourado puro não tem contraste no branco. */
+  --gold: #d9a41e;
+  --gold-dim: #c08f17;
+  --gold-ink: #87600a;
 
-  --cream: #f3ecdf;
-  --cream-dim: #b3a994;
-  --cream-faint: #7e7566;
+  /* Creme — texto sobre o marrom */
+  --cream: #f6eedf;
+  --cream-dim: #dccbb0;
+  --cream-faint: #a8977b;
 
   --green: #7fb98a;
   --red: #c77b5e;
 
-  /* Cor por área (cível/trabalhista) — antes as duas viviam só na família dourada
-     (gold-dim sobre creme vs. gold sobre ink-800), sem hue próprio nenhum; só o ícone
-     (contrato vs. maleta) diferenciava. Constantes nos dois temas, como gold/brown. */
+  /* Cor por área (cível/trabalhista) no AreaIcon. Em revisão: o verde destoa da paleta
+     nova (ver docs/DESIGN.md, "Pendências"). */
   --area-civel: #3d5c4e;
   --area-civel-bg: #dce6de;
   --area-trabalhista: #8b4332;
   --area-trabalhista-bg: #eddad2;
 
-  /* Tipografia — uma família só (títulos e corpo), pra manter o visual simples e fácil
-     de manter. */
+  /* Tipografia — corpo e interface em IBM Plex Sans. --font-serif é a serifada dos
+     títulos do visual novo; entra tela por tela conforme cada uma é refeita (a Home foi a
+     primeira). --font-display continua apontando pro corpo até todas as telas migrarem. */
   --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  --font-serif: "Libre Baskerville", Georgia, "Times New Roman", serif;
   --font-display: var(--font-body);
 
-  /* Forma */
+  /* Forma. --radius-sharp é o canto quase reto do visual novo (Home em diante); --radius e
+     --radius-sm continuam nas telas que ainda não foram refeitas. */
+  --radius-sharp: 3px;
   --radius: 12px;
   --radius-sm: 8px;
-  /* Visual simples: profundidade vem da borda de 1px, não de sombra — os tokens de
-     sombra abaixo ficam bem discretos de propósito. */
   --shadow: none;
 
-  /* --- Tema: claro (padrão) --- trocam em :root[data-theme="dark"] logo abaixo --- */
-  /* Levemente mais claro/limpo que #F7F2E7 — junto com o --surface branco, dá mais
-     respiro entre fundo e card (aprovado 07/08). */
-  --bg: #faf7f1;
-  --bg-section: #f1ead9;
-  /* Branco puro (não creme) — de propósito, aprovado 07/08. Cria separação real entre
-     card e fundo (--bg continua creme) sem precisar de sombra pesada pra sustentar a
-     hierarquia. Não é "branco sobre branco" (a regra que o DESIGN.md original queria
-     evitar): o fundo continua creme, só o card ficou branco-sobre-creme. */
-  --surface: #ffffff;
-  /* Era #E4D8BB — mesmo problema do --border antigo (caqui saturado). Com o --surface
-     branco novo, o hover precisa ser um passo bem mais discreto, não outro tom de bege
-     forte (aprovado 07/08). */
-  --surface-hover: #f1ede4;
-  /* Era #DBCBA3 — tinha ~35% de saturação, então lia como caqui sujo, não como linha
-     neutra de estrutura (achado do usuário, 07/08: "cinza estranho"). Versão bem mais
-     desaturada. */
-  --border: #e4e0d7;
-  --text: #221b12;
-  --text-dim: #5b4c36;
-  --text-faint: #8a7b60;
+  /* Superfícies e texto */
+  --bg: #faf6ee;
+  --bg-section: #f2eadb;
+  --surface: #ffffff; /* card branco sobre o fundo creme */
+  --surface-hover: #f4efe6;
+  --border: #e6ded0;
+  --text: #2a1f16;
+  --text-dim: #5e4e3b;
+  --text-faint: #8c7d66;
 
   /* --- Aliases: nomes consumidos pelo resto do CSS (index.css, componentes) --- */
   --color-ink: var(--ink-950);
@@ -127,18 +121,4 @@
   --shadow-sm: 0 1px 2px rgba(20, 18, 15, 0.08);
   --shadow-md: 0 1px 2px rgba(20, 18, 15, 0.08);
   --shadow-up: 0 -1px 2px rgba(20, 18, 15, 0.08);
-}
-
-/* Tema escuro — ligado pelo botão no Header (ver lib/theme.js), guardado em localStorage.
-   Só os tokens de superfície/texto trocam; dourado, marrom e o marrom do header (acima)
-   ficam fixos nos dois temas de propósito, pra manter a identidade da marca. */
-:root[data-theme="dark"] {
-  --bg: #14120f;
-  --bg-section: #1e1913;
-  --surface: #2a2118;
-  --surface-hover: #37291c;
-  --border: #47382a;
-  --text: #f3ecdf;
-  --text-dim: #b3a994;
-  --text-faint: #7e7566;
 }

@@ -52,13 +52,9 @@ npm run lint       # oxlint
 
 ## Estado do design
 
-Todas as telas do fluxo principal já passaram pelo redesign (tela cheia nas telas de entrada,
-sem cards flutuando soltos, seletores em pills, listas como `.list-row`/`AdvogadoCard` em vez de
-bullets dentro de caixas). Tema claro (padrão) e escuro alternável pelo botão no header —
-`lib/theme.js` guarda a escolha em `localStorage`, tokens em `styles/tokens.css`
-(`:root` = claro, `:root[data-theme="dark"]` = escuro; dourado/marrom do header ficam fixos nos
-dois temas). Falta validar responsividade mobile de verdade nas telas mais recentes — ver a
-seção "Pontos fracos" do README na raiz do repo.
+Redesign de outubro/2026 em andamento, tela por tela (ver `docs/DESIGN.md`): um tema só,
+sem modo escuro, tokens em `styles/tokens.css`. A Home já está no visual novo (estilos em
+`routes/HomePage.css`); as outras telas pegaram a paleta nova e ainda têm o layout antigo.
 
 `/perfil` do advogado é dashboard-only (saudação, estatísticas, completude de perfil,
 conversas recentes, atalhos); o formulário de edição (dados, foto, especialidades, currículo)

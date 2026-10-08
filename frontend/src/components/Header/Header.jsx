@@ -3,17 +3,14 @@ import logoIcone from "../../assets/logosvg_sócoruja.svg";
 import { useAuth } from "../../features/auth/AuthContext";
 import { rotaInicial } from "../../features/auth/rotaInicial";
 import { TELAS_VITRINE } from "../../lib/telasVitrine";
-import { useTheme } from "../../lib/theme";
 import { useNotificacoes } from "../../lib/useNotificacoes";
 import { Button } from "../Button/Button";
 import { InstallButton } from "../InstallButton/InstallButton";
 import { NotificationBell } from "../NotificationBell/NotificationBell";
-import { ThemeToggle } from "../ThemeToggle/ThemeToggle";
 import "./Header.css";
 
 export function Header() {
   const { user, role, loading, logout } = useAuth();
-  const { tema, alternarTema } = useTheme();
   const { notificacoes, naoLidas, marcarComoLida } = useNotificacoes(user?.uid);
   const navigate = useNavigate();
   const location = useLocation();
@@ -33,7 +30,6 @@ export function Header() {
 
       <div className="site-header__actions">
         <InstallButton />
-        <ThemeToggle tema={tema} onToggle={alternarTema} />
 
         {!loading && (
           <>

@@ -11,10 +11,6 @@ body {
   line-height: var(--line-height-base);
   color: var(--color-text);
   background: var(--color-bg);
-  /* Troca suave ao ligar/desligar o tema escuro (lib/theme.js) — sem isso a troca de
-     token era um corte seco. Não afeta Home/Login/Cadastro: lá o tema é escuro fixo
-     (main.splash/main.auth-screen), o toggle nem aparece nessas telas. */
-  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 #root {
@@ -495,75 +491,11 @@ fieldset label {
   }
 }
 
-main.splash {
-  max-width: none;
-  margin: 0;
-  padding: var(--space-xl) var(--space-lg);
-  background: var(--bg);
-  color: var(--text);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: var(--space-xl);
-  position: relative;
-  overflow: hidden;
-}
-
-/* Visual simples: sem marca d'água decorativa no fundo. */
-.splash__owl-mark {
-  display: none;
-}
-
-main.splash > *:not(.splash__owl-mark) {
-  position: relative;
-  z-index: 1;
-}
-
-.splash__logo {
-  height: 48px;
-  width: auto;
-  color: var(--color-text);
-  margin: 0 0 var(--space-lg);
-}
-
-.splash__headline {
-  font-family: var(--font-display);
-  font-size: var(--font-size-3xl);
-  line-height: 1.1;
-  color: var(--text);
-  margin: 0 0 var(--space-md);
-}
-
 /* No máximo uma palavra em destaque por título (ver docs/DESIGN.md) */
-.splash__headline .accent,
 h1 .accent,
 h2 .accent {
   color: var(--gold);
   font-style: italic;
-}
-
-.splash__subtitle {
-  font-size: var(--font-size-lg);
-  color: var(--text-dim);
-  margin: 0;
-}
-
-.splash__actions {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-
-.splash__actions .button {
-  width: 100%;
-}
-
-.splash__secondary {
-  text-align: center;
-  color: var(--color-yellow-300);
-  font-size: var(--font-size-sm);
-  font-weight: 700;
-  text-decoration: underline;
 }
 
 main.auth-screen {
@@ -594,12 +526,6 @@ main.auth-screen {
   background: var(--color-surface-hover);
   color: var(--color-text);
   text-decoration: none;
-}
-
-.auth-screen__theme-toggle {
-  position: absolute;
-  top: var(--space-lg);
-  right: var(--space-lg);
 }
 
 .auth-screen__inner {
@@ -1054,94 +980,4 @@ a.list-row:hover .advogado-row__chevron {
 .advogado-card:hover .advogado-row__chevron,
 a.list-row:hover .advogado-row__chevron {
   transform: translateX(3px);
-}
-
-/* Visual simples: Home, Login e Cadastro usam o mesmo tema (claro/escuro) do resto do
-   app, sem um visual "vitrine" fixo à parte. */
-
-/* FAQ da Home — <details>/<summary> nativo em vez de um acordeão em JS: zero estado pra
-   gerenciar, funciona sem JS carregado ainda, e cada pergunta some/aparece sozinha (não
-   precisa fechar as outras na mão). */
-.faq {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-}
-
-.faq__heading {
-  font-size: var(--font-size-xl);
-  margin: 0;
-}
-
-.faq__item {
-  background: var(--color-surface);
-  border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: var(--space-md) var(--space-lg);
-}
-
-.faq__item summary {
-  cursor: pointer;
-  font-weight: 700;
-  color: var(--color-text);
-  list-style: none;
-}
-
-.faq__item summary::-webkit-details-marker {
-  display: none;
-}
-
-.faq__item summary::after {
-  content: "+";
-  float: right;
-  color: var(--color-text-muted);
-  font-weight: 400;
-}
-
-.faq__item[open] summary::after {
-  content: "−";
-}
-
-.faq__item p {
-  margin: var(--space-sm) 0 0;
-  color: var(--color-text-muted);
-}
-
-/* CTA fixo da Home no mobile — some no desktop, onde o CTA do topo já está sempre à
-   vista. No celular, quem rola até o FAQ perde de vista os botões do topo; essa barra
-   mantém "Criar conta" alcançável em qualquer ponto da rolagem. Mesmo padrão visual do
-   .bottom-nav (fixed/bottom/shadow-up), mas só aparece na Home (nunca logado — Home é
-   tela de vitrine, BottomNav não existe aqui, então não tem conflito de z-index).
-   Seletor "main.splash > .home-cta-fixa" (não só ".home-cta-fixa") de propósito: precisa
-   empatar em especificidade com "main.splash > *:not(.splash__owl-mark)" (que força
-   position:relative em todo filho direto da splash) pra ganhar no desempate por ordem —
-   com só a classe, o position:fixed era sobrescrito de volta pra relative. */
-.home-cta-fixa {
-  display: none;
-}
-
-@media (max-width: 480px) {
-  main.splash > .home-cta-fixa {
-    display: block;
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 20;
-    padding: var(--space-md) var(--space-lg);
-    padding-bottom: calc(var(--space-md) + env(safe-area-inset-bottom));
-    background: var(--bg-section);
-    border-top: 1px solid var(--color-border);
-    box-shadow: var(--shadow-up);
-  }
-
-  .home-cta-fixa .button {
-    width: 100%;
-  }
-
-  /* Sem isso, a última pergunta do FAQ fica embaixo da barra fixa. */
-  main.splash {
-    padding-bottom: calc(72px + var(--space-xl));
-  }
 }
