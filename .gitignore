@@ -26,3 +26,9 @@ CLAUDE.md
 # Sistema
 .DS_Store
 Thumbs.db
+
+# Monografia e outros documentos do Word ficam fora do repositório público
+docs/*.docx
+
+# Configuração local do Claude Code
+.claude/

@@ -9,6 +9,11 @@ compatíveis (por área e localização) pra contato direto via WhatsApp/e-mail.
 
 **No ar:** https://nocturis.com.br (domínio próprio; também responde em https://nocturis-web.web.app)
 
+> **Outubro/2026 — replanejamento pós-banca.** A Home já está no visual novo; o resto do
+> sistema está sendo ajustado aos requisitos revisados, sprint por sprint, em
+> [`docs/SPRINTS.md`](docs/SPRINTS.md). Partes desta página ainda descrevem a versão anterior
+> (denúncias, chat, tema claro/escuro) e serão atualizadas no Sprint 7.
+
 ## Status atual
 
 Já funciona de ponta a ponta:
@@ -60,7 +65,7 @@ Já funciona de ponta a ponta:
 **Ainda não existe:** verificação real de OAB, upload de currículo em PDF (`nocturis-prod`
 separado foi avaliado e descartado por decisão — ver abaixo). Ver
 [Pontos fracos e próximos passos](#pontos-fracos-e-próximos-passos) abaixo e o
-[roadmap completo](docs/ROADMAP.md) para o plano de sprints.
+[plano de sprints pós-banca](docs/SPRINTS.md) para o que vem a seguir.
 
 ## Stack
 
@@ -120,10 +125,13 @@ database/             Firestore: regras, índices, seed e docs do modelo
   firestore.indexes.json
   schema.md            modelo de dados por coleção
   seed/                scripts pra popular advogados fictícios e criar admin
-docs/                 ROADMAP.md (plano de sprints), DESIGN.md, TESTES.md (resumo dos testes)
+docs/                 SPRINTS.md (plano pós-banca), DESIGN.md (visual), TESTES.md (resumo dos
+                      testes), historico/ (planos antigos, só pra consulta)
 ```
 
-**Branches:** `main` (deploy) · `develop` (integração) · `feature/<nome>` por tarefa.
+**Branches:** só a `main` fica permanente (é o que está no ar). Cada tarefa pode ter uma
+branch própria (`feature/<nome>`, `fix/<nome>`), apagada depois de mesclada. Versões antigas
+ficam marcadas com tags (`design-agosto-2026`, `arquivo-develop-julho`).
 **Commits:** `tipo: descrição` (ex.: `feat: triagem com Gemini`, `fix: validação da OAB`).
 
 ## Pontos fracos e próximos passos
@@ -164,5 +172,7 @@ Levantamento honesto do que ainda precisa de trabalho, priorizado.
 - **Gustavo Cereja** — líder, análise e documentação
 - **Gabriel Paulucci** — front-end e design
 - **Guilherme Reche** — back-end e banco de dados
+- **Gustavo Abade** — design
 
-Plano completo de sprints, modelo de dados e decisões de arquitetura: [`docs/ROADMAP.md`](docs/ROADMAP.md).
+Plano atual: [`docs/SPRINTS.md`](docs/SPRINTS.md). Modelo de dados: [`database/schema.md`](database/schema.md).
+Plano original de julho (histórico): [`docs/historico/ROADMAP-julho-2026.md`](docs/historico/ROADMAP-julho-2026.md).

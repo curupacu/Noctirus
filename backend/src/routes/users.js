@@ -153,7 +153,7 @@ usersRouter.get("/users/me/dados", verificarToken, async (req, res) => {
 // advogados/curriculos, se for o caso). Não apaga registros que também são dado de
 // terceiros (mensagens de chat, feedback que ele deixou, denúncia que registrou) — apagar
 // esses de vez destruiria o histórico do outro lado da conversa/moderação; ver
-// docs/ROADMAP.md pra anonimização completa como item de LGPD mais robusto.
+// docs/historico/ROADMAP-julho-2026.md pra anonimização completa como item de LGPD mais robusto.
 usersRouter.delete("/users/me", verificarToken, async (req, res) => {
   const { uid, role } = req.user;
 

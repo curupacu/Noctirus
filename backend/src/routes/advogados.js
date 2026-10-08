@@ -11,7 +11,7 @@ import { AREAS_VALIDAS, TODAS_CATEGORIAS } from "../services/triagem.js";
 export const advogadosRouter = Router();
 
 // Upload de foto de perfil (achado da auditoria de UX, 29/07: advogados sem foto real
-// recebem 17x menos contato — ver docs/ROADMAP.md pra decisão anterior de adiar isso).
+// recebem 17x menos contato — ver docs/historico/ROADMAP-julho-2026.md pra decisão anterior de adiar isso).
 // Memória, não disco — o arquivo só existe no processo até subir pro Cloudinary.
 // Só formatos raster — nunca SVG, que pode embutir <script> e virar XSS armazenado se
 // algum dia a URL for aberta como documento (achado da auditoria de segurança, F3).
@@ -160,7 +160,7 @@ advogadosRouter.post(
 );
 
 // Aprovação manual da OAB (não há API externa gratuita pra verificar automaticamente —
-// ver docs/ROADMAP.md). Só o admin pode marcar um advogado como verificado.
+// ver docs/historico/ROADMAP-julho-2026.md). Só o admin pode marcar um advogado como verificado.
 advogadosRouter.patch(
   "/advogados/:uid/verificar",
   verificarToken,
