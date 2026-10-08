@@ -20,6 +20,7 @@
   background: var(--color-surface);
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-lg);
+  min-height: 44px; /* alvo mínimo de toque no celular */
   padding: var(--space-sm) var(--space-md);
   transition: border-color 0.15s ease, background-color 0.2s ease, color 0.2s ease;
 }

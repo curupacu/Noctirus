@@ -6,6 +6,7 @@
   font-family: var(--font-body);
   font-size: var(--font-size-base);
   font-weight: 700;
+  min-height: 44px; /* alvo mínimo de toque no celular */
   padding: var(--space-sm) var(--space-lg);
   border-radius: var(--radius-sm);
   border: 1.5px solid transparent;

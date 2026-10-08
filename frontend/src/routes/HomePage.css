@@ -368,7 +368,7 @@ main.home {
 }
 
 .home-service__area {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -509,7 +509,7 @@ main.home {
 
 .home-lawyer__badge {
   margin-top: 4px;
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -782,6 +782,43 @@ main.home {
 
 /* ---------- responsivo ---------- */
 @media (max-width: 1000px) {
+  /* Celular e tablet são usados com o dedo: alvos de toque de pelo menos 44px. */
+  .home-btn,
+  .home-btn--sm {
+    min-height: 44px;
+  }
+
+  /* Com 44px de altura a borda de baixo ficaria longe do texto — vira sublinhado de texto. */
+  .home-hero__sublink,
+  .home-link-dark {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    border-bottom: 0;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 5px;
+  }
+
+  .home-round {
+    width: 44px;
+    height: 44px;
+  }
+
+  .home-nav__brand {
+    padding: 8px 0;
+  }
+
+  .home-footer__list a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .home-footer__list {
+    gap: 0;
+  }
+
   .home-nav__links {
     display: none;
   }
@@ -865,10 +902,40 @@ main.home {
     object-position: center 25%;
   }
 
-  .home-services__grid,
-  .home-why__grid,
-  .home-footer__grid {
+  .home-why__grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* No celular os 8 cartões de assunto, um embaixo do outro, ocupavam mais de um terço da
+     página (2.400px a 375px de largura). Viram uma faixa que desliza pro lado, com o
+     próximo cartão aparecendo na borda — mesmo padrão do carrossel de advogados. */
+  .home-services__grid {
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: 80%;
+    gap: 12px;
+    margin-left: -20px;
+    margin-right: -20px;
+    padding: 0 20px 4px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 20px;
+    scrollbar-width: none;
+  }
+
+  .home-services__grid::-webkit-scrollbar {
+    display: none;
+  }
+
+  .home-service {
+    scroll-snap-align: start;
+  }
+
+  /* Rodapé: marca em cima, as duas listas de links lado a lado (antes era tudo numa coluna
+     só, 700px de rodapé). */
+  .home-footer__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 32px 20px;
   }
 
   .home-services__grid {

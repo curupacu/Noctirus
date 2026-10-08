@@ -22,6 +22,7 @@
 .site-header__brand {
   display: flex;
   align-items: center;
+  min-height: 44px; /* alvo mínimo de toque */
 }
 
 .site-header__actions {
@@ -37,11 +38,13 @@
 }
 
 .site-header__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px; /* alvo mínimo de toque no celular */
   color: var(--color-text);
   text-decoration: none;
   font-size: var(--font-size-sm);
   font-weight: 700;
-  padding-bottom: 2px;
   border-bottom: 2px solid transparent;
 }
 
