@@ -3,9 +3,11 @@ import multer from "multer";
 import { z } from "zod";
 import { cloudinary } from "../lib/cloudinary.js";
 import { db } from "../lib/firebase-admin.js";
+import { schemaLocalizacao } from "../lib/localizacao.js";
 import { requireRole, tentarVerificarToken, verificarToken } from "../middlewares/auth.js";
 import { validarBody } from "../middlewares/validar.js";
 import { buscarAdvogadosCompativeis } from "../services/matching.js";
+import { SITUACOES_COM_MOTIVO, SITUACOES_OAB } from "../services/oab.js";
 import { AREAS_VALIDAS, TODAS_CATEGORIAS } from "../services/triagem.js";
 
 export const advogadosRouter = Router();
@@ -79,7 +81,6 @@ advogadosRouter.get("/advogados/:uid", async (req, res) => {
   res.json({
     uid,
     nome: usuarioDoc.exists ? usuarioDoc.data().nome : null,
-    status: usuarioDoc.exists ? usuarioDoc.data().status : null,
     ...advogadoDoc.data(),
   });
 });
@@ -87,9 +88,7 @@ advogadosRouter.get("/advogados/:uid", async (req, res) => {
 const schemaEditarAdvogado = z.object({
   areasAtuacao: z.array(z.enum(AREAS_VALIDAS)).optional(),
   especialidades: z.array(z.string()).optional(),
-  localizacao: z
-    .object({ cidade: z.string().trim().max(100).optional(), uf: z.string().trim().max(2).optional() })
-    .optional(),
+  localizacao: schemaLocalizacao.optional(),
   whatsapp: z.string().trim().max(20).optional(),
   bio: z.string().max(1000).optional(),
 });
@@ -159,21 +158,40 @@ advogadosRouter.post(
   },
 );
 
-// Aprovação manual da OAB (não há API externa gratuita pra verificar automaticamente —
-// ver docs/historico/ROADMAP-julho-2026.md). Só o admin pode marcar um advogado como verificado.
+// Validação manual da OAB pelo admin (RF011) — não existe API pública gratuita da OAB, então
+// o admin confere o número no Cadastro Nacional dos Advogados e registra aqui a decisão.
+// Recusar ou revogar exige motivo, que o advogado vai ver. Notificação e regras de
+// transição entram no Sprint 2.
+const schemaSituacaoOab = z
+  .object({
+    situacao: z.enum(SITUACOES_OAB, { message: "Situação da OAB inválida" }),
+    motivo: z.string().trim().max(500).optional().default(""),
+  })
+  .refine((dados) => !SITUACOES_COM_MOTIVO.includes(dados.situacao) || dados.motivo.length >= 5, {
+    message: "Explique o motivo (pelo menos 5 caracteres)",
+    path: ["motivo"],
+  });
+
 advogadosRouter.patch(
-  "/advogados/:uid/verificar",
+  "/advogados/:uid/situacao-oab",
   verificarToken,
   requireRole("admin"),
+  validarBody(schemaSituacaoOab),
   async (req, res) => {
     const { uid } = req.params;
-    const { verificado } = req.body;
+    const { situacao, motivo } = req.body;
 
-    if (typeof verificado !== "boolean") {
-      return res.status(400).json({ erro: "Campo 'verificado' deve ser booleano" });
+    const advogadoDoc = await db.collection("advogados").doc(uid).get();
+    if (!advogadoDoc.exists) {
+      return res.status(404).json({ erro: "Advogado não encontrado" });
     }
 
-    await db.collection("advogados").doc(uid).update({ verificado });
+    await db.collection("advogados").doc(uid).update({
+      situacaoOab: situacao,
+      situacaoOabMotivo: SITUACOES_COM_MOTIVO.includes(situacao) ? motivo : null,
+      situacaoOabAtualizadaEm: new Date().toISOString(),
+      situacaoOabPor: req.user.uid,
+    });
     res.json({ ok: true });
   },
 );

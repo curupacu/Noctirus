@@ -35,14 +35,16 @@ service cloud.firestore {
     match /advogados/{uid} {
       allow read: if true;
       // O dono só pode mexer nos campos que o backend também deixa (áreas, especialidades,
-      // localização, contato) — nunca em "verificado" ou "oab". Sem essa trava, um advogado
-      // conseguia se auto-aprovar (`verificado: true`) escrevendo direto no Firestore pelo
+      // localização, contato) — nunca na situação da OAB nem na "oab". Sem essa trava, um
+      // advogado conseguia se auto-aprovar (`situacaoOab: "aprovado"`) escrevendo direto no Firestore pelo
       // SDK do cliente, sem passar pelo backend — as chaves do Firebase web são públicas
       // por design, "só o backend faz isso" não protege nada se a rule não travar também.
       allow create, delete: if papel() == "admin";
       allow update: if papel() == "admin" ||
         (dono(uid) && papel() == "advogado" &&
-          request.resource.data.verificado == resource.data.verificado &&
+          request.resource.data.situacaoOab == resource.data.situacaoOab &&
+          request.resource.data.situacaoOabMotivo == resource.data.situacaoOabMotivo &&
+          request.resource.data.situacaoOabPor == resource.data.situacaoOabPor &&
           request.resource.data.oab == resource.data.oab);
     }
 

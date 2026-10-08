@@ -29,6 +29,8 @@ beforeEach(() => {
   cell.fake = criarFakeFirebase();
 });
 
+const SP = { cidade: "São Paulo", uf: "SP" };
+
 describe("POST /auth/completar-cadastro", () => {
   it("recusa sem token", async () => {
     const resposta = await request(app).post("/auth/completar-cadastro").send({ role: "cliente", nome: "X" });
@@ -59,7 +61,7 @@ describe("POST /auth/completar-cadastro", () => {
     const resposta = await request(app)
       .post("/auth/completar-cadastro")
       .set("Authorization", `Bearer ${token}`)
-      .send({ role: "cliente", nome: "X", aceitouPoliticaPrivacidade: true });
+      .send({ role: "cliente", nome: "X", aceitouPoliticaPrivacidade: true, localizacao: SP });
     expect(resposta.status).toBe(409);
   });
 
@@ -68,7 +70,30 @@ describe("POST /auth/completar-cadastro", () => {
     const resposta = await request(app)
       .post("/auth/completar-cadastro")
       .set("Authorization", `Bearer ${token}`)
-      .send({ role: "cliente", nome: "Cliente Teste" });
+      .send({ role: "cliente", nome: "Cliente Teste", localizacao: SP });
+    expect(resposta.status).toBe(400);
+  });
+
+  it("recusa cliente sem cidade/UF (o filtro por região depende disso)", async () => {
+    const token = cell.fake.criarToken({ uid: "u1", role: null });
+    const resposta = await request(app)
+      .post("/auth/completar-cadastro")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ role: "cliente", nome: "Cliente Teste", aceitouPoliticaPrivacidade: true });
+    expect(resposta.status).toBe(400);
+  });
+
+  it("recusa UF que não existe", async () => {
+    const token = cell.fake.criarToken({ uid: "u1", role: null });
+    const resposta = await request(app)
+      .post("/auth/completar-cadastro")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        role: "cliente",
+        nome: "Cliente Teste",
+        aceitouPoliticaPrivacidade: true,
+        localizacao: { cidade: "Lugar Nenhum", uf: "XX" },
+      });
     expect(resposta.status).toBe(400);
   });
 
@@ -82,13 +107,19 @@ describe("POST /auth/completar-cadastro", () => {
         nome: "Cliente Teste",
         telefone: "11999999999",
         aceitouPoliticaPrivacidade: true,
+        localizacao: { cidade: "São Paulo", uf: "sp" },
       });
 
     expect(resposta.status).toBe(201);
     expect(resposta.body).toEqual({ role: "cliente" });
 
     const usuario = await (await cell.fake.db.collection("users").doc("u1").get()).data();
-    expect(usuario).toMatchObject({ role: "cliente", nome: "Cliente Teste", status: "ativo" });
+    expect(usuario).toMatchObject({
+      role: "cliente",
+      nome: "Cliente Teste",
+      status: "ativo",
+      localizacao: { cidade: "São Paulo", uf: "SP" },
+    });
 
     const advogado = await cell.fake.db.collection("advogados").doc("u1").get();
     expect(advogado.exists).toBe(false);
@@ -99,7 +130,13 @@ describe("POST /auth/completar-cadastro", () => {
     const resposta = await request(app)
       .post("/auth/completar-cadastro")
       .set("Authorization", `Bearer ${token}`)
-      .send({ role: "advogado", nome: "Advogado Teste", oab: { numero: "12", uf: "SP" } });
+      .send({
+        role: "advogado",
+        nome: "Advogado Teste",
+        oab: { numero: "12", uf: "SP" },
+        aceitouPoliticaPrivacidade: true,
+        localizacao: SP,
+      });
     expect(resposta.status).toBe(400);
   });
 
@@ -114,6 +151,7 @@ describe("POST /auth/completar-cadastro", () => {
         nome: "Advogado Teste",
         oab: { numero: "123456", uf: "SP" },
         aceitouPoliticaPrivacidade: true,
+        localizacao: SP,
       });
     expect(resposta.status).toBe(409);
   });
@@ -153,7 +191,13 @@ describe("POST /auth/completar-cadastro", () => {
     const advogado = (await cell.fake.db.collection("advogados").doc("u3").get()).data();
     expect(advogado.oab).toEqual({ numero: "123456", uf: "SP" });
     expect(advogado.especialidades).toEqual(["horas_extras"]);
-    expect(advogado.verificado).toBe(false);
+    expect(advogado.situacaoOab).toBe("em_analise");
+    expect(advogado.situacaoOabMotivo).toBeNull();
+    expect(advogado.localizacao).toEqual({ cidade: "São Paulo", uf: "SP" });
+
+    // A localização do advogado fica no doc de "advogados", não duplicada em "users".
+    const usuario = (await cell.fake.db.collection("users").doc("u3").get()).data();
+    expect(usuario.localizacao).toBeUndefined();
     expect(advogado.contatos).toEqual({ whatsapp: "11988887777", email: "a@example.com" });
 
     const curriculo = await cell.fake.db.collection("curriculos").doc("u3").get();

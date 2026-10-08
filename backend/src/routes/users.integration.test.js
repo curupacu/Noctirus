@@ -79,6 +79,28 @@ describe("PUT /users/me", () => {
     expect(usuario.nome).toBe("Fulano Editado");
     expect(usuario.telefone).toBe("11999999999");
   });
+
+  it("cliente atualiza a própria cidade/UF", async () => {
+    cell.fake.db._seed("users", "u1", { nome: "Fulano" });
+    const token = cell.fake.criarToken({ uid: "u1", role: "cliente" });
+    const resposta = await request(app)
+      .put("/users/me")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ localizacao: { cidade: "Campinas", uf: "sp" } });
+    expect(resposta.status).toBe(200);
+    const usuario = (await cell.fake.db.collection("users").doc("u1").get()).data();
+    expect(usuario.localizacao).toEqual({ cidade: "Campinas", uf: "SP" });
+  });
+
+  it("recusa localização por aqui pra advogado (ela fica no perfil profissional)", async () => {
+    cell.fake.db._seed("users", "a1", { nome: "Advogado" });
+    const token = cell.fake.criarToken({ uid: "a1", role: "advogado" });
+    const resposta = await request(app)
+      .put("/users/me")
+      .set("Authorization", `Bearer ${token}`)
+      .send({ localizacao: { cidade: "Campinas", uf: "SP" } });
+    expect(resposta.status).toBe(400);
+  });
 });
 
 describe("POST /users/me/foto", () => {

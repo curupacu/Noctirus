@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { Button } from "../../components/Button/Button";
 import { Loading } from "../../components/Loading/Loading";
+import { SeloOab } from "../../components/SeloOab/SeloOab";
 import { api } from "../../lib/api";
 import { useCarregar } from "../../lib/useCarregar";
 import { useTitulo } from "../../lib/useTitulo";
@@ -13,10 +14,17 @@ export function AdminAdvogadosPage() {
   const { dado: advogados, erro, setErro, recarregar } = useCarregar(() => api.get("/admin/advogados"));
   const [copiadoUid, setCopiadoUid] = useState(null);
 
-  async function alternarVerificado(uid, verificado) {
+  // Recusar/revogar pede o motivo num prompt simples por enquanto — a fila de validação
+  // de verdade (com motivo, histórico e aviso pro advogado) é o Sprint 2.
+  async function mudarSituacao(uid, situacao) {
     setErro(null);
+    let motivo = "";
+    if (situacao === "recusado" || situacao === "revogado") {
+      motivo = window.prompt(situacao === "recusado" ? "Motivo da recusa:" : "Motivo da revogação:") || "";
+      if (!motivo.trim()) return;
+    }
     try {
-      await api.patch(`/advogados/${uid}/verificar`, { verificado: !verificado });
+      await api.patch(`/advogados/${uid}/situacao-oab`, { situacao, motivo });
       await recarregar();
     } catch (err) {
       setErro(err.message);
@@ -64,15 +72,11 @@ export function AdminAdvogadosPage() {
                   OAB {adv.oab?.numero}/{adv.oab?.uf}
                 </span>
                 <span className="advogado-card__badges">
-                  <span className={`badge${adv.verificado ? " badge--seal" : ""}`}>
-                    {adv.verificado && (
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <path d="M20 6 9 17l-5-5" />
-                      </svg>
-                    )}
-                    {adv.verificado ? "verificada" : "em análise"}
-                  </span>
+                  <SeloOab advogado={adv} />
                 </span>
+                {adv.situacaoOabMotivo && (
+                  <span className="text-muted">Motivo: {adv.situacaoOabMotivo}</span>
+                )}
               </div>
             </div>
 
@@ -80,12 +84,19 @@ export function AdminAdvogadosPage() {
               <Button variant="secondary" onClick={() => verificarNoCna(adv)}>
                 {copiadoUid === adv.uid ? "Nº copiado!" : "Verificar no CNA"}
               </Button>
-              <Button
-                variant={adv.verificado ? "secondary" : "primary"}
-                onClick={() => alternarVerificado(adv.uid, adv.verificado)}
-              >
-                {adv.verificado ? "Revogar" : "Aprovar"}
-              </Button>
+              {adv.situacaoOab !== "aprovado" && (
+                <Button onClick={() => mudarSituacao(adv.uid, "aprovado")}>Aprovar</Button>
+              )}
+              {(adv.situacaoOab || "em_analise") === "em_analise" && (
+                <Button variant="secondary" onClick={() => mudarSituacao(adv.uid, "recusado")}>
+                  Recusar
+                </Button>
+              )}
+              {adv.situacaoOab === "aprovado" && (
+                <Button variant="secondary" onClick={() => mudarSituacao(adv.uid, "revogado")}>
+                  Revogar
+                </Button>
+              )}
             </div>
           </li>
         ))}

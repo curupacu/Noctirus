@@ -15,6 +15,7 @@ claim no token — o documento é a cópia legível/consultável.
 | --- | --- | --- |
 | `role` | `"cliente" \| "advogado" \| "admin"` | Admin não tem cadastro público — só via `database/seed/criar-admin.js`. |
 | `nome`, `email`, `telefone` | string | `telefone` opcional. |
+| `localizacao` | `{ cidade, uf }` | **Só cliente**, obrigatória no cadastro desde outubro/2026 (contas antigas podem não ter). A do advogado fica em `advogados`. |
 | `status` | `"ativo"` | Sempre `"ativo"`; a suspensão pelo admin foi removida em outubro/2026. |
 | `createdAt` | string ISO | |
 
@@ -27,11 +28,13 @@ Um documento por advogado, id = `uid` (mesmo doc de `users`, papel `"advogado"`)
 | `oab` | `{ numero: string, uf: string }` | Não editável depois do cadastro. Verificação é só formato + unicidade, aprovação manual pelo admin. |
 | `areasAtuacao` | `string[]` | `"civel"` e/ou `"trabalhista"`. |
 | `especialidades` | `string[]` | Subcategorias da mesma taxonomia usada na triagem (`services/triagem.js`, 33 valores). |
-| `localizacao` | `{ cidade, uf }` | |
+| `localizacao` | `{ cidade, uf }` | Obrigatória; UF validada contra as 27 siglas (`backend/src/lib/localizacao.js`). |
 | `contatos` | `{ whatsapp, email }` | Canal direto, usado em `ContatoAdvogadoPage`. |
 | `bio` | string | Texto livre, capado em 240 caracteres. |
 | `foto` | string (URL) | Cloudinary, opcional — sem foto usa avatar de iniciais no frontend. |
-| `verificado` | boolean | Selo "OAB verificada", setado pelo admin. |
+| `situacaoOab` | `"em_analise" \| "aprovado" \| "recusado" \| "revogado"` | Nasce `em_analise`; só o admin muda (`PATCH /advogados/:uid/situacao-oab`). Substituiu o antigo `verificado: boolean` (migração em `database/seed/migrar-situacao-oab.js`). |
+| `situacaoOabMotivo` | string ou `null` | Obrigatório pra recusar/revogar — o advogado vê. |
+| `situacaoOabAtualizadaEm`, `situacaoOabPor` | string ISO, uid | Quando e qual admin mudou a situação. |
 | `vezesSugerido` | number | Contador de quantas triagens sugeriram esse advogado — prova social honesta, incrementado em `POST /triagem/classificar`. |
 
 ## `curriculos`

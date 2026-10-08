@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { Button } from "../../components/Button/Button";
+import { CampoLocalizacao } from "../../components/CampoLocalizacao/CampoLocalizacao";
 import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
 import { Input } from "../../components/Input/Input";
 import { Loading } from "../../components/Loading/Loading";
@@ -194,10 +195,7 @@ export function EditarPerfilPage() {
           value={whatsapp}
           onChange={(e) => setWhatsapp(e.target.value)}
         />
-        <div className="row">
-          <Input label="Cidade" id="cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} />
-          <Input label="UF" id="uf" value={uf} onChange={(e) => setUf(e.target.value)} maxLength={2} />
-        </div>
+        <CampoLocalizacao cidade={cidade} uf={uf} onCidade={setCidade} onUf={setUf} required />
 
         {especialidadesDisponiveis.length > 0 && (
           <div className="input-group">

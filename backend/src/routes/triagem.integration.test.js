@@ -126,7 +126,7 @@ describe("POST /triagem/classificar", () => {
       areasAtuacao: ["trabalhista"],
       localizacao: {},
       especialidades: [],
-      verificado: false,
+      situacaoOab: "aprovado",
     });
     cell.fake.db._seed("users", "adv1", { nome: "Advogado Um", status: "ativo" });
 

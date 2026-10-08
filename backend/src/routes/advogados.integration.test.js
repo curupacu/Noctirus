@@ -43,7 +43,7 @@ function semear(uid, { advogado, usuario } = {}) {
     areasAtuacao: [],
     localizacao: {},
     especialidades: [],
-    verificado: false,
+    situacaoOab: "em_analise",
     ...advogado,
   });
   cell.fake.db._seed("users", uid, { nome: "Advogado " + uid, status: "ativo", ...usuario });
@@ -210,38 +210,58 @@ describe("POST /advogados/:uid/foto", () => {
   });
 });
 
-describe("PATCH /advogados/:uid/verificar", () => {
+describe("PATCH /advogados/:uid/situacao-oab", () => {
+  async function mudar(uid, corpo, papel = "admin") {
+    const token = cell.fake.criarToken({ uid: papel === "admin" ? "admin1" : uid, role: papel });
+    return request(app)
+      .patch(`/advogados/${uid}/situacao-oab`)
+      .set("Authorization", `Bearer ${token}`)
+      .send(corpo);
+  }
+
   it("recusa quem não é admin", async () => {
     semear("a1");
-    const token = cell.fake.criarToken({ uid: "a1", role: "advogado" });
-    const resposta = await request(app)
-      .patch("/advogados/a1/verificar")
-      .set("Authorization", `Bearer ${token}`)
-      .send({ verificado: true });
+    const resposta = await mudar("a1", { situacao: "aprovado" }, "advogado");
     expect(resposta.status).toBe(403);
   });
 
-  it("recusa campo não booleano", async () => {
+  it("recusa situação que não existe", async () => {
     semear("a1");
-    const token = cell.fake.criarToken({ uid: "admin1", role: "admin" });
-    const resposta = await request(app)
-      .patch("/advogados/a1/verificar")
-      .set("Authorization", `Bearer ${token}`)
-      .send({ verificado: "sim" });
+    const resposta = await mudar("a1", { situacao: "verificado" });
     expect(resposta.status).toBe(400);
   });
 
-  it("admin aprova a OAB", async () => {
+  it("recusa recusar ou revogar sem motivo", async () => {
     semear("a1");
-    const token = cell.fake.criarToken({ uid: "admin1", role: "admin" });
-    const resposta = await request(app)
-      .patch("/advogados/a1/verificar")
-      .set("Authorization", `Bearer ${token}`)
-      .send({ verificado: true });
+    expect((await mudar("a1", { situacao: "recusado" })).status).toBe(400);
+    expect((await mudar("a1", { situacao: "revogado", motivo: "x" })).status).toBe(400);
+  });
+
+  it("devolve 404 pra advogado inexistente", async () => {
+    const resposta = await mudar("nao-existe", { situacao: "aprovado" });
+    expect(resposta.status).toBe(404);
+  });
+
+  it("admin aprova a OAB e fica registrado quem e quando", async () => {
+    semear("a1");
+    const resposta = await mudar("a1", { situacao: "aprovado", motivo: "ignorado" });
 
     expect(resposta.status).toBe(200);
     const advogado = (await cell.fake.db.collection("advogados").doc("a1").get()).data();
-    expect(advogado.verificado).toBe(true);
+    expect(advogado.situacaoOab).toBe("aprovado");
+    expect(advogado.situacaoOabMotivo).toBeNull();
+    expect(advogado.situacaoOabPor).toBe("admin1");
+    expect(advogado.situacaoOabAtualizadaEm).toEqual(expect.any(String));
+  });
+
+  it("admin recusa com motivo", async () => {
+    semear("a1");
+    const resposta = await mudar("a1", { situacao: "recusado", motivo: "Número não encontrado no CNA" });
+
+    expect(resposta.status).toBe(200);
+    const advogado = (await cell.fake.db.collection("advogados").doc("a1").get()).data();
+    expect(advogado.situacaoOab).toBe("recusado");
+    expect(advogado.situacaoOabMotivo).toBe("Número não encontrado no CNA");
   });
 });
 

@@ -29,7 +29,7 @@ substituído — assim os sprints seguintes não carregam código morto.
 
 **Pronto quando:** nenhuma tela/rota de denúncia ou suspensão sobrar, testes passando.
 
-## Sprint 1 — Cadastro e conta (RF001–RF004)
+## Sprint 1 — Cadastro e conta (RF001–RF004) ✅ código feito em 07/10
 
 - ➕ **Localização do cliente** (cidade + UF) no cadastro, no "completar cadastro" do login com
   Google e na edição de perfil. Sem isso o filtro por região (RF008) não tem como funcionar.
@@ -40,6 +40,11 @@ substituído — assim os sprints seguintes não carregam código morto.
   do sistema, currículo (inserir/consultar/atualizar/excluir itens), excluir a própria conta.
 
 **Pronto quando:** cliente novo informa cidade/UF; advogado novo nasce "em análise".
+
+> ⚠️ **No deploy:** o banco já tem a `situacaoOab` (migração rodada em 07/10, sem apagar o
+> `verificado`, pra não quebrar o site no ar). **Depois** de subir o código novo, rodar
+> `migrar-situacao-oab.js --remover-verificado` pra apagar o campo antigo. Clientes antigos
+> sem cidade veem um aviso no painel pedindo pra completar.
 
 ## Sprint 2 — Validação da OAB pelo admin (RF011, RF009)
 

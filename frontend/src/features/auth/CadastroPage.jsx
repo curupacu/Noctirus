@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { BotaoGoogle } from "../../components/BotaoGoogle/BotaoGoogle";
 import { Button } from "../../components/Button/Button";
+import { CampoLocalizacao } from "../../components/CampoLocalizacao/CampoLocalizacao";
 import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
 import { Input } from "../../components/Input/Input";
 import { Logo } from "../../components/Logo/Logo";
@@ -112,12 +113,12 @@ export function CadastroPage() {
         nome,
         telefone,
         aceitouPoliticaPrivacidade,
+        localizacao: { cidade, uf },
         ...(role === "advogado"
           ? {
               oab: { numero: oabNumero, uf: oabUf },
               areasAtuacao,
               especialidades,
-              localizacao: { cidade, uf },
               whatsapp,
             }
           : {}),
@@ -220,6 +221,12 @@ export function CadastroPage() {
             value={telefone}
             onChange={(e) => setTelefone(e.target.value)}
           />
+          <CampoLocalizacao cidade={cidade} uf={uf} onCidade={setCidade} onUf={setUf} required />
+          <p className="text-muted" style={{ margin: 0 }}>
+            {role === "advogado"
+              ? "Onde você atende. Os clientes da sua região veem você primeiro."
+              : "Usamos sua cidade pra mostrar advogados perto de você."}
+          </p>
 
           {role === "advogado" && (
             <>
@@ -276,10 +283,6 @@ export function CadastroPage() {
                 </div>
               )}
 
-              <div className="row">
-                <Input label="Cidade" id="cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} />
-                <Input label="UF" id="uf" value={uf} onChange={(e) => setUf(e.target.value)} maxLength={2} />
-              </div>
               <Input
                 label="WhatsApp"
                 id="whatsapp"
