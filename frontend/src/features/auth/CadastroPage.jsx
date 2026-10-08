@@ -5,11 +5,12 @@ import { Button } from "../../components/Button/Button";
 import { CampoLocalizacao } from "../../components/CampoLocalizacao/CampoLocalizacao";
 import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
 import { Input } from "../../components/Input/Input";
-import { Logo } from "../../components/Logo/Logo";
 import { api } from "../../lib/api";
 import { auth } from "../../lib/firebase";
+import { UFS } from "../../lib/localizacao";
 import { useTitulo } from "../../lib/useTitulo";
 import { useAuth } from "./AuthContext";
+import { CampoSenha, EntradaLayout, LogoEntrada } from "./EntradaLayout";
 import { rotaInicial } from "./rotaInicial";
 
 const AREAS = [
@@ -17,16 +18,40 @@ const AREAS = [
   { valor: "trabalhista", label: "Trabalhista" },
 ];
 
+// Etapas do cadastro (uma por tela, como na referência). O advogado tem uma a mais, pra
+// escolher áreas e especialidades.
+const ETAPAS = {
+  cliente: ["papel", "dados", "local"],
+  advogado: ["papel", "dados", "local", "atuacao"],
+};
+
+const MENSAGENS_ERRO_FIREBASE = {
+  "auth/email-already-in-use": "Esse e-mail já tem conta na Nocturis. Entre ou recupere a senha.",
+  "auth/invalid-email": "Esse e-mail não parece válido.",
+  "auth/weak-password": "Escolha uma senha com pelo menos 6 caracteres.",
+};
+
+function IconeUsuario() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21a8 8 0 0 1 16 0" />
+    </svg>
+  );
+}
+
 export function CadastroPage() {
   useTitulo("Criar conta");
   const { cadastrar, loginComGoogle, atualizarRole } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
+  const [etapa, setEtapa] = useState(0);
   const [role, setRole] = useState("cliente");
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [senha2, setSenha2] = useState("");
   const [telefone, setTelefone] = useState("");
   const [oabNumero, setOabNumero] = useState("");
   const [oabUf, setOabUf] = useState("");
@@ -42,6 +67,11 @@ export function CadastroPage() {
   const [contaGoogle, setContaGoogle] = useState(null);
   const [erro, setErro] = useState(null);
   const [enviando, setEnviando] = useState(false);
+  const [concluido, setConcluido] = useState(null);
+
+  const etapas = ETAPAS[role];
+  const nomeEtapa = etapas[etapa];
+  const ultima = etapa === etapas.length - 1;
 
   useEffect(() => {
     api.get("/triagem/perguntas").then((dados) => setCategoriasPorArea(dados.categorias));
@@ -56,6 +86,13 @@ export function CadastroPage() {
     }
   }, [location.state]);
 
+  // Depois do "Conta criada!", entra no app.
+  useEffect(() => {
+    if (!concluido) return;
+    const timer = setTimeout(() => navigate(rotaInicial(concluido)), 1800);
+    return () => clearTimeout(timer);
+  }, [concluido, navigate]);
+
   async function cadastrarComGoogle() {
     setErro(null);
     try {
@@ -66,260 +103,370 @@ export function CadastroPage() {
       }
       setContaGoogle(user);
       setNome(user.displayName || "");
+      setEtapa(1);
     } catch {
       setErro("Não foi possível conectar com o Google");
     }
   }
 
+  function alternar(lista, setLista, valor) {
+    setLista(lista.includes(valor) ? lista.filter((v) => v !== valor) : [...lista, valor]);
+  }
+
   function alternarArea(area) {
-    setAreasAtuacao((atual) =>
-      atual.includes(area) ? atual.filter((a) => a !== area) : [...atual, area],
-    );
+    const novas = areasAtuacao.includes(area) ? areasAtuacao.filter((a) => a !== area) : [...areasAtuacao, area];
+    setAreasAtuacao(novas);
+    // Especialidade de uma área desmarcada sai junto.
+    const validas = novas.flatMap((a) => (categoriasPorArea?.[a] || []).map((c) => c.valor));
+    setEspecialidades((atual) => atual.filter((e) => validas.includes(e)));
   }
 
-  function alternarEspecialidade(valor) {
-    setEspecialidades((atual) =>
-      atual.includes(valor) ? atual.filter((e) => e !== valor) : [...atual, valor],
-    );
+  // Confere a etapa atual antes de avançar — o erro aparece na própria etapa, em vez de só
+  // no fim do cadastro.
+  function erroDaEtapa() {
+    if (nomeEtapa === "dados") {
+      if (nome.trim().length < 2) return "Informe seu nome.";
+      if (!contaGoogle) {
+        if (!/^\S+@\S+\.\S+$/.test(email.trim())) return "Informe um e-mail válido.";
+        if (senha.length < 6) return "A senha precisa ter pelo menos 6 caracteres.";
+        if (senha !== senha2) return "As duas senhas não são iguais.";
+      }
+    }
+    if (nomeEtapa === "local") {
+      if (cidade.trim().length < 2 || !uf) return "Informe sua cidade e o estado.";
+      if (role === "advogado") {
+        if (!/^\d{4,7}$/.test(oabNumero.trim())) return "O número da OAB tem de 4 a 7 dígitos.";
+        if (!oabUf) return "Escolha a UF da sua OAB.";
+      }
+    }
+    if (nomeEtapa === "atuacao" && areasAtuacao.length === 0) {
+      return "Escolha pelo menos uma área de atuação.";
+    }
+    return null;
   }
 
-  const especialidadesDisponiveis = (categoriasPorArea
-    ? areasAtuacao.flatMap((area) => categoriasPorArea[area] || [])
-    : []
-  ).filter((c, i, lista) => lista.findIndex((c2) => c2.valor === c.valor) === i);
-
-  useEffect(() => {
-    const valoresDisponiveis = especialidadesDisponiveis.map((c) => c.valor);
-    setEspecialidades((atual) => atual.filter((e) => valoresDisponiveis.includes(e)));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [areasAtuacao, categoriasPorArea]);
-
-  async function criarConta(e) {
-    e.preventDefault();
+  function voltar() {
     setErro(null);
-    setEnviando(true);
+    if (etapa === 0) navigate("/");
+    else setEtapa((e) => e - 1);
+  }
 
+  async function avancar(e) {
+    e.preventDefault();
+    const problema = erroDaEtapa();
+    if (problema) {
+      setErro(problema);
+      return;
+    }
+    setErro(null);
+    if (!ultima) {
+      setEtapa((n) => n + 1);
+      window.scrollTo({ top: 0 });
+      return;
+    }
+    await criarConta();
+  }
+
+  async function criarConta() {
+    setEnviando(true);
     // Só cria (e só desfaz em caso de erro) uma conta nova por e-mail/senha. A conta do
     // Google já existia antes desse formulário — se completar-cadastro falhar, não faz
     // sentido apagar o login Google da pessoa, só o cadastro na Nocturis não terminou.
     let usuarioCriado = null;
     try {
       if (!contaGoogle) {
-        usuarioCriado = await cadastrar(email, senha);
+        usuarioCriado = await cadastrar(email.trim(), senha);
       }
 
       await api.post("/auth/completar-cadastro", {
         role,
-        nome,
+        nome: nome.trim(),
         telefone,
         aceitouPoliticaPrivacidade,
         localizacao: { cidade, uf },
         ...(role === "advogado"
-          ? {
-              oab: { numero: oabNumero, uf: oabUf },
-              areasAtuacao,
-              especialidades,
-              whatsapp,
-            }
+          ? { oab: { numero: oabNumero.trim(), uf: oabUf }, areasAtuacao, especialidades, whatsapp }
           : {}),
       });
 
       const roleLogado = await atualizarRole();
-      navigate(rotaInicial(roleLogado));
+      setConcluido(roleLogado || role);
     } catch (err) {
       if (usuarioCriado) {
         await usuarioCriado.delete().catch(() => {});
       }
-      setErro(err.message);
+      setErro(MENSAGENS_ERRO_FIREBASE[err.code] || err.message);
     } finally {
       setEnviando(false);
     }
   }
 
+  const textoBotao = enviando ? "Criando conta..." : ultima ? "Criar conta" : "Continuar";
+
   return (
-    <main className="auth-screen">
-      <Link to="/" className="auth-screen__close" aria-label="Voltar para o início">
-        ×
-      </Link>
-
-      <div className="auth-screen__inner">
-        <Logo className="auth-screen__logo step-enter" />
-        <div className="auth-screen__header step-enter" style={{ animationDelay: "80ms" }}>
-          <h1>Criar conta</h1>
-          <p>Leva menos de 2 minutos.</p>
-        </div>
-
-        <form
-          className="auth-screen__form step-enter"
-          style={{ animationDelay: "160ms" }}
-          onSubmit={criarConta}
-        >
-          <div className="input-group">
-            <label className="input-label">Você é:</label>
+    <EntradaLayout
+      voltar={voltar}
+      rotuloVoltar={etapa === 0 ? "Voltar para o início" : "Etapa anterior"}
+      progresso={(etapa + 1) / etapas.length}
+    >
+      <form className="entrada__form entrada__passo" key={nomeEtapa} onSubmit={avancar} noValidate>
+        {nomeEtapa === "papel" && (
+          <>
+            <div>
+              <LogoEntrada />
+              <h1 className="entrada__titulo">Vamos criar sua conta</h1>
+              <p className="entrada__sub" style={{ margin: 0 }}>
+                É grátis. Primeiro, conta pra gente quem é você.
+              </p>
+            </div>
             <div className="choice-grid">
               <ChoiceCard
                 type="radio"
                 name="role"
-                label="Cliente"
-                description="Quero encontrar um advogado"
+                label="Preciso de um advogado"
+                description="Conto meu caso e encontro quem atende perto de mim"
                 checked={role === "cliente"}
                 onChange={() => setRole("cliente")}
               />
               <ChoiceCard
                 type="radio"
                 name="role"
-                label="Advogado"
-                description="Quero atender clientes"
+                label="Sou advogado"
+                description="Quero receber casos da minha área"
                 checked={role === "advogado"}
                 onChange={() => setRole("advogado")}
               />
             </div>
-          </div>
-
-          {!contaGoogle && (
-            <>
-              <BotaoGoogle onClick={cadastrarComGoogle} style={{ width: "100%" }}>
-                Cadastrar com Google
-              </BotaoGoogle>
-              <p className="text-muted" style={{ textAlign: "center", margin: 0 }}>
-                ou
+            {contaGoogle ? (
+              <p className="entrada__sub" style={{ margin: 0 }}>
+                Conectado como <strong>{contaGoogle.email}</strong> via Google.
               </p>
-            </>
-          )}
+            ) : (
+              <>
+                <BotaoGoogle onClick={cadastrarComGoogle}>Continuar com Google</BotaoGoogle>
+                <p className="entrada__ou" style={{ margin: "4px 0 -20px" }}>
+                  ou
+                </p>
+              </>
+            )}
+          </>
+        )}
 
-          {contaGoogle && (
-            <p className="text-muted">
-              Conectado como <strong>{contaGoogle.email}</strong> via Google.
-            </p>
-          )}
-
-          <Input label="Nome" id="nome" value={nome} onChange={(e) => setNome(e.target.value)} required />
-          {!contaGoogle && (
-            <>
-              <Input
-                label="E-mail"
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-              <Input
-                label="Senha"
-                id="senha"
-                type="password"
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
-                minLength={6}
-                required
-              />
-            </>
-          )}
-          <Input
-            label="Telefone"
-            id="telefone"
-            value={telefone}
-            onChange={(e) => setTelefone(e.target.value)}
-          />
-          <CampoLocalizacao cidade={cidade} uf={uf} onCidade={setCidade} onUf={setUf} required />
-          <p className="text-muted" style={{ margin: 0 }}>
-            {role === "advogado"
-              ? "Onde você atende. Os clientes da sua região veem você primeiro."
-              : "Usamos sua cidade pra mostrar advogados perto de você."}
-          </p>
-
-          {role === "advogado" && (
-            <>
-              <div className="row">
+        {nomeEtapa === "dados" && (
+          <>
+            <div>
+              <h1 className="entrada__titulo">Seus dados</h1>
+              <p className="entrada__sub" style={{ margin: 0 }}>
+                {role === "advogado"
+                  ? "Seu nome aparece no seu perfil profissional. O e-mail é pra você entrar."
+                  : "Só você vê seus dados. O advogado só vê seu nome se aceitar seu pedido de contato."}
+              </p>
+            </div>
+            <Input
+              label="Nome completo"
+              id="nome"
+              autoComplete="name"
+              placeholder="Como você se chama"
+              value={nome}
+              onChange={(e) => setNome(e.target.value)}
+            />
+            {!contaGoogle && (
+              <>
                 <Input
-                  label="Número da OAB"
-                  id="oabNumero"
-                  value={oabNumero}
-                  onChange={(e) => setOabNumero(e.target.value)}
-                  required
+                  label="E-mail"
+                  id="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="seu@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                 />
-                <Input
-                  label="UF da OAB"
-                  id="oabUf"
-                  value={oabUf}
-                  onChange={(e) => setOabUf(e.target.value)}
-                  maxLength={2}
-                  required
+                <CampoSenha
+                  label="Senha"
+                  id="senha"
+                  autoComplete="new-password"
+                  placeholder="Pelo menos 6 caracteres"
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
                 />
-              </div>
+                <CampoSenha
+                  label="Confirme a senha"
+                  id="senha2"
+                  autoComplete="new-password"
+                  placeholder="Digite a senha de novo"
+                  value={senha2}
+                  onChange={(e) => setSenha2(e.target.value)}
+                />
+              </>
+            )}
+            <Input
+              label="Telefone (opcional)"
+              id="telefone"
+              type="tel"
+              autoComplete="tel"
+              placeholder="(11) 90000-0000"
+              value={telefone}
+              onChange={(e) => setTelefone(e.target.value)}
+            />
+          </>
+        )}
 
-              <div className="input-group">
-                <label className="input-label">Áreas de atuação</label>
-                <div className="choice-grid">
-                  {AREAS.map((area) => (
-                    <ChoiceCard
-                      key={area.valor}
-                      type="checkbox"
-                      label={area.label}
-                      checked={areasAtuacao.includes(area.valor)}
-                      onChange={() => alternarArea(area.valor)}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              {especialidadesDisponiveis.length > 0 && (
-                <div className="input-group">
-                  <label className="input-label">Especialidades (opcional)</label>
-                  <p className="text-muted">
-                    Ajuda o cliente a ver se você atende o assunto específico do caso dele.
-                  </p>
-                  <div className="choice-grid">
-                    {especialidadesDisponiveis.map((c) => (
-                      <ChoiceCard
-                        key={c.valor}
-                        type="checkbox"
-                        label={c.label}
-                        checked={especialidades.includes(c.valor)}
-                        onChange={() => alternarEspecialidade(c.valor)}
-                      />
-                    ))}
+        {nomeEtapa === "local" && (
+          <>
+            <div>
+              <h1 className="entrada__titulo">{role === "advogado" ? "Onde você atende?" : "Onde você mora?"}</h1>
+              <p className="entrada__sub" style={{ margin: 0 }}>
+                {role === "advogado"
+                  ? "Os clientes da sua região veem você primeiro. Sua OAB fica em análise até a gente conferir no Cadastro Nacional dos Advogados."
+                  : "Usamos sua cidade pra mostrar primeiro os advogados perto de você."}
+              </p>
+            </div>
+            <CampoLocalizacao cidade={cidade} uf={uf} onCidade={setCidade} onUf={setUf} />
+            {role === "advogado" && (
+              <>
+                <div className="row">
+                  <Input
+                    label="Número da OAB"
+                    id="oabNumero"
+                    inputMode="numeric"
+                    placeholder="123456"
+                    value={oabNumero}
+                    onChange={(e) => setOabNumero(e.target.value.replace(/\D/g, ""))}
+                  />
+                  <div className="input-group">
+                    <label className="input-label" htmlFor="oabUf">
+                      UF da OAB
+                    </label>
+                    <select id="oabUf" className="input" value={oabUf} onChange={(e) => setOabUf(e.target.value)}>
+                      <option value="">—</option>
+                      {UFS.map((sigla) => (
+                        <option key={sigla} value={sigla}>
+                          {sigla}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
-              )}
+                <Input
+                  label="WhatsApp (opcional)"
+                  id="whatsapp"
+                  type="tel"
+                  placeholder="(11) 90000-0000"
+                  value={whatsapp}
+                  onChange={(e) => setWhatsapp(e.target.value)}
+                />
+                <p className="entrada__sub" style={{ margin: 0, fontSize: 13 }}>
+                  O WhatsApp e o e-mail só são mostrados pro cliente quando você aceita o pedido dele.
+                </p>
+              </>
+            )}
+          </>
+        )}
 
-              <Input
-                label="WhatsApp"
-                id="whatsapp"
-                value={whatsapp}
-                onChange={(e) => setWhatsapp(e.target.value)}
-              />
-              <p className="text-muted">
-                Sua OAB fica em análise até a aprovação manual do admin — hoje não existe API
-                gratuita da OAB pra verificar isso automaticamente.
+        {nomeEtapa === "atuacao" && (
+          <>
+            <div>
+              <h1 className="entrada__titulo">Em que você atua?</h1>
+              <p className="entrada__sub" style={{ margin: 0 }}>
+                Escolha a área e, se quiser, as especialidades — é assim que os casos certos chegam até você.
               </p>
-            </>
-          )}
+            </div>
+            <div>
+              <p className="chips__grupo" style={{ marginTop: 0 }}>
+                Áreas
+              </p>
+              <ul className="chips">
+                {AREAS.map((area) => (
+                  <li key={area.valor}>
+                    <button
+                      type="button"
+                      className="chip-opcao"
+                      aria-pressed={areasAtuacao.includes(area.valor)}
+                      onClick={() => alternarArea(area.valor)}
+                    >
+                      {area.label}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              {areasAtuacao.map((area) => (
+                <div key={area}>
+                  <p className="chips__grupo">Especialidades {area === "civel" ? "cíveis" : "trabalhistas"}</p>
+                  <ul className="chips">
+                    {(categoriasPorArea?.[area] || []).map((c) => (
+                      <li key={c.valor}>
+                        <button
+                          type="button"
+                          className="chip-opcao"
+                          aria-pressed={especialidades.includes(c.valor)}
+                          onClick={() => alternar(especialidades, setEspecialidades, c.valor)}
+                        >
+                          {c.label}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
 
-          <label style={{ display: "flex", alignItems: "flex-start", gap: "8px", fontSize: "var(--font-size-sm)" }}>
+        {ultima && (
+          <label className="entrada__consentimento">
             <input
               type="checkbox"
               checked={aceitouPoliticaPrivacidade}
               onChange={(e) => setAceitouPoliticaPrivacidade(e.target.checked)}
-              required
-              style={{ marginTop: "2px", width: "20px", height: "20px", flex: "none" }}
             />
             <span>
               Li e aceito a{" "}
-              <Link to="/privacidade" target="_blank" rel="noreferrer">
+              <Link to="/privacidade" target="_blank" rel="noreferrer" className="entrada__link">
                 política de privacidade
               </Link>
               .
             </span>
           </label>
+        )}
 
-          {erro && <p role="alert">{erro}</p>}
+        {erro && <p role="alert">{erro}</p>}
 
-          <Button type="submit" disabled={enviando || !aceitouPoliticaPrivacidade}>
-            {enviando ? "Criando conta..." : "Criar conta"}
+        {/* Na primeira etapa o botão fica logo depois do "ou" (Google ou e-mail); nas outras,
+            preso no pé da tela no celular, como na referência. */}
+        <div className={`entrada__acoes${nomeEtapa === "papel" ? "" : " entrada__acoes--fixas"}`}>
+          <Button type="submit" disabled={enviando || (ultima && !aceitouPoliticaPrivacidade)}>
+            {nomeEtapa === "papel" && !contaGoogle ? "Continuar com e-mail" : textoBotao}
           </Button>
-        </form>
-      </div>
-    </main>
+        </div>
+      </form>
+
+      {etapa === 0 && (
+        <p className="entrada__rodape">
+          Já tem conta?{" "}
+          <Link to="/login" className="entrada__link">
+            Entrar
+          </Link>
+        </p>
+      )}
+
+      {concluido && (
+        <div className="entrada-sucesso" role="alertdialog" aria-labelledby="sucesso-titulo">
+          <div className="entrada-sucesso__cartao">
+            <div className="entrada-sucesso__icone">
+              <IconeUsuario />
+            </div>
+            <h2 id="sucesso-titulo" className="entrada-sucesso__titulo">
+              Conta criada!
+            </h2>
+            <p className="entrada-sucesso__texto">
+              {concluido === "advogado"
+                ? "Sua OAB foi pra análise. Enquanto isso, já dá pra completar seu perfil."
+                : "Estamos preparando seu painel..."}
+            </p>
+            <div className="entrada-sucesso__girando" aria-hidden="true" />
+          </div>
+        </div>
+      )}
+    </EntradaLayout>
   );
 }
