@@ -76,6 +76,11 @@ Só o backend cria e altera (`routes/solicitacoes.js`).
 | `area`, `especialidade`, `descricao` | string | Cópia do caso autorizado, no momento do pedido (o advogado lê isso). |
 | `situacao` | `"pendente" \| "aceita" \| "recusada"` | Um pedido pendente ou aceito por cliente+advogado; depois de recusado, pode pedir de novo. |
 | `createdAt`, `respondidaEm` | string ISO | |
+| `etapaCaso` | `"pendente" \| "em_andamento" \| "concluido"` ou `null` | Coluna no quadro de casos do advogado (RF012). Nasce `pendente`, vira `em_andamento` ao aceitar, `null` se recusado. |
+| `prioridade` | `"baixa" \| "media" \| "alta"` | Definida pelo advogado; nasce `media`. |
+| `anotacoes` | string | **Só do advogado** — nunca vai pro cliente (nem na lista dele, nem no "Meus dados"). |
+| `arquivado`, `arquivadoEm` | boolean, string ISO | O caso só sai do quadro quando o advogado arquiva. |
+| `atualizadoEm` | string ISO | Última mudança no quadro. |
 
 O que cada lado vê: o advogado vê o caso desde o pedido e o **nome** do cliente só depois de
 aceitar; o cliente vê o **WhatsApp/e-mail** do advogado só depois do aceite.

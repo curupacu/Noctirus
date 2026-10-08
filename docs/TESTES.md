@@ -6,7 +6,7 @@ sem precisar de nenhuma credencial real do Firebase ou do Gemini pra rodar.
 
 ## Números (19/08)
 
-- **166 testes**, em **12 arquivos**, 100% passando (outubro/2026, depois dos Sprints 0–5).
+- **174 testes**, em **12 arquivos**, 100% passando (outubro/2026, depois dos Sprints 0–6).
 - Framework: [Vitest](https://vitest.dev/) (`backend/package.json`).
 - Rodar: `npm test` na raiz (delega pro backend) ou `npm test` dentro de `backend/`.
 - Tempo total: ~8s.
@@ -60,7 +60,7 @@ Nenhum teste toca Firebase ou Gemini de verdade:
 | `users.integration.test.js` | `GET/PUT /users/me`, foto do cliente (só JPEG/PNG/WebP), exportação dos próprios dados (LGPD) e exclusão da própria conta (Auth + Firestore, incluindo `advogados`/`curriculos` quando aplicável). |
 | `curriculos.integration.test.js` | Leitura pública do currículo, edição restrita ao próprio advogado, validação de campo que deveria ser lista, atualização com sucesso. |
 | `triagem.integration.test.js` | `GET /triagem/perguntas` sem token (as duas etapas), `POST /triagem/area` (etapa 1: todas as perguntas obrigatórias, devolve a área e as perguntas da etapa 2 sem gravar nada, `indefinido` quando não dá pra identificar), `POST /triagem/classificar` (etapa 2: área obrigatória e perguntas dela respondidas, área corrigida pelo cliente é respeitada, grava as duas etapas, contador `vezesSugerido`, opt-in `compartilharComAdvogado` falso por padrão), histórico e detalhe da triagem restritos ao próprio cliente (404 pra triagem de outro, sem vazar dado). |
-| `solicitacoes.integration.test.js` | Pedido de contato (RF010/RF013/RF014): só cliente pede, autorização obrigatória, advogado sem OAB aprovada e triagem de outro cliente recusados, cópia do caso guardada, aviso pro advogado (sininho + e-mail, e o pedido vale mesmo se o e-mail falhar), sem pedido repetido enquanto pendente/aceito (pode pedir de novo depois de recusado). Aceitar/recusar só pelo advogado do pedido, uma vez, avisando o cliente. Cliente vê os próprios pedidos e o WhatsApp/e-mail só depois do aceite; advogado vê o caso e o nome do cliente só depois de aceitar. |
+| `solicitacoes.integration.test.js` | Pedido de contato (RF010/RF013/RF014): só cliente pede, autorização obrigatória, advogado sem OAB aprovada e triagem de outro cliente recusados, cópia do caso guardada, aviso pro advogado (sininho + e-mail, e o pedido vale mesmo se o e-mail falhar), sem pedido repetido enquanto pendente/aceito (pode pedir de novo depois de recusado). Aceitar/recusar só pelo advogado do pedido, uma vez, avisando o cliente. Cliente vê os próprios pedidos e o WhatsApp/e-mail só depois do aceite; advogado vê o caso e o nome do cliente só depois de aceitar. Quadro de casos (RF012): pedido nasce na coluna pendente, aceitar leva pra em andamento, mudar etapa/prioridade/anotações e arquivar só em caso aceito e só pelo advogado dele; anotações nunca chegam ao cliente. |
 | `health.integration.test.js` | `GET /health` responde 200. |
 
 ## O que não está coberto

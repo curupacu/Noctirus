@@ -21,6 +21,22 @@ const SITE_URL = "https://nocturis.com.br";
 //    nome do cliente. A conversa em si acontece fora da plataforma.
 export const SITUACOES_SOLICITACAO = ["pendente", "aceita", "recusada"];
 
+// Quadro de casos do advogado (RF012). Pedido pendente fica na coluna "pendente"; ao aceitar,
+// vira caso "em_andamento"; o advogado move entre "em_andamento" e "concluido", define a
+// prioridade e anota o que quiser (anotação é só dele — nunca vai pro cliente). O caso só
+// sai do quadro quando o advogado arquiva (decisão do time, 07/10).
+export const ETAPAS_CASO = ["pendente", "em_andamento", "concluido"];
+export const PRIORIDADES = ["baixa", "media", "alta"];
+
+const schemaCaso = z
+  .object({
+    etapa: z.enum(["em_andamento", "concluido"], { message: "Etapa inválida" }).optional(),
+    prioridade: z.enum(PRIORIDADES, { message: "Prioridade inválida" }).optional(),
+    anotacoes: z.string().max(2000, "Anotação longa demais (máx. 2000)").optional(),
+    arquivado: z.boolean().optional(),
+  })
+  .refine((dados) => Object.keys(dados).length > 0, { message: "Nada pra atualizar" });
+
 const schemaNovaSolicitacao = z.object({
   advogadoId: z.string().min(1),
   triagemId: z.string().min(1, "Escolha a triagem que vai junto com o pedido"),
@@ -108,6 +124,10 @@ solicitacoesRouter.post(
       situacao: "pendente",
       createdAt: agora,
       respondidaEm: null,
+      etapaCaso: "pendente",
+      prioridade: "media",
+      anotacoes: "",
+      arquivado: false,
     };
     const ref = await db.collection("solicitacoes").add(solicitacao);
 
@@ -115,7 +135,7 @@ solicitacoesRouter.post(
       destinatarioId: advogadoId,
       tipo: "solicitacao_nova",
       texto: `Novo pedido de contato: caso ${LABEL_AREA[solicitacao.area] || ""}. Veja as respostas e aceite ou recuse.`,
-      link: "/solicitacoes",
+      link: "/casos",
       assunto: "Você recebeu um pedido de contato na Nocturis",
       titulo: "Você recebeu um pedido de contato",
       paragrafos: [
@@ -181,6 +201,11 @@ solicitacoesRouter.get("/solicitacoes/recebidas", verificarToken, requireRole("a
         createdAt: s.createdAt,
         respondidaEm: s.respondidaEm,
         clienteNome,
+        etapaCaso: s.etapaCaso || (aceita ? "em_andamento" : "pendente"),
+        prioridade: s.prioridade || "media",
+        anotacoes: s.anotacoes || "",
+        arquivado: Boolean(s.arquivado),
+        atualizadoEm: s.atualizadoEm || null,
       };
     }),
   );
@@ -208,7 +233,12 @@ solicitacoesRouter.patch(
 
     const aceitou = req.body.acao === "aceitar";
     const situacao = aceitou ? "aceita" : "recusada";
-    await ref.update({ situacao, respondidaEm: new Date().toISOString() });
+    // Aceitar já coloca o caso em andamento no quadro; recusado sai do quadro.
+    await ref.update({
+      situacao,
+      respondidaEm: new Date().toISOString(),
+      etapaCaso: aceitou ? "em_andamento" : null,
+    });
 
     const advogadoNome = (await db.collection("users").doc(req.user.uid).get()).data()?.nome || "O advogado";
     await avisar({
@@ -227,5 +257,37 @@ solicitacoesRouter.patch(
     });
 
     res.json({ id: doc.id, situacao });
+  },
+);
+
+// RF012: o advogado organiza os casos aceitos no quadro — muda a etapa, a prioridade, as
+// anotações, ou arquiva. Pedido pendente não entra aqui (antes precisa aceitar/recusar).
+solicitacoesRouter.patch(
+  "/solicitacoes/:id/caso",
+  verificarToken,
+  requireRole("advogado"),
+  validarBody(schemaCaso),
+  async (req, res) => {
+    const ref = db.collection("solicitacoes").doc(req.params.id);
+    const doc = await ref.get();
+    if (!doc.exists || doc.data().advogadoId !== req.user.uid) {
+      return res.status(404).json({ erro: "Caso não encontrado" });
+    }
+    if (doc.data().situacao !== "aceita") {
+      return res.status(409).json({ erro: "Só dá pra organizar no quadro um pedido já aceito" });
+    }
+
+    const { etapa, prioridade, anotacoes, arquivado } = req.body;
+    const campos = { atualizadoEm: new Date().toISOString() };
+    if (etapa !== undefined) campos.etapaCaso = etapa;
+    if (prioridade !== undefined) campos.prioridade = prioridade;
+    if (anotacoes !== undefined) campos.anotacoes = anotacoes.trim();
+    if (arquivado !== undefined) {
+      campos.arquivado = arquivado;
+      campos.arquivadoEm = arquivado ? campos.atualizadoEm : null;
+    }
+
+    await ref.update(campos);
+    res.json({ id: doc.id, ...campos });
   },
 );

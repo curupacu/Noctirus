@@ -176,7 +176,12 @@ describe("GET /users/me/dados", () => {
   it("junta cadastro, triagens e pedidos de contato do cliente", async () => {
     cell.fake.db._seed("users", "c1", { role: "cliente", nome: "Cliente" });
     cell.fake.db._seed("triagens", "t1", { clienteId: "c1", descricao: "Fui demitido" });
-    cell.fake.db._seed("solicitacoes", "s1", { clienteId: "c1", advogadoId: "a1", situacao: "pendente" });
+    cell.fake.db._seed("solicitacoes", "s1", {
+      clienteId: "c1",
+      advogadoId: "a1",
+      situacao: "aceita",
+      anotacoes: "Anotação privada do advogado",
+    });
 
     const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
     const resposta = await request(app).get("/users/me/dados").set("Authorization", `Bearer ${token}`);
@@ -185,6 +190,7 @@ describe("GET /users/me/dados", () => {
     expect(resposta.body.cadastro.nome).toBe("Cliente");
     expect(resposta.body.triagens).toHaveLength(1);
     expect(resposta.body.solicitacoesFeitas).toHaveLength(1);
+    expect(resposta.body.solicitacoesFeitas[0].anotacoes).toBeUndefined();
     expect(resposta.body.perfilAdvogado).toBeUndefined();
   });
 

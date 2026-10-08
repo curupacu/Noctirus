@@ -152,7 +152,9 @@ export function PerfilPage() {
     ];
     const primeiroNome = (dadosUsuario.nome || dadosUsuario.email || "").split(" ")[0];
     const pendentes = (solicitacoes || []).filter((s) => s.situacao === "pendente");
-    const aceitos = (solicitacoes || []).filter((s) => s.situacao === "aceita");
+    const emAndamento = (solicitacoes || []).filter(
+      (s) => s.situacao === "aceita" && !s.arquivado && s.etapaCaso === "em_andamento",
+    );
 
     return (
       <main>
@@ -171,22 +173,22 @@ export function PerfilPage() {
             <p className="stat-numero">{solicitacoes ? pendentes.length : "—"}</p>
           </div>
           <div className="card">
-            <p className="text-muted">Pedidos aceitos</p>
-            <p className="stat-numero">{solicitacoes ? aceitos.length : "—"}</p>
+            <p className="text-muted">Casos em andamento</p>
+            <p className="stat-numero">{solicitacoes ? emAndamento.length : "—"}</p>
           </div>
         </div>
 
         <PerfilCompletude itens={itensCompletude} />
 
         <div className="section-heading">
-          <h2>Pedidos de contato</h2>
-          {solicitacoes && solicitacoes.length > 0 && <Link to="/solicitacoes">Ver todos</Link>}
+          <h2>Meus casos</h2>
+          <Link to="/casos">Abrir quadro</Link>
         </div>
         {solicitacoes && pendentes.length === 0 && (
           <p className="text-muted">Nenhum pedido esperando resposta.</p>
         )}
         {pendentes.length > 0 && (
-          <Link to="/solicitacoes" className="list-row">
+          <Link to="/casos" className="list-row">
             <span className="list-row__info">
               <span className="list-row__title">
                 {pendentes.length} pedido{pendentes.length === 1 ? "" : "s"} esperando sua resposta

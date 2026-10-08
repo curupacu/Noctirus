@@ -139,7 +139,11 @@ usersRouter.get("/users/me/dados", verificarToken, async (req, res) => {
       db.collection("solicitacoes").where("clienteId", "==", uid).get(),
     ]);
     dados.triagens = paraLista(triagens);
-    dados.solicitacoesFeitas = paraLista(solicitacoesFeitas);
+    // As anotações do quadro de casos são do advogado, não do cliente — ficam fora.
+    dados.solicitacoesFeitas = paraLista(solicitacoesFeitas).map(
+      // eslint-disable-next-line no-unused-vars
+      ({ anotacoes, prioridade, etapaCaso, arquivado, arquivadoEm, ...resto }) => resto,
+    );
   }
 
 

@@ -104,7 +104,7 @@ describe("POST /solicitacoes (RF010)", () => {
 
     const avisos = await notificacoesDe("a1");
     expect(avisos).toHaveLength(1);
-    expect(avisos[0]).toMatchObject({ tipo: "solicitacao_nova", link: "/solicitacoes" });
+    expect(avisos[0]).toMatchObject({ tipo: "solicitacao_nova", link: "/casos" });
     expect(enviarEmailMock).toHaveBeenCalledWith(expect.objectContaining({ to: "a1@example.com" }));
   });
 
@@ -228,5 +228,96 @@ describe("GET /solicitacoes/recebidas", () => {
       .get("/solicitacoes/recebidas")
       .set("Authorization", `Bearer ${token("c1", "cliente")}`);
     expect(resposta.status).toBe(403);
+  });
+});
+
+describe("PATCH /solicitacoes/:id/caso (quadro de casos, RF012)", () => {
+  function mexer(id, corpo, uid = "a1") {
+    return request(app)
+      .patch(`/solicitacoes/${id}/caso`)
+      .set("Authorization", `Bearer ${token(uid, "advogado")}`)
+      .send(corpo);
+  }
+
+  async function casoAceito() {
+    const { body } = await pedir();
+    await responder(body.id, "aceitar");
+    return body.id;
+  }
+
+  async function ler(id) {
+    return (await cell.fake.db.collection("solicitacoes").doc(id).get()).data();
+  }
+
+  it("pedido novo entra na coluna pendente, com prioridade média", async () => {
+    const { body } = await pedir();
+    expect(await ler(body.id)).toMatchObject({ etapaCaso: "pendente", prioridade: "media", arquivado: false });
+  });
+
+  it("aceitar coloca o caso em andamento; recusar tira do quadro", async () => {
+    const aceito = await casoAceito();
+    expect((await ler(aceito)).etapaCaso).toBe("em_andamento");
+
+    cell.fake.db._seed("users", "c2", { role: "cliente", nome: "Cliente Dois" });
+    cell.fake.db._seed("triagens", "t2", { clienteId: "c2", areaClassificada: "civel", descricao: "x" });
+    const { body } = await pedir({ triagemId: "t2" }, "c2");
+    await responder(body.id, "recusar");
+    expect((await ler(body.id)).etapaCaso).toBeNull();
+  });
+
+  it("muda etapa, prioridade e anotações do caso", async () => {
+    const id = await casoAceito();
+    const resposta = await mexer(id, { etapa: "concluido", prioridade: "alta", anotacoes: "  Audiência dia 20  " });
+
+    expect(resposta.status).toBe(200);
+    expect(await ler(id)).toMatchObject({ etapaCaso: "concluido", prioridade: "alta", anotacoes: "Audiência dia 20" });
+  });
+
+  it("arquiva e desarquiva (o caso só sai do quadro quando o advogado tira)", async () => {
+    const id = await casoAceito();
+    await mexer(id, { arquivado: true });
+    expect((await ler(id)).arquivado).toBe(true);
+    expect((await ler(id)).arquivadoEm).toEqual(expect.any(String));
+    await mexer(id, { arquivado: false });
+    expect((await ler(id)).arquivadoEm).toBeNull();
+  });
+
+  it("recusa etapa, prioridade e anotação inválidas, ou corpo vazio", async () => {
+    const id = await casoAceito();
+    expect((await mexer(id, { etapa: "pendente" })).status).toBe(400);
+    expect((await mexer(id, { prioridade: "urgentíssima" })).status).toBe(400);
+    expect((await mexer(id, { anotacoes: "a".repeat(2001) })).status).toBe(400);
+    expect((await mexer(id, {})).status).toBe(400);
+  });
+
+  it("pedido ainda pendente não pode ser organizado (precisa aceitar antes)", async () => {
+    const { body } = await pedir();
+    expect((await mexer(body.id, { etapa: "em_andamento" })).status).toBe(409);
+  });
+
+  it("só o advogado do caso mexe nele", async () => {
+    const id = await casoAceito();
+    cell.fake.db._seed("users", "a2", { role: "advogado", nome: "Outro" });
+    expect((await mexer(id, { prioridade: "alta" }, "a2")).status).toBe(404);
+  });
+
+  it("a lista do advogado traz os campos do quadro; a do cliente nunca traz as anotações", async () => {
+    const id = await casoAceito();
+    await mexer(id, { prioridade: "alta", anotacoes: "Pedir holerites" });
+
+    const recebidas = await request(app)
+      .get("/solicitacoes/recebidas")
+      .set("Authorization", `Bearer ${token("a1", "advogado")}`);
+    expect(recebidas.body[0]).toMatchObject({
+      etapaCaso: "em_andamento",
+      prioridade: "alta",
+      anotacoes: "Pedir holerites",
+      arquivado: false,
+    });
+
+    const minhas = await request(app)
+      .get("/solicitacoes/minhas")
+      .set("Authorization", `Bearer ${token("c1", "cliente")}`);
+    expect(minhas.body[0].anotacoes).toBeUndefined();
   });
 });
