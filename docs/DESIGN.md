@@ -89,6 +89,22 @@ ficar mais forte que isso: a ideia é sentir a textura sem perceber que ela est�
 - Profundidade por borda de 1px; sombra só na foto do hero, que "flutua" sobre o marrom.
 - Ícones em SVG de traço, sem emoji.
 
+## 5.1 Telas do app (login, cadastro e as próximas)
+
+Seguem as referências do time (kit "Scribblr", outubro/2026) — diferentes da Home de propósito:
+
+- **Botões em pílula** (`border-radius` total): principal marrom `#765039` com texto creme;
+  Google/secundário contornado. A Home continua com cantos quase retos.
+- **Campos com linha embaixo** (sem caixa), rótulo pequeno em negrito em cima, olho pra
+  mostrar a senha.
+- **Fluxos em etapas** com seta de voltar e barra de progresso no topo; botão principal preso
+  no pé da tela no celular.
+- **Chips** contornados que ficam marrons quando marcados (áreas e especialidades).
+- **No computador**, painel marrom com as linhas curvas da Home à esquerda e o formulário à
+  direita.
+- Sem emoji nos títulos (a referência usa; a Nocturis não).
+- Estilos em `frontend/src/features/auth/entrada.css` e `EntradaLayout.jsx`.
+
 ## 6. Fotos
 
 - Fotos de banco de imagem do **Unsplash** (licença gratuita, uso comercial liberado, crédito

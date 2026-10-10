@@ -60,6 +60,7 @@ export function CadastroPage() {
   const [whatsapp, setWhatsapp] = useState("");
   const [areasAtuacao, setAreasAtuacao] = useState([]);
   const [categoriasPorArea, setCategoriasPorArea] = useState(null);
+  const [erroCategorias, setErroCategorias] = useState(false);
   const [especialidades, setEspecialidades] = useState([]);
   const [aceitouPoliticaPrivacidade, setAceitouPoliticaPrivacidade] = useState(false);
   // Preenchido quando o cadastro vem via Google — pula e-mail/senha, porque o Firebase já
@@ -73,9 +74,17 @@ export function CadastroPage() {
   const nomeEtapa = etapas[etapa];
   const ultima = etapa === etapas.length - 1;
 
-  useEffect(() => {
-    api.get("/triagem/perguntas").then((dados) => setCategoriasPorArea(dados.categorias));
-  }, []);
+  // Lista de especialidades (a mesma taxonomia da triagem). Se a API não responder (ex.:
+  // Render acordando), a etapa de atuação avisa e deixa tentar de novo ou seguir só com a área.
+  function carregarCategorias() {
+    setErroCategorias(false);
+    api
+      .get("/triagem/perguntas")
+      .then((dados) => setCategoriasPorArea(dados.categorias))
+      .catch(() => setErroCategorias(true));
+  }
+
+  useEffect(carregarCategorias, []);
 
   // Chegou aqui vindo do botão "Entrar com Google" da LoginPage (conta sem role ainda) —
   // já está autenticado, não precisa abrir o popup de novo.
@@ -389,7 +398,23 @@ export function CadastroPage() {
                   </li>
                 ))}
               </ul>
-              {areasAtuacao.map((area) => (
+              {areasAtuacao.length > 0 && !categoriasPorArea && (
+                <p className="entrada__sub" style={{ margin: "16px 0 0" }}>
+                  {erroCategorias ? (
+                    <>
+                      Não deu pra carregar as especialidades agora.{" "}
+                      <button type="button" className="link-button" onClick={carregarCategorias}>
+                        Tentar de novo
+                      </button>{" "}
+                      — ou siga só com a área e escolha depois, no seu perfil.
+                    </>
+                  ) : (
+                    "Carregando especialidades..."
+                  )}
+                </p>
+              )}
+              {categoriasPorArea &&
+                areasAtuacao.map((area) => (
                 <div key={area}>
                   <p className="chips__grupo">Especialidades {area === "civel" ? "cíveis" : "trabalhistas"}</p>
                   <ul className="chips">
