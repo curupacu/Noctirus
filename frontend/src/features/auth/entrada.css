@@ -50,6 +50,7 @@ main.entrada {
   }
 
   .entrada__painel-logo {
+    align-self: flex-start;
     height: 36px;
     width: auto;
     color: #f6eedf;
