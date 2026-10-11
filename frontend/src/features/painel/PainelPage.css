@@ -40,7 +40,7 @@
 }
 
 .prateleira__item:hover {
-  border-color: var(--gold);
+  border-color: var(--brown);
 }
 
 .prateleira__nome {

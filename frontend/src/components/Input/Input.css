@@ -35,8 +35,8 @@
 
 .input:focus-visible {
   outline: none;
-  border-color: var(--gold);
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--gold) 25%, transparent);
+  border-color: var(--brown);
+  box-shadow: 0 0 0 3px rgba(118, 80, 57, 0.14);
 }
 
 .input-error {

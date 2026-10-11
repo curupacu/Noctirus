@@ -61,7 +61,7 @@
 }
 
 .bottom-nav__item--active .bottom-nav__icon-wrap {
-  background: var(--gold);
+  background: var(--brown);
 }
 
 .bottom-nav__item--active svg {

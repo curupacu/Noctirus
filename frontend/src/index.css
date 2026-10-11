@@ -928,3 +928,121 @@ a.list-row:hover .advogado-row__chevron {
   text-decoration: underline;
   cursor: pointer;
 }
+
+/* ===================================================================================
+   Repaginação geral (outubro/2026) — leva o padrão das telas de entrada (kit "Scribblr")
+   pra todas as telas do app: títulos na serifada, botões e abas em pílula, campos
+   preenchidos e arredondados, cartões com canto grande e sombra suave em vez de borda
+   forte. A Home tem CSS próprio (.home-*) e continua com canto reto. Ver docs/DESIGN.md
+   §5.1 "Telas do app".
+   =================================================================================== */
+h1,
+h2 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 1.25;
+}
+
+h3 {
+  letter-spacing: normal;
+}
+
+.button {
+  border-radius: var(--radius-full);
+  min-height: 48px;
+  padding-inline: 24px;
+}
+
+.button--primary {
+  box-shadow: 0 6px 16px rgba(118, 80, 57, 0.2);
+}
+
+.button--secondary {
+  border-color: var(--brown-400);
+  color: var(--brown);
+}
+
+.button--secondary:hover:not(:disabled) {
+  background: #f6eee4;
+  border-color: var(--brown);
+  color: var(--brown);
+}
+
+.input,
+select.input,
+textarea.input {
+  background: #f5f0e8;
+  border-color: transparent;
+  border-radius: var(--radius-sm);
+}
+
+.input:hover {
+  border-color: #e4d6c2;
+}
+
+.input:focus-visible {
+  background: #fffdf8;
+  border-color: var(--brown);
+  box-shadow: 0 0 0 3px rgba(118, 80, 57, 0.14);
+}
+
+.card {
+  border-color: #f1e9dc;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+fieldset {
+  border-color: #f1e9dc;
+  border-radius: var(--radius);
+}
+
+/* Abas (ex.: Pendentes / Aceitas) no formato "Articles / Writers" da referência */
+.pill-toggle__item {
+  border-radius: var(--radius-full);
+  border-color: var(--brown-400);
+  color: var(--brown);
+  background: transparent;
+}
+
+.pill-toggle__item:hover {
+  border-color: var(--brown);
+}
+
+.pill-toggle__item--active {
+  background: var(--brown);
+  border-color: var(--brown);
+  color: #fffdf8;
+}
+
+.chip {
+  border-color: #e4d6c2;
+  background: #fffdf8;
+}
+
+.badge {
+  border-radius: var(--radius-full);
+}
+
+/* "Ver todos →" vira só texto marrom com seta, como nos títulos de seção da referência */
+.section-heading {
+  align-items: center;
+}
+
+.section-heading a {
+  padding: 6px 4px;
+  border: 0;
+  background: none;
+  color: var(--brown);
+}
+
+.section-heading a:hover {
+  background: none;
+  color: var(--brown-deep);
+  text-decoration: none;
+}
+
+[role="alert"]:not(:empty) {
+  border-radius: 12px;
+}

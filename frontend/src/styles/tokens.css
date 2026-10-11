@@ -53,16 +53,16 @@
   /* Forma. --radius-sharp é o canto quase reto do visual novo (Home em diante); --radius e
      --radius-sm continuam nas telas que ainda não foram refeitas. */
   --radius-sharp: 3px;
-  --radius: 12px;
-  --radius-sm: 8px;
+  --radius: 20px;
+  --radius-sm: 14px;
   --shadow: none;
 
   /* Superfícies e texto */
-  --bg: #faf6ee;
+  --bg: #fcf9f4;
   --bg-section: #f2eadb;
   --surface: #ffffff; /* card branco sobre o fundo creme */
   --surface-hover: #f4efe6;
-  --border: #e6ded0;
+  --border: #ece3d5;
   --text: #2a1f16;
   --text-dim: #5e4e3b;
   --text-faint: #8c7d66;
@@ -89,9 +89,9 @@
   --color-text-muted: var(--text-dim);
   --color-text-faint: var(--text-faint);
   --color-border: var(--border);
-  --color-primary: var(--gold);
-  --color-primary-hover: var(--gold-dim);
-  --color-primary-text: var(--ink-on-accent);
+  --color-primary: var(--brown);
+  --color-primary-hover: var(--brown-deep);
+  --color-primary-text: #fffdf8;
   --color-dark: var(--ink-950);
   --color-dark-text: var(--cream);
   --color-danger: var(--red);
@@ -118,7 +118,7 @@
   --space-xl: 40px;
   --bottom-nav-height: 68px;
 
-  --shadow-sm: 0 1px 2px rgba(20, 18, 15, 0.08);
-  --shadow-md: 0 1px 2px rgba(20, 18, 15, 0.08);
+  --shadow-sm: 0 4px 16px rgba(59, 40, 28, 0.06);
+  --shadow-md: 0 8px 24px rgba(59, 40, 28, 0.09);
   --shadow-up: 0 -1px 2px rgba(20, 18, 15, 0.08);
 }

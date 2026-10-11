@@ -29,7 +29,7 @@
    (ver docs/DESIGN.md, "dourado com parcimônia"). */
 .choice-card--checked {
   background: var(--surface-hover);
-  border-color: var(--gold);
+  border-color: var(--brown);
 }
 
 .choice-card__input {
@@ -81,7 +81,7 @@
 }
 
 .choice-card--checked .choice-card__check {
-  background: var(--gold);
-  border-color: var(--gold);
-  color: var(--ink-on-accent);
+  background: var(--brown);
+  border-color: var(--brown);
+  color: #fffdf8;
 }
