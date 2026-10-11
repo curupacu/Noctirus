@@ -32,7 +32,7 @@
 
 .completude__fill {
   height: 100%;
-  background: var(--gold);
+  background: var(--brown);
   border-radius: var(--radius-full);
   transition: width 0.4s ease;
 }
@@ -76,8 +76,8 @@
 }
 
 .completude__item--ok .completude__dot {
-  background: var(--gold);
-  border-color: var(--gold);
+  background: var(--brown);
+  border-color: var(--brown);
 }
 
 .completude__dot svg {

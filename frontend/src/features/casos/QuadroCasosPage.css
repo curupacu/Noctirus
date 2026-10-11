@@ -27,7 +27,7 @@ main.quadro {
 }
 
 .quadro-coluna--sobre {
-  border-color: var(--gold);
+  border-color: var(--brown);
   background: var(--surface-hover);
 }
 

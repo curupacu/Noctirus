@@ -148,3 +148,11 @@ Seguem as referências do time (kit "Scribblr", outubro/2026) — diferentes da 
 - Conferir contraste: texto pequeno com pelo menos 4,5:1.
 - Listar os arquivos alterados.
 - Deploy é `firebase deploy` de verdade; commit no git não é deploy.
+
+### Repaginação geral (11/10/2026)
+O padrão das telas de entrada virou o padrão de todo o app (fora a Home): primária marrom
+(`--color-primary: var(--brown)`, texto creme), h1/h2 na serifada, botões e abas
+(`.pill-toggle`) em pílula, campos arredondados, cartões com `--radius` 20px e sombra
+suave, seleções (choice-card, quadro, painel, barra de completude, menu inferior) em
+marrom. Dourado fica só no cartão de visita e em destaques pontuais. A camada fica no fim
+de `frontend/src/index.css`.
