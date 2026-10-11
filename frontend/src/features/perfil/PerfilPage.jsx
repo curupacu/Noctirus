@@ -10,6 +10,46 @@ import { SeloOab } from "../../components/SeloOab/SeloOab";
 import { useAuth } from "../auth/AuthContext";
 import { api } from "../../lib/api";
 import { useTitulo } from "../../lib/useTitulo";
+import "../painel/PainelPage.css";
+
+// Foto de banco de imagem (Unsplash, mesma da seção "Sobre" da Home).
+const FOTO_DESTAQUE_ADVOGADO =
+  "https://images.unsplash.com/photo-1613837770636-cae46b162c28?auto=format&fit=crop&w=720&h=560&q=75";
+
+function Icone({ d }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d={d} />
+    </svg>
+  );
+}
+
+const ATALHOS_ADVOGADO = (uid) => [
+  {
+    to: "/perfil/editar",
+    titulo: "Editar perfil",
+    texto: "Foto, bio, especialidades e currículo",
+    icone: <Icone d="M4 20h4L19 9l-4-4L4 16v4ZM14 6l4 4" />,
+  },
+  {
+    to: `/advogados/${uid}`,
+    titulo: "Perfil público",
+    texto: "Veja como o cliente te vê",
+    icone: <Icone d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Zm10 3a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />,
+  },
+  {
+    to: "/cartao",
+    titulo: "Cartão de visita",
+    texto: "Compartilhe com seus clientes",
+    icone: <Icone d="M3 6h18v12H3zM7 10h5M7 14h8" />,
+  },
+  {
+    to: "/meus-dados",
+    titulo: "Meus dados",
+    texto: "Baixe ou apague seus dados",
+    icone: <Icone d="M12 3 4 6v6c0 4.5 3.4 8 8 9 4.6-1 8-4.5 8-9V6l-8-3Z" />,
+  },
+];
 
 // Enquanto a OAB não está aprovada o perfil não aparece pra nenhum cliente (RF009) — o
 // advogado precisa saber disso logo de cara, e o porquê quando foi recusado/revogado.
@@ -156,85 +196,80 @@ export function PerfilPage() {
       (s) => s.situacao === "aceita" && !s.arquivado && s.etapaCaso === "em_andamento",
     );
 
+    const qtdPendentes = pendentes.length;
+
     return (
-      <main>
-        <h1>
-          Olá, <em className="accent">{primeiroNome}</em>
-        </h1>
-        <p className="text-muted">
-          <span className="badge">{dadosUsuario.role}</span> <SeloOab advogado={advogado} />
+      <main className="painel">
+        <p className="painel__ola">
+          Olá, {primeiroNome} <SeloOab advogado={advogado} />
         </p>
+        <h1 className="painel__titulo">Seu escritório na Nocturis</h1>
 
         <AvisoSituacaoOab advogado={advogado} />
 
-        <div className="row">
-          <div className="card">
-            <p className="text-muted">Pedidos esperando resposta</p>
-            <p className="stat-numero">{solicitacoes ? pendentes.length : "—"}</p>
+        {/* Cartão de destaque: o que precisa da atenção do advogado agora. */}
+        <section className="destaque">
+          <img className="destaque__foto" src={FOTO_DESTAQUE_ADVOGADO} alt="" loading="lazy" />
+          <div className="destaque__corpo">
+            {qtdPendentes > 0 ? (
+              <>
+                <span className="destaque__etiqueta">Novos pedidos</span>
+                <h2 className="destaque__titulo">
+                  {qtdPendentes} pedido{qtdPendentes === 1 ? "" : "s"} esperando sua resposta
+                </h2>
+                <p className="destaque__texto">Leia o caso e aceite ou recuse. Responder rápido passa confiança.</p>
+                <div className="destaque__acoes">
+                  <Link to="/casos" className="button button--primary">
+                    Responder agora <span className="button__arrow">→</span>
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <>
+                <span className="destaque__etiqueta">Tudo em dia</span>
+                <h2 className="destaque__titulo">Nenhum pedido esperando resposta</h2>
+                <p className="destaque__texto">
+                  Enquanto isso, deixe seu perfil completo: é ele que o cliente vê antes de pedir contato.
+                </p>
+                <div className="destaque__acoes">
+                  <Link to="/casos" className="button button--primary">
+                    Abrir quadro de casos <span className="button__arrow">→</span>
+                  </Link>
+                  <Link to={`/advogados/${user.uid}`} className="destaque__link">
+                    Ver meu perfil público
+                  </Link>
+                </div>
+              </>
+            )}
           </div>
-          <div className="card">
-            <p className="text-muted">Casos em andamento</p>
-            <p className="stat-numero">{solicitacoes ? emAndamento.length : "—"}</p>
-          </div>
+        </section>
+
+        <div className="painel__numeros">
+          <Link to="/casos" className="painel__numero">
+            <strong>{solicitacoes ? qtdPendentes : "—"}</strong>
+            <span>Pedidos esperando resposta</span>
+          </Link>
+          <Link to="/casos" className="painel__numero">
+            <strong>{solicitacoes ? emAndamento.length : "—"}</strong>
+            <span>Casos em andamento</span>
+          </Link>
         </div>
 
         <PerfilCompletude itens={itensCompletude} />
 
         <div className="section-heading">
-          <h2>Meus casos</h2>
-          <Link to="/casos">Abrir quadro</Link>
+          <h2>Atalhos</h2>
         </div>
-        {solicitacoes && pendentes.length === 0 && (
-          <p className="text-muted">Nenhum pedido esperando resposta.</p>
-        )}
-        {pendentes.length > 0 && (
-          <Link to="/casos" className="list-row">
-            <span className="list-row__info">
-              <span className="list-row__title">
-                {pendentes.length} pedido{pendentes.length === 1 ? "" : "s"} esperando sua resposta
-              </span>
-              <span className="list-row__meta">Leia o caso e aceite ou recuse</span>
-            </span>
-            <span className="advogado-row__chevron" aria-hidden="true">
-              ›
-            </span>
-          </Link>
-        )}
-
-        <div className="section-heading">
-          <h2>Acesso rápido</h2>
-        </div>
-        <ul className="list-plain">
-          <li>
-            <Link to="/perfil/editar" className="list-row">
-              <span className="list-row__title">Editar perfil</span>
-              <span className="advogado-row__chevron" aria-hidden="true">›</span>
-            </Link>
-          </li>
-          <li>
-            <Link to={`/advogados/${user.uid}`} className="list-row">
-              <span className="list-row__title">Ver meu perfil público</span>
-              <span className="advogado-row__chevron" aria-hidden="true">›</span>
-            </Link>
-          </li>
-          <li>
-            <Link to="/cartao" className="list-row">
-              <span className="list-row__title">Meu cartão de visita</span>
-              <span className="advogado-row__chevron" aria-hidden="true">›</span>
-            </Link>
-          </li>
-        </ul>
-
-        <div className="section-heading">
-          <h2>Mais</h2>
-        </div>
-        <ul className="list-plain">
-          <li>
-            <Link to="/meus-dados" className="list-row">
-              <span className="list-row__title">Meus dados</span>
-              <span className="advogado-row__chevron" aria-hidden="true">›</span>
-            </Link>
-          </li>
+        <ul className="atalhos">
+          {ATALHOS_ADVOGADO(user.uid).map((atalho) => (
+            <li key={atalho.to}>
+              <Link to={atalho.to} className="atalho">
+                <span className="atalho__icone">{atalho.icone}</span>
+                <strong>{atalho.titulo}</strong>
+                <span>{atalho.texto}</span>
+              </Link>
+            </li>
+          ))}
         </ul>
       </main>
     );

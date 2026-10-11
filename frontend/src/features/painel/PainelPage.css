@@ -1,13 +1,178 @@
-/* Prateleiras do painel do cliente: lista que desliza pro lado, com o próximo cartão
-   aparecendo cortado na borda pra dar a dica de que dá pra rolar. Visual provisório —
-   o painel inteiro ganha o visual novo na fase de UX/UI (docs/SPRINTS.md). */
+/* Painéis (cliente em PainelPage, advogado em PerfilPage) — repaginação de outubro/2026
+   com base na referência do time (app de café): um cartão de destaque grande no topo com
+   UMA ação principal, e depois vitrines que deslizam com cartões de foto grande. No
+   computador a tela usa a largura toda em vez de uma coluna estreita no meio. */
+main.painel {
+  max-width: 1120px;
+  padding-top: var(--space-md);
+  padding-bottom: calc(var(--bottom-nav-height) + var(--space-lg));
+}
+
+.painel__ola {
+  margin: 0 0 4px;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+
+.painel__titulo {
+  margin: 0 0 var(--space-lg);
+  font-size: clamp(26px, 4vw, 34px);
+}
+
+/* ---------- cartão de destaque ---------- */
+.destaque {
+  position: relative;
+  display: grid;
+  overflow: hidden;
+  margin-bottom: var(--space-xl);
+  border-radius: 28px;
+  background: var(--brown);
+  color: #f6eedf;
+  box-shadow: 0 16px 40px rgba(59, 40, 28, 0.18);
+}
+
+.destaque__foto {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.destaque__corpo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 24px;
+}
+
+.destaque__etiqueta {
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  background: rgba(246, 238, 223, 0.16);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #f6eedf;
+}
+
+.destaque__titulo {
+  margin: 0;
+  max-width: 16em;
+  font-size: clamp(26px, 4.2vw, 40px);
+  line-height: 1.15;
+  color: #fffdf8;
+}
+
+.destaque__texto {
+  margin: 0;
+  max-width: 30em;
+  font-size: 15px;
+  line-height: 1.55;
+  color: #e6d8bf;
+}
+
+.destaque__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 20px;
+  margin-top: 8px;
+}
+
+.destaque .button--primary {
+  background: #fffdf8;
+  color: var(--brown);
+  box-shadow: none;
+}
+
+.destaque .button--primary:hover:not(:disabled) {
+  background: #f3e7d6;
+  color: var(--brown-deep);
+}
+
+.destaque__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #f6eedf;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.destaque__link:hover {
+  color: #fffdf8;
+}
+
+@media (min-width: 760px) {
+  .destaque {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    min-height: 320px;
+  }
+
+  .destaque__foto {
+    order: 2;
+    height: 100%;
+  }
+
+  .destaque__corpo {
+    justify-content: center;
+    padding: 48px;
+  }
+}
+
+/* ---------- números rápidos (advogado) ---------- */
+.painel__numeros {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.painel__numero {
+  padding: 20px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  color: var(--text);
+  text-decoration: none;
+}
+
+a.painel__numero:hover {
+  color: var(--text);
+  text-decoration: none;
+  box-shadow: var(--shadow-md);
+}
+
+.painel__numero strong {
+  display: block;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 1;
+  color: var(--brown);
+}
+
+.painel__numero span {
+  display: block;
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+
+/* ---------- vitrines que deslizam ---------- */
+.prateleira {
+  margin-bottom: var(--space-lg);
+}
+
 .prateleira__trilho {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 150px;
-  gap: var(--space-sm);
+  grid-auto-columns: 156px;
+  gap: 14px;
   margin: 0 calc(-1 * var(--space-lg));
-  padding: 2px var(--space-lg) var(--space-sm);
+  padding: 4px var(--space-lg) var(--space-md);
   list-style: none;
   overflow-x: auto;
   scroll-snap-type: x proximity;
@@ -23,45 +188,184 @@
   scroll-snap-align: start;
 }
 
+@media (min-width: 760px) {
+  .prateleira__trilho {
+    grid-auto-columns: 176px;
+    gap: 18px;
+  }
+}
+
 .prateleira__item {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 6px;
   height: 100%;
-  padding: var(--space-md) var(--space-sm);
-  text-align: center;
-  text-decoration: none;
-  color: var(--text);
+  padding: 8px 8px 14px;
+  border-radius: 20px;
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  transition: border-color 0.15s ease;
+  box-shadow: var(--shadow-sm);
+  color: var(--text);
+  text-decoration: none;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .prateleira__item:hover {
-  border-color: var(--brown);
+  color: var(--text);
+  text-decoration: none;
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* Foto grande e quadrada, como os produtos da referência */
+.prateleira__item .avatar-placeholder.prateleira__foto {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  border-radius: 14px;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 44px;
 }
 
 .prateleira__nome {
-  font-size: var(--font-size-sm);
+  margin: 12px 6px 2px;
+  font-size: 15px;
   line-height: 1.3;
 }
 
 .prateleira__meta {
-  font-size: var(--font-size-xs);
+  margin: 0 6px;
+  font-size: 13px;
   color: var(--text-dim);
 }
 
 .prateleira__selo {
-  font-size: 10.5px;
+  margin: 8px 6px 0;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--gold-ink);
+  color: var(--brown);
 }
 
-.prateleira__item .badge {
-  margin: 0;
-  font-size: var(--font-size-xs);
+/* Solicitação: cartão menor, com a situação numa etiqueta */
+.prateleira__trilho--pedidos {
+  grid-auto-columns: 240px;
+}
+
+.pedido-mini {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 100%;
+  padding: 14px;
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  color: var(--text);
+  text-decoration: none;
+}
+
+.pedido-mini:hover {
+  color: var(--text);
+  text-decoration: none;
+  box-shadow: var(--shadow-md);
+}
+
+.pedido-mini__info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.pedido-mini__info strong {
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.etiqueta {
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  background: #f3ece2;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.etiqueta--ok {
+  background: var(--brown);
+  color: #fffdf8;
+}
+
+/* ---------- atalhos em grade (advogado) ---------- */
+.atalhos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-md);
+  margin: 0 0 var(--space-lg);
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 760px) {
+  .atalhos {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.atalho {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  height: 100%;
+  padding: 18px;
+  border-radius: 20px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  color: var(--text);
+  text-decoration: none;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.atalho:hover {
+  color: var(--text);
+  text-decoration: none;
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.atalho__icone {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 10px;
+  border-radius: 14px;
+  background: #f3ece2;
+  color: var(--brown);
+}
+
+.atalho__icone svg {
+  width: 22px;
+  height: 22px;
+}
+
+.atalho strong {
+  font-size: 15px;
+}
+
+.atalho span:last-child {
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text-dim);
+}
+
+/* Listas (triagens) em duas colunas no computador */
+@media (min-width: 760px) {
+  .painel .list-plain--grade {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-md);
+  }
 }
