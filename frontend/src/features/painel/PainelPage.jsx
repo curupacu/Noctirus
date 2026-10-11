@@ -1,9 +1,7 @@
 import { Link } from "react-router-dom";
 import { AreaIcon } from "../../components/AreaIcon/AreaIcon";
 import { Avatar } from "../../components/Avatar/Avatar";
-import { Button } from "../../components/Button/Button";
 import { Loading } from "../../components/Loading/Loading";
-import { OwlIllustration } from "../../components/OwlIllustration/OwlIllustration";
 import { api } from "../../lib/api";
 import { textoLocalizacao } from "../../lib/localizacao";
 import { oabAprovada } from "../../lib/situacaoOab";
@@ -11,6 +9,10 @@ import { LABEL_AREA, LABEL_SITUACAO_CLIENTE, rotulosEspecialidades } from "../..
 import { useCarregar } from "../../lib/useCarregar";
 import { useTitulo } from "../../lib/useTitulo";
 import "./PainelPage.css";
+
+// Foto de banco de imagem (Unsplash, mesma da seção de serviços da Home).
+const FOTO_DESTAQUE =
+  "https://images.unsplash.com/photo-1631217875019-8cb2649c3478?auto=format&fit=crop&w=720&h=560&q=75";
 
 function normalizarCidade(cidade) {
   return String(cidade || "")
@@ -58,7 +60,7 @@ function CartaoAdvogadoMini({ advogado, triagemId }) {
   const destino = triagemId ? `/advogados/${advogado.uid}?triagemId=${triagemId}` : `/advogados/${advogado.uid}`;
   return (
     <Link to={destino} className="prateleira__item">
-      <Avatar nome={advogado.nome} foto={advogado.foto} seed={advogado.uid} className="avatar-placeholder--grande" />
+      <Avatar nome={advogado.nome} foto={advogado.foto} seed={advogado.uid} className="prateleira__foto" />
       <strong className="prateleira__nome">{advogado.nome}</strong>
       <span className="prateleira__meta">{textoLocalizacao(advogado.localizacao)}</span>
       {oabAprovada(advogado) && <span className="prateleira__selo">OAB verificada</span>}
@@ -66,14 +68,14 @@ function CartaoAdvogadoMini({ advogado, triagemId }) {
   );
 }
 
-function Prateleira({ titulo, verTodos, children }) {
+function Prateleira({ titulo, verTodos, classeTrilho = "", children }) {
   return (
     <section className="prateleira">
       <div className="section-heading">
         <h2>{titulo}</h2>
         {verTodos}
       </div>
-      <ul className="prateleira__trilho">{children}</ul>
+      <ul className={`prateleira__trilho ${classeTrilho}`}>{children}</ul>
     </section>
   );
 }
@@ -105,11 +107,12 @@ export function PainelPage() {
   );
   const pertoDeMim = [...daMinhaCidade, ...doMeuEstado].slice(0, 10);
 
+  const qtd = ultima?.advogados.length || 0;
+
   return (
-    <main>
-      <h1>
-        Olá, <em className="accent">{primeiroNome}</em>
-      </h1>
+    <main className="painel">
+      <p className="painel__ola">Olá, {primeiroNome}</p>
+      <h1 className="painel__titulo">{ultima ? "Seu caso, sem complicação" : "Por onde a gente começa?"}</h1>
 
       {/* Conta criada antes da cidade/UF virar obrigatória (outubro/2026) — sem isso o
           resultado da triagem não tem como mostrar advogados perto da pessoa. */}
@@ -125,65 +128,49 @@ export function PainelPage() {
         </div>
       )}
 
-      <section className="hero-block hero-block--dark hero-cta">
-        <OwlIllustration className="hero-block__owl-mark" />
-        {ultima ? (
-          <>
-            <span className="eyebrow">Sua última triagem</span>
-            <h2>
-              {LABEL_AREA[ultima.areaClassificada]}
-              {especialidadeUltima ? ` — ${especialidadeUltima}` : ""}
-            </h2>
-            <p>
-              {ultima.advogados.length > 0
-                ? `${ultima.advogados.length} advogado${ultima.advogados.length === 1 ? "" : "s"} compatíve${ultima.advogados.length === 1 ? "l" : "is"} com o seu caso.`
-                : "Ainda não achamos advogado compatível na sua região."}
-            </p>
-            <div className="actions">
-              <Link to={`/triagem/${ultima.id}`}>
-                <Button>
-                  Ver resultado <span className="button__arrow">→</span>
-                </Button>
-              </Link>
-              <Link to="/triagem">
-                <Button variant="secondary">Novo caso</Button>
-              </Link>
-            </div>
-          </>
-        ) : (
-          <>
-            <span className="eyebrow">Comece por aqui</span>
-            <h2>
-              Fale com o advogado <em className="accent">certo</em>
-            </h2>
-            <p>Conte o que aconteceu com suas palavras — a gente identifica a área e mostra quem atende.</p>
-            <Link to="/triagem">
-              <Button>
-                Fazer triagem <span className="button__arrow">→</span>
-              </Button>
-            </Link>
-          </>
-        )}
+      {/* Cartão de destaque: a coisa principal da tela, com texto curto e UMA ação. */}
+      <section className="destaque">
+        <img className="destaque__foto" src={FOTO_DESTAQUE} alt="" loading="lazy" />
+        <div className="destaque__corpo">
+          {ultima ? (
+            <>
+              <span className="destaque__etiqueta">
+                {LABEL_AREA[ultima.areaClassificada]}
+                {especialidadeUltima ? ` · ${especialidadeUltima}` : ""}
+              </span>
+              <h2 className="destaque__titulo">
+                {qtd > 0
+                  ? `${qtd} advogado${qtd === 1 ? "" : "s"} pro seu caso`
+                  : "Ainda procurando advogado pra você"}
+              </h2>
+              <p className="destaque__texto">
+                {qtd > 0
+                  ? "Veja quem atende esse assunto perto de você e peça contato."
+                  : "Ninguém da sua região atende esse assunto ainda. Veja o resultado completo."}
+              </p>
+              <div className="destaque__acoes">
+                <Link to={`/triagem/${ultima.id}`} className="button button--primary">
+                  Ver advogados <span className="button__arrow">→</span>
+                </Link>
+                <Link to="/triagem" className="destaque__link">
+                  Contar outro caso
+                </Link>
+              </div>
+            </>
+          ) : (
+            <>
+              <span className="destaque__etiqueta">Triagem gratuita · 2 minutos</span>
+              <h2 className="destaque__titulo">Conte o que aconteceu. A gente acha o advogado certo.</h2>
+              <p className="destaque__texto">Responda algumas perguntas simples, com suas palavras.</p>
+              <div className="destaque__acoes">
+                <Link to="/triagem" className="button button--primary">
+                  Começar triagem <span className="button__arrow">→</span>
+                </Link>
+              </div>
+            </>
+          )}
+        </div>
       </section>
-
-      {solicitacoes.length > 0 && (
-        <Prateleira
-          titulo="Suas solicitações"
-          verTodos={<Link to="/minhas-solicitacoes">Ver todas</Link>}
-        >
-          {solicitacoes.slice(0, 8).map((s) => (
-            <li key={s.id}>
-              <Link to="/minhas-solicitacoes" className="prateleira__item">
-                <Avatar nome={s.advogadoNome} foto={s.advogadoFoto} seed={s.advogadoId} />
-                <strong className="prateleira__nome">{s.advogadoNome || "Advogado"}</strong>
-                <span className={`badge${s.situacao === "aceita" ? " badge--seal" : ""}`}>
-                  {LABEL_SITUACAO_CLIENTE[s.situacao]}
-                </span>
-              </Link>
-            </li>
-          ))}
-        </Prateleira>
-      )}
 
       {ultima && ultima.advogados.length > 0 && (
         <Prateleira
@@ -211,6 +198,28 @@ export function PainelPage() {
         </Prateleira>
       )}
 
+      {solicitacoes.length > 0 && (
+        <Prateleira
+          titulo="Seus pedidos de contato"
+          verTodos={<Link to="/minhas-solicitacoes">Ver todos</Link>}
+          classeTrilho="prateleira__trilho--pedidos"
+        >
+          {solicitacoes.slice(0, 8).map((s) => (
+            <li key={s.id}>
+              <Link to="/minhas-solicitacoes" className="pedido-mini">
+                <Avatar nome={s.advogadoNome} foto={s.advogadoFoto} seed={s.advogadoId} />
+                <span className="pedido-mini__info">
+                  <strong>{s.advogadoNome || "Advogado"}</strong>
+                  <span className={`etiqueta${s.situacao === "aceita" ? " etiqueta--ok" : ""}`}>
+                    {LABEL_SITUACAO_CLIENTE[s.situacao]}
+                  </span>
+                </span>
+              </Link>
+            </li>
+          ))}
+        </Prateleira>
+      )}
+
       <div className="section-heading">
         <h2>Suas triagens</h2>
         {ultimasTriagens.length > 0 && <Link to="/minhas-triagens">Ver todas</Link>}
@@ -219,7 +228,7 @@ export function PainelPage() {
       {ultimasTriagens.length === 0 && <p className="text-muted">Você ainda não fez nenhuma triagem.</p>}
 
       {ultimasTriagens.length > 0 && (
-        <ul className="list-plain">
+        <ul className="list-plain list-plain--grade">
           {ultimasTriagens.map((t) => (
             <li key={t.id}>
               <Link to={`/triagem/${t.id}`} className="list-row">
@@ -240,19 +249,6 @@ export function PainelPage() {
         </ul>
       )}
 
-      <div className="section-heading">
-        <h2>Minha conta</h2>
-      </div>
-      <Link to="/perfil" className="list-row">
-        <Avatar nome={usuario.nome} foto={usuario.foto} seed={usuario.uid || usuario.email} />
-        <span className="list-row__info">
-          <span className="list-row__title">{usuario.nome}</span>
-          <span className="list-row__meta">{usuario.email}</span>
-        </span>
-        <span className="advogado-row__chevron" aria-hidden="true">
-          ›
-        </span>
-      </Link>
     </main>
   );
 }
