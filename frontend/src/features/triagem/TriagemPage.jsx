@@ -3,11 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
 import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
 import { Loading } from "../../components/Loading/Loading";
-import { ProgressSteps } from "../../components/ProgressSteps/ProgressSteps";
 import { api } from "../../lib/api";
 import { useTitulo } from "../../lib/useTitulo";
-
-const STEPS = ["Conte o caso", "Detalhes", "Advogados"];
+import "./TriagemPage.css";
 
 const AREAS = {
   trabalhista: {
@@ -20,195 +18,245 @@ const AREAS = {
   },
 };
 
-// Uma pergunta aberta (RF005): o cliente responde com as próprias palavras. O exemplo da
-// pergunta aparece dentro do campo, e o contador avisa quando ainda falta texto.
-function PerguntaAberta({ pergunta, valor, onChange }) {
-  const tamanho = valor.trim().length;
-  const falta = Math.max(0, pergunta.minimo - tamanho);
-  const longa = pergunta.maximo > 500;
+// Frases da tela de espera enquanto a IA classifica — trocam sozinhas pra pessoa ver que
+// algo está acontecendo (o servidor pode levar alguns segundos, mais ainda se estava dormindo).
+const FRASES_ANALISE = [
+  "Lendo suas respostas...",
+  "Identificando o assunto do seu caso...",
+  "Procurando advogados que atendem isso perto de você...",
+];
 
+function SetaVoltar() {
   return (
-    <div className="input-group step-enter">
-      <label className="input-label" htmlFor={`p-${pergunta.id}`}>
-        {pergunta.pergunta}
-      </label>
-      <textarea
-        id={`p-${pergunta.id}`}
-        className="input"
-        rows={longa ? 5 : 2}
-        placeholder={pergunta.ajuda}
-        value={valor}
-        maxLength={pergunta.maximo}
-        onChange={(e) => onChange(e.target.value)}
-      />
-      {tamanho > 0 && falta > 0 && (
-        <p className="char-counter text-muted">Escreva mais um pouco ({falta} caracteres)</p>
-      )}
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M19 12H5M11 18l-6-6 6-6" />
+    </svg>
+  );
+}
+
+function TelaAnalisando() {
+  const [indice, setIndice] = useState(0);
+  useEffect(() => {
+    const timer = setInterval(() => setIndice((i) => Math.min(i + 1, FRASES_ANALISE.length - 1)), 1800);
+    return () => clearInterval(timer);
+  }, []);
+  return (
+    <div className="triagem-analisando" role="status" aria-live="polite">
+      <div className="triagem-analisando__cartao">
+        <Loading />
+        <h2>Analisando seu caso</h2>
+        <p>{FRASES_ANALISE[indice]}</p>
+      </div>
     </div>
   );
 }
 
-function completas(perguntas, respostas) {
-  return perguntas.every((p) => (respostas[p.id] || "").trim().length >= p.minimo);
-}
-
-// Triagem em duas etapas (RF005–RF007). Etapa 1: perguntas comuns a todo caso → o sistema
-// identifica a área (POST /triagem/area). Etapa 2: perguntas da área → identifica a
-// especialidade, grava a triagem e mostra os advogados (POST /triagem/classificar).
+// Triagem em duas etapas (RF005–RF007), uma pergunta por tela (redesign de outubro/2026,
+// mesmo padrão do cadastro). Etapa 1: perguntas comuns → POST /triagem/area identifica a
+// área. Tela de confirmação da área (o cliente pode trocar). Etapa 2: perguntas da área →
+// POST /triagem/classificar identifica a especialidade, grava e mostra os advogados.
 export function TriagemPage() {
   useTitulo("Nova triagem");
   const navigate = useNavigate();
   const [perguntas, setPerguntas] = useState(null);
-  const [etapa, setEtapa] = useState(1);
+  const [passo, setPasso] = useState(0);
   const [etapa1, setEtapa1] = useState({});
   const [etapa2, setEtapa2] = useState({});
-  // Área sugerida pela etapa 1 ("indefinido" quando não deu pra identificar) e área que vale
-  // pra etapa 2 — o cliente pode trocar se a sugestão não fizer sentido pra ele.
+  // Área sugerida pela etapa 1 ("indefinido" quando não deu pra identificar) e a área que
+  // vale pra etapa 2 — o cliente pode trocar se a sugestão não fizer sentido pra ele.
   const [areaSugerida, setAreaSugerida] = useState(null);
   const [area, setArea] = useState(null);
-  const [enviando, setEnviando] = useState(false);
+  const [identificando, setIdentificando] = useState(false);
+  const [analisando, setAnalisando] = useState(false);
   const [erro, setErro] = useState(null);
 
   useEffect(() => {
     api.get("/triagem/perguntas").then(setPerguntas).catch((err) => setErro(err.message));
   }, []);
 
-  async function identificarArea(e) {
-    e.preventDefault();
+  if (!perguntas && !erro) return <Loading>Carregando...</Loading>;
+  if (!perguntas) return <p role="alert">{erro}</p>;
+
+  // Lista de telas: perguntas da etapa 1, confirmação da área, perguntas da etapa 2. Antes
+  // de saber a área, conta 3 perguntas de etapa 2 pra barra de progresso não "pular".
+  const perguntasEtapa2 = area ? perguntas.etapa2[area] : [];
+  const telas = [
+    ...perguntas.etapa1.map((p) => ({ tipo: "pergunta", etapa: 1, p })),
+    { tipo: "area" },
+    ...perguntasEtapa2.map((p) => ({ tipo: "pergunta", etapa: 2, p })),
+  ];
+  const totalTelas = perguntas.etapa1.length + 1 + (perguntasEtapa2.length || 3);
+  const tela = telas[passo];
+  const ultima = passo === telas.length - 1 && tela.tipo === "pergunta" && tela.etapa === 2;
+
+  const respostas = tela.tipo === "pergunta" ? (tela.etapa === 1 ? etapa1 : etapa2) : null;
+  const valor = tela.tipo === "pergunta" ? respostas[tela.p.id] || "" : "";
+  const tamanho = valor.trim().length;
+  const falta = tela.tipo === "pergunta" ? Math.max(0, tela.p.minimo - tamanho) : 0;
+  const podeSeguir = tela.tipo === "area" ? Boolean(area) : falta === 0;
+
+  function responder(texto) {
+    const setar = tela.etapa === 1 ? setEtapa1 : setEtapa2;
+    setar((atual) => ({ ...atual, [tela.p.id]: texto }));
+  }
+
+  function irPara(novo) {
     setErro(null);
-    setEnviando(true);
+    setPasso(novo);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  async function identificarArea() {
+    setIdentificando(true);
+    setErro(null);
     try {
       const resultado = await api.post("/triagem/area", { etapa1 });
       setAreaSugerida(resultado.area);
-      setArea(resultado.area === "indefinido" ? null : resultado.area);
-      setEtapa(2);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      // Só troca a área se ainda não tinha uma (voltar e avançar não apaga a escolha).
+      if (!area) setArea(resultado.area === "indefinido" ? null : resultado.area);
+      irPara(passo + 1);
     } catch (err) {
-      setErro(err.message);
+      setErro(err.message || "Não foi possível continuar agora. Tente de novo.");
     } finally {
-      setEnviando(false);
+      setIdentificando(false);
     }
   }
 
-  async function enviar(e) {
-    e.preventDefault();
+  async function enviar() {
     setErro(null);
-    setEnviando(true);
+    setAnalisando(true);
     try {
-      const resultado = await api.post("/triagem/classificar", {
-        etapa1,
-        area,
-        etapa2,
-      });
+      const resultado = await api.post("/triagem/classificar", { etapa1, area, etapa2 });
       navigate(`/triagem/${resultado.id}`, { state: { resultado } });
     } catch (err) {
-      setErro(err.message);
-      setEnviando(false);
+      setErro(err.message || "Não foi possível analisar agora. Tente de novo.");
+      setAnalisando(false);
     }
+  }
+
+  function avancar(e) {
+    e.preventDefault();
+    if (!podeSeguir) return;
+    const proxima = telas[passo + 1];
+    if (proxima?.tipo === "area") identificarArea();
+    else if (ultima) enviar();
+    else irPara(passo + 1);
   }
 
   function trocarArea(nova) {
+    if (nova === area) return;
     setArea(nova);
     setEtapa2({});
   }
 
-  if (!perguntas && !erro) return <Loading>Carregando...</Loading>;
-  if (!perguntas) return <p role="alert">{erro}</p>;
+  function voltar() {
+    if (passo === 0) navigate(-1);
+    else irPara(passo - 1);
+  }
 
-  const perguntasEtapa2 = area ? perguntas.etapa2[area] : [];
-  const outraArea = area === "civel" ? "trabalhista" : "civel";
+  const progresso = Math.round(((passo + 1) / totalTelas) * 100);
+  const ocupado = identificando || analisando;
 
   return (
-    <main>
-      <span className="eyebrow">
-        Passo {etapa} de {STEPS.length}
-      </span>
-      <h1>Triagem</h1>
-      <p className="text-muted">
-        {etapa === 1
-          ? "Conte o que está acontecendo com suas palavras. Não precisa saber nada de Direito."
-          : "Agora algumas perguntas sobre o seu tipo de caso, pra achar o advogado certo."}
-      </p>
+    <main className="triagem">
+      <div className="triagem__topo">
+        <button type="button" className="triagem__voltar" onClick={voltar} aria-label="Voltar" disabled={ocupado}>
+          <SetaVoltar />
+        </button>
+        <div
+          className="triagem__progresso"
+          role="progressbar"
+          aria-label="Progresso da triagem"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={progresso}
+        >
+          <span style={{ width: `${progresso}%` }} />
+        </div>
+        <span className="triagem__contagem">
+          {passo + 1}/{totalTelas}
+        </span>
+      </div>
 
-      <ProgressSteps steps={STEPS} currentIndex={etapa - 1} />
-
-      {etapa === 1 && (
-        <form className="card stack" onSubmit={identificarArea}>
-          {perguntas.etapa1.map((p) => (
-            <PerguntaAberta
-              key={p.id}
-              pergunta={p}
-              valor={etapa1[p.id] || ""}
-              onChange={(valor) => setEtapa1((atual) => ({ ...atual, [p.id]: valor }))}
-            />
-          ))}
-
-          <div className="form-cta-sticky">
-            <Button type="submit" disabled={enviando || !completas(perguntas.etapa1, etapa1)}>
-              {enviando ? "Entendendo seu caso..." : "Continuar"}
-            </Button>
-            {erro && <p role="alert">{erro}</p>}
-          </div>
-        </form>
-      )}
-
-      {etapa === 2 && (
-        <form className="card stack" onSubmit={enviar}>
-          {areaSugerida !== "indefinido" && area && (
-            <div className="stack step-enter" style={{ gap: "var(--space-xs)" }}>
-              <p style={{ margin: 0 }}>
-                Pelo que você contou, seu caso é da área <strong>{AREAS[area].label}</strong>.
+      <form className="triagem__passo" key={passo} onSubmit={avancar}>
+        {tela.tipo === "pergunta" && (
+          <>
+            <span className="triagem__etiqueta">
+              {tela.etapa === 1 ? "Sobre o que aconteceu" : `Detalhes · ${AREAS[area].label}`}
+            </span>
+            <label className="triagem__pergunta" htmlFor={`p-${tela.p.id}`}>
+              {tela.p.pergunta}
+            </label>
+            {passo === 0 && (
+              <p className="triagem__dica">
+                Não precisa saber nada de Direito. Escreva do seu jeito, como contaria pra um amigo.
               </p>
-              <p className="text-muted" style={{ margin: 0 }}>
-                {area === areaSugerida ? "Não parece certo? " : "Você trocou a área sugerida. "}
-                <button type="button" className="link-button" onClick={() => trocarArea(outraArea)}>
-                  Mudar pra {AREAS[outraArea].label}
-                </button>
-              </p>
-            </div>
-          )}
-
-          {areaSugerida === "indefinido" && (
-            <div className="input-group step-enter">
-              <label className="input-label">
-                Não conseguimos identificar a área só com isso. Seu problema é mais parecido com:
-              </label>
-              <div className="choice-grid">
-                {Object.entries(AREAS).map(([valor, { label, descricao }]) => (
-                  <ChoiceCard
-                    key={valor}
-                    type="radio"
-                    name="area"
-                    label={label}
-                    description={descricao}
-                    checked={area === valor}
-                    onChange={() => trocarArea(valor)}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-
-          {perguntasEtapa2.map((p) => (
-            <PerguntaAberta
-              key={`${area}-${p.id}`}
-              pergunta={p}
-              valor={etapa2[p.id] || ""}
-              onChange={(valor) => setEtapa2((atual) => ({ ...atual, [p.id]: valor }))}
+            )}
+            <textarea
+              id={`p-${tela.p.id}`}
+              className="input triagem__campo"
+              rows={tela.p.maximo > 500 ? 7 : 3}
+              placeholder={tela.p.ajuda}
+              value={valor}
+              maxLength={tela.p.maximo}
+              onChange={(e) => responder(e.target.value)}
+              autoFocus
             />
-          ))}
+            <p className="triagem__contador" aria-live="polite">
+              {tamanho > 0 && falta > 0 ? `Escreva mais um pouco (faltam ${falta} caracteres)` : " "}
+            </p>
+          </>
+        )}
 
-          <div className="form-cta-sticky">
-            <Button type="submit" disabled={enviando || !area || !completas(perguntasEtapa2, etapa2)}>
-              {enviando ? "Procurando advogados..." : "Ver advogados"}
-            </Button>
-            <Button type="button" variant="secondary" disabled={enviando} onClick={() => setEtapa(1)}>
-              Voltar
-            </Button>
-            {erro && <p role="alert">{erro}</p>}
-          </div>
-        </form>
-      )}
+        {tela.tipo === "area" && (
+          <>
+            <span className="triagem__etiqueta">Área do seu caso</span>
+            <h1 className="triagem__pergunta">
+              {areaSugerida && areaSugerida !== "indefinido"
+                ? `Pelo que você contou, seu caso parece ${AREAS[areaSugerida].label.toLowerCase()}.`
+                : "Seu problema é mais parecido com qual destes?"}
+            </h1>
+            <p className="triagem__dica">
+              {areaSugerida && areaSugerida !== "indefinido"
+                ? "Se não fizer sentido pra você, é só escolher a outra opção."
+                : "Não deu pra ter certeza só com o que você contou. Escolha a que chega mais perto."}
+            </p>
+            <div className="choice-grid">
+              {Object.entries(AREAS).map(([valorArea, { label, descricao }]) => (
+                <ChoiceCard
+                  key={valorArea}
+                  type="radio"
+                  name="area"
+                  label={label}
+                  description={descricao}
+                  checked={area === valorArea}
+                  onChange={() => trocarArea(valorArea)}
+                />
+              ))}
+            </div>
+          </>
+        )}
+
+        {erro && (
+          <p role="alert" className="triagem__erro">
+            {erro}
+          </p>
+        )}
+
+        <div className="triagem__acoes">
+          <Button type="submit" disabled={!podeSeguir || ocupado}>
+            {identificando
+              ? "Entendendo seu caso..."
+              : ultima
+                ? "Ver advogados"
+                : erro
+                  ? "Tentar de novo"
+                  : "Continuar"}
+          </Button>
+        </div>
+      </form>
+
+      {analisando && <TelaAnalisando />}
     </main>
   );
 }
