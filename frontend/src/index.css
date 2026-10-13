@@ -1162,3 +1162,15 @@ a.list-row:hover {
 .card.stack > strong:first-child {
   font-size: 16px;
 }
+
+/* Ação destrutiva (excluir conta) — contorno vermelho em vez do marrom de sempre. */
+.button.button--perigo {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.button.button--perigo:hover:not(:disabled) {
+  background: var(--color-danger);
+  border-color: var(--color-danger);
+  color: #fffdf8;
+}
