@@ -1,0 +1,23 @@
+/* Respostas da triagem: pergunta em destaque, resposta embaixo (quadro de casos e
+   pedido de contato). */
+.respostas-triagem {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 18px;
+  background: var(--surface);
+  border-radius: 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.respostas-triagem dt {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--brown);
+}
+
+.respostas-triagem dd {
+  margin: 2px 0 0;
+  font-size: 15px;
+  line-height: 1.55;
+}

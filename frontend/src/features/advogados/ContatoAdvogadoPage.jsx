@@ -4,6 +4,7 @@ import { Avatar } from "../../components/Avatar/Avatar";
 import { Button } from "../../components/Button/Button";
 import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
 import { Loading } from "../../components/Loading/Loading";
+import { RespostasTriagem, textosDasPerguntas } from "../../components/RespostasTriagem/RespostasTriagem";
 import { api } from "../../lib/api";
 import { textoLocalizacao } from "../../lib/localizacao";
 import {
@@ -15,6 +16,7 @@ import {
 } from "../../lib/solicitacoes";
 import { useCarregar } from "../../lib/useCarregar";
 import { useTitulo } from "../../lib/useTitulo";
+import "./AdvogadoPublicoPage.css";
 
 // Contatos do advogado — só aparecem quando o pedido foi aceito (RF010).
 export function ContatosLiberados({ contatos }) {
@@ -55,10 +57,17 @@ export function ContatoAdvogadoPage() {
       api.get("/solicitacoes/minhas"),
       api.get("/triagem/perguntas"),
     ]);
-    return { advogado, triagens, solicitacoes, rotulos: rotulosEspecialidades(perguntas.categorias) };
+    return {
+      advogado,
+      triagens,
+      solicitacoes,
+      rotulos: rotulosEspecialidades(perguntas.categorias),
+      textosPerguntas: textosDasPerguntas(perguntas),
+    };
   }, [uid]);
   const [triagemId, setTriagemId] = useState(searchParams.get("triagemId"));
   const [autoriza, setAutoriza] = useState(false);
+  const [trocando, setTrocando] = useState(false);
   const [enviando, setEnviando] = useState(false);
   const [erroEnvio, setErroEnvio] = useState(null);
   const [enviada, setEnviada] = useState(null);
@@ -93,15 +102,20 @@ export function ContatoAdvogadoPage() {
   if (erro) return <p role="alert">{erro}</p>;
   if (!dado) return <Loading>Carregando...</Loading>;
 
-  const { advogado, triagens, solicitacoes, rotulos } = dado;
+  const { advogado, triagens, solicitacoes, rotulos, textosPerguntas } = dado;
   const existente = solicitacoes.find(
     (s) => s.advogadoId === uid && (s.situacao === "pendente" || s.situacao === "aceita"),
   );
   const triagensValidas = triagens.filter((t) => t.areaClassificada !== "indefinido");
   const escolhida = triagensValidas.find((t) => t.id === triagemId);
+  const tituloTriagem = (t) =>
+    `${LABEL_AREA[t.areaClassificada]} — ${rotulos[t.especialidade || t.categorias?.[0]] || "assunto geral"}`;
 
   return (
     <main>
+      <Link to={`/advogados/${uid}`} className="perfil-adv__voltar">
+        ← Voltar pro perfil
+      </Link>
       <span className="eyebrow">Pedir contato</span>
       <div className="media">
         <Avatar nome={advogado.nome} foto={advogado.foto} seed={uid} className="avatar-placeholder--grande" />
@@ -149,7 +163,23 @@ export function ContatoAdvogadoPage() {
 
       {!enviada && !existente && triagensValidas.length > 0 && (
         <form className="card stack" onSubmit={enviar}>
-          {triagensValidas.length > 1 && (
+          {/* A triagem certa já vem escolhida (pela URL ou a mais recente) — a lista só
+              abre se a pessoa quiser trocar. Antes eram até 5 opções sempre abertas. */}
+          {escolhida && !trocando && (
+            <div className="contato__caso">
+              <span>
+                <span className="input-label">Caso que vai junto</span>
+                <strong>{tituloTriagem(escolhida)}</strong>
+                <span className="text-muted">Triagem de {formatarData(escolhida.createdAt)}</span>
+              </span>
+              {triagensValidas.length > 1 && (
+                <button type="button" className="link-button" onClick={() => setTrocando(true)}>
+                  Trocar caso
+                </button>
+              )}
+            </div>
+          )}
+          {(trocando || !escolhida) && triagensValidas.length > 0 && (
             <div className="input-group">
               <label className="input-label">Qual caso você quer levar pra esse advogado?</label>
               <div className="choice-grid">
@@ -158,10 +188,13 @@ export function ContatoAdvogadoPage() {
                     key={t.id}
                     type="radio"
                     name="triagem"
-                    label={`${LABEL_AREA[t.areaClassificada]} — ${rotulos[t.especialidade || t.categorias?.[0]] || "assunto geral"}`}
+                    label={tituloTriagem(t)}
                     description={`Triagem de ${formatarData(t.createdAt)}`}
                     checked={triagemId === t.id}
-                    onChange={() => setTriagemId(t.id)}
+                    onChange={() => {
+                      setTriagemId(t.id);
+                      setTrocando(false);
+                    }}
                   />
                 ))}
               </div>
@@ -171,9 +204,7 @@ export function ContatoAdvogadoPage() {
           {escolhida && (
             <div className="stack" style={{ gap: "var(--space-xs)" }}>
               <span className="input-label">O que o advogado vai receber</span>
-              <p className="text-muted" style={{ margin: 0, whiteSpace: "pre-line" }}>
-                {escolhida.descricao}
-              </p>
+              <RespostasTriagem descricao={escolhida.descricao} textosPerguntas={textosPerguntas} />
             </div>
           )}
 
@@ -188,13 +219,11 @@ export function ContatoAdvogadoPage() {
           <Button type="submit" disabled={enviando || !autoriza || !escolhida}>
             {enviando ? "Enviando..." : "Enviar pedido de contato"}
           </Button>
+          {!autoriza && <p className="text-muted" style={{ margin: 0 }}>Marque a autorização acima pra enviar.</p>}
           {erroEnvio && <p role="alert">{erroEnvio}</p>}
         </form>
       )}
 
-      <p className="text-muted resultado-proximos-passos">
-        <Link to={`/advogados/${uid}`}>Voltar pro perfil</Link>
-      </p>
     </main>
   );
 }

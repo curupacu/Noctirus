@@ -5,6 +5,7 @@ import { api } from "../../lib/api";
 import { formatarData, LABEL_AREA, rotulosEspecialidades } from "../../lib/solicitacoes";
 import { useCarregar } from "../../lib/useCarregar";
 import { useTitulo } from "../../lib/useTitulo";
+import { RespostasTriagem, textosDasPerguntas } from "../../components/RespostasTriagem/RespostasTriagem";
 import "./QuadroCasosPage.css";
 
 const COLUNAS = [
@@ -23,10 +24,7 @@ const PESO_PRIORIDADE = { alta: 0, media: 1, baixa: 2 };
 async function buscar() {
   const [casos, perguntas] = await Promise.all([api.get("/solicitacoes/recebidas"), api.get("/triagem/perguntas")]);
   // Textos das perguntas, pra separar pergunta e resposta no detalhe do caso.
-  const textosPerguntas = [
-    ...(perguntas.etapa1 || []),
-    ...Object.values(perguntas.etapa2 || {}).flat(),
-  ].map((p) => p.pergunta);
+  const textosPerguntas = textosDasPerguntas(perguntas);
   return { casos, rotulos: rotulosEspecialidades(perguntas.categorias), textosPerguntas };
 }
 
@@ -64,29 +62,6 @@ function CartaoCaso({ caso, rotulos, onAbrir, onResponder, ocupado }) {
         </div>
       )}
     </li>
-  );
-}
-
-// A descrição vem montada como "Pergunta? resposta" por linha (montarDescricao no
-// backend) — separa cada linha em pergunta em negrito + resposta, em vez do bloco corrido.
-function RespostasTriagem({ descricao, textosPerguntas = [] }) {
-  const linhas = String(descricao || "").split("\n").filter((l) => l.trim());
-  return (
-    <dl className="quadro-detalhe__respostas">
-      {linhas.map((linha, i) => {
-        // Pergunta conhecida no começo da linha; senão, corta no primeiro "? ".
-        const conhecida = textosPerguntas.find((t) => linha.startsWith(t));
-        const corte = conhecida ? conhecida.length : linha.indexOf("? ") + 1;
-        const pergunta = corte > 0 ? linha.slice(0, corte) : null;
-        const resposta = corte > 0 ? linha.slice(corte).trim() : linha;
-        return (
-          <div key={i}>
-            {pergunta && <dt>{pergunta}</dt>}
-            <dd>{resposta || "—"}</dd>
-          </div>
-        );
-      })}
-    </dl>
   );
 }
 

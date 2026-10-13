@@ -174,3 +174,25 @@ main.perfil-adv {
     margin-left: calc(320px + var(--space-lg));
   }
 }
+
+/* Pedir contato: caso escolhido em destaque, com "Trocar caso" */
+.contato__caso {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  width: 100%;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: #f6eee4;
+}
+
+.contato__caso > span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.contato__caso strong {
+  font-size: 16px;
+}
