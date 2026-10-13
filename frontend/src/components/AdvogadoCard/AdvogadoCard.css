@@ -1,0 +1,183 @@
+/* Card de advogado (listagem e resultado da triagem) — redesign de 13/10/2026. */
+.adv-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  height: 100%;
+  padding: 18px;
+  border-radius: 22px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  color: var(--text);
+  text-decoration: none;
+  transition: box-shadow 0.15s ease;
+}
+
+.adv-card:hover {
+  color: var(--text);
+  text-decoration: none;
+  box-shadow: var(--shadow-md);
+}
+
+.adv-card .avatar-placeholder.adv-card__foto {
+  width: 92px;
+  height: 92px;
+  border-radius: 18px;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 36px;
+}
+
+@media (min-width: 600px) {
+  .adv-card .avatar-placeholder.adv-card__foto {
+    width: 108px;
+    height: 108px;
+  }
+}
+
+.adv-card__corpo {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  height: 100%;
+}
+
+.adv-card__nome {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  line-height: 1.25;
+}
+
+.adv-card__selo {
+  margin-top: 6px;
+}
+
+.adv-card__meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+
+.adv-card__meta svg {
+  flex: none;
+  width: 15px;
+  height: 15px;
+  color: var(--brown);
+}
+
+.adv-card__combina {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #2f6b45;
+}
+
+.adv-card__combina span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.adv-card__combina svg {
+  width: 13px;
+  height: 13px;
+}
+
+.adv-card__bio {
+  display: -webkit-box;
+  margin-top: 12px;
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text);
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.adv-card__atende {
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
+.adv-card__atende strong {
+  color: var(--text);
+}
+
+.adv-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 14px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--brown);
+}
+
+.adv-card:hover .adv-card__cta span {
+  transform: translateX(3px);
+}
+
+.adv-card__cta span {
+  transition: transform 0.15s ease;
+}
+
+/* No celular a foto fica ao lado do nome e o resto do texto ocupa a largura toda. */
+@media (max-width: 480px) {
+  .adv-card {
+    display: grid;
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 4px 14px;
+  }
+
+  .adv-card .avatar-placeholder.adv-card__foto {
+    width: 76px;
+    height: 76px;
+    border-radius: 16px;
+    font-size: 30px;
+  }
+
+  .adv-card__corpo {
+    display: contents;
+  }
+
+  .adv-card__nome,
+  .adv-card__selo,
+  .adv-card__meta {
+    grid-column: 2;
+  }
+
+  .adv-card__nome {
+    grid-row: 1;
+    align-self: end;
+  }
+
+  .adv-card__foto {
+    grid-row: 1 / span 3;
+  }
+
+  .adv-card__selo {
+    margin-top: 2px;
+  }
+
+  .adv-card__meta {
+    margin-top: 2px;
+  }
+
+  .adv-card__combina,
+  .adv-card__bio,
+  .adv-card__atende,
+  .adv-card__cta {
+    grid-column: 1 / -1;
+  }
+}
