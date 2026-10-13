@@ -5,12 +5,9 @@ import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
 import { rotulosEspecialidades } from "../../lib/solicitacoes";
 import { useTitulo } from "../../lib/useTitulo";
+import { LABEL_AREA } from "../../lib/areas";
 
-const LABEL_AREA = {
-  civel: "Cível",
-  trabalhista: "Trabalhista",
-  indefinido: "Não identificada",
-};
+
 
 export function MinhasTriagensPage() {
   useTitulo("Minhas triagens");

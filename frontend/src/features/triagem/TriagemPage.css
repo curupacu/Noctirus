@@ -229,3 +229,21 @@ main.triagem {
     transform: scale(1.06);
   }
 }
+
+/* Etapa 2: chips de assunto + detalhe opcional */
+.triagem .chips {
+  margin-top: 4px;
+}
+
+.triagem__subpergunta {
+  display: block;
+  margin: 28px 0 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.triagem__subpergunta span {
+  font-weight: 400;
+  color: var(--text-dim);
+}

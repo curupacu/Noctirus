@@ -5,11 +5,13 @@ import { Input } from "../../components/Input/Input";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
 import { useTitulo } from "../../lib/useTitulo";
+import { LABEL_AREA_CURTO } from "../../lib/areas";
 
 const AREAS = [
   { value: "", label: "Todas" },
-  { value: "civel", label: "Cível" },
-  { value: "trabalhista", label: "Trabalhista" },
+  ...Object.entries(LABEL_AREA_CURTO)
+    .filter(([valor]) => valor !== "indefinido")
+    .map(([value, label]) => ({ value, label })),
 ];
 
 export function AdvogadosListPage() {

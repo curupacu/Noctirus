@@ -3,8 +3,9 @@ import { oabAprovada } from "../../lib/situacaoOab";
 import { Avatar } from "../Avatar/Avatar";
 import { SeloOab } from "../SeloOab/SeloOab";
 import "./AdvogadoCard.css";
+import { LABEL_AREA_CURTO } from "../../lib/areas";
 
-const LABEL_AREA = { civel: "Cível", trabalhista: "Trabalhista" };
+const LABEL_AREA = LABEL_AREA_CURTO;
 
 function IconeLocal() {
   return (

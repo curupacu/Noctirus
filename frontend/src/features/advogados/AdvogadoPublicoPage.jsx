@@ -7,11 +7,9 @@ import { api } from "../../lib/api";
 import { useCarregar } from "../../lib/useCarregar";
 import { useTitulo } from "../../lib/useTitulo";
 import "./AdvogadoPublicoPage.css";
+import { LABEL_AREA_CURTO } from "../../lib/areas";
 
-const LABEL_AREA = {
-  civel: "Cível",
-  trabalhista: "Trabalhista",
-};
+const LABEL_AREA = LABEL_AREA_CURTO;
 
 // Bloco do currículo — só aparece se tiver item (antes eram 4 "Nada cadastrado ainda.").
 function BlocoCurriculo({ titulo, itens }) {

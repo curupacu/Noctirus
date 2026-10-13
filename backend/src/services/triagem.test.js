@@ -96,16 +96,16 @@ describe("classificarPorRegras", () => {
 describe("perguntas da triagem", () => {
   it("etapa 1 é a mesma pra todo mundo e etapa 2 existe pras duas áreas", () => {
     expect(PERGUNTAS_ETAPA1.length).toBeGreaterThan(0);
-    expect(Object.keys(PERGUNTAS_ETAPA2).sort()).toEqual(["civel", "trabalhista"]);
+    expect(Object.keys(PERGUNTAS_ETAPA2).sort()).toEqual(["civel", "previdenciario", "trabalhista", "transito"]);
   });
 
   it("toda pergunta tem id único, texto, exemplo e limites de tamanho", () => {
-    const todas = [...PERGUNTAS_ETAPA1, ...PERGUNTAS_ETAPA2.civel, ...PERGUNTAS_ETAPA2.trabalhista];
+    const todas = [...PERGUNTAS_ETAPA1, ...Object.values(PERGUNTAS_ETAPA2).flat()];
     for (const p of todas) {
       expect(p.id && p.pergunta && p.ajuda).toBeTruthy();
       expect(p.minimo).toBeLessThan(p.maximo);
     }
-    for (const lista of [PERGUNTAS_ETAPA1, PERGUNTAS_ETAPA2.civel, PERGUNTAS_ETAPA2.trabalhista]) {
+    for (const lista of [PERGUNTAS_ETAPA1, ...Object.values(PERGUNTAS_ETAPA2)]) {
       expect(new Set(lista.map((p) => p.id)).size).toBe(lista.length);
     }
   });
@@ -120,10 +120,18 @@ describe("perguntas da triagem", () => {
 // de categorias sem querer (ex.: duplicar um valor ou desalinhar do que o CLAUDE.md
 // documenta: 33 categorias, 17 cíveis + 16 trabalhistas).
 describe("taxonomia de categorias", () => {
-  it("tem 17 categorias cíveis e 16 trabalhistas (33 no total)", () => {
-    expect(CATEGORIAS_POR_AREA.civel).toHaveLength(17);
+  it("tem 21 cíveis, 16 trabalhistas, 8 previdenciárias e 6 de trânsito (51 no total)", () => {
+    expect(CATEGORIAS_POR_AREA.civel).toHaveLength(21);
     expect(CATEGORIAS_POR_AREA.trabalhista).toHaveLength(16);
-    expect(TODAS_CATEGORIAS).toHaveLength(33);
+    expect(CATEGORIAS_POR_AREA.previdenciario).toHaveLength(8);
+    expect(CATEGORIAS_POR_AREA.transito).toHaveLength(6);
+    expect(TODAS_CATEGORIAS).toHaveLength(51);
+  });
+
+  it("toda área tem a sua categoria 'outro_<área>' (usada quando nada específico casa)", () => {
+    for (const area of Object.keys(CATEGORIAS_POR_AREA)) {
+      expect(CATEGORIAS_POR_AREA[area].map((c) => c.valor)).toContain(`outro_${area}`);
+    }
   });
 
   it("não tem valores duplicados entre as áreas", () => {

@@ -33,7 +33,28 @@ function IconIndefinido() {
   );
 }
 
-const ICONES = { civel: IconContrato, trabalhista: IconMaleta };
+function IconEscudo() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 3 5 6v6c0 4.4 3 7.8 7 9 4-1.2 7-4.6 7-9V6l-7-3Z" />
+      <path d="m9 12 2 2 4-4" />
+    </svg>
+  );
+}
+
+function IconCarro() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5 16V11l2-5h10l2 5v5" />
+      <path d="M3 16h18v2.5a.5.5 0 0 1-.5.5H18v-1H6v1H3.5a.5.5 0 0 1-.5-.5Z" />
+      <path d="M5 11h14" />
+      <circle cx="7.5" cy="13.5" r=".8" />
+      <circle cx="16.5" cy="13.5" r=".8" />
+    </svg>
+  );
+}
+
+const ICONES = { civel: IconContrato, trabalhista: IconMaleta, previdenciario: IconEscudo, transito: IconCarro };
 
 export function AreaIcon({ area, className }) {
   const Icone = ICONES[area] || IconIndefinido;

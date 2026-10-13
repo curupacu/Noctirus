@@ -6,12 +6,14 @@ import { limiteTriagem } from "../middlewares/rateLimit.js";
 import { validarBody } from "../middlewares/validar.js";
 import { buscarAdvogadosCompativeis, perfilPublico } from "../services/matching.js";
 import {
+  AREAS,
   AREAS_VALIDAS,
   CATEGORIAS_POR_AREA,
   classificar,
   montarDescricao,
   PERGUNTAS_ETAPA1,
   PERGUNTAS_ETAPA2,
+  sugerirTipoAdvogado,
 } from "../services/triagem.js";
 
 export const triagemRouter = Router();
@@ -60,20 +62,32 @@ const schemaEtapa1 = z
 
 // A área vem do cliente porque ele pode corrigir a que a IA sugeriu na etapa 1 (ou escolher,
 // quando a IA não conseguiu identificar) — a etapa 2 só faz sentido com uma área definida.
+// Etapa 2 (redesenho de 13/10/2026): o cliente confirma as especialidades em chips — vêm
+// sugeridas pela IA na etapa 1 — e pode acrescentar um detalhe opcional. `origem` e
+// `justificativa` são os da classificação da etapa 1, só pra exibir no resultado.
 const schemaClassificar = z
   .object({
     etapa1: respostasTexto,
-    area: z.enum(AREAS_VALIDAS, { message: "Escolha a área: cível ou trabalhista" }),
+    area: z.enum(AREAS_VALIDAS, { message: "Escolha a área do seu caso" }),
+    categorias: z.array(z.string()).min(1, "Marque pelo menos um assunto").max(10),
     etapa2: respostasTexto,
+    origem: z.enum(["ia", "regras"]).optional().default("regras"),
+    justificativa: z.string().max(600).optional(),
   })
   .superRefine((dados, ctx) => {
     validarRespostas(PERGUNTAS_ETAPA1, dados.etapa1, ctx, "etapa1");
     validarRespostas(PERGUNTAS_ETAPA2[dados.area] || [], dados.etapa2, ctx, "etapa2");
+    const daArea = (CATEGORIAS_POR_AREA[dados.area] || []).map((c) => c.valor);
+    if (dados.categorias.some((c) => !daArea.includes(c))) {
+      ctx.addIssue({ code: "custom", path: ["categorias"], message: "Assunto fora da área escolhida" });
+    }
   });
 
 // Guarda só as respostas das perguntas que existem (nada de chave arbitrária no banco).
 function somenteDasPerguntas(perguntas, respostas) {
-  return Object.fromEntries(perguntas.map((p) => [p.id, respostas[p.id].trim()]));
+  return Object.fromEntries(
+    perguntas.map((p) => [p.id, (respostas[p.id] || "").trim()]).filter(([, valor]) => valor),
+  );
 }
 
 triagemRouter.get("/triagem/perguntas", (_req, res) => {
@@ -81,6 +95,7 @@ triagemRouter.get("/triagem/perguntas", (_req, res) => {
     etapa1: PERGUNTAS_ETAPA1,
     etapa2: PERGUNTAS_ETAPA2,
     categorias: CATEGORIAS_POR_AREA,
+    areas: AREAS,
   });
 });
 
@@ -97,8 +112,10 @@ triagemRouter.post(
     const resultado = await classificar({ descricao });
     const area = resultado.areaClassificada;
 
+    // Já devolve as especialidades sugeridas pra etapa 2 vir com os chips marcados.
     res.json({
       area,
+      categorias: area === "indefinido" ? [] : resultado.categorias || [],
       origem: resultado.origem,
       justificativa: resultado.justificativa || null,
       perguntas: PERGUNTAS_ETAPA2[area] || null,
@@ -116,15 +133,23 @@ triagemRouter.post(
   limiteTriagem,
   validarBody(schemaClassificar),
   async (req, res) => {
-    const { area } = req.body;
+    const { area, categorias, origem, justificativa } = req.body;
     const etapa1 = somenteDasPerguntas(PERGUNTAS_ETAPA1, req.body.etapa1);
     const etapa2 = somenteDasPerguntas(PERGUNTAS_ETAPA2[area], req.body.etapa2);
     const descricao = [
       montarDescricao(PERGUNTAS_ETAPA1, etapa1),
       montarDescricao(PERGUNTAS_ETAPA2[area], etapa2),
-    ].join("\n");
+    ]
+      .filter(Boolean)
+      .join("\n");
 
-    const resultado = await classificar({ descricao, areaFixa: area });
+    // Sem nova chamada à IA: quem confirma a especialidade agora é o próprio cliente.
+    const resultado = {
+      categorias,
+      tipoAdvogadoSugerido: sugerirTipoAdvogado({ area, descricao, categorias }),
+      origem,
+      justificativa,
+    };
     const { advogados, regiao } = await advogadosDaTriagem({
       clienteId: req.user.uid,
       area,

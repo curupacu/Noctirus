@@ -10,8 +10,9 @@ import { useTitulo } from "../../lib/useTitulo";
 import { useAuth } from "../auth/AuthContext";
 import "./cartao.css";
 import { CartaoVerso, TEMPLATES } from "./templates";
+import { LABEL_AREA_CURTO } from "../../lib/areas";
 
-const LABEL_AREA = { civel: "Cível", trabalhista: "Trabalhista" };
+const LABEL_AREA = LABEL_AREA_CURTO;
 const CHAVE_TEMPLATE = "nocturis:cartao:template";
 
 export function CartaoPage() {

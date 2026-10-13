@@ -69,7 +69,7 @@ async function avisar({ destinatarioId, tipo, texto, link, assunto, titulo, para
   }
 }
 
-const LABEL_AREA = { civel: "cível", trabalhista: "trabalhista" };
+const LABEL_AREA = { civel: "cível", trabalhista: "trabalhista", previdenciario: "previdenciário", transito: "de trânsito" };
 
 solicitacoesRouter.post(
   "/solicitacoes",

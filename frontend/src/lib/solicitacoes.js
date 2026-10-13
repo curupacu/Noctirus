@@ -11,7 +11,7 @@ export const LABEL_SITUACAO_ADVOGADO = {
   recusada: "Recusado",
 };
 
-export const LABEL_AREA = { civel: "Cível", trabalhista: "Trabalhista", indefinido: "Não identificada" };
+export { LABEL_AREA } from "./areas";
 
 export function formatarData(iso) {
   if (!iso) return "";

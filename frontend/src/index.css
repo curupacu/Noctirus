@@ -1217,3 +1217,13 @@ a.list-row:hover {
   background: #fffdf8;
   color: var(--brown);
 }
+
+.area-icon--previdenciario {
+  background: var(--area-previdenciario-bg);
+  color: var(--area-previdenciario);
+}
+
+.area-icon--transito {
+  background: var(--area-transito-bg);
+  color: var(--area-transito);
+}

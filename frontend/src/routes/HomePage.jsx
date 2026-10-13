@@ -9,6 +9,7 @@ import { oabAprovada } from "../lib/situacaoOab";
 import { useCarregar } from "../lib/useCarregar";
 import { useTitulo } from "../lib/useTitulo";
 import "./HomePage.css";
+import { LABEL_AREA_CURTO } from "../lib/areas";
 
 // Fotos de banco de imagem do Unsplash (licença gratuita, uso comercial liberado, crédito
 // não obrigatório — mesmo assim o rodapé cita a fonte). Servidas direto da CDN deles, já
@@ -35,7 +36,7 @@ const FAQ = [
   {
     pergunta: "Como funciona a triagem por IA?",
     resposta:
-      "Você descreve seu problema com suas próprias palavras. A IA identifica se é uma questão cível ou trabalhista e sugere advogados com a especialidade certa.",
+      "Você descreve seu problema com suas próprias palavras. A IA identifica a área do caso (cível, trabalhista, previdenciário ou trânsito) e sugere advogados com a especialidade certa.",
   },
   {
     pergunta: "Meus dados estão seguros?",
@@ -120,7 +121,7 @@ const MOTIVOS = [
   {
     titulo: "O problema",
     texto:
-      "A maioria das pessoas não sabe se o problema é cível ou trabalhista, nem que tipo de advogado procurar. Ao mesmo tempo, advogados em início de carreira têm dificuldade de encontrar os primeiros clientes. A Nocturis liga essas duas pontas.",
+      "A maioria das pessoas não sabe de que área é o seu problema, nem que tipo de advogado procurar. Ao mesmo tempo, advogados em início de carreira têm dificuldade de encontrar os primeiros clientes. A Nocturis liga essas duas pontas.",
   },
   {
     titulo: "Pra quem procura ajuda",
@@ -187,7 +188,7 @@ const ICONES = {
   ),
 };
 
-const LABEL_AREA = { civel: "Cível", trabalhista: "Trabalhista" };
+const LABEL_AREA = LABEL_AREA_CURTO;
 
 function Seta({ direcao = "direita" }) {
   return (
@@ -299,8 +300,8 @@ export function HomePage() {
               <h1 className="home-hero__title">Encontre o advogado certo pro seu caso.</h1>
               <span className="home-hero__rule" aria-hidden="true" />
               <p className="home-hero__lead">
-                Descreva sua situação com suas palavras. A gente identifica se o caso é cível ou
-                trabalhista e mostra advogados que atendem esse assunto.
+                Descreva sua situação com suas palavras. A gente identifica a área do caso e mostra
+                advogados que atendem esse assunto.
               </p>
               <div className="home-hero__actions">
                 <Link to={destinoConta} className="home-btn home-btn--gold">
@@ -516,7 +517,7 @@ export function HomePage() {
         <div className="home-container home-footer__grid">
           <div className="home-footer__brand">
             <Logo className="home-footer__logo" />
-            <p>Plataforma de triagem e direcionamento jurídico nas áreas cível e trabalhista.</p>
+            <p>Plataforma de triagem e direcionamento jurídico nas áreas cível, trabalhista, previdenciária e de trânsito.</p>
           </div>
           <div>
             <h2 className="home-footer__title">Navegação</h2>
