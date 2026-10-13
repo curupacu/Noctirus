@@ -22,7 +22,12 @@ const PESO_PRIORIDADE = { alta: 0, media: 1, baixa: 2 };
 
 async function buscar() {
   const [casos, perguntas] = await Promise.all([api.get("/solicitacoes/recebidas"), api.get("/triagem/perguntas")]);
-  return { casos, rotulos: rotulosEspecialidades(perguntas.categorias) };
+  // Textos das perguntas, pra separar pergunta e resposta no detalhe do caso.
+  const textosPerguntas = [
+    ...(perguntas.etapa1 || []),
+    ...Object.values(perguntas.etapa2 || {}).flat(),
+  ].map((p) => p.pergunta);
+  return { casos, rotulos: rotulosEspecialidades(perguntas.categorias), textosPerguntas };
 }
 
 function tituloCaso(caso, rotulos) {
@@ -62,9 +67,59 @@ function CartaoCaso({ caso, rotulos, onAbrir, onResponder, ocupado }) {
   );
 }
 
+// A descrição vem montada como "Pergunta? resposta" por linha (montarDescricao no
+// backend) — separa cada linha em pergunta em negrito + resposta, em vez do bloco corrido.
+function RespostasTriagem({ descricao, textosPerguntas = [] }) {
+  const linhas = String(descricao || "").split("\n").filter((l) => l.trim());
+  return (
+    <dl className="quadro-detalhe__respostas">
+      {linhas.map((linha, i) => {
+        // Pergunta conhecida no começo da linha; senão, corta no primeiro "? ".
+        const conhecida = textosPerguntas.find((t) => linha.startsWith(t));
+        const corte = conhecida ? conhecida.length : linha.indexOf("? ") + 1;
+        const pergunta = corte > 0 ? linha.slice(0, corte) : null;
+        const resposta = corte > 0 ? linha.slice(corte).trim() : linha;
+        return (
+          <div key={i}>
+            {pergunta && <dt>{pergunta}</dt>}
+            <dd>{resposta || "—"}</dd>
+          </div>
+        );
+      })}
+    </dl>
+  );
+}
+
+function AcoesMover({ caso, ocupado, onMudar, onFechar }) {
+  return (
+    <div className="quadro-detalhe__mover">
+      {caso.etapaCaso !== "em_andamento" && (
+        <Button variant="secondary" disabled={ocupado} onClick={() => onMudar(caso.id, { etapa: "em_andamento" })}>
+          Voltar pra em andamento
+        </Button>
+      )}
+      {caso.etapaCaso !== "concluido" && (
+        <Button disabled={ocupado} onClick={() => onMudar(caso.id, { etapa: "concluido" })}>
+          Marcar como concluído
+        </Button>
+      )}
+      <Button
+        variant="secondary"
+        disabled={ocupado}
+        onClick={async () => {
+          await onMudar(caso.id, { arquivado: true });
+          onFechar();
+        }}
+      >
+        Arquivar
+      </Button>
+    </div>
+  );
+}
+
 // Painel com o detalhe de um caso: respostas da triagem, prioridade, anotações e as ações
 // de mover/arquivar. No celular ocupa a tela; no computador abre do lado.
-function DetalheCaso({ caso, rotulos, onFechar, onMudar, onResponder, ocupado }) {
+function DetalheCaso({ caso, rotulos, textosPerguntas, onFechar, onMudar, onResponder, ocupado }) {
   const [anotacoes, setAnotacoes] = useState(caso.anotacoes);
   const [salvo, setSalvo] = useState(false);
   const pendente = caso.etapaCaso === "pendente";
@@ -105,8 +160,16 @@ function DetalheCaso({ caso, rotulos, onFechar, onMudar, onResponder, ocupado })
           </button>
         </div>
 
+        {!pendente && (
+          <p className="quadro-detalhe__aviso">
+            Seu contato foi liberado pra este cliente — ele vai te chamar pelo WhatsApp ou e-mail.
+          </p>
+        )}
+
+        {!pendente && <AcoesMover caso={caso} ocupado={ocupado} onMudar={onMudar} onFechar={onFechar} />}
+
         <h3>Respostas da triagem</h3>
-        <p className="quadro-detalhe__respostas">{caso.descricao}</p>
+        <RespostasTriagem descricao={caso.descricao} textosPerguntas={textosPerguntas} />
 
         {pendente ? (
           <>
@@ -164,29 +227,6 @@ function DetalheCaso({ caso, rotulos, onFechar, onMudar, onResponder, ocupado })
               </div>
             </form>
 
-            <h3>Mover</h3>
-            <div className="actions">
-              {caso.etapaCaso !== "em_andamento" && (
-                <Button variant="secondary" disabled={ocupado} onClick={() => onMudar(caso.id, { etapa: "em_andamento" })}>
-                  Voltar pra em andamento
-                </Button>
-              )}
-              {caso.etapaCaso !== "concluido" && (
-                <Button disabled={ocupado} onClick={() => onMudar(caso.id, { etapa: "concluido" })}>
-                  Marcar como concluído
-                </Button>
-              )}
-              <Button
-                variant="secondary"
-                disabled={ocupado}
-                onClick={async () => {
-                  await onMudar(caso.id, { arquivado: true });
-                  onFechar();
-                }}
-              >
-                Arquivar (tirar do quadro)
-              </Button>
-            </div>
           </>
         )}
       </section>
@@ -253,6 +293,7 @@ export function QuadroCasosPage() {
   if (!dado && !erro) return <Loading>Carregando...</Loading>;
   const casos = dado?.casos || [];
   const rotulos = dado?.rotulos || {};
+  const textosPerguntas = dado?.textosPerguntas || [];
   const noQuadro = casos.filter((c) => c.situacao !== "recusada" && !c.arquivado);
   const arquivados = casos.filter((c) => c.situacao === "aceita" && c.arquivado);
   const recusados = casos.filter((c) => c.situacao === "recusada");
@@ -369,6 +410,7 @@ export function QuadroCasosPage() {
         <DetalheCaso
           caso={aberto}
           rotulos={rotulos}
+          textosPerguntas={textosPerguntas}
           ocupado={ocupado}
           onFechar={() => setAbertoId(null)}
           onMudar={mudar}
