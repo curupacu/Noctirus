@@ -55,8 +55,11 @@ export function BottomNav() {
   const itensBrutos = [
     { to: rotaInicial(role), label: "Início", Icon: IconInicio, end: true },
     ...(role === "cliente" ? [{ to: "/triagem", label: "Triagem", Icon: IconTriagem }] : []),
+    // Advogado: o quadro de casos é o que ele mais usa — antes só dava pra chegar pelo
+    // painel. "Perfil" dele aponta pra edição, já que o Início (/perfil) é o painel.
+    ...(role === "advogado" ? [{ to: "/casos", label: "Casos", Icon: IconTriagem }] : []),
     { to: "/advogados", label: "Advogados", Icon: IconAdvogados },
-    { to: "/perfil", label: "Perfil", Icon: IconPerfil },
+    { to: role === "advogado" ? "/perfil/editar" : "/perfil", label: "Perfil", Icon: IconPerfil },
   ];
   // Pro advogado, rotaInicial já é "/perfil" — sem isso, "Início" e "Perfil" viravam dois
   // botões idênticos apontando pro mesmo lugar (e com a mesma key, o que o React reclama).
