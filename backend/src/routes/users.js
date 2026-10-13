@@ -151,20 +151,27 @@ usersRouter.get("/users/me/dados", verificarToken, async (req, res) => {
 });
 
 // Direito de eliminação (LGPD, art. 18, VI) — o próprio titular apaga a conta, sem
-// depender de um admin. Sai da Auth e do Firestore (users + advogados/curriculos, se for o
-// caso). Não apaga registros que também são dado de terceiros (pedidos de contato) — apagar
-// esses de vez destruiria o histórico do outro lado; ver
-// docs/historico/ROADMAP-julho-2026.md pra anonimização completa como item de LGPD mais robusto.
+// depender de um admin. Sai da Auth e do Firestore: users, as triagens do cliente (o relato
+// do caso é o dado mais sensível que ele deixa aqui) e advogados/curriculos, se for o caso.
+// Não apaga os pedidos de contato — são também registro do advogado (quadro de casos) e
+// apagar destruiria o histórico do outro lado; ver docs/historico/ROADMAP-julho-2026.md pra
+// anonimização completa como item de LGPD mais robusto.
 usersRouter.delete("/users/me", verificarToken, async (req, res) => {
   const { uid, role } = req.user;
 
-  const batch = db.batch();
-  batch.delete(db.collection("users").doc(uid));
+  const refs = [db.collection("users").doc(uid)];
   if (role === "advogado") {
-    batch.delete(db.collection("advogados").doc(uid));
-    batch.delete(db.collection("curriculos").doc(uid));
+    refs.push(db.collection("advogados").doc(uid), db.collection("curriculos").doc(uid));
   }
-  await batch.commit();
+  const triagens = await db.collection("triagens").where("clienteId", "==", uid).get();
+  triagens.docs.forEach((doc) => refs.push(db.collection("triagens").doc(doc.id)));
+
+  // Lote do Firestore aceita até 500 operações — fatia por garantia.
+  for (let i = 0; i < refs.length; i += 400) {
+    const batch = db.batch();
+    refs.slice(i, i + 400).forEach((ref) => batch.delete(ref));
+    await batch.commit();
+  }
   await ignorarSeUsuarioNaoExisteNaAuth(auth.deleteUser(uid));
 
   res.json({ ok: true });

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { Input } from "../../components/Input/Input";
 import { Button } from "../../components/Button/Button";
@@ -96,7 +96,8 @@ function AvisoSituacaoOab({ advogado }) {
 // mudam — pra eles /perfil já era só um formulário pequeno, sem esse problema.
 export function PerfilPage() {
   useTitulo("Meu perfil");
-  const { user, role } = useAuth();
+  const { user, role, logout } = useAuth();
+  const navigate = useNavigate();
 
   const [dadosUsuario, setDadosUsuario] = useState(null);
   const [nome, setNome] = useState("");
@@ -278,29 +279,46 @@ export function PerfilPage() {
   return (
     <main>
       <h1>Meu perfil</h1>
-      <p>
-        <span className="badge">{{ cliente: "Cliente", advogado: "Advogado", admin: "Administrador" }[dadosUsuario.role]}</span>
-      </p>
 
-      {role === "cliente" && (
-        <div className="media" style={{ marginBottom: "var(--space-lg)" }}>
-          <Avatar nome={nome} foto={foto} seed={user.uid} className="avatar-placeholder--grande" />
-          <div className="stack">
-            <label className="button button--secondary" htmlFor="foto">
-              {enviandoFoto ? "Enviando..." : foto ? "Trocar foto" : "Adicionar foto"}
-            </label>
-            <input
-              id="foto"
-              type="file"
-              accept="image/*"
-              className="visually-hidden"
-              onChange={enviarFoto}
-              disabled={enviandoFoto}
-            />
-            {erroFoto && <p role="alert">{erroFoto}</p>}
-          </div>
+      {/* Topo com foto, nome e e-mail (cliente e admin) — antes era só um selo "Cliente" e
+          o botão de foto solto. O "Sair" também fica aqui, não só no cabeçalho. */}
+      <section className="card perfil-topo">
+        <Avatar nome={nome} foto={foto} seed={user.uid} className="avatar-placeholder--grande" />
+        <div className="perfil-topo__info">
+          <strong>{nome || "Sem nome"}</strong>
+          <span className="text-muted">{dadosUsuario.email}</span>
+          <span className="badge">
+            {{ cliente: "Cliente", advogado: "Advogado", admin: "Administrador" }[dadosUsuario.role]}
+          </span>
         </div>
-      )}
+        <div className="perfil-topo__acoes">
+          {role === "cliente" && (
+            <>
+              <label className="button button--secondary" htmlFor="foto">
+                {enviandoFoto ? "Enviando..." : foto ? "Trocar foto" : "Adicionar foto"}
+              </label>
+              <input
+                id="foto"
+                type="file"
+                accept="image/*"
+                className="visually-hidden"
+                onChange={enviarFoto}
+                disabled={enviandoFoto}
+              />
+            </>
+          )}
+          <Button
+            variant="secondary"
+            onClick={async () => {
+              await logout();
+              navigate("/");
+            }}
+          >
+            Sair
+          </Button>
+        </div>
+        {erroFoto && <p role="alert">{erroFoto}</p>}
+      </section>
 
       <div className="section-heading">
         <h2>Dados básicos</h2>

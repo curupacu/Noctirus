@@ -217,6 +217,19 @@ describe("DELETE /users/me", () => {
     expect(resposta.status).toBe(401);
   });
 
+  it("apaga as triagens do cliente junto com a conta, sem tocar nas de outros", async () => {
+    cell.fake.db._seed("users", "c1", { role: "cliente" });
+    cell.fake.db._seed("triagens", "t1", { clienteId: "c1", descricao: "caso do c1" });
+    cell.fake.db._seed("triagens", "t2", { clienteId: "c2", descricao: "caso do c2" });
+    cell.fake.auth._registrarUsuario("c1");
+    const token = cell.fake.criarToken({ uid: "c1", role: "cliente" });
+
+    const resposta = await request(app).delete("/users/me").set("Authorization", `Bearer ${token}`);
+    expect(resposta.status).toBe(200);
+    expect((await cell.fake.db.collection("triagens").doc("t1").get()).exists).toBe(false);
+    expect((await cell.fake.db.collection("triagens").doc("t2").get()).exists).toBe(true);
+  });
+
   it("cliente apaga a própria conta (Auth + Firestore)", async () => {
     cell.fake.db._seed("users", "c1", { role: "cliente" });
     cell.fake.auth._registrarUsuario("c1");

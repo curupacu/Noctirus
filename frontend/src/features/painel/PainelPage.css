@@ -416,3 +416,32 @@ a.painel__numero:hover {
     height: 100%;
   }
 }
+
+/* ---------- topo do "Meu perfil" (cliente/admin) ---------- */
+.perfil-topo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-md) var(--space-lg);
+}
+
+.perfil-topo__info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 180px;
+}
+
+.perfil-topo__info strong {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 22px;
+}
+
+.perfil-topo__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { Loading } from "../../components/Loading/Loading";
@@ -20,15 +21,28 @@ async function buscar() {
   return { solicitacoes, rotulos: rotulosEspecialidades(perguntas.categorias) };
 }
 
+const ABAS = [
+  { situacao: "pendente", label: "Aguardando" },
+  { situacao: "aceita", label: "Aceitos" },
+  { situacao: "recusada", label: "Recusados" },
+];
+
 // RF014: o cliente acompanha os pedidos de contato — advogado, data e situação. Nos aceitos
 // aparecem o WhatsApp/e-mail do advogado (RF010).
 export function MinhasSolicitacoesPage() {
   useTitulo("Minhas solicitações");
   const { dado, erro } = useCarregar(buscar);
+  const [aba, setAba] = useState(null);
 
   if (erro) return <p role="alert">{erro}</p>;
   if (!dado) return <Loading>Carregando...</Loading>;
   const { solicitacoes, rotulos } = dado;
+  const contagem = Object.fromEntries(
+    ABAS.map(({ situacao }) => [situacao, solicitacoes.filter((s) => s.situacao === situacao).length]),
+  );
+  // Abre na aba "Aceitos" se tiver algum (é onde está o contato liberado); senão "Aguardando".
+  const abaAtual = aba || (contagem.aceita > 0 ? "aceita" : "pendente");
+  const daAba = solicitacoes.filter((s) => s.situacao === abaAtual);
 
   return (
     <main>
@@ -49,8 +63,28 @@ export function MinhasSolicitacoesPage() {
         </div>
       )}
 
+      {solicitacoes.length > 0 && (
+        <nav className="pill-toggle" aria-label="Situação dos pedidos" style={{ marginBottom: "var(--space-lg)" }}>
+          {ABAS.map(({ situacao, label }) => (
+            <button
+              key={situacao}
+              type="button"
+              className={`pill-toggle__item${abaAtual === situacao ? " pill-toggle__item--active" : ""}`}
+              aria-pressed={abaAtual === situacao}
+              onClick={() => setAba(situacao)}
+            >
+              {label} ({contagem[situacao]})
+            </button>
+          ))}
+        </nav>
+      )}
+
+      {solicitacoes.length > 0 && daAba.length === 0 && (
+        <p className="text-muted">Nenhum pedido nesta situação.</p>
+      )}
+
       <ul className="list-plain">
-        {solicitacoes.map((s) => (
+        {daAba.map((s) => (
           <li key={s.id} className="card stack">
             <Link to={`/advogados/${s.advogadoId}`} className="media">
               <Avatar nome={s.advogadoNome} foto={s.advogadoFoto} seed={s.advogadoId} />
