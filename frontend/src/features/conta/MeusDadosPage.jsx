@@ -85,7 +85,8 @@ export function MeusDadosPage() {
         <h2>Excluir minha conta</h2>
       </div>
       <p className="text-muted">
-        Remove seu cadastro e seu acesso definitivamente. Não dá pra desfazer depois.
+        Apaga seu cadastro, suas triagens e seu acesso de vez — não dá pra desfazer. Pedidos de
+        contato já enviados continuam no histórico do advogado que os recebeu.
       </p>
       <div className="actions">
         <Button variant="secondary" className="button--perigo" onClick={excluirMinhaConta} disabled={excluindo}>
