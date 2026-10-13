@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
-import { AdvogadoCard } from "../../components/AdvogadoCard/AdvogadoCard";
+import { AdvogadoCard, AdvogadoDestaque } from "../../components/AdvogadoCard/AdvogadoCard";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
 import { useTitulo } from "../../lib/useTitulo";
@@ -33,6 +33,7 @@ export function ResultadoPage() {
   // parecer conquistado, não só carregado (referência: reveal de match do Tinder).
   // Só acontece uma vez por triagem — marcar/desmarcar categoria não deve re-revelar.
   const [revelando, setRevelando] = useState(true);
+  const [verTodos, setVerTodos] = useState(false);
 
   const temResultado = Boolean(resultado);
 
@@ -169,12 +170,12 @@ export function ResultadoPage() {
       )}
 
       <div className="section-heading" id="advogados">
-        <h2>Advogados compatíveis</h2>
+        <h2>Os mais compatíveis com o seu caso</h2>
       </div>
       {regiao && resultado.areaClassificada !== "indefinido" && (
-        <p className="text-muted">
-          Advogados que atendem em {regiao.uf}
-          {regiao.cidade ? `, começando pelos de ${regiao.cidade}` : ""}.
+        <p className="text-muted resultado__criterio">
+          Escolhidos pelo assunto que você contou e por atenderem em {regiao.uf}
+          {regiao.cidade ? `, começando por ${regiao.cidade}` : ""}.
         </p>
       )}
       {!regiao && resultado.areaClassificada !== "indefinido" && (
@@ -210,13 +211,35 @@ export function ResultadoPage() {
       )}
       {advogados && !revelando && advogados.length > 0 && (
         <>
-          <ul className="advogados-lista">
-            {advogados.map((adv, i) => (
-              <li key={adv.uid} className="step-enter" style={{ animationDelay: `${Math.min(i * 40, 400)}ms` }}>
-                <AdvogadoCard advogado={adv} catalogoEspecialidades={catalogoEspecialidades} triagemId={id} />
+          <ul className="resultado__destaques">
+            {advogados.slice(0, 3).map((adv, i) => (
+              <li key={adv.uid} className="step-enter" style={{ animationDelay: `${i * 80}ms` }}>
+                <AdvogadoDestaque advogado={adv} catalogoEspecialidades={catalogoEspecialidades} triagemId={id} />
               </li>
             ))}
           </ul>
+
+          {advogados.length > 3 && !verTodos && (
+            <button type="button" className="button button--secondary resultado__ver-mais" onClick={() => setVerTodos(true)}>
+              Ver outros {advogados.length - 3} advogado{advogados.length - 3 === 1 ? "" : "s"} compatíve
+              {advogados.length - 3 === 1 ? "l" : "is"}
+            </button>
+          )}
+
+          {verTodos && (
+            <>
+              <div className="section-heading">
+                <h2>Outros advogados compatíveis</h2>
+              </div>
+              <ul className="advogados-lista">
+                {advogados.slice(3).map((adv) => (
+                  <li key={adv.uid}>
+                    <AdvogadoCard advogado={adv} catalogoEspecialidades={catalogoEspecialidades} triagemId={id} />
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </>
       )}
 

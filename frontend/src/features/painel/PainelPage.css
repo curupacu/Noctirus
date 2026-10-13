@@ -445,3 +445,20 @@ a.painel__numero:hover {
   flex-wrap: wrap;
   gap: 8px;
 }
+
+.resultado__criterio {
+  margin-top: -4px;
+}
+
+.resultado__destaques {
+  display: grid;
+  gap: 20px;
+  margin: 0 0 var(--space-lg);
+  padding: 0;
+  list-style: none;
+}
+
+.resultado__ver-mais {
+  width: 100%;
+  margin-bottom: var(--space-lg);
+}
