@@ -1,0 +1,231 @@
+/* Triagem — uma pergunta por tela, no mesmo padrão do cadastro (redesign de outubro/2026):
+   barra de progresso no topo, pergunta grande na serifada, campo amplo e o botão em pílula
+   fixo embaixo no celular. */
+main.triagem {
+  max-width: 680px;
+  padding-top: var(--space-md);
+}
+
+.triagem__topo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: var(--space-xl);
+}
+
+.triagem__voltar {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  margin-left: -10px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.triagem__voltar:hover:not(:disabled) {
+  background: var(--surface-hover);
+}
+
+.triagem__voltar:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.triagem__voltar svg {
+  width: 22px;
+  height: 22px;
+}
+
+.triagem__progresso {
+  flex: 1;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: #eee6d8;
+  overflow: hidden;
+}
+
+.triagem__progresso span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--brown);
+  transition: width 0.35s ease;
+}
+
+.triagem__contagem {
+  flex: none;
+  min-width: 36px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dim);
+  text-align: right;
+}
+
+.triagem__passo {
+  display: flex;
+  flex-direction: column;
+}
+
+.triagem__etiqueta {
+  align-self: flex-start;
+  margin-bottom: 12px;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  background: #f3ece2;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--brown);
+}
+
+.triagem__pergunta {
+  display: block;
+  margin: 0 0 10px;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: clamp(24px, 5vw, 32px);
+  line-height: 1.25;
+  color: var(--text);
+}
+
+.triagem__dica {
+  margin: 0 0 18px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text-dim);
+}
+
+.triagem .triagem__campo {
+  margin-top: 8px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  font-size: 16px;
+  line-height: 1.55;
+  resize: vertical;
+}
+
+.triagem__contador {
+  margin: 6px 2px 0;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.triagem .choice-grid {
+  margin-top: 4px;
+}
+
+.triagem__erro {
+  margin: var(--space-md) 0 0;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #f7e6df;
+  color: #8b4332;
+}
+
+.triagem__acoes {
+  display: flex;
+  margin-top: var(--space-lg);
+}
+
+.triagem__acoes .button {
+  flex: 1;
+  min-height: 52px;
+}
+
+@media (min-width: 600px) {
+  .triagem__acoes {
+    justify-content: flex-end;
+  }
+
+  .triagem__acoes .button {
+    flex: none;
+    min-width: 220px;
+  }
+}
+
+/* No celular o botão fica preso embaixo, logo acima do menu. */
+@media (max-width: 599px) {
+  .triagem__acoes {
+    position: sticky;
+    bottom: var(--bottom-nav-height);
+    margin: var(--space-lg) calc(-1 * var(--space-lg)) 0;
+    padding: 12px var(--space-lg);
+    background: var(--bg);
+    border-top: 1px solid #efe7da;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .triagem__passo {
+    animation: triagem-entrar 0.25s ease both;
+  }
+}
+
+@keyframes triagem-entrar {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+}
+
+/* ---------- tela de espera enquanto a IA analisa ---------- */
+.triagem-analisando {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(38, 28, 20, 0.55);
+}
+
+.triagem-analisando__cartao {
+  width: min(360px, 100%);
+  padding: 32px 28px;
+  border-radius: 28px;
+  background: #fffdf8;
+  text-align: center;
+}
+
+.triagem-analisando__cartao .loading {
+  justify-content: center;
+  margin: 0 0 8px;
+}
+
+.triagem-analisando__cartao h2 {
+  margin: 0 0 8px;
+  font-size: 22px;
+  color: var(--brown);
+}
+
+.triagem-analisando__cartao p:last-child {
+  min-height: 3em;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
+.triagem-analisando__cartao .loading {
+  display: flex;
+}
+
+.triagem-analisando__cartao .loading__owl {
+  width: 96px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .triagem-analisando__cartao .loading__owl {
+    animation: triagem-respirar 1.6s ease-in-out infinite;
+  }
+}
+
+@keyframes triagem-respirar {
+  50% {
+    transform: scale(1.06);
+  }
+}
