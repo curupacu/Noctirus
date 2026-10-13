@@ -1,5 +1,6 @@
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
 import { AtualizacaoDisponivel } from "../components/AtualizacaoDisponivel/AtualizacaoDisponivel";
+import { AvisoServidor } from "../components/AvisoServidor/AvisoServidor";
 import { BottomNav } from "../components/BottomNav/BottomNav";
 import { Header } from "../components/Header/Header";
 import { AdminAdvogadosPage } from "../features/admin/AdminAdvogadosPage";
@@ -139,6 +140,7 @@ export function AppRouter() {
       </Routes>
       <BottomNav />
       <AtualizacaoDisponivel />
+      <AvisoServidor />
     </BrowserRouter>
   );
 }

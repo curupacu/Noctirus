@@ -7,20 +7,69 @@ function esperar(ms) {
 }
 
 // O backend (Render, plano grátis) "hiberna" depois de inatividade — a primeira
-// requisição depois disso pode não achar o servidor de pé ainda e o fetch falha de
-// verdade (TypeError "Failed to fetch"), não é um erro HTTP normal (achado ao vivo,
-// 20/08: usuário via a página quebrada até dar refresh manual, porque nessa hora o
-// servidor já tinha acordado). Só GET tenta de novo sozinho — escrita (POST/PATCH/etc.)
-// não, pra não arriscar duplicar uma ação se o servidor tiver recebido mas a resposta
-// não voltou a tempo.
+// requisição depois disso pode levar até ~1 minuto, ou falhar de verdade (TypeError
+// "Failed to fetch") / voltar 502-503 enquanto o servidor sobe (achado ao vivo, 20/08 e
+// 13/10). Só GET tenta de novo sozinho — escrita (POST/PATCH/etc.) não, pra não arriscar
+// duplicar uma ação se o servidor tiver recebido mas a resposta não voltou a tempo.
+const ESPERAS_RETRY = [2000, 4000, 8000];
+const STATUS_ACORDANDO = [502, 503, 504];
+
 async function fetchComRetry(url, opcoes, { retryGet = false } = {}) {
-  try {
-    return await fetch(url, opcoes);
-  } catch (erro) {
-    if (!retryGet) throw erro;
-    await esperar(1500);
-    return fetch(url, opcoes);
+  for (let tentativa = 0; ; tentativa += 1) {
+    const ultima = !retryGet || tentativa >= ESPERAS_RETRY.length;
+    try {
+      const res = await fetch(url, opcoes);
+      if (ultima || !STATUS_ACORDANDO.includes(res.status)) return res;
+    } catch (erro) {
+      if (ultima) throw erro;
+    }
+    await esperar(ESPERAS_RETRY[tentativa]);
   }
+}
+
+// Aviso de "servidor acordando": se uma requisição passa de 3 s, avisa quem estiver
+// ouvindo (componente AvisoServidor) até ela terminar.
+const ouvintesLentidao = new Set();
+let lentas = 0;
+
+function avisarLentidao() {
+  ouvintesLentidao.forEach((fn) => fn(lentas > 0));
+}
+
+export function ouvirServidorLento(fn) {
+  ouvintesLentidao.add(fn);
+  return () => ouvintesLentidao.delete(fn);
+}
+
+const ERRO_CONEXAO = "Não conseguimos falar com o servidor. Confira sua internet e tente de novo em instantes.";
+
+async function medindoLentidao(promessa) {
+  let ficouLenta = false;
+  const timer = setTimeout(() => {
+    ficouLenta = true;
+    lentas += 1;
+    avisarLentidao();
+  }, 3000);
+  try {
+    return await promessa;
+  } catch (erro) {
+    // Falha de rede (servidor fora ou sem internet): o "Failed to fetch" do navegador não
+    // diz nada pra quem usa — troca por uma mensagem em português.
+    if (erro instanceof TypeError) throw new Error(ERRO_CONEXAO);
+    throw erro;
+  } finally {
+    clearTimeout(timer);
+    if (ficouLenta) {
+      lentas -= 1;
+      avisarLentidao();
+    }
+  }
+}
+
+// Chamado assim que o app abre: cutuca o backend pra ele já ir acordando enquanto a
+// pessoa ainda está na Home ou no login. Silencioso — não mostra aviso nem erro.
+export function acordarServidor() {
+  fetch(`${API_URL}/health`).catch(() => {});
 }
 
 async function request(path, { method = "GET", body } = {}) {
@@ -31,10 +80,12 @@ async function request(path, { method = "GET", body } = {}) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const res = await fetchComRetry(
-    `${API_URL}${path}`,
-    { method, headers, body: body ? JSON.stringify(body) : undefined },
-    { retryGet: method === "GET" },
+  const res = await medindoLentidao(
+    fetchComRetry(
+      `${API_URL}${path}`,
+      { method, headers, body: body ? JSON.stringify(body) : undefined },
+      { retryGet: method === "GET" },
+    ),
   );
 
   const data = await res.json().catch(() => ({}));
@@ -54,7 +105,7 @@ async function requestUpload(path, formData) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const res = await fetch(`${API_URL}${path}`, { method: "POST", headers, body: formData });
+  const res = await medindoLentidao(fetch(`${API_URL}${path}`, { method: "POST", headers, body: formData }));
 
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {

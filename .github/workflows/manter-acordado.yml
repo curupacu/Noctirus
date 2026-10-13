@@ -1,0 +1,18 @@
+name: Manter backend acordado
+
+# O Render grátis hiberna o backend depois de ~15 min sem uso, e a primeira requisição
+# depois disso leva até ~1 minuto. Esse agendamento chama o /health a cada 10 minutos
+# das 07h às 23h (horário de Brasília) pra demo e os testes não pegarem o servidor
+# dormindo. De madrugada ele dorme, pra não gastar as 750 h/mês do plano grátis.
+# Pra desligar: Actions → "Manter backend acordado" → Disable workflow.
+on:
+  schedule:
+    - cron: "*/10 10-23,0-1 * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Chamar /health
+        run: curl --silent --show-error --max-time 90 --retry 2 https://noctirus-backend.onrender.com/health
