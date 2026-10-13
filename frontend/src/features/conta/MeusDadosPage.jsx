@@ -88,7 +88,7 @@ export function MeusDadosPage() {
         Remove seu cadastro e seu acesso definitivamente. Não dá pra desfazer depois.
       </p>
       <div className="actions">
-        <Button variant="secondary" onClick={excluirMinhaConta} disabled={excluindo}>
+        <Button variant="secondary" className="button--perigo" onClick={excluirMinhaConta} disabled={excluindo}>
           {excluindo ? "Excluindo..." : "Excluir minha conta"}
         </Button>
       </div>
