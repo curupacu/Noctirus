@@ -410,4 +410,9 @@ a.painel__numero:hover {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-md);
   }
+
+  /* Cartões da mesma linha com a mesma altura */
+  .resultado .advogados-lista > li > .advogado-card {
+    height: 100%;
+  }
 }
