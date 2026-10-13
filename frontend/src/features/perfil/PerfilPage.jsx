@@ -279,7 +279,7 @@ export function PerfilPage() {
     <main>
       <h1>Meu perfil</h1>
       <p>
-        <span className="badge">{dadosUsuario.role}</span>
+        <span className="badge">{{ cliente: "Cliente", advogado: "Advogado", admin: "Administrador" }[dadosUsuario.role]}</span>
       </p>
 
       {role === "cliente" && (

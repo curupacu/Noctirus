@@ -117,7 +117,7 @@ a:hover {
   border: 1px solid var(--border);
   padding: 3px var(--space-sm);
   border-radius: var(--radius-full);
-  text-transform: capitalize;
+  text-transform: none;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
