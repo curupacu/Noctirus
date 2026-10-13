@@ -35,6 +35,7 @@ export function AdminAdvogadosPage() {
   useTitulo("Admin — Validação de OAB");
   const { dado: advogados, erro, setErro, recarregar } = useCarregar(() => api.get("/admin/advogados"));
   const [aba, setAba] = useState("em_analise");
+  const [busca, setBusca] = useState("");
   const [copiadoUid, setCopiadoUid] = useState(null);
   // { uid, situacao } enquanto o admin escreve o motivo de uma recusa/revogação.
   const [pedindoMotivo, setPedindoMotivo] = useState(null);
@@ -78,12 +79,20 @@ export function AdminAdvogadosPage() {
   const contagem = Object.fromEntries(
     ABAS.map(({ situacao }) => [situacao, lista.filter((a) => situacaoDe(a) === situacao).length]),
   );
+  // Busca por nome ou número da OAB — a aba de aprovados passa de 30 cadastros.
+  const termo = busca.trim().toLowerCase();
   const daAba = lista
     .filter((a) => situacaoDe(a) === aba)
+    .filter(
+      (a) =>
+        !termo ||
+        (a.nome || "").toLowerCase().includes(termo) ||
+        String(a.oab?.numero || "").includes(termo),
+    )
     .sort((a, b) => (a.situacaoOabAtualizadaEm || "").localeCompare(b.situacaoOabAtualizadaEm || ""));
 
   return (
-    <main>
+    <main className="admin-oab">
       <span className="eyebrow">Administração</span>
       <h1>Validação de OAB</h1>
       <p className="text-muted">
@@ -105,15 +114,28 @@ export function AdminAdvogadosPage() {
         ))}
       </nav>
 
+      <input
+        type="search"
+        className="input admin-oab__busca"
+        placeholder="Buscar por nome ou número da OAB"
+        aria-label="Buscar advogado"
+        value={busca}
+        onChange={(e) => setBusca(e.target.value)}
+      />
+
       {erro && <p role="alert">{erro}</p>}
 
       {daAba.length === 0 && (
         <p className="text-muted">
-          {aba === "em_analise" ? "Nenhum cadastro esperando validação." : "Ninguém nesta situação."}
+          {termo
+            ? "Ninguém encontrado com essa busca."
+            : aba === "em_analise"
+              ? "Nenhum cadastro esperando validação."
+              : "Ninguém nesta situação."}
         </p>
       )}
 
-      <ul className="list-plain">
+      <ul className="list-plain admin-oab__lista">
         {daAba.map((adv) => {
           const situacao = situacaoDe(adv);
           const escrevendoMotivo = pedindoMotivo?.uid === adv.uid;
