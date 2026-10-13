@@ -1046,3 +1046,119 @@ fieldset {
 [role="alert"]:not(:empty) {
   border-radius: 12px;
 }
+
+/* ---- Repaginação, parte 2 (13/10/2026): o que sobrou das telas internas ----
+   Listas (triagens, solicitações, advogados, admin) viram cartões limpos com sombra
+   suave em vez de borda escura; o cartão de resultado da triagem ganha o mesmo visual
+   do destaque do painel; no computador as telas de leitura ficam um pouco mais largas. */
+@media (min-width: 900px) {
+  main {
+    max-width: 760px;
+    padding-top: var(--space-xl);
+  }
+}
+
+main > h1:first-child,
+main > .stack > h1:first-child {
+  margin-top: 0;
+  font-size: clamp(26px, 4vw, 34px);
+}
+
+.list-row {
+  gap: var(--space-md);
+  border: 0;
+  border-radius: 20px;
+  padding: 16px 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+a.list-row:hover {
+  border-color: transparent;
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.list-row__title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.list-row__meta {
+  font-size: 13px;
+}
+
+/* Seta da linha num círculo bege, como os botões redondos da referência */
+.list-row .advogado-row__chevron {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  background: #f3ece2;
+  color: var(--brown);
+  font-size: 20px;
+  line-height: 1;
+}
+
+.list-plain {
+  gap: 12px;
+}
+
+/* Cartão de resultado da triagem: marrom, canto grande, sombra — igual ao destaque */
+.hero-block {
+  border: 0;
+  border-radius: 28px;
+  padding: 32px 24px;
+  background: var(--brown);
+  color: #f6eedf;
+  box-shadow: 0 16px 40px rgba(59, 40, 28, 0.18);
+}
+
+@media (min-width: 760px) {
+  .hero-block {
+    padding: 44px 48px;
+  }
+}
+
+.hero-block h1,
+.hero-block h2 {
+  color: #fffdf8;
+  font-size: clamp(26px, 4.2vw, 38px);
+}
+
+.hero-block .eyebrow {
+  color: #e6d8bf;
+}
+
+.hero-block .badge {
+  background: rgba(246, 238, 223, 0.16);
+  border-color: transparent;
+  color: #f6eedf;
+}
+
+.hero-block .button--primary {
+  background: #fffdf8;
+  color: var(--brown);
+  box-shadow: none;
+}
+
+.hero-block .button--secondary {
+  border-color: rgba(246, 238, 223, 0.5);
+  color: #f6eedf;
+}
+
+.hero-block .button--secondary:hover:not(:disabled) {
+  background: rgba(246, 238, 223, 0.12);
+  border-color: #f6eedf;
+  color: #fffdf8;
+}
+
+.eyebrow {
+  letter-spacing: 0.06em;
+  color: var(--brown);
+}
+
+/* Estado vazio e avisos em cartão ficam centralizados e com mais respiro */
+.card.stack > strong:first-child {
+  font-size: 16px;
+}
