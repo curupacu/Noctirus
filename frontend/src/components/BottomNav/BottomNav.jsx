@@ -43,15 +43,9 @@ function IconPerfil() {
   );
 }
 
-export function BottomNav() {
-  const { user, role, loading } = useAuth();
-  const location = useLocation();
-
-  // Mesma lista do Header — sem isso, um usuário já logado que visita "/", "/login" ou
-  // "/cadastro" (ex.: digitando a URL de novo) via um BottomNav fixed cobrindo o formulário
-  // da vitrine, que não reserva espaço pra ele (achado testando viewport mobile, 07/08).
-  if (loading || !user || TELAS_VITRINE.includes(location.pathname)) return null;
-
+// Itens do menu por papel — usados pela barra de baixo (celular) e pelos links do
+// cabeçalho (computador, ver Header).
+export function itensNavegacao(role) {
   const itensBrutos = [
     { to: rotaInicial(role), label: "Início", Icon: IconInicio, end: true },
     ...(role === "cliente" ? [{ to: "/triagem", label: "Triagem", Icon: IconTriagem }] : []),
@@ -63,9 +57,21 @@ export function BottomNav() {
   ];
   // Pro advogado, rotaInicial já é "/perfil" — sem isso, "Início" e "Perfil" viravam dois
   // botões idênticos apontando pro mesmo lugar (e com a mesma key, o que o React reclama).
-  const itens = itensBrutos.filter(
+  return itensBrutos.filter(
     (item, i) => itensBrutos.findIndex((outro) => outro.to === item.to) === i,
   );
+}
+
+export function BottomNav() {
+  const { user, role, loading } = useAuth();
+  const location = useLocation();
+
+  // Mesma lista do Header — sem isso, um usuário já logado que visita "/", "/login" ou
+  // "/cadastro" (ex.: digitando a URL de novo) via um BottomNav fixed cobrindo o formulário
+  // da vitrine, que não reserva espaço pra ele (achado testando viewport mobile, 07/08).
+  if (loading || !user || TELAS_VITRINE.includes(location.pathname)) return null;
+
+  const itens = itensNavegacao(role);
 
   return (
     <>

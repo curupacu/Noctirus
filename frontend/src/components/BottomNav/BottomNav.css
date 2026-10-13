@@ -74,3 +74,11 @@
     transition: none;
   }
 }
+
+/* No computador o menu vai pro cabeçalho (ver Header) — a barra de baixo é de celular. */
+@media (min-width: 900px) {
+  .bottom-nav,
+  .bottom-nav-spacer {
+    display: none;
+  }
+}

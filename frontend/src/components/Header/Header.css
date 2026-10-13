@@ -52,3 +52,63 @@
   color: var(--color-primary-hover);
   border-bottom-color: var(--color-primary);
 }
+
+/* Texto claro sobre o cabeçalho marrom (antes o "Entrar" saía escuro sobre marrom). */
+.site-header__link,
+.site-header__link:hover {
+  color: #f6eedf;
+}
+
+.site-header__link:hover {
+  border-bottom-color: #f6eedf;
+}
+
+.site-header .button--secondary {
+  border-color: rgba(246, 238, 223, 0.5);
+  color: #f6eedf;
+}
+
+.site-header .button--secondary:hover:not(:disabled) {
+  background: rgba(246, 238, 223, 0.12);
+  border-color: #f6eedf;
+  color: #fffdf8;
+}
+
+/* Menu no cabeçalho: só no computador. No celular continua a barra de baixo. */
+.site-header__nav {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .site-header__nav {
+    display: flex;
+    gap: 4px;
+    margin-right: auto;
+    margin-left: var(--space-xl);
+  }
+
+  .site-header__nav-item {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 16px;
+    border-radius: var(--radius-full);
+    font-size: 15px;
+    font-weight: 600;
+    color: #e6d8bf;
+    text-decoration: none;
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .site-header__nav-item:hover {
+    background: rgba(246, 238, 223, 0.12);
+    color: #fffdf8;
+    text-decoration: none;
+  }
+
+  .site-header__nav-item--ativo,
+  .site-header__nav-item--ativo:hover {
+    background: #fffdf8;
+    color: var(--brown);
+  }
+}

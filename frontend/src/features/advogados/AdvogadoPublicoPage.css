@@ -1,0 +1,176 @@
+/* Perfil público do advogado — página de detalhe (repaginação de outubro/2026). */
+main.perfil-adv {
+  max-width: 1040px;
+  padding-top: var(--space-md);
+}
+
+.perfil-adv__voltar {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin: 0 0 var(--space-sm) -4px;
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  font: 600 14px/1 var(--font-body);
+  color: var(--brown);
+  cursor: pointer;
+}
+
+.perfil-adv__grade {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+@media (min-width: 900px) {
+  .perfil-adv__grade {
+    grid-template-columns: 320px minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .perfil-adv__cartao {
+    position: sticky;
+    top: 96px;
+  }
+}
+
+.perfil-adv__cartao {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 24px 28px;
+  border-radius: 28px;
+  background: var(--brown);
+  color: #f6eedf;
+  text-align: center;
+  box-shadow: 0 16px 40px rgba(59, 40, 28, 0.18);
+}
+
+.perfil-adv__cartao .avatar-placeholder.perfil-adv__foto {
+  width: 132px;
+  height: 132px;
+  border: 4px solid rgba(246, 238, 223, 0.35);
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 48px;
+}
+
+.perfil-adv__cartao h1 {
+  margin: 18px 0 6px;
+  font-size: 26px;
+  color: #fffdf8;
+}
+
+.perfil-adv__local {
+  margin: 0 0 16px;
+  font-size: 14px;
+  color: #e6d8bf;
+}
+
+.perfil-adv__selos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.perfil-adv__cartao .badge {
+  background: rgba(246, 238, 223, 0.16);
+  border-color: transparent;
+  color: #f6eedf;
+}
+
+.perfil-adv__conteudo .card {
+  margin-bottom: var(--space-md);
+}
+
+.perfil-adv__conteudo h2 {
+  margin: 0 0 12px;
+  font-size: 20px;
+}
+
+.perfil-adv__bio {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.perfil-adv__curriculo {
+  display: grid;
+  gap: var(--space-md);
+}
+
+@media (min-width: 600px) {
+  .perfil-adv__curriculo {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.perfil-adv__bloco {
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: #f8f3ec;
+}
+
+.perfil-adv__bloco h3 {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--brown);
+}
+
+.perfil-adv__bloco ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Barra fixa com a ação principal, como o "Buy Now" da referência */
+.perfil-adv__barra {
+  position: sticky;
+  bottom: calc(var(--bottom-nav-height) + 12px);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+  padding: 12px 12px 12px 20px;
+  border-radius: 24px;
+  background: var(--surface);
+  box-shadow: 0 10px 30px rgba(59, 40, 28, 0.16);
+}
+
+.perfil-adv__barra > span {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+
+.perfil-adv__barra strong {
+  font-size: 15px;
+  color: var(--text);
+}
+
+.perfil-adv__barra .button {
+  flex: none;
+}
+
+@media (max-width: 420px) {
+  .perfil-adv__barra > span span {
+    display: none;
+  }
+}
+
+@media (min-width: 900px) {
+  .perfil-adv__barra {
+    bottom: 16px;
+    margin-left: calc(320px + var(--space-lg));
+  }
+}

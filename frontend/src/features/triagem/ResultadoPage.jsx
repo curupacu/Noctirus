@@ -2,9 +2,13 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { AdvogadoCard } from "../../components/AdvogadoCard/AdvogadoCard";
 import { Loading } from "../../components/Loading/Loading";
-import { OwlMark } from "../../components/OwlMark/OwlMark";
 import { api } from "../../lib/api";
 import { useTitulo } from "../../lib/useTitulo";
+import "../painel/PainelPage.css";
+
+// Mesma foto do destaque do painel do cliente (Unsplash).
+const FOTO_DESTAQUE =
+  "https://images.unsplash.com/photo-1631217875019-8cb2649c3478?auto=format&fit=crop&w=720&h=560&q=75";
 
 const LABEL_AREA = {
   civel: "Cível",
@@ -97,32 +101,54 @@ export function ResultadoPage() {
     setCategorias((atual) => (atual.includes(valor) ? atual.filter((c) => c !== valor) : [...atual, valor]));
   }
 
-  return (
-    <main>
-      <span className="eyebrow">Triagem concluída</span>
-      <h1>
-        Resultado da <em className="accent">triagem</em>
-      </h1>
+  const area = LABEL_AREA[resultado.areaClassificada] || resultado.areaClassificada;
+  const especialidade = catalogoEspecialidades[resultado.especialidade || resultado.categorias?.[0]];
+  const qtd = advogados?.length ?? 0;
+  const indefinido = resultado.areaClassificada === "indefinido";
 
-      <section className="hero-block hero-reveal">
-        <OwlMark className="hero-block__owl-mark" />
-        <span className="badge badge--gold">
-          {resultado.origem === "ia" ? "Classificado por IA" : "Classificado por regras"}
-        </span>
-        <p>
-          <strong>Área:</strong> {LABEL_AREA[resultado.areaClassificada] || resultado.areaClassificada}
-        </p>
-        <p>
-          <strong>Recomendação:</strong> {resultado.tipoAdvogadoSugerido}
-        </p>
-        {resultado.justificativa && <p>{resultado.justificativa}</p>}
+  return (
+    <main className="painel resultado">
+      <p className="painel__ola">Triagem concluída</p>
+      <h1 className="painel__titulo">O que encontramos no seu caso</h1>
+
+      {/* Cartão de destaque: o assunto identificado em letra grande e quantos advogados
+          atendem — o resto (categorias, justificativa) fica em segundo plano. */}
+      <section className="destaque hero-reveal">
+        <img className="destaque__foto" src={FOTO_DESTAQUE} alt="" loading="lazy" />
+        <div className="destaque__corpo">
+          <span className="destaque__etiqueta">
+            {area} · {resultado.origem === "ia" ? "identificado por IA" : "identificado por regras"}
+          </span>
+          <h2 className="destaque__titulo">
+            {indefinido ? "Não deu pra identificar a área" : especialidade || `Caso ${area.toLowerCase()}`}
+          </h2>
+          <p className="destaque__texto">
+            {indefinido
+              ? "Tente uma nova triagem contando um pouco mais sobre o que aconteceu."
+              : advogados === null || revelando
+                ? "Procurando advogados que atendem esse assunto..."
+                : qtd > 0
+                  ? `${qtd} advogado${qtd === 1 ? "" : "s"} atende${qtd === 1 ? "" : "m"} esse assunto${regiao ? ` em ${regiao.uf}` : ""}. Escolha um e peça contato.`
+                  : "Ainda não temos advogado aprovado pra esse assunto na sua região."}
+          </p>
+          <div className="destaque__acoes">
+            {!indefinido && qtd > 0 && (
+              <a href="#advogados" className="button button--primary">
+                Ver advogados <span className="button__arrow">↓</span>
+              </a>
+            )}
+            <Link to="/triagem" className={indefinido ? "button button--primary" : "destaque__link"}>
+              {indefinido ? "Fazer nova triagem" : "Contar outro caso"}
+            </Link>
+          </div>
+        </div>
       </section>
 
+      {/* Ajuste fino fica recolhido — antes eram ~20 chips logo no topo da tela. */}
       {opcoesDaArea.length > 0 && (
-        <section className="card">
-          <h2>Categorias identificadas no seu caso</h2>
-          <p className="text-muted">Toque pra marcar ou desmarcar o que se aplica ao seu caso.</p>
-
+        <details className="card resultado__ajuste">
+          <summary>Não é bem isso? Ajustar o assunto</summary>
+          <p className="text-muted">Marque o que mais combina com o seu caso — a lista de advogados se reorganiza.</p>
           <div className="pill-toggle">
             {opcoesDaArea.map((c) => {
               const selecionada = categorias.includes(c.valor);
@@ -139,10 +165,10 @@ export function ResultadoPage() {
               );
             })}
           </div>
-        </section>
+        </details>
       )}
 
-      <div className="section-heading">
+      <div className="section-heading" id="advogados">
         <h2>Advogados compatíveis</h2>
       </div>
       {regiao && resultado.areaClassificada !== "indefinido" && (
@@ -184,10 +210,6 @@ export function ResultadoPage() {
       )}
       {advogados && !revelando && advogados.length > 0 && (
         <>
-          <span className="eyebrow">
-            {advogados.length} advogado{advogados.length === 1 ? "" : "s"} compatíve
-            {advogados.length === 1 ? "l" : "is"} — escolha um e peça contato
-          </span>
           <ul className="advogados-lista">
             {advogados.map((adv, i) => (
               <li key={adv.uid} className="step-enter" style={{ animationDelay: `${Math.min(i * 40, 400)}ms` }}>
@@ -198,20 +220,6 @@ export function ResultadoPage() {
         </>
       )}
 
-      <ul className="list-plain resultado-proximos-passos">
-        <li>
-          <Link to="/triagem" className="list-row">
-            <span className="list-row__title">Fazer nova triagem</span>
-            <span className="advogado-row__chevron" aria-hidden="true">›</span>
-          </Link>
-        </li>
-        <li>
-          <Link to="/minhas-triagens" className="list-row">
-            <span className="list-row__title">Minhas triagens</span>
-            <span className="advogado-row__chevron" aria-hidden="true">›</span>
-          </Link>
-        </li>
-      </ul>
     </main>
   );
 }

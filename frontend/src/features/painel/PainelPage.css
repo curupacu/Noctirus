@@ -5,7 +5,7 @@
 main.painel {
   max-width: 1120px;
   padding-top: var(--space-md);
-  padding-bottom: calc(var(--bottom-nav-height) + var(--space-lg));
+  padding-bottom: var(--space-xl);
 }
 
 .painel__ola {
@@ -364,6 +364,48 @@ a.painel__numero:hover {
 /* Listas (triagens) em duas colunas no computador */
 @media (min-width: 760px) {
   .painel .list-plain--grade {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-md);
+  }
+}
+
+/* ---------- resultado da triagem ---------- */
+.resultado__ajuste {
+  margin-bottom: var(--space-lg);
+}
+
+.resultado__ajuste summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 44px;
+  font-weight: 600;
+  color: var(--brown);
+  cursor: pointer;
+  list-style: none;
+}
+
+.resultado__ajuste summary::-webkit-details-marker {
+  display: none;
+}
+
+.resultado__ajuste summary::after {
+  content: "+";
+  font-size: 22px;
+  line-height: 1;
+}
+
+.resultado__ajuste[open] summary::after {
+  content: "–";
+}
+
+.resultado #advogados {
+  scroll-margin-top: 90px;
+}
+
+@media (min-width: 900px) {
+  .resultado .advogados-lista {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-md);
