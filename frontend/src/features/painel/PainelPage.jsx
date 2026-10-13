@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { AreaIcon } from "../../components/AreaIcon/AreaIcon";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { Loading } from "../../components/Loading/Loading";
@@ -8,6 +8,8 @@ import { oabAprovada } from "../../lib/situacaoOab";
 import { LABEL_AREA, LABEL_SITUACAO_CLIENTE, rotulosEspecialidades } from "../../lib/solicitacoes";
 import { useCarregar } from "../../lib/useCarregar";
 import { useTitulo } from "../../lib/useTitulo";
+import { useAuth } from "../auth/AuthContext";
+import { rotaInicial } from "../auth/rotaInicial";
 import "./PainelPage.css";
 
 // Foto de banco de imagem (Unsplash, mesma da seção de serviços da Home).
@@ -85,6 +87,14 @@ function Prateleira({ titulo, verTodos, classeTrilho = "", children }) {
 // cidade —, nunca popularidade.
 export function PainelPage() {
   useTitulo("Painel");
+  const { role } = useAuth();
+  // Painel é só do cliente — advogado/admin que caírem aqui (link antigo, URL digitada)
+  // vão pra própria tela inicial em vez de levar "Sem permissão" das rotas de cliente.
+  if (role && role !== "cliente") return <Navigate to={rotaInicial(role)} replace />;
+  return <PainelCliente />;
+}
+
+function PainelCliente() {
   const { dado, erro } = useCarregar(buscarPainel);
 
   if (erro) return <p role="alert">{erro}</p>;
