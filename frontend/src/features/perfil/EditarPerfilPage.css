@@ -1,0 +1,64 @@
+/* Editar perfil do advogado — seções em cartão e um botão só de salvar, fixo embaixo
+   (repaginação de outubro/2026). As especialidades usam os chips do cadastro. */
+.editar-perfil h1 {
+  margin: 0 0 var(--space-lg);
+}
+
+.editar-perfil .card h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.editar-perfil__topo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+}
+
+.editar-perfil__topo .stack {
+  gap: 6px;
+}
+
+.editar-perfil__dupla {
+  display: grid;
+  gap: var(--space-md);
+  width: 100%;
+}
+
+@media (min-width: 600px) {
+  .editar-perfil__dupla {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.editar-perfil .chips__grupo {
+  margin: 16px 0 10px;
+}
+
+.editar-perfil__barra {
+  position: sticky;
+  bottom: calc(var(--bottom-nav-height) + 12px);
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin: 0 0 var(--space-lg);
+  padding: 12px 12px 12px 20px;
+  border-radius: 24px;
+  background: var(--surface);
+  box-shadow: 0 10px 30px rgba(59, 40, 28, 0.16);
+  font-size: 14px;
+  color: var(--text-dim);
+}
+
+.editar-perfil__barra [role="status"] {
+  color: var(--brown);
+  font-weight: 600;
+}
+
+@media (min-width: 900px) {
+  .editar-perfil__barra {
+    bottom: 16px;
+  }
+}

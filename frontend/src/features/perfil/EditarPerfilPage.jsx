@@ -3,13 +3,15 @@ import { Link } from "react-router-dom";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { Button } from "../../components/Button/Button";
 import { CampoLocalizacao } from "../../components/CampoLocalizacao/CampoLocalizacao";
-import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
 import { Input } from "../../components/Input/Input";
 import { Loading } from "../../components/Loading/Loading";
 import { useAuth } from "../auth/AuthContext";
 import { CurriculoForm } from "../curriculo/CurriculoForm";
 import { api } from "../../lib/api";
 import { useTitulo } from "../../lib/useTitulo";
+import "../advogados/AdvogadoPublicoPage.css";
+import "../auth/entrada.css";
+import "./EditarPerfilPage.css";
 
 // Formulário de edição do advogado — antes vivia dentro de /perfil junto com o
 // dashboard; separado pra /perfil/editar a pedido do usuário (18/08/2026).
@@ -34,6 +36,7 @@ export function EditarPerfilPage() {
   const [categoriasPorArea, setCategoriasPorArea] = useState(null);
   const [especialidades, setEspecialidades] = useState([]);
   const [mensagem, setMensagem] = useState(null);
+  const [salvando, setSalvando] = useState(false);
   const [carregando, setCarregando] = useState(true);
   const [, setCurriculo] = useState(null);
 
@@ -70,22 +73,6 @@ export function EditarPerfilPage() {
     );
   }
 
-  const especialidadesDisponiveis = (categoriasPorArea && advogado
-    ? (advogado.areasAtuacao || []).flatMap((area) => categoriasPorArea[area] || [])
-    : []
-  ).filter((c, i, lista) => lista.findIndex((c2) => c2.valor === c.valor) === i);
-
-  async function salvarUsuario(e) {
-    e.preventDefault();
-    setMensagem(null);
-    try {
-      await api.put("/users/me", { nome, telefone });
-      setMensagem("Dados salvos.");
-    } catch (err) {
-      setMensagem(err.message);
-    }
-  }
-
   async function enviarFoto(e) {
     const arquivo = e.target.files?.[0];
     if (!arquivo) return;
@@ -105,19 +92,27 @@ export function EditarPerfilPage() {
     }
   }
 
-  async function salvarAdvogado(e) {
+  // Um botão só salva tudo (antes eram "Salvar dados básicos" e "Salvar dados de
+  // advogado", e quem salvava um achava que tinha salvo o outro).
+  async function salvarTudo(e) {
     e.preventDefault();
     setMensagem(null);
+    setSalvando(true);
     try {
-      await api.put(`/advogados/${user.uid}`, {
-        bio,
-        whatsapp,
-        localizacao: { cidade, uf },
-        especialidades,
-      });
-      setMensagem("Dados salvos.");
+      await Promise.all([
+        api.put("/users/me", { nome, telefone }),
+        api.put(`/advogados/${user.uid}`, {
+          bio,
+          whatsapp,
+          localizacao: { cidade, uf },
+          especialidades,
+        }),
+      ]);
+      setMensagem("Alterações salvas.");
     } catch (err) {
       setMensagem(err.message);
+    } finally {
+      setSalvando(false);
     }
   }
 
@@ -143,35 +138,26 @@ export function EditarPerfilPage() {
     return <Loading>Carregando perfil...</Loading>;
   }
 
-  return (
-    <main>
-      <p className="text-muted resultado-proximos-passos" style={{ marginTop: 0 }}>
-        <Link to="/perfil">‹ Voltar pro meu perfil</Link>
-      </p>
+  const LABEL_AREA = { civel: "Cível", trabalhista: "Trabalhista" };
+  const grupos = (advogado.areasAtuacao || [])
+    .map((area) => ({ area, opcoes: categoriasPorArea?.[area] || [] }))
+    .filter((g) => g.opcoes.length > 0);
 
+  return (
+    <main className="editar-perfil">
+      <Link to="/perfil" className="perfil-adv__voltar">
+        ← Voltar pro painel
+      </Link>
       <h1>Editar perfil</h1>
 
-      <div className="section-heading">
-        <h2>Dados básicos</h2>
-      </div>
-      <form className="stack" onSubmit={salvarUsuario}>
-        <Input label="Nome" id="nome" value={nome} onChange={(e) => setNome(e.target.value)} />
-        <Input
-          label="Telefone"
-          id="telefone"
-          value={telefone}
-          onChange={(e) => setTelefone(e.target.value)}
-        />
-        <Button type="submit">Salvar dados básicos</Button>
-      </form>
-
-      <div className="section-heading">
-        <h2>Dados de advogado</h2>
-      </div>
-
-      <div className="media">
+      {/* Topo: foto + OAB. A foto sobe sozinha ao escolher o arquivo. */}
+      <section className="card editar-perfil__topo">
         <Avatar nome={advogado.nome} foto={foto} seed={user.uid} className="avatar-placeholder--grande" />
         <div className="stack">
+          <strong>{nome || advogado.nome}</strong>
+          <span className="text-muted">
+            OAB {advogado.oab?.numero}/{advogado.oab?.uf}
+          </span>
           <label className="button button--secondary" htmlFor="foto">
             {enviandoFoto ? "Enviando..." : foto ? "Trocar foto" : "Adicionar foto"}
           </label>
@@ -185,9 +171,9 @@ export function EditarPerfilPage() {
           />
           {erroFoto && <p role="alert">{erroFoto}</p>}
         </div>
-      </div>
+      </section>
 
-      {advogado.situacaoOab === "recusado" ? (
+      {advogado.situacaoOab === "recusado" && (
         <form className="card stack" onSubmit={reenviarOab}>
           <strong>Corrigir minha OAB</strong>
           <p className="text-muted" style={{ margin: 0 }}>
@@ -213,73 +199,82 @@ export function EditarPerfilPage() {
             />
           </div>
           <Button type="submit">Reenviar pra análise</Button>
-          {mensagemOab && <p role="status">{mensagemOab}</p>}
         </form>
-      ) : (
-        <>
-          <p className="text-muted">
-            OAB: {advogado.oab?.numero}/{advogado.oab?.uf} (não editável)
-          </p>
-          {mensagemOab && <p role="status">{mensagemOab}</p>}
-        </>
       )}
+      {mensagemOab && <p role="status">{mensagemOab}</p>}
 
-      <form className="stack" onSubmit={salvarAdvogado}>
-
-        <div className="input-group">
-          <label className="input-label" htmlFor="bio">
-            Sobre você
-          </label>
-          <p className="text-muted">
-            Uma ou duas frases pra se apresentar — aparece no topo do seu perfil
-            público e na listagem.
-          </p>
-          <textarea
-            id="bio"
-            className="input"
-            rows={3}
-            maxLength={240}
-            value={bio}
-            onChange={(e) => setBio(e.target.value)}
-            placeholder="Ex.: Advogada trabalhista há 8 anos, focada em casos de rescisão indireta e assédio moral."
-          />
-          <p className="text-muted char-counter">{bio.length}/240</p>
-        </div>
-
-        <Input
-          label="WhatsApp"
-          id="whatsapp"
-          value={whatsapp}
-          onChange={(e) => setWhatsapp(e.target.value)}
-        />
-        <CampoLocalizacao cidade={cidade} uf={uf} onCidade={setCidade} onUf={setUf} required />
-
-        {especialidadesDisponiveis.length > 0 && (
+      <form id="form-perfil" onSubmit={salvarTudo}>
+        <section className="card stack">
+          <h2>Apresentação</h2>
           <div className="input-group">
-            <label className="input-label">Especialidades</label>
-            <p className="text-muted">
-              Ajuda o cliente a ver se você atende o assunto específico do caso dele.
+            <label className="input-label" htmlFor="bio">
+              Sobre você
+            </label>
+            <textarea
+              id="bio"
+              className="input"
+              rows={3}
+              maxLength={240}
+              value={bio}
+              onChange={(e) => setBio(e.target.value)}
+              placeholder="Ex.: Advogada trabalhista há 8 anos, focada em casos de rescisão indireta e assédio moral."
+            />
+            <p className="text-muted char-counter">
+              Aparece no topo do seu perfil público · {bio.length}/240
             </p>
-            <div className="choice-grid">
-              {especialidadesDisponiveis.map((c) => (
-                <ChoiceCard
-                  key={c.valor}
-                  type="checkbox"
-                  label={c.label}
-                  checked={especialidades.includes(c.valor)}
-                  onChange={() => alternarEspecialidade(c.valor)}
-                />
-              ))}
-            </div>
           </div>
+        </section>
+
+        <section className="card stack">
+          <h2>Contato e localização</h2>
+          <Input label="Nome" id="nome" value={nome} onChange={(e) => setNome(e.target.value)} />
+          <div className="editar-perfil__dupla">
+            <Input label="Telefone" id="telefone" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+            <Input label="WhatsApp" id="whatsapp" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} />
+          </div>
+          <CampoLocalizacao cidade={cidade} uf={uf} onCidade={setCidade} onUf={setUf} required />
+          <p className="text-muted" style={{ margin: 0 }}>
+            O WhatsApp só é mostrado pro cliente depois que você aceita o pedido dele.
+          </p>
+        </section>
+
+        {grupos.length > 0 && (
+          <section className="card">
+            <h2>Especialidades</h2>
+            <p className="text-muted">Toque nos assuntos que você atende. O cliente vê isso no seu perfil.</p>
+            {grupos.map((g) => (
+              <div key={g.area}>
+                <p className="chips__grupo">{LABEL_AREA[g.area] || g.area}</p>
+                <ul className="chips">
+                  {g.opcoes.map((c) => (
+                    <li key={c.valor}>
+                      <button
+                        type="button"
+                        className="chip-opcao"
+                        aria-pressed={especialidades.includes(c.valor)}
+                        onClick={() => alternarEspecialidade(c.valor)}
+                      >
+                        {c.label}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
         )}
 
-        <Button type="submit">Salvar dados de advogado</Button>
+        <div className="editar-perfil__barra">
+          {mensagem ? <span role="status">{mensagem}</span> : <span>Lembre de salvar antes de sair.</span>}
+          <Button type="submit" disabled={salvando}>
+            {salvando ? "Salvando..." : "Salvar alterações"}
+          </Button>
+        </div>
       </form>
 
-      <CurriculoForm uid={user.uid} onSalvo={setCurriculo} />
-
-      {mensagem && <p role="status">{mensagem}</p>}
+      <section className="card">
+        <CurriculoForm uid={user.uid} onSalvo={setCurriculo} />
+      </section>
     </main>
   );
 }
