@@ -70,6 +70,13 @@ export const CATEGORIAS_POR_AREA = {
     { valor: "funeral_cemiterio", label: "Funeral, cemitério e plano funerário" },
     { valor: "golpe_fraude", label: "Golpe, fraude bancária e Pix" },
     { valor: "voo_viagem", label: "Voo atrasado, cancelado ou bagagem extraviada" },
+    // Trânsito (13/10/2026) — multas e CNH ficam dentro de cível: o escopo aprovado do TCC
+    // é cível + trabalhista (decisão do grupo).
+    { valor: "multa_transito", label: "Recurso de multa de trânsito" },
+    { valor: "cnh_suspensa", label: "CNH suspensa, cassada ou com muitos pontos" },
+    { valor: "lei_seca", label: "Lei Seca e bafômetro" },
+    { valor: "veiculo_apreendido", label: "Veículo apreendido ou guinchado" },
+    { valor: "documentacao_veiculo", label: "Documentação e transferência de veículo" },
     { valor: "outro_civel", label: "Outro assunto cível" },
   ],
   trabalhista: [
@@ -88,13 +95,8 @@ export const CATEGORIAS_POR_AREA = {
     { valor: "sem_carteira", label: "Trabalho sem carteira assinada" },
     { valor: "jornada_intervalo", label: "Jornada excessiva e intervalo não respeitado" },
     { valor: "estabilidade_gestante", label: "Estabilidade gestante ou acidentária" },
-    { valor: "outro_trabalhista", label: "Outro direito trabalhista" },
-  ],
-  // Áreas novas (13/10/2026), depois de pesquisa sobre o que mais leva brasileiros à
-  // Justiça: o INSS é o maior litigante do país (mais de 4 milhões de processos, CNJ) e
-  // ~11% dos advogados atuam em previdenciário (FGV/OAB); multa e CNH suspensa são uma
-  // especialidade à parte (direito de trânsito, administrativo).
-  previdenciario: [
+    // INSS (13/10/2026) — benefícios previdenciários ficam dentro de trabalhista, como muitos
+    // escritórios atuam ("trabalhista e previdenciário"); escopo do TCC é cível + trabalhista.
     { valor: "aposentadoria", label: "Aposentadoria (pedido, negativa ou revisão)" },
     { valor: "beneficio_incapacidade", label: "Auxílio-doença e aposentadoria por invalidez" },
     { valor: "bpc_loas", label: "BPC/LOAS (idoso ou pessoa com deficiência)" },
@@ -102,26 +104,19 @@ export const CATEGORIAS_POR_AREA = {
     { valor: "salario_maternidade", label: "Salário-maternidade" },
     { valor: "auxilio_acidente", label: "Auxílio-acidente" },
     { valor: "revisao_beneficio", label: "Revisão ou corte de benefício do INSS" },
-    { valor: "outro_previdenciario", label: "Outro assunto do INSS" },
-  ],
-  transito: [
-    { valor: "multa_transito", label: "Recurso de multa de trânsito" },
-    { valor: "cnh_suspensa", label: "CNH suspensa, cassada ou com muitos pontos" },
-    { valor: "lei_seca", label: "Lei Seca e bafômetro" },
-    { valor: "veiculo_apreendido", label: "Veículo apreendido ou guinchado" },
-    { valor: "documentacao_veiculo", label: "Documentação e transferência de veículo" },
-    { valor: "outro_transito", label: "Outro assunto de trânsito" },
+    { valor: "outro_trabalhista", label: "Outro direito trabalhista" },
   ],
 };
 
 export const AREAS = {
-  civel: { label: "Cível", descricao: "Compras, contratos, dívidas, aluguel, família, herança, seguros, golpes" },
-  trabalhista: { label: "Trabalhista", descricao: "Emprego, demissão, salário, direitos de quem trabalha ou contrata" },
-  previdenciario: {
-    label: "Previdenciário (INSS)",
-    descricao: "Aposentadoria, auxílio-doença, BPC/LOAS, pensão por morte",
+  civel: {
+    label: "Cível",
+    descricao: "Compras, contratos, dívidas, família, herança, seguros, golpes, multas e CNH",
   },
-  transito: { label: "Trânsito", descricao: "Multas, CNH suspensa ou cassada, Lei Seca, veículo apreendido" },
+  trabalhista: {
+    label: "Trabalhista",
+    descricao: "Emprego, demissão, salário e benefícios do INSS (aposentadoria, auxílio-doença, pensão por morte)",
+  },
 };
 
 // Etapa 2 de cada área: só a pergunta opcional de detalhes (as especialidades são chips).
@@ -262,7 +257,13 @@ const PALAVRAS_EMPREGADOR = [
   "meu funcionário", "meus funcionarios", "meus funcionários", "minha funcionaria", "minha funcionária",
 ];
 
+const CATEGORIAS_INSS = ["aposentadoria", "beneficio_incapacidade", "bpc_loas", "pensao_por_morte", "salario_maternidade", "auxilio_acidente", "revisao_beneficio"];
+const CATEGORIAS_TRANSITO = ["multa_transito", "cnh_suspensa", "lei_seca", "veiculo_apreendido", "documentacao_veiculo"];
+
 export function sugerirTipoAdvogado({ area, descricao, categorias }) {
+  const principalEspecifica = categorias.find((c) => !c.startsWith("outro_"));
+  if (CATEGORIAS_INSS.includes(principalEspecifica)) return `Advogado previdenciário — ${LABEL_CATEGORIA[principalEspecifica]}`;
+  if (CATEGORIAS_TRANSITO.includes(principalEspecifica)) return `Advogado de trânsito — ${LABEL_CATEGORIA[principalEspecifica]}`;
   if (area === "trabalhista") {
     const base = contarOcorrencias(descricao, PALAVRAS_EMPREGADOR) > 0
       ? "Advogado trabalhista para empregador"
@@ -271,7 +272,7 @@ export function sugerirTipoAdvogado({ area, descricao, categorias }) {
     return principal ? `${base} — ${LABEL_CATEGORIA[principal]}` : base;
   }
   if (AREAS[area]) {
-    const nomeArea = { civel: "cível", previdenciario: "previdenciário", transito: "de trânsito" }[area];
+    const nomeArea = { civel: "cível" }[area] || area;
     const principal = categorias.find((c) => c !== `outro_${area}`);
     return principal ? `Advogado ${nomeArea} — ${LABEL_CATEGORIA[principal]}` : `Advogado ${nomeArea}`;
   }
@@ -285,10 +286,8 @@ export function classificarPorRegras({ descricao = "", areaFixa } = {}) {
 
   if (!areaFixa) {
     const pontos = [
-      ["trabalhista", contarOcorrencias(descricao, PALAVRAS_TRABALHISTA)],
-      ["civel", contarOcorrencias(descricao, PALAVRAS_CIVEL)],
-      ["previdenciario", contarOcorrencias(descricao, PALAVRAS_PREVIDENCIARIO)],
-      ["transito", contarOcorrencias(descricao, PALAVRAS_TRANSITO)],
+      ["trabalhista", contarOcorrencias(descricao, [...PALAVRAS_TRABALHISTA, ...PALAVRAS_PREVIDENCIARIO])],
+      ["civel", contarOcorrencias(descricao, [...PALAVRAS_CIVEL, ...PALAVRAS_TRANSITO])],
     ].sort((x, y) => y[1] - x[1]);
     // Só decide se uma área ganhou sozinha; empate ou nada encontrado = indefinido.
     if (pontos[0][1] > 0 && pontos[0][1] > pontos[1][1]) area = pontos[0][0];
@@ -340,8 +339,8 @@ function construirPromptTriagem({ descricao, areaFixa }) {
       ]
     : [
         `Escolha a área entre: ${Object.keys(AREAS).join(", ")}.`,
-        "Previdenciário é tudo que envolve o INSS (aposentadoria, auxílio-doença, BPC/LOAS, pensão por morte).",
-        "Trânsito é multa, CNH suspensa ou cassada, Lei Seca e veículo apreendido; acidente de trânsito com pedido de indenização é cível.",
+        "Casos do INSS (aposentadoria, auxílio-doença, BPC/LOAS, pensão por morte) são da área trabalhista.",
+        "Multa de trânsito, CNH suspensa ou cassada, Lei Seca e veículo apreendido são da área cível.",
         'Se o caso não for de nenhuma dessas áreas, ou faltar informação, use area = "indefinido" e categorias = [].',
         "Escolha 'categorias' só entre estas opções da área escolhida, e só as que realmente se aplicam ao caso:",
         ...Object.keys(AREAS).map((a) => `Categorias (${a}): ${CATEGORIAS_POR_AREA[a].map((c) => c.valor).join(", ")}`),

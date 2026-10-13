@@ -11,6 +11,7 @@ import { useTitulo } from "../../lib/useTitulo";
 import { useAuth } from "../auth/AuthContext";
 import { rotaInicial } from "../auth/rotaInicial";
 import "./PainelPage.css";
+import { aceitasRecentes, CartaoAceite, ModalAceite } from "../../components/AceiteDestaque/AceiteDestaque";
 
 // Foto de banco de imagem (Unsplash, mesma da seção de serviços da Home).
 const FOTO_DESTAQUE =
@@ -123,6 +124,14 @@ function PainelCliente() {
     <main className="painel">
       <p className="painel__ola">Olá, {primeiroNome}</p>
       <h1 className="painel__titulo">{ultima ? "Seu caso, sem complicação" : "Por onde a gente começa?"}</h1>
+
+      {/* Advogado aceitou: tela de destaque (uma vez) + cartão fixo no topo do painel. */}
+      <ModalAceite solicitacoes={solicitacoes} />
+      {aceitasRecentes(solicitacoes)
+        .slice(0, 2)
+        .map((s) => (
+          <CartaoAceite key={s.id} solicitacao={s} />
+        ))}
 
       {/* Conta criada antes da cidade/UF virar obrigatória (outubro/2026) — sem isso o
           resultado da triagem não tem como mostrar advogados perto da pessoa. */}

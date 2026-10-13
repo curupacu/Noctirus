@@ -12,6 +12,7 @@ import {
 import { useCarregar } from "../../lib/useCarregar";
 import { useTitulo } from "../../lib/useTitulo";
 import { ContatosLiberados } from "../advogados/ContatoAdvogadoPage";
+import { ModalAceite } from "../../components/AceiteDestaque/AceiteDestaque";
 
 async function buscar() {
   const [solicitacoes, perguntas] = await Promise.all([
@@ -47,6 +48,7 @@ export function MinhasSolicitacoesPage() {
   return (
     <main>
       <h1>Minhas solicitações</h1>
+      <ModalAceite solicitacoes={solicitacoes} />
       <p className="text-muted">
         Os advogados que você pediu pra falar. Quando um aceita, o contato dele aparece aqui.
       </p>
@@ -85,7 +87,7 @@ export function MinhasSolicitacoesPage() {
 
       <ul className="list-plain">
         {daAba.map((s) => (
-          <li key={s.id} className="card stack">
+          <li key={s.id} className={`card stack${s.situacao === "aceita" ? " pedido-aceito" : ""}`}>
             <Link to={`/advogados/${s.advogadoId}`} className="media">
               <Avatar nome={s.advogadoNome} foto={s.advogadoFoto} seed={s.advogadoId} />
               <span className="stack" style={{ gap: 2 }}>

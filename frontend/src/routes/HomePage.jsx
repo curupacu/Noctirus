@@ -36,7 +36,7 @@ const FAQ = [
   {
     pergunta: "Como funciona a triagem por IA?",
     resposta:
-      "Você descreve seu problema com suas próprias palavras. A IA identifica a área do caso (cível, trabalhista, previdenciário ou trânsito) e sugere advogados com a especialidade certa.",
+      "Você descreve seu problema com suas próprias palavras. A IA identifica se é uma questão cível ou trabalhista (o que inclui multas de trânsito e benefícios do INSS) e sugere advogados com a especialidade certa.",
   },
   {
     pergunta: "Meus dados estão seguros?",
@@ -517,7 +517,7 @@ export function HomePage() {
         <div className="home-container home-footer__grid">
           <div className="home-footer__brand">
             <Logo className="home-footer__logo" />
-            <p>Plataforma de triagem e direcionamento jurídico nas áreas cível, trabalhista, previdenciária e de trânsito.</p>
+            <p>Plataforma de triagem e direcionamento jurídico nas áreas cível e trabalhista.</p>
           </div>
           <div>
             <h2 className="home-footer__title">Navegação</h2>
