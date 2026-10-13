@@ -2,7 +2,7 @@
    por vez escolhida pelas abas. Visual provisório — ganha o acabamento final na fase de
    UX/UI (docs/SPRINTS.md). */
 main.quadro {
-  max-width: 1120px;
+  max-width: 1320px;
 }
 
 .quadro__abas {
@@ -171,11 +171,41 @@ main.quadro {
 }
 
 .quadro-detalhe__respostas {
-  white-space: pre-line;
-  padding: var(--space-md);
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 18px;
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.quadro-detalhe__respostas dt {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--brown);
+}
+
+.quadro-detalhe__respostas dd {
+  margin: 2px 0 0;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.quadro-detalhe__aviso {
+  margin: var(--space-md) 0 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #f3ece2;
+  font-size: 14px;
+  color: var(--text-dim);
+}
+
+.quadro-detalhe__mover {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: var(--space-md);
 }
 
 .quadro-detalhe h3 {
@@ -209,5 +239,86 @@ main.quadro {
   /* Abaixo do BottomNav fixo. */
   .quadro-detalhe__painel {
     padding-bottom: calc(var(--bottom-nav-height) + var(--space-lg));
+  }
+}
+
+/* ---- Repaginação (13/10/2026): colunas claras, cartões com sombra, texto maior ---- */
+.quadro-coluna {
+  padding: 14px;
+  border: 0;
+  border-radius: 24px;
+  background: #f3ece2;
+}
+
+.quadro-coluna--sobre {
+  outline: 2px dashed var(--brown);
+  outline-offset: -2px;
+}
+
+.quadro-coluna__titulo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 4px 6px 14px;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 18px;
+}
+
+.quadro-coluna__lista {
+  gap: 10px;
+}
+
+.quadro-cartao {
+  border: 0;
+  border-left: 4px solid transparent;
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.quadro-cartao:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.quadro-cartao--alta {
+  border-left-color: #b4462f;
+}
+
+.quadro-cartao--alta .quadro-cartao__prioridade {
+  color: #b4462f;
+}
+
+.quadro-cartao--media {
+  border-left-color: var(--brown-400);
+}
+
+.quadro-cartao__abrir {
+  gap: 4px;
+  padding: 14px 16px;
+}
+
+.quadro-cartao__titulo {
+  font-size: 15px;
+}
+
+.quadro-cartao__meta {
+  font-size: 13px;
+}
+
+.quadro-cartao__nota {
+  color: var(--brown);
+}
+
+.quadro-detalhe__painel {
+  border-radius: 28px 0 0 28px;
+  padding: 28px;
+}
+
+@media (max-width: 900px) {
+  .quadro-detalhe__painel {
+    border-radius: 0;
+    padding: 20px;
   }
 }
