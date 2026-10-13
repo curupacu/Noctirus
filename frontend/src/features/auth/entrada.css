@@ -381,7 +381,9 @@ main.entrada {
   color: #fffdf8;
 }
 
-/* ---------- chips (áreas e especialidades) ---------- */
+/* ---------- chips (áreas e especialidades) ----------
+   Cores diretas (não as --entrada-*), porque o editar perfil do advogado usa os mesmos
+   chips fora do main.entrada. */
 .chips {
   display: flex;
   flex-wrap: wrap;
@@ -394,18 +396,18 @@ main.entrada {
 .chip-opcao {
   min-height: 40px;
   padding: 8px 16px;
-  border: 1.5px solid var(--entrada-chip-borda);
+  border: 1.5px solid #c9a98a;
   border-radius: var(--radius-full);
   background: transparent;
   font: 600 14px/1.2 var(--font-body);
-  color: var(--entrada-marrom);
+  color: var(--brown);
   cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .chip-opcao[aria-pressed="true"] {
-  background: var(--entrada-marrom);
-  border-color: var(--entrada-marrom);
+  background: var(--brown);
+  border-color: var(--brown);
   color: #fffdf8;
 }
 
