@@ -1174,3 +1174,25 @@ a.list-row:hover {
   border-color: var(--color-danger);
   color: #fffdf8;
 }
+
+/* Fila de validação de OAB (admin): busca, respiro entre abas e lista, e duas colunas
+   no computador (a aba de aprovados tem 30+ cadastros). */
+.admin-oab__busca {
+  margin: var(--space-md) 0 var(--space-lg);
+}
+
+@media (min-width: 900px) {
+  main.admin-oab {
+    max-width: 1120px;
+  }
+
+  .admin-oab__lista {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  .admin-oab__lista > .card {
+    margin-bottom: 0;
+  }
+}
