@@ -43,7 +43,7 @@ Demonstração ao vivo no site de verdade (https://nocturis.com.br), mostrando o
 4. **Etapa 2**: perguntas específicas da área trabalhista.
 5. **Resultado**: especialidade identificada e advogados **do estado do cliente, a cidade dele
    primeiro** ("Na sua cidade").
-6. Abrir o perfil do **Advogado Teste**: currículo, especialidades, selo "OAB verificada".
+6. Abrir o perfil do **Marcos Autilio** (a conta de advogado do time, antes "Advogado Teste"): currículo, especialidades, selo "OAB verificada".
    Mostrar que **não aparece WhatsApp nem e-mail**.
 7. **Pedir contato**: mostrar o texto exato que vai ser enviado e a autorização obrigatória.
    Enviar.
@@ -114,6 +114,6 @@ Resultado esperado: **Trabalhista — Horas extras não pagas**.
 ## Antes da banca (checklist do time)
 
 - [ ] Ensaiar o roteiro inteiro pelo menos duas vezes, rodando o reset antes de cada um.
-- [ ] Decidir se a conta "Advogado Teste" ganha um nome realista pra apresentação.
+- [x] Conta "Advogado Teste" renomeada pra **Marcos Autilio** (13/10/2026).
 - [ ] Gravar o vídeo do plano B.
 - [ ] Conferir no celular (o público da Nocturis usa principalmente o celular).
