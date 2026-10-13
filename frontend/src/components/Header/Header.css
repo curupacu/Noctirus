@@ -112,3 +112,51 @@
     color: var(--brown);
   }
 }
+
+/* Ações do cabeçalho (13/10/2026): os ícones e o "Sair" tinham borda clara cada um, o que
+   destacava demais sobre o marrom e parecia solto do resto. Agora são ícones limpos em
+   creme, com um fundo leve só no hover, e o "Sair" vira uma pílula translúcida. */
+.site-header__actions {
+  gap: 6px;
+}
+
+.site-header .notification-bell__toggle,
+.site-header .install-button {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  background: transparent;
+  color: #f6eedf;
+}
+
+.site-header .notification-bell__toggle:hover,
+.site-header .install-button:hover {
+  border: 0;
+  background: rgba(246, 238, 223, 0.14);
+}
+
+.site-header__avatar.avatar-placeholder {
+  width: 36px;
+  height: 36px;
+  margin: 0 4px;
+  background: rgba(246, 238, 223, 0.18);
+  color: #fffdf8;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.site-header .button--secondary {
+  min-height: 38px;
+  padding-inline: 18px;
+  border: 0;
+  background: rgba(246, 238, 223, 0.14);
+  color: #fffdf8;
+  font-size: 14px;
+}
+
+.site-header .button--secondary:hover:not(:disabled) {
+  border: 0;
+  background: rgba(246, 238, 223, 0.24);
+  color: #fffdf8;
+}

@@ -1196,3 +1196,24 @@ a.list-row:hover {
     margin-bottom: 0;
   }
 }
+
+/* Selo "OAB verificada" em destaque (13/10/2026 — antes era só um contorno cinza que
+   sumia no meio dos outros rótulos). Sobre o cartão marrom do perfil ele fica creme. */
+.badge.badge--seal {
+  gap: 5px;
+  padding: 4px 10px;
+  border: 0;
+  background: var(--brown);
+  color: #fffdf8;
+  font-weight: 700;
+}
+
+.badge.badge--seal svg {
+  width: 11px;
+  height: 11px;
+}
+
+.perfil-adv__cartao .badge.badge--seal {
+  background: #fffdf8;
+  color: var(--brown);
+}
