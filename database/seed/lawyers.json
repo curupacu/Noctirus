@@ -109,7 +109,7 @@
     "localizacao": { "cidade": "São Paulo", "uf": "SP" },
     "contatos": { "whatsapp": "5511988880002", "email": "thiago.costa@example.com" },
     "bio": "Advogado trabalhista com 7 anos de experiência em horas extras, verbas rescisórias e equiparação salarial. Faço os cálculos certos pra você não sair no prejuízo.",
-    "foto": "https://i.pravatar.cc/400?img=8",
+    "foto": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&crop=faces&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
       "formacao": ["Direito - PUC-SP (2013)"],

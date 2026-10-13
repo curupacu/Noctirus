@@ -87,3 +87,66 @@ export function AdvogadoCard({ advogado, catalogoEspecialidades = {}, triagemId 
     </Link>
   );
 }
+
+// Destaque do resultado da triagem: os advogados mais compatíveis com o caso aparecem
+// grandes, um por vez, com a bio inteira e o "Pedir contato" direto no cartão — pra
+// parecer uma indicação pensada pro caso da pessoa, não mais um item de catálogo
+// (achado do usuário, 13/10/2026). "Mais compatíveis" = critério objetivo (assunto e
+// cidade), nunca "melhores": o Código de Ética da OAB não permite comparar advogados.
+export function AdvogadoDestaque({ advogado, catalogoEspecialidades = {}, triagemId }) {
+  const especialidades = (advogado.especialidades || [])
+    .map((valor) => catalogoEspecialidades[valor])
+    .filter(Boolean);
+  const perfil = `/advogados/${advogado.uid}${triagemId ? `?triagemId=${triagemId}` : ""}`;
+  const contato = `/advogados/${advogado.uid}/contato${triagemId ? `?triagemId=${triagemId}` : ""}`;
+  const primeiroNome = (advogado.nome || "").split(" ")[0];
+  const areas = advogado.areasAtuacao?.map((a) => LABEL_AREA[a] || a).join(" e ");
+  const motivos = [
+    advogado.especialidadesCompativeis > 0 && "Atua no assunto do seu caso",
+    advogado.mesmaCidade && "Atende na sua cidade",
+  ].filter(Boolean);
+
+  return (
+    <article className="adv-destaque">
+      <Link to={perfil} className="adv-destaque__foto-link" tabIndex={-1} aria-hidden="true">
+        <Avatar nome={advogado.nome} foto={advogado.foto} seed={advogado.uid} className="adv-destaque__foto" />
+      </Link>
+
+      <div className="adv-destaque__corpo">
+        {motivos.length > 0 && (
+          <span className="adv-destaque__motivos">
+            <IconeCheck /> {motivos.join(" · ")}
+          </span>
+        )}
+        <h3 className="adv-destaque__nome">
+          <Link to={perfil}>{advogado.nome}</Link>
+        </h3>
+        <div className="adv-destaque__linha">
+          {oabAprovada(advogado) && <SeloOab advogado={advogado} />}
+          <span className="adv-card__meta">
+            <IconeLocal />
+            {advogado.localizacao?.cidade}/{advogado.localizacao?.uf}
+            {areas ? ` · ${areas}` : ""}
+          </span>
+        </div>
+
+        {advogado.bio && <p className="adv-destaque__bio">“{advogado.bio}”</p>}
+
+        {especialidades.length > 0 && (
+          <p className="adv-destaque__atende">
+            <strong>Atende:</strong> {especialidades.join(", ")}
+          </p>
+        )}
+
+        <div className="adv-destaque__acoes">
+          <Link to={contato} className="button button--primary">
+            Pedir contato{primeiroNome ? ` a ${primeiroNome}` : ""} <span className="button__arrow">→</span>
+          </Link>
+          <Link to={perfil} className="button button--secondary">
+            Ver perfil completo
+          </Link>
+        </div>
+      </div>
+    </article>
+  );
+}
