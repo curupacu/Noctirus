@@ -212,7 +212,7 @@ export function TriagemPage() {
             <h1 className="triagem__pergunta">
               {areaSugerida && areaSugerida !== "indefinido"
                 ? `Pelo que você contou, é um caso ${
-                    { civel: "cível", trabalhista: "trabalhista", previdenciario: "previdenciário (INSS)", transito: "de trânsito" }[areaSugerida]
+                    { civel: "cível", trabalhista: "trabalhista" }[areaSugerida]
                   }.`
                 : "Seu problema é mais parecido com qual destes?"}
             </h1>

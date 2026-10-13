@@ -46,9 +46,9 @@ describe("GET /triagem/perguntas", () => {
     const resposta = await request(app).get("/triagem/perguntas");
     expect(resposta.status).toBe(200);
     expect(resposta.body.etapa1.map((p) => p.id)).toEqual(["oque", "quando"]);
-    expect(Object.keys(resposta.body.etapa2).sort()).toEqual(["civel", "previdenciario", "trabalhista", "transito"]);
+    expect(Object.keys(resposta.body.etapa2).sort()).toEqual(["civel", "trabalhista"]);
     expect(resposta.body.categorias).toBeDefined();
-    expect(resposta.body.areas.transito.label).toBe("Trânsito");
+    expect(resposta.body.areas.civel.label).toBe("Cível");
   });
 });
 
@@ -92,19 +92,19 @@ describe("POST /triagem/area (etapa 1)", () => {
     expect((await cell.fake.db.collection("triagens").get()).docs).toHaveLength(0);
   });
 
-  it("identifica as áreas novas: trânsito e previdenciário", async () => {
+  it("multa de trânsito cai em cível e INSS cai em trabalhista, com a especialidade certa", async () => {
     const multa = await request(app)
       .post("/triagem/area")
       .set("Authorization", `Bearer ${tokenCliente()}`)
       .send({ etapa1: { oque: "Recebi uma multa de radar e quero recorrer antes da minha CNH ser suspensa", quando: "Semana passada" } });
-    expect(multa.body.area).toBe("transito");
+    expect(multa.body.area).toBe("civel");
     expect(multa.body.categorias).toContain("multa_transito");
 
     const inss = await request(app)
       .post("/triagem/area")
       .set("Authorization", `Bearer ${tokenCliente()}`)
       .send({ etapa1: { oque: "Meu marido faleceu e o INSS negou minha pensão por morte", quando: "Mês passado" } });
-    expect(inss.body.area).toBe("previdenciario");
+    expect(inss.body.area).toBe("trabalhista");
     expect(inss.body.categorias).toContain("pensao_por_morte");
   });
 

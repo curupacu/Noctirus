@@ -96,7 +96,7 @@ describe("classificarPorRegras", () => {
 describe("perguntas da triagem", () => {
   it("etapa 1 é a mesma pra todo mundo e etapa 2 existe pras duas áreas", () => {
     expect(PERGUNTAS_ETAPA1.length).toBeGreaterThan(0);
-    expect(Object.keys(PERGUNTAS_ETAPA2).sort()).toEqual(["civel", "previdenciario", "trabalhista", "transito"]);
+    expect(Object.keys(PERGUNTAS_ETAPA2).sort()).toEqual(["civel", "trabalhista"]);
   });
 
   it("toda pergunta tem id único, texto, exemplo e limites de tamanho", () => {
@@ -120,12 +120,10 @@ describe("perguntas da triagem", () => {
 // de categorias sem querer (ex.: duplicar um valor ou desalinhar do que o CLAUDE.md
 // documenta: 33 categorias, 17 cíveis + 16 trabalhistas).
 describe("taxonomia de categorias", () => {
-  it("tem 21 cíveis, 16 trabalhistas, 8 previdenciárias e 6 de trânsito (51 no total)", () => {
-    expect(CATEGORIAS_POR_AREA.civel).toHaveLength(21);
-    expect(CATEGORIAS_POR_AREA.trabalhista).toHaveLength(16);
-    expect(CATEGORIAS_POR_AREA.previdenciario).toHaveLength(8);
-    expect(CATEGORIAS_POR_AREA.transito).toHaveLength(6);
-    expect(TODAS_CATEGORIAS).toHaveLength(51);
+  it("tem 26 cíveis (com trânsito) e 23 trabalhistas (com INSS), 49 no total", () => {
+    expect(CATEGORIAS_POR_AREA.civel).toHaveLength(26);
+    expect(CATEGORIAS_POR_AREA.trabalhista).toHaveLength(23);
+    expect(TODAS_CATEGORIAS).toHaveLength(49);
   });
 
   it("toda área tem a sua categoria 'outro_<área>' (usada quando nada específico casa)", () => {

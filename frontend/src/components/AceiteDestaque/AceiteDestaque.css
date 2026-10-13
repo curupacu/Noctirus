@@ -1,0 +1,215 @@
+/* ---------- tela "contato liberado" ---------- */
+.aceite-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+.aceite-modal__fundo {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(38, 28, 20, 0.6);
+  cursor: pointer;
+}
+
+.aceite-modal__cartao {
+  position: relative;
+  width: min(420px, 100%);
+  padding: 36px 28px 24px;
+  border-radius: 32px;
+  background: #fffdf8;
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(38, 28, 20, 0.35);
+}
+
+.aceite-modal__foto {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  margin: 0 auto 18px;
+}
+
+.aceite-modal .avatar-placeholder.aceite-modal__avatar {
+  position: relative;
+  width: 132px;
+  height: 132px;
+  border: 5px solid #fffdf8;
+  box-shadow: 0 0 0 3px #3f8f5c;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 52px;
+}
+
+.aceite-modal__onda {
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  border: 3px solid rgba(63, 143, 92, 0.45);
+}
+
+.aceite-modal__selo {
+  position: absolute;
+  right: 2px;
+  bottom: 4px;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 4px solid #fffdf8;
+  border-radius: 50%;
+  background: #3f8f5c;
+  color: #fff;
+}
+
+.aceite-modal__selo svg {
+  width: 16px;
+  height: 16px;
+}
+
+.aceite-modal__etiqueta {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 5px 14px;
+  border-radius: var(--radius-full);
+  background: #e6f2ea;
+  font-size: 13px;
+  font-weight: 700;
+  color: #2f6b45;
+}
+
+.aceite-modal__cartao h2 {
+  margin: 0 0 10px;
+  font-size: clamp(24px, 6vw, 30px);
+  line-height: 1.2;
+  color: var(--text);
+}
+
+.aceite-modal__cartao p {
+  margin: 0 0 22px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text-dim);
+}
+
+.aceite-modal__acoes .actions {
+  flex-direction: column;
+  gap: 10px;
+}
+
+.aceite-modal__acoes .button {
+  width: 100%;
+  min-height: 52px;
+}
+
+.aceite-modal__depois {
+  margin-top: 14px;
+  min-height: 44px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .aceite-modal__cartao {
+    animation: aceite-entrar 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
+  }
+
+  .aceite-modal__onda {
+    animation: aceite-onda 1.8s ease-out infinite;
+  }
+
+  .aceite-modal__selo {
+    animation: aceite-selo 0.5s 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.5) both;
+  }
+}
+
+@keyframes aceite-entrar {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.92);
+  }
+}
+
+@keyframes aceite-onda {
+  from {
+    opacity: 1;
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.25);
+  }
+}
+
+@keyframes aceite-selo {
+  from {
+    transform: scale(0);
+  }
+}
+
+/* ---------- cartão fixo no painel ---------- */
+.aceite-cartao {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px 22px;
+  margin-bottom: var(--space-lg);
+  padding: 22px;
+  border: 2px solid #9cc9ab;
+  border-radius: 26px;
+  background: #f1f8f3;
+}
+
+.aceite-cartao .avatar-placeholder.aceite-cartao__avatar {
+  width: 88px;
+  height: 88px;
+  box-shadow: 0 0 0 3px #3f8f5c;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 34px;
+}
+
+.aceite-cartao__corpo {
+  flex: 1;
+  min-width: 220px;
+}
+
+.aceite-cartao__etiqueta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #2f6b45;
+}
+
+.aceite-cartao__etiqueta svg {
+  width: 13px;
+  height: 13px;
+}
+
+.aceite-cartao h2 {
+  margin: 4px 0 4px;
+  font-size: clamp(20px, 3vw, 24px);
+}
+
+.aceite-cartao p {
+  margin: 0 0 14px;
+  font-size: 15px;
+  color: var(--text-dim);
+}
+
+.aceite-cartao__link {
+  align-self: flex-start;
+  font-size: 14px;
+  font-weight: 700;
+  color: #2f6b45;
+}
+
+/* Pedido aceito em "Minhas solicitações": verde, pra saltar aos olhos na lista */
+.card.pedido-aceito {
+  border: 2px solid #9cc9ab;
+  background: #f1f8f3;
+}
