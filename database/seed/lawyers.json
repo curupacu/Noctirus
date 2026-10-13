@@ -1,512 +1,1488 @@
 [
   {
     "nome": "Ana Beatriz Souza",
-    "oab": { "numero": "123456", "uf": "SP" },
-    "areasAtuacao": ["civel"],
-    "especialidades": ["familia_divorcio", "familia_pensao", "familia_guarda", "heranca_inventario", "heranca_testamento"],
-    "localizacao": { "cidade": "São Paulo", "uf": "SP" },
-    "contatos": { "whatsapp": "5511999990001", "email": "ana.souza@example.com" },
+    "oab": {
+      "numero": "123456",
+      "uf": "SP"
+    },
+    "areasAtuacao": [
+      "civel"
+    ],
+    "especialidades": [
+      "familia_divorcio",
+      "familia_pensao",
+      "familia_guarda",
+      "heranca_inventario",
+      "heranca_testamento"
+    ],
+    "localizacao": {
+      "cidade": "São Paulo",
+      "uf": "SP"
+    },
+    "contatos": {
+      "whatsapp": "5511999990001",
+      "email": "ana.souza@example.com"
+    },
     "bio": "Advogada especializada em direito de família e sucessões há mais de 10 anos, com atuação focada em divórcios, guarda de filhos e inventários conduzidos com cuidado e transparência.",
-    "foto": "https://i.pravatar.cc/400?img=5",
+    "foto": "https://images.unsplash.com/photo-1563132337-f159f484226c?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - USP (2010)"],
-      "especializacoes": ["Direito Civil"],
-      "cursos": ["Contratos e Responsabilidade Civil"],
-      "experiencias": ["10 anos atuando em direito de família e sucessões"]
+      "formacao": [
+        "Direito - USP (2010)"
+      ],
+      "especializacoes": [
+        "Direito Civil"
+      ],
+      "cursos": [
+        "Contratos e Responsabilidade Civil"
+      ],
+      "experiencias": [
+        "10 anos atuando em direito de família e sucessões"
+      ]
     }
   },
   {
     "nome": "Carlos Eduardo Lima",
-    "oab": { "numero": "234567", "uf": "SP" },
-    "areasAtuacao": ["trabalhista"],
-    "especialidades": ["demissao_sem_justa_causa", "verbas_rescisorias", "fgts_multa", "horas_extras"],
-    "localizacao": { "cidade": "Guarulhos", "uf": "SP" },
-    "contatos": { "whatsapp": "5511999990002", "email": "carlos.lima@example.com" },
+    "oab": {
+      "numero": "234567",
+      "uf": "SP"
+    },
+    "areasAtuacao": [
+      "trabalhista"
+    ],
+    "especialidades": [
+      "demissao_sem_justa_causa",
+      "verbas_rescisorias",
+      "fgts_multa",
+      "horas_extras"
+    ],
+    "localizacao": {
+      "cidade": "Guarulhos",
+      "uf": "SP"
+    },
+    "contatos": {
+      "whatsapp": "5511999990002",
+      "email": "carlos.lima@example.com"
+    },
     "bio": "Advogado trabalhista há 8 anos, atuando em rescisões, verbas não pagas e horas extras. Atendimento direto e objetivo pra quem precisa entender seus direitos rapidamente.",
-    "foto": "https://i.pravatar.cc/400?img=70",
+    "foto": "https://images.unsplash.com/photo-1738566061874-2160e9f4a064?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - Mackenzie (2012)"],
-      "especializacoes": ["Direito do Trabalho"],
-      "cursos": ["Reforma Trabalhista na Prática"],
-      "experiencias": ["8 anos em escritório especializado em causas trabalhistas"]
+      "formacao": [
+        "Direito - Mackenzie (2012)"
+      ],
+      "especializacoes": [
+        "Direito do Trabalho"
+      ],
+      "cursos": [
+        "Reforma Trabalhista na Prática"
+      ],
+      "experiencias": [
+        "8 anos em escritório especializado em causas trabalhistas"
+      ]
     }
   },
   {
     "nome": "Fernanda Torres",
-    "oab": { "numero": "345678", "uf": "SP" },
-    "areasAtuacao": ["civel", "trabalhista"],
-    "especialidades": ["dividas_cobranca", "aluguel_imoveis", "rescisao_indireta", "assedio_moral"],
-    "localizacao": { "cidade": "São Paulo", "uf": "SP" },
-    "contatos": { "whatsapp": "5511999990003", "email": "fernanda.torres@example.com" },
+    "oab": {
+      "numero": "345678",
+      "uf": "SP"
+    },
+    "areasAtuacao": [
+      "civel",
+      "trabalhista"
+    ],
+    "especialidades": [
+      "dividas_cobranca",
+      "aluguel_imoveis",
+      "rescisao_indireta",
+      "assedio_moral"
+    ],
+    "localizacao": {
+      "cidade": "São Paulo",
+      "uf": "SP"
+    },
+    "contatos": {
+      "whatsapp": "5511999990003",
+      "email": "fernanda.torres@example.com"
+    },
     "bio": "Escritório próprio há 12 anos, com atuação em cobranças, contratos de aluguel e casos trabalhistas sensíveis como assédio moral. Foco em resolver com agilidade.",
-    "foto": "https://i.pravatar.cc/400?img=9",
+    "foto": "https://images.unsplash.com/photo-1685760259914-ee8d2c92d2e0?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - PUC-SP (2008)"],
-      "especializacoes": ["Direito Civil", "Direito do Trabalho"],
-      "cursos": ["Mediação e Arbitragem"],
-      "experiencias": ["Escritório próprio há 12 anos"]
+      "formacao": [
+        "Direito - PUC-SP (2008)"
+      ],
+      "especializacoes": [
+        "Direito Civil",
+        "Direito do Trabalho"
+      ],
+      "cursos": [
+        "Mediação e Arbitragem"
+      ],
+      "experiencias": [
+        "Escritório próprio há 12 anos"
+      ]
     }
   },
   {
     "nome": "Rafael Andrade",
-    "oab": { "numero": "456789", "uf": "RJ" },
-    "areasAtuacao": ["trabalhista"],
-    "especialidades": ["demissao_sem_justa_causa", "assedio_moral", "assedio_sexual", "sem_carteira", "estabilidade_gestante"],
-    "localizacao": { "cidade": "Rio de Janeiro", "uf": "RJ" },
-    "contatos": { "whatsapp": "5521999990004", "email": "rafael.andrade@example.com" },
+    "oab": {
+      "numero": "456789",
+      "uf": "RJ"
+    },
+    "areasAtuacao": [
+      "trabalhista"
+    ],
+    "especialidades": [
+      "demissao_sem_justa_causa",
+      "assedio_moral",
+      "assedio_sexual",
+      "sem_carteira",
+      "estabilidade_gestante"
+    ],
+    "localizacao": {
+      "cidade": "Rio de Janeiro",
+      "uf": "RJ"
+    },
+    "contatos": {
+      "whatsapp": "5521999990004",
+      "email": "rafael.andrade@example.com"
+    },
     "bio": "Defendo trabalhadores há 6 anos em casos de demissão irregular, assédio e trabalho sem carteira assinada. Atendimento próximo, sem juridiquês.",
-    "foto": "https://i.pravatar.cc/400?img=3",
+    "foto": "https://images.unsplash.com/photo-1714974528885-f7f9c774ed7a?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - UERJ (2014)"],
-      "especializacoes": ["Direito do Trabalho"],
-      "cursos": ["Direito Sindical"],
-      "experiencias": ["6 anos representando trabalhadores em ações trabalhistas"]
+      "formacao": [
+        "Direito - UERJ (2014)"
+      ],
+      "especializacoes": [
+        "Direito do Trabalho"
+      ],
+      "cursos": [
+        "Direito Sindical"
+      ],
+      "experiencias": [
+        "6 anos representando trabalhadores em ações trabalhistas"
+      ]
     }
   },
   {
     "nome": "Juliana Prado",
-    "oab": { "numero": "567890", "uf": "PR" },
-    "areasAtuacao": ["civel"],
-    "especialidades": ["consumo_produto_servico", "banco_cartao", "plano_saude", "dividas_cobranca"],
-    "localizacao": { "cidade": "Curitiba", "uf": "PR" },
-    "contatos": { "whatsapp": "5541999990005", "email": "juliana.prado@example.com" },
+    "oab": {
+      "numero": "567890",
+      "uf": "PR"
+    },
+    "areasAtuacao": [
+      "civel"
+    ],
+    "especialidades": [
+      "consumo_produto_servico",
+      "banco_cartao",
+      "plano_saude",
+      "dividas_cobranca"
+    ],
+    "localizacao": {
+      "cidade": "Curitiba",
+      "uf": "PR"
+    },
+    "contatos": {
+      "whatsapp": "5541999990005",
+      "email": "juliana.prado@example.com"
+    },
     "bio": "9 anos atuando em direito do consumidor: produtos com defeito, cobranças indevidas e problemas com planos de saúde. Já ajudei centenas de clientes a reverem contratos injustos.",
-    "foto": "https://i.pravatar.cc/400?img=16",
+    "foto": "https://images.unsplash.com/photo-1665224751641-8ea911ca2267?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - UFPR (2011)"],
-      "especializacoes": ["Direito Civil", "Direito do Consumidor"],
-      "cursos": ["Contratos Digitais"],
-      "experiencias": ["9 anos atuando em causas cíveis e de consumidor"]
+      "formacao": [
+        "Direito - UFPR (2011)"
+      ],
+      "especializacoes": [
+        "Direito Civil",
+        "Direito do Consumidor"
+      ],
+      "cursos": [
+        "Contratos Digitais"
+      ],
+      "experiencias": [
+        "9 anos atuando em causas cíveis e de consumidor"
+      ]
     }
   },
   {
     "nome": "Beatriz Nogueira Alencar",
-    "oab": { "numero": "600001", "uf": "SP" },
-    "areasAtuacao": ["civel"],
-    "especialidades": ["familia_divorcio", "familia_pensao", "familia_guarda", "familia_uniao_estavel"],
-    "localizacao": { "cidade": "São Paulo", "uf": "SP" },
-    "contatos": { "whatsapp": "5511988880001", "email": "beatriz.alencar@example.com" },
+    "oab": {
+      "numero": "600001",
+      "uf": "SP"
+    },
+    "areasAtuacao": [
+      "civel"
+    ],
+    "especialidades": [
+      "familia_divorcio",
+      "familia_pensao",
+      "familia_guarda",
+      "familia_uniao_estavel"
+    ],
+    "localizacao": {
+      "cidade": "São Paulo",
+      "uf": "SP"
+    },
+    "contatos": {
+      "whatsapp": "5511988880001",
+      "email": "beatriz.alencar@example.com"
+    },
     "bio": "14 anos dedicados exclusivamente ao direito de família — divórcios, pensão alimentícia e guarda compartilhada conduzidos com sensibilidade e clareza em cada etapa.",
-    "foto": "https://i.pravatar.cc/400?img=23",
+    "foto": "https://images.unsplash.com/photo-1652226825940-46ad2a55d132?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - Mackenzie (2009)"],
-      "especializacoes": ["Direito de Família"],
-      "cursos": ["Mediação Familiar"],
-      "experiencias": ["14 anos dedicados exclusivamente a direito de família"]
+      "formacao": [
+        "Direito - Mackenzie (2009)"
+      ],
+      "especializacoes": [
+        "Direito de Família"
+      ],
+      "cursos": [
+        "Mediação Familiar"
+      ],
+      "experiencias": [
+        "14 anos dedicados exclusivamente a direito de família"
+      ]
     }
   },
   {
     "nome": "Thiago Ramalho Costa",
-    "oab": { "numero": "600002", "uf": "SP" },
-    "areasAtuacao": ["trabalhista"],
-    "especialidades": ["horas_extras", "verbas_rescisorias", "equiparacao_salarial", "jornada_intervalo"],
-    "localizacao": { "cidade": "São Paulo", "uf": "SP" },
-    "contatos": { "whatsapp": "5511988880002", "email": "thiago.costa@example.com" },
+    "oab": {
+      "numero": "600002",
+      "uf": "SP"
+    },
+    "areasAtuacao": [
+      "trabalhista"
+    ],
+    "especialidades": [
+      "horas_extras",
+      "verbas_rescisorias",
+      "equiparacao_salarial",
+      "jornada_intervalo"
+    ],
+    "localizacao": {
+      "cidade": "São Paulo",
+      "uf": "SP"
+    },
+    "contatos": {
+      "whatsapp": "5511988880002",
+      "email": "thiago.costa@example.com"
+    },
     "bio": "Advogado trabalhista com 7 anos de experiência em horas extras, verbas rescisórias e equiparação salarial. Faço os cálculos certos pra você não sair no prejuízo.",
-    "foto": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&crop=faces&w=400&h=400&q=75",
+    "foto": "https://images.unsplash.com/photo-1757620765404-a1ee66df5e27?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - PUC-SP (2013)"],
-      "especializacoes": ["Direito do Trabalho"],
-      "cursos": ["Cálculos Trabalhistas"],
-      "experiencias": ["7 anos atuando em ações de horas extras e verbas rescisórias"]
+      "formacao": [
+        "Direito - PUC-SP (2013)"
+      ],
+      "especializacoes": [
+        "Direito do Trabalho"
+      ],
+      "cursos": [
+        "Cálculos Trabalhistas"
+      ],
+      "experiencias": [
+        "7 anos atuando em ações de horas extras e verbas rescisórias"
+      ]
     }
   },
   {
     "nome": "Camila Duarte Ferreira",
-    "oab": { "numero": "600003", "uf": "RJ" },
-    "areasAtuacao": ["civel"],
-    "especialidades": ["consumo_produto_servico", "banco_cartao", "dividas_cobranca"],
-    "localizacao": { "cidade": "Rio de Janeiro", "uf": "RJ" },
-    "contatos": { "whatsapp": "5521988880003", "email": "camila.ferreira@example.com" },
+    "oab": {
+      "numero": "600003",
+      "uf": "RJ"
+    },
+    "areasAtuacao": [
+      "civel"
+    ],
+    "especialidades": [
+      "consumo_produto_servico",
+      "banco_cartao",
+      "dividas_cobranca"
+    ],
+    "localizacao": {
+      "cidade": "Rio de Janeiro",
+      "uf": "RJ"
+    },
+    "contatos": {
+      "whatsapp": "5521988880003",
+      "email": "camila.ferreira@example.com"
+    },
     "bio": "5 anos em defesa do consumidor, com foco em cobranças indevidas e problemas com bancos e cartões. Atendimento acolhedor pra quem se sente perdido diante das dívidas.",
-    "foto": "https://i.pravatar.cc/400?img=25",
+    "foto": "https://images.unsplash.com/photo-1573496358961-3c82861ab8f4?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - UFRJ (2015)"],
-      "especializacoes": ["Direito do Consumidor"],
-      "cursos": ["Direito Bancário"],
-      "experiencias": ["5 anos em escritório de defesa do consumidor"]
+      "formacao": [
+        "Direito - UFRJ (2015)"
+      ],
+      "especializacoes": [
+        "Direito do Consumidor"
+      ],
+      "cursos": [
+        "Direito Bancário"
+      ],
+      "experiencias": [
+        "5 anos em escritório de defesa do consumidor"
+      ]
     }
   },
   {
     "nome": "Marcos Vinícius Pereira",
-    "oab": { "numero": "600004", "uf": "RJ" },
-    "areasAtuacao": ["trabalhista"],
-    "especialidades": ["assedio_moral", "assedio_sexual", "estabilidade_gestante"],
-    "localizacao": { "cidade": "Niterói", "uf": "RJ" },
-    "contatos": { "whatsapp": "5521988880004", "email": "marcos.pereira@example.com" },
+    "oab": {
+      "numero": "600004",
+      "uf": "RJ"
+    },
+    "areasAtuacao": [
+      "trabalhista"
+    ],
+    "especialidades": [
+      "assedio_moral",
+      "assedio_sexual",
+      "estabilidade_gestante"
+    ],
+    "localizacao": {
+      "cidade": "Niterói",
+      "uf": "RJ"
+    },
+    "contatos": {
+      "whatsapp": "5521988880004",
+      "email": "marcos.pereira@example.com"
+    },
     "bio": "11 anos representando vítimas de assédio moral e sexual no trabalho. Conduzo cada caso com sigilo e respeito, priorizando o bem-estar do cliente acima de tudo.",
-    "foto": "https://i.pravatar.cc/400?img=12",
+    "foto": "https://images.unsplash.com/photo-1705645930353-0e335311ef20?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - UFF (2010)"],
-      "especializacoes": ["Direito do Trabalho"],
-      "cursos": ["Assédio Moral e Sexual no Trabalho"],
-      "experiencias": ["11 anos representando vítimas de assédio no ambiente de trabalho"]
+      "formacao": [
+        "Direito - UFF (2010)"
+      ],
+      "especializacoes": [
+        "Direito do Trabalho"
+      ],
+      "cursos": [
+        "Assédio Moral e Sexual no Trabalho"
+      ],
+      "experiencias": [
+        "11 anos representando vítimas de assédio no ambiente de trabalho"
+      ]
     }
   },
   {
     "nome": "Larissa Monteiro Cavalcanti",
-    "oab": { "numero": "600005", "uf": "MG" },
-    "areasAtuacao": ["civel"],
-    "especialidades": ["heranca_inventario", "heranca_testamento", "familia_uniao_estavel"],
-    "localizacao": { "cidade": "Belo Horizonte", "uf": "MG" },
-    "contatos": { "whatsapp": "5531988880005", "email": "larissa.cavalcanti@example.com" },
+    "oab": {
+      "numero": "600005",
+      "uf": "MG"
+    },
+    "areasAtuacao": [
+      "civel"
+    ],
+    "especialidades": [
+      "heranca_inventario",
+      "heranca_testamento",
+      "familia_uniao_estavel"
+    ],
+    "localizacao": {
+      "cidade": "Belo Horizonte",
+      "uf": "MG"
+    },
+    "contatos": {
+      "whatsapp": "5531988880005",
+      "email": "larissa.cavalcanti@example.com"
+    },
     "bio": "16 anos de experiência em inventários e partilha de bens. Simplifico processos sucessórios complexos pra famílias em Belo Horizonte e região.",
-    "foto": "https://i.pravatar.cc/400?img=26",
+    "foto": "https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - UFMG (2007)"],
-      "especializacoes": ["Direito das Sucessões"],
-      "cursos": ["Inventário Extrajudicial"],
-      "experiencias": ["16 anos em inventários e partilhas de bens"]
+      "formacao": [
+        "Direito - UFMG (2007)"
+      ],
+      "especializacoes": [
+        "Direito das Sucessões"
+      ],
+      "cursos": [
+        "Inventário Extrajudicial"
+      ],
+      "experiencias": [
+        "16 anos em inventários e partilhas de bens"
+      ]
     }
   },
   {
     "nome": "Eduardo Bezerra Lins",
-    "oab": { "numero": "600006", "uf": "MG" },
-    "areasAtuacao": ["trabalhista"],
-    "especialidades": ["demissao_sem_justa_causa", "sem_carteira", "fgts_multa"],
-    "localizacao": { "cidade": "Belo Horizonte", "uf": "MG" },
-    "contatos": { "whatsapp": "5531988880006", "email": "eduardo.lins@example.com" },
+    "oab": {
+      "numero": "600006",
+      "uf": "MG"
+    },
+    "areasAtuacao": [
+      "trabalhista"
+    ],
+    "especialidades": [
+      "demissao_sem_justa_causa",
+      "sem_carteira",
+      "fgts_multa"
+    ],
+    "localizacao": {
+      "cidade": "Belo Horizonte",
+      "uf": "MG"
+    },
+    "contatos": {
+      "whatsapp": "5531988880006",
+      "email": "eduardo.lins@example.com"
+    },
     "bio": "Atuo há 4 anos regularizando vínculos empregatícios informais e cobrando FGTS não recolhido. Se você trabalhou sem carteira assinada, posso ajudar.",
-    "foto": "https://i.pravatar.cc/400?img=13",
+    "foto": "https://images.unsplash.com/photo-1604241842992-1f5e733449cc?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - PUC Minas (2016)"],
-      "especializacoes": ["Direito do Trabalho"],
-      "cursos": ["Regularização de Vínculo Empregatício"],
-      "experiencias": ["4 anos atuando em casos de trabalho informal"]
+      "formacao": [
+        "Direito - PUC Minas (2016)"
+      ],
+      "especializacoes": [
+        "Direito do Trabalho"
+      ],
+      "cursos": [
+        "Regularização de Vínculo Empregatício"
+      ],
+      "experiencias": [
+        "4 anos atuando em casos de trabalho informal"
+      ]
     }
   },
   {
     "nome": "Patrícia Gouveia Martins",
-    "oab": { "numero": "600007", "uf": "MG" },
-    "areasAtuacao": ["civel", "trabalhista"],
-    "especialidades": ["acidente_transito", "acidente_trabalho", "indenizacao_dano_moral"],
-    "localizacao": { "cidade": "Uberlândia", "uf": "MG" },
-    "contatos": { "whatsapp": "5531988880007", "email": "patricia.martins@example.com" },
+    "oab": {
+      "numero": "600007",
+      "uf": "MG"
+    },
+    "areasAtuacao": [
+      "civel",
+      "trabalhista"
+    ],
+    "especialidades": [
+      "acidente_transito",
+      "acidente_trabalho",
+      "indenizacao_dano_moral"
+    ],
+    "localizacao": {
+      "cidade": "Uberlândia",
+      "uf": "MG"
+    },
+    "contatos": {
+      "whatsapp": "5531988880007",
+      "email": "patricia.martins@example.com"
+    },
     "bio": "9 anos em ações de acidente de trânsito e de trabalho, buscando indenização justa por danos morais e materiais. Análise cuidadosa de cada caso antes de qualquer decisão.",
-    "foto": "https://i.pravatar.cc/400?img=27",
+    "foto": "https://images.unsplash.com/photo-1612476929092-26a78fd1ea89?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - UFU (2012)"],
-      "especializacoes": ["Direito Civil", "Direito do Trabalho"],
-      "cursos": ["Perícia e Indenização por Acidentes"],
-      "experiencias": ["9 anos em ações de acidente de trânsito e de trabalho"]
+      "formacao": [
+        "Direito - UFU (2012)"
+      ],
+      "especializacoes": [
+        "Direito Civil",
+        "Direito do Trabalho"
+      ],
+      "cursos": [
+        "Perícia e Indenização por Acidentes"
+      ],
+      "experiencias": [
+        "9 anos em ações de acidente de trânsito e de trabalho"
+      ]
     }
   },
   {
     "nome": "Rodrigo Salgado Vieira",
-    "oab": { "numero": "600008", "uf": "PR" },
-    "areasAtuacao": ["civel"],
-    "especialidades": ["vizinhanca_condominio", "indenizacao_dano_moral"],
-    "localizacao": { "cidade": "Curitiba", "uf": "PR" },
-    "contatos": { "whatsapp": "5541988880008", "email": "rodrigo.vieira@example.com" },
+    "oab": {
+      "numero": "600008",
+      "uf": "PR"
+    },
+    "areasAtuacao": [
+      "civel"
+    ],
+    "especialidades": [
+      "vizinhanca_condominio",
+      "indenizacao_dano_moral"
+    ],
+    "localizacao": {
+      "cidade": "Curitiba",
+      "uf": "PR"
+    },
+    "contatos": {
+      "whatsapp": "5541988880008",
+      "email": "rodrigo.vieira@example.com"
+    },
     "bio": "10 anos assessorando condomínios e síndicos em conflitos de vizinhança e questões condominiais. Soluções práticas pra problemas do dia a dia em Curitiba.",
-    "foto": "https://i.pravatar.cc/400?img=17",
+    "foto": "https://images.unsplash.com/photo-1584554376766-ac0f2c65e949?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - PUC-PR (2011)"],
-      "especializacoes": ["Direito Condominial"],
-      "cursos": ["Gestão de Conflitos entre Vizinhos"],
-      "experiencias": ["10 anos assessorando condomínios e síndicos"]
+      "formacao": [
+        "Direito - PUC-PR (2011)"
+      ],
+      "especializacoes": [
+        "Direito Condominial"
+      ],
+      "cursos": [
+        "Gestão de Conflitos entre Vizinhos"
+      ],
+      "experiencias": [
+        "10 anos assessorando condomínios e síndicos"
+      ]
     }
   },
   {
     "nome": "Bianca Correia Nascimento",
-    "oab": { "numero": "600009", "uf": "PR" },
-    "areasAtuacao": ["trabalhista"],
-    "especialidades": ["jornada_intervalo", "horas_extras"],
-    "localizacao": { "cidade": "Londrina", "uf": "PR" },
-    "contatos": { "whatsapp": "5541988880009", "email": "bianca.nascimento@example.com" },
+    "oab": {
+      "numero": "600009",
+      "uf": "PR"
+    },
+    "areasAtuacao": [
+      "trabalhista"
+    ],
+    "especialidades": [
+      "jornada_intervalo",
+      "horas_extras"
+    ],
+    "localizacao": {
+      "cidade": "Londrina",
+      "uf": "PR"
+    },
+    "contatos": {
+      "whatsapp": "5541988880009",
+      "email": "bianca.nascimento@example.com"
+    },
     "bio": "Advogada trabalhista iniciando carreira com foco em jornada excessiva e horas extras não pagas. Atendimento próximo e atenção total ao seu caso.",
-    "foto": "https://i.pravatar.cc/400?img=28",
+    "foto": "https://images.unsplash.com/photo-1582896911227-c966f6e7fb93?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - UEL (2017)"],
-      "especializacoes": ["Direito do Trabalho"],
-      "cursos": ["Jornada de Trabalho e Intervalos"],
-      "experiencias": ["3 anos em ações de jornada excessiva"]
+      "formacao": [
+        "Direito - UEL (2017)"
+      ],
+      "especializacoes": [
+        "Direito do Trabalho"
+      ],
+      "cursos": [
+        "Jornada de Trabalho e Intervalos"
+      ],
+      "experiencias": [
+        "3 anos em ações de jornada excessiva"
+      ]
     }
   },
   {
     "nome": "Gustavo Henrique Barros",
-    "oab": { "numero": "600010", "uf": "RS" },
-    "areasAtuacao": ["civel"],
-    "especialidades": ["aluguel_imoveis", "dividas_cobranca", "emprestimo_financiamento"],
-    "localizacao": { "cidade": "Porto Alegre", "uf": "RS" },
-    "contatos": { "whatsapp": "5551988880010", "email": "gustavo.barros@example.com" },
+    "oab": {
+      "numero": "600010",
+      "uf": "RS"
+    },
+    "areasAtuacao": [
+      "civel"
+    ],
+    "especialidades": [
+      "aluguel_imoveis",
+      "dividas_cobranca",
+      "emprestimo_financiamento"
+    ],
+    "localizacao": {
+      "cidade": "Porto Alegre",
+      "uf": "RS"
+    },
+    "contatos": {
+      "whatsapp": "5551988880010",
+      "email": "gustavo.barros@example.com"
+    },
     "bio": "12 anos em contratos de locação, despejo e cobrança de dívidas. Ajudo inquilinos e proprietários a resolverem impasses contratuais em Porto Alegre.",
-    "foto": "https://i.pravatar.cc/400?img=18",
+    "foto": "https://images.unsplash.com/photo-1642257859842-c95f9fa8121d?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - UFRGS (2009)"],
-      "especializacoes": ["Direito Imobiliário"],
-      "cursos": ["Locações e Despejo"],
-      "experiencias": ["12 anos em contratos de locação e cobrança de dívidas"]
+      "formacao": [
+        "Direito - UFRGS (2009)"
+      ],
+      "especializacoes": [
+        "Direito Imobiliário"
+      ],
+      "cursos": [
+        "Locações e Despejo"
+      ],
+      "experiencias": [
+        "12 anos em contratos de locação e cobrança de dívidas"
+      ]
     }
   },
   {
     "nome": "Renata Farias Albuquerque",
-    "oab": { "numero": "600011", "uf": "RS" },
-    "areasAtuacao": ["trabalhista"],
-    "especialidades": ["demissao_justa_causa", "rescisao_indireta", "pedido_demissao"],
-    "localizacao": { "cidade": "Porto Alegre", "uf": "RS" },
-    "contatos": { "whatsapp": "5551988880011", "email": "renata.albuquerque@example.com" },
+    "oab": {
+      "numero": "600011",
+      "uf": "RS"
+    },
+    "areasAtuacao": [
+      "trabalhista"
+    ],
+    "especialidades": [
+      "demissao_justa_causa",
+      "rescisao_indireta",
+      "pedido_demissao"
+    ],
+    "localizacao": {
+      "cidade": "Porto Alegre",
+      "uf": "RS"
+    },
+    "contatos": {
+      "whatsapp": "5551988880011",
+      "email": "renata.albuquerque@example.com"
+    },
     "bio": "6 anos em disputas sobre motivo de rescisão — justa causa contestada, pedido de demissão e verbas relacionadas. Defendo seus direitos com firmeza.",
-    "foto": "https://i.pravatar.cc/400?img=32",
+    "foto": "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - PUC-RS (2014)"],
-      "especializacoes": ["Direito do Trabalho"],
-      "cursos": ["Rescisão Contratual Trabalhista"],
-      "experiencias": ["6 anos em disputas sobre motivo de rescisão"]
+      "formacao": [
+        "Direito - PUC-RS (2014)"
+      ],
+      "especializacoes": [
+        "Direito do Trabalho"
+      ],
+      "cursos": [
+        "Rescisão Contratual Trabalhista"
+      ],
+      "experiencias": [
+        "6 anos em disputas sobre motivo de rescisão"
+      ]
     }
   },
   {
     "nome": "Felipe Cordeiro Teixeira",
-    "oab": { "numero": "600012", "uf": "BA" },
-    "areasAtuacao": ["civel"],
-    "especialidades": ["erro_medico", "plano_saude"],
-    "localizacao": { "cidade": "Salvador", "uf": "BA" },
-    "contatos": { "whatsapp": "5571988880012", "email": "felipe.teixeira@example.com" },
+    "oab": {
+      "numero": "600012",
+      "uf": "BA"
+    },
+    "areasAtuacao": [
+      "civel"
+    ],
+    "especialidades": [
+      "erro_medico",
+      "plano_saude"
+    ],
+    "localizacao": {
+      "cidade": "Salvador",
+      "uf": "BA"
+    },
+    "contatos": {
+      "whatsapp": "5571988880012",
+      "email": "felipe.teixeira@example.com"
+    },
     "bio": "15 anos em ações contra planos de saúde e casos de erro médico. Especialista em responsabilidade civil na área da saúde, com resultados consistentes.",
-    "foto": "https://i.pravatar.cc/400?img=51",
+    "foto": "https://images.unsplash.com/photo-1595211877493-41a4e5f236b3?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - UFBA (2008)"],
-      "especializacoes": ["Direito Médico e da Saúde"],
-      "cursos": ["Responsabilidade Civil Médica"],
-      "experiencias": ["15 anos em ações contra planos de saúde e erro médico"]
+      "formacao": [
+        "Direito - UFBA (2008)"
+      ],
+      "especializacoes": [
+        "Direito Médico e da Saúde"
+      ],
+      "cursos": [
+        "Responsabilidade Civil Médica"
+      ],
+      "experiencias": [
+        "15 anos em ações contra planos de saúde e erro médico"
+      ]
     }
   },
   {
     "nome": "Vanessa Aragão Pinto",
-    "oab": { "numero": "600013", "uf": "BA" },
-    "areasAtuacao": ["trabalhista"],
-    "especialidades": ["pedido_demissao", "ferias_decimo_terceiro"],
-    "localizacao": { "cidade": "Salvador", "uf": "BA" },
-    "contatos": { "whatsapp": "5571988880013", "email": "vanessa.pinto@example.com" },
+    "oab": {
+      "numero": "600013",
+      "uf": "BA"
+    },
+    "areasAtuacao": [
+      "trabalhista"
+    ],
+    "especialidades": [
+      "pedido_demissao",
+      "ferias_decimo_terceiro"
+    ],
+    "localizacao": {
+      "cidade": "Salvador",
+      "uf": "BA"
+    },
+    "contatos": {
+      "whatsapp": "5571988880013",
+      "email": "vanessa.pinto@example.com"
+    },
     "bio": "Advogada trabalhista há 2 anos, atendendo casos de verbas não pagas, férias e décimo terceiro. Atenção próxima a cada cliente, do início ao fim do processo.",
-    "foto": "https://i.pravatar.cc/400?img=34",
+    "foto": "https://images.unsplash.com/photo-1629540266304-fff9c67b7660?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - UCSAL (2018)"],
-      "especializacoes": ["Direito do Trabalho"],
-      "cursos": ["Verbas Trabalhistas na Prática"],
-      "experiencias": ["2 anos atendendo trabalhadores em causas de verbas não pagas"]
+      "formacao": [
+        "Direito - UCSAL (2018)"
+      ],
+      "especializacoes": [
+        "Direito do Trabalho"
+      ],
+      "cursos": [
+        "Verbas Trabalhistas na Prática"
+      ],
+      "experiencias": [
+        "2 anos atendendo trabalhadores em causas de verbas não pagas"
+      ]
     }
   },
   {
     "nome": "Diego Moraes Siqueira",
-    "oab": { "numero": "600014", "uf": "PE" },
-    "areasAtuacao": ["civel", "trabalhista"],
-    "especialidades": ["consumo_produto_servico", "sem_carteira"],
-    "localizacao": { "cidade": "Recife", "uf": "PE" },
-    "contatos": { "whatsapp": "5581988880014", "email": "diego.siqueira@example.com" },
+    "oab": {
+      "numero": "600014",
+      "uf": "PE"
+    },
+    "areasAtuacao": [
+      "civel",
+      "trabalhista"
+    ],
+    "especialidades": [
+      "consumo_produto_servico",
+      "sem_carteira"
+    ],
+    "localizacao": {
+      "cidade": "Recife",
+      "uf": "PE"
+    },
+    "contatos": {
+      "whatsapp": "5581988880014",
+      "email": "diego.siqueira@example.com"
+    },
     "bio": "8 anos com atuação mista em cível e trabalhista, do consumidor ao trabalho informal. Escuto com calma antes de indicar o melhor caminho jurídico.",
-    "foto": "https://i.pravatar.cc/400?img=53",
+    "foto": "https://images.unsplash.com/photo-1600878459138-e1123b37cb30?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - UFPE (2013)"],
-      "especializacoes": ["Direito Civil", "Direito do Trabalho"],
-      "cursos": ["Atendimento ao Consumidor"],
-      "experiencias": ["8 anos com atuação mista em cível e trabalhista"]
+      "formacao": [
+        "Direito - UFPE (2013)"
+      ],
+      "especializacoes": [
+        "Direito Civil",
+        "Direito do Trabalho"
+      ],
+      "cursos": [
+        "Atendimento ao Consumidor"
+      ],
+      "experiencias": [
+        "8 anos com atuação mista em cível e trabalhista"
+      ]
     }
   },
   {
     "nome": "Aline Rezende Cunha",
-    "oab": { "numero": "600015", "uf": "CE" },
-    "areasAtuacao": ["civel"],
-    "especialidades": ["familia_divorcio", "familia_guarda"],
-    "localizacao": { "cidade": "Fortaleza", "uf": "CE" },
-    "contatos": { "whatsapp": "5585988880015", "email": "aline.cunha@example.com" },
+    "oab": {
+      "numero": "600015",
+      "uf": "CE"
+    },
+    "areasAtuacao": [
+      "civel"
+    ],
+    "especialidades": [
+      "familia_divorcio",
+      "familia_guarda"
+    ],
+    "localizacao": {
+      "cidade": "Fortaleza",
+      "uf": "CE"
+    },
+    "contatos": {
+      "whatsapp": "5585988880015",
+      "email": "aline.cunha@example.com"
+    },
     "bio": "5 anos em divórcios e disputas de guarda de filhos. Busco sempre a solução menos desgastante pra você e sua família em Fortaleza.",
-    "foto": "https://i.pravatar.cc/400?img=35",
+    "foto": "https://images.unsplash.com/photo-1665062173657-3912ae7991e0?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - UFC (2016)"],
-      "especializacoes": ["Direito de Família"],
-      "cursos": ["Guarda Compartilhada"],
-      "experiencias": ["5 anos em divórcios e disputas de guarda"]
+      "formacao": [
+        "Direito - UFC (2016)"
+      ],
+      "especializacoes": [
+        "Direito de Família"
+      ],
+      "cursos": [
+        "Guarda Compartilhada"
+      ],
+      "experiencias": [
+        "5 anos em divórcios e disputas de guarda"
+      ]
     }
   },
   {
     "nome": "Bruno Castanheira Lopes",
-    "oab": { "numero": "600016", "uf": "CE" },
-    "areasAtuacao": ["trabalhista"],
-    "especialidades": ["assedio_moral", "equiparacao_salarial"],
-    "localizacao": { "cidade": "Fortaleza", "uf": "CE" },
-    "contatos": { "whatsapp": "5585988880016", "email": "bruno.lopes@example.com" },
+    "oab": {
+      "numero": "600016",
+      "uf": "CE"
+    },
+    "areasAtuacao": [
+      "trabalhista"
+    ],
+    "especialidades": [
+      "assedio_moral",
+      "equiparacao_salarial"
+    ],
+    "localizacao": {
+      "cidade": "Fortaleza",
+      "uf": "CE"
+    },
+    "contatos": {
+      "whatsapp": "5585988880016",
+      "email": "bruno.lopes@example.com"
+    },
     "bio": "6 anos representando trabalhadores em casos de assédio moral e equiparação salarial. Atuação firme e atenta aos detalhes de cada processo.",
-    "foto": "https://i.pravatar.cc/400?img=54",
+    "foto": "https://images.unsplash.com/photo-1588178454780-441fa5b99fa5?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - UNIFOR (2015)"],
-      "especializacoes": ["Direito do Trabalho"],
-      "cursos": ["Assédio Moral no Ambiente de Trabalho"],
-      "experiencias": ["6 anos representando trabalhadores em casos de assédio"]
+      "formacao": [
+        "Direito - UNIFOR (2015)"
+      ],
+      "especializacoes": [
+        "Direito do Trabalho"
+      ],
+      "cursos": [
+        "Assédio Moral no Ambiente de Trabalho"
+      ],
+      "experiencias": [
+        "6 anos representando trabalhadores em casos de assédio"
+      ]
     }
   },
   {
     "nome": "Isabela Marques Prado",
-    "oab": { "numero": "600017", "uf": "DF" },
-    "areasAtuacao": ["civel"],
-    "especialidades": ["banco_cartao", "indenizacao_dano_moral"],
-    "localizacao": { "cidade": "Brasília", "uf": "DF" },
-    "contatos": { "whatsapp": "5561988880017", "email": "isabela.prado@example.com" },
+    "oab": {
+      "numero": "600017",
+      "uf": "DF"
+    },
+    "areasAtuacao": [
+      "civel"
+    ],
+    "especialidades": [
+      "banco_cartao",
+      "indenizacao_dano_moral"
+    ],
+    "localizacao": {
+      "cidade": "Brasília",
+      "uf": "DF"
+    },
+    "contatos": {
+      "whatsapp": "5561988880017",
+      "email": "isabela.prado@example.com"
+    },
     "bio": "13 anos em ações contra instituições financeiras — tarifas abusivas, cartões e cobranças indevidas. Já recuperei valores pra centenas de clientes em Brasília.",
-    "foto": "https://i.pravatar.cc/400?img=36",
+    "foto": "https://images.unsplash.com/photo-1611432579699-484f7990b127?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - UnB (2010)"],
-      "especializacoes": ["Direito Bancário"],
-      "cursos": ["Tarifas Bancárias Abusivas"],
-      "experiencias": ["13 anos em ações contra instituições financeiras"]
+      "formacao": [
+        "Direito - UnB (2010)"
+      ],
+      "especializacoes": [
+        "Direito Bancário"
+      ],
+      "cursos": [
+        "Tarifas Bancárias Abusivas"
+      ],
+      "experiencias": [
+        "13 anos em ações contra instituições financeiras"
+      ]
     }
   },
   {
     "nome": "Leonardo Vasconcelos Dias",
-    "oab": { "numero": "600018", "uf": "DF" },
-    "areasAtuacao": ["trabalhista"],
-    "especialidades": ["horas_extras", "verbas_rescisorias"],
-    "localizacao": { "cidade": "Brasília", "uf": "DF" },
-    "contatos": { "whatsapp": "5561988880018", "email": "leonardo.dias@example.com" },
+    "oab": {
+      "numero": "600018",
+      "uf": "DF"
+    },
+    "areasAtuacao": [
+      "trabalhista"
+    ],
+    "especialidades": [
+      "horas_extras",
+      "verbas_rescisorias"
+    ],
+    "localizacao": {
+      "cidade": "Brasília",
+      "uf": "DF"
+    },
+    "contatos": {
+      "whatsapp": "5561988880018",
+      "email": "leonardo.dias@example.com"
+    },
     "bio": "7 anos cobrando horas extras e verbas rescisórias não pagas. Faço a conta certa pra você saber exatamente o que tem direito a receber.",
-    "foto": "https://i.pravatar.cc/400?img=57",
+    "foto": "https://images.unsplash.com/photo-1648474484044-bb82df2f5a1f?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - UCB (2014)"],
-      "especializacoes": ["Direito do Trabalho"],
-      "cursos": ["Cálculos de Horas Extras"],
-      "experiencias": ["7 anos atuando em cobrança de verbas trabalhistas"]
+      "formacao": [
+        "Direito - UCB (2014)"
+      ],
+      "especializacoes": [
+        "Direito do Trabalho"
+      ],
+      "cursos": [
+        "Cálculos de Horas Extras"
+      ],
+      "experiencias": [
+        "7 anos atuando em cobrança de verbas trabalhistas"
+      ]
     }
   },
   {
     "nome": "Priscila Andrade Guimarães",
-    "oab": { "numero": "600019", "uf": "PA" },
-    "areasAtuacao": ["civel"],
-    "especialidades": ["heranca_inventario", "aluguel_imoveis"],
-    "localizacao": { "cidade": "Belém", "uf": "PA" },
-    "contatos": { "whatsapp": "5591988880019", "email": "priscila.guimaraes@example.com" },
+    "oab": {
+      "numero": "600019",
+      "uf": "PA"
+    },
+    "areasAtuacao": [
+      "civel"
+    ],
+    "especialidades": [
+      "heranca_inventario",
+      "aluguel_imoveis"
+    ],
+    "localizacao": {
+      "cidade": "Belém",
+      "uf": "PA"
+    },
+    "contatos": {
+      "whatsapp": "5591988880019",
+      "email": "priscila.guimaraes@example.com"
+    },
     "bio": "9 anos em inventários e contratos de locação. Atendimento cuidadoso em processos sucessórios e questões imobiliárias em Belém.",
-    "foto": "https://i.pravatar.cc/400?img=42",
+    "foto": "https://images.unsplash.com/photo-1692801439915-ef9194bf0951?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - UFPA (2012)"],
-      "especializacoes": ["Direito Imobiliário e Sucessório"],
-      "cursos": ["Partilha de Bens"],
-      "experiencias": ["9 anos em inventários e contratos de locação"]
+      "formacao": [
+        "Direito - UFPA (2012)"
+      ],
+      "especializacoes": [
+        "Direito Imobiliário e Sucessório"
+      ],
+      "cursos": [
+        "Partilha de Bens"
+      ],
+      "experiencias": [
+        "9 anos em inventários e contratos de locação"
+      ]
     }
   },
   {
     "nome": "Fábio Nunes Carvalho",
-    "oab": { "numero": "600020", "uf": "AM" },
-    "areasAtuacao": ["trabalhista"],
-    "especialidades": ["demissao_sem_justa_causa", "acidente_trabalho"],
-    "localizacao": { "cidade": "Manaus", "uf": "AM" },
-    "contatos": { "whatsapp": "5592988880020", "email": "fabio.carvalho@example.com" },
+    "oab": {
+      "numero": "600020",
+      "uf": "AM"
+    },
+    "areasAtuacao": [
+      "trabalhista"
+    ],
+    "especialidades": [
+      "demissao_sem_justa_causa",
+      "acidente_trabalho"
+    ],
+    "localizacao": {
+      "cidade": "Manaus",
+      "uf": "AM"
+    },
+    "contatos": {
+      "whatsapp": "5592988880020",
+      "email": "fabio.carvalho@example.com"
+    },
     "bio": "5 anos em ações de acidente de trabalho na indústria. Defendo trabalhadores lesionados buscando indenização e estabilidade justas.",
-    "foto": "https://i.pravatar.cc/400?img=59",
+    "foto": "https://images.unsplash.com/photo-1629425733761-caae3b5f2e50?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - UFAM (2015)"],
-      "especializacoes": ["Direito do Trabalho"],
-      "cursos": ["Acidente de Trabalho e Doença Ocupacional"],
-      "experiencias": ["5 anos em ações de acidente de trabalho na indústria"]
+      "formacao": [
+        "Direito - UFAM (2015)"
+      ],
+      "especializacoes": [
+        "Direito do Trabalho"
+      ],
+      "cursos": [
+        "Acidente de Trabalho e Doença Ocupacional"
+      ],
+      "experiencias": [
+        "5 anos em ações de acidente de trabalho na indústria"
+      ]
     }
   },
   {
     "nome": "Tatiana Sousa Mendonça",
-    "oab": { "numero": "600021", "uf": "GO" },
-    "areasAtuacao": ["civel"],
-    "especialidades": ["consumo_produto_servico", "plano_saude"],
-    "localizacao": { "cidade": "Goiânia", "uf": "GO" },
-    "contatos": { "whatsapp": "5562988880021", "email": "tatiana.mendonca@example.com" },
+    "oab": {
+      "numero": "600021",
+      "uf": "GO"
+    },
+    "areasAtuacao": [
+      "civel"
+    ],
+    "especialidades": [
+      "consumo_produto_servico",
+      "plano_saude"
+    ],
+    "localizacao": {
+      "cidade": "Goiânia",
+      "uf": "GO"
+    },
+    "contatos": {
+      "whatsapp": "5562988880021",
+      "email": "tatiana.mendonca@example.com"
+    },
     "bio": "10 anos defendendo consumidores contra operadoras de plano de saúde. Se sua cobertura foi negada indevidamente, posso te ajudar a reverter.",
-    "foto": "https://i.pravatar.cc/400?img=44",
+    "foto": "https://images.unsplash.com/photo-1758599543125-0a927f1d7a3b?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - UFG (2011)"],
-      "especializacoes": ["Direito do Consumidor"],
-      "cursos": ["Planos de Saúde e Negativa de Cobertura"],
-      "experiencias": ["10 anos defendendo consumidores contra operadoras de saúde"]
+      "formacao": [
+        "Direito - UFG (2011)"
+      ],
+      "especializacoes": [
+        "Direito do Consumidor"
+      ],
+      "cursos": [
+        "Planos de Saúde e Negativa de Cobertura"
+      ],
+      "experiencias": [
+        "10 anos defendendo consumidores contra operadoras de saúde"
+      ]
     }
   },
   {
     "nome": "Vinícius Peixoto Rocha",
-    "oab": { "numero": "600022", "uf": "GO" },
-    "areasAtuacao": ["trabalhista"],
-    "especialidades": ["sem_carteira", "jornada_intervalo"],
-    "localizacao": { "cidade": "Goiânia", "uf": "GO" },
-    "contatos": { "whatsapp": "5562988880022", "email": "vinicius.rocha@example.com" },
+    "oab": {
+      "numero": "600022",
+      "uf": "GO"
+    },
+    "areasAtuacao": [
+      "trabalhista"
+    ],
+    "especialidades": [
+      "sem_carteira",
+      "jornada_intervalo"
+    ],
+    "localizacao": {
+      "cidade": "Goiânia",
+      "uf": "GO"
+    },
+    "contatos": {
+      "whatsapp": "5562988880022",
+      "email": "vinicius.rocha@example.com"
+    },
     "bio": "4 anos em ações de reconhecimento de vínculo empregatício e trabalho informal. Atendimento direto pra quem trabalhou sem os direitos garantidos.",
-    "foto": "https://i.pravatar.cc/400?img=68",
+    "foto": "https://images.unsplash.com/photo-1652471943570-f3590a4e52ed?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - PUC Goiás (2017)"],
-      "especializacoes": ["Direito do Trabalho"],
-      "cursos": ["Reconhecimento de Vínculo Empregatício"],
-      "experiencias": ["4 anos em ações de trabalho informal"]
+      "formacao": [
+        "Direito - PUC Goiás (2017)"
+      ],
+      "especializacoes": [
+        "Direito do Trabalho"
+      ],
+      "cursos": [
+        "Reconhecimento de Vínculo Empregatício"
+      ],
+      "experiencias": [
+        "4 anos em ações de trabalho informal"
+      ]
     }
   },
   {
     "nome": "Carolina Espínola Ramos",
-    "oab": { "numero": "600023", "uf": "SC" },
-    "areasAtuacao": ["civel"],
-    "especialidades": ["familia_pensao", "familia_uniao_estavel"],
-    "localizacao": { "cidade": "Florianópolis", "uf": "SC" },
-    "contatos": { "whatsapp": "5548988880023", "email": "carolina.ramos@example.com" },
+    "oab": {
+      "numero": "600023",
+      "uf": "SC"
+    },
+    "areasAtuacao": [
+      "civel"
+    ],
+    "especialidades": [
+      "familia_pensao",
+      "familia_uniao_estavel"
+    ],
+    "localizacao": {
+      "cidade": "Florianópolis",
+      "uf": "SC"
+    },
+    "contatos": {
+      "whatsapp": "5548988880023",
+      "email": "carolina.ramos@example.com"
+    },
     "bio": "14 anos em pensão alimentícia e reconhecimento de união estável. Experiência consolidada em direito de família em Santa Catarina.",
-    "foto": "https://i.pravatar.cc/400?img=45",
+    "foto": "https://images.unsplash.com/photo-1747302654028-a96a7842455e?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - UFSC (2009)"],
-      "especializacoes": ["Direito de Família"],
-      "cursos": ["Reconhecimento de União Estável"],
-      "experiencias": ["14 anos em pensão alimentícia e união estável"]
+      "formacao": [
+        "Direito - UFSC (2009)"
+      ],
+      "especializacoes": [
+        "Direito de Família"
+      ],
+      "cursos": [
+        "Reconhecimento de União Estável"
+      ],
+      "experiencias": [
+        "14 anos em pensão alimentícia e união estável"
+      ]
     }
   },
   {
     "nome": "André Luiz Fontoura",
-    "oab": { "numero": "600024", "uf": "SC" },
-    "areasAtuacao": ["trabalhista"],
-    "especialidades": ["fgts_multa", "ferias_decimo_terceiro"],
-    "localizacao": { "cidade": "Florianópolis", "uf": "SC" },
-    "contatos": { "whatsapp": "5548988880024", "email": "andre.fontoura@example.com" },
+    "oab": {
+      "numero": "600024",
+      "uf": "SC"
+    },
+    "areasAtuacao": [
+      "trabalhista"
+    ],
+    "especialidades": [
+      "fgts_multa",
+      "ferias_decimo_terceiro"
+    ],
+    "localizacao": {
+      "cidade": "Florianópolis",
+      "uf": "SC"
+    },
+    "contatos": {
+      "whatsapp": "5548988880024",
+      "email": "andre.fontoura@example.com"
+    },
     "bio": "5 anos cobrando FGTS e férias não pagas por ex-empregadores. Atuação objetiva pra recuperar o que é seu por direito.",
-    "foto": "https://i.pravatar.cc/400?img=69",
+    "foto": "https://images.unsplash.com/photo-1764084051438-369ad6a09334?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - UNIVALI (2016)"],
-      "especializacoes": ["Direito do Trabalho"],
-      "cursos": ["FGTS e Verbas Rescisórias"],
-      "experiencias": ["5 anos em cobrança de FGTS e férias não pagas"]
+      "formacao": [
+        "Direito - UNIVALI (2016)"
+      ],
+      "especializacoes": [
+        "Direito do Trabalho"
+      ],
+      "cursos": [
+        "FGTS e Verbas Rescisórias"
+      ],
+      "experiencias": [
+        "5 anos em cobrança de FGTS e férias não pagas"
+      ]
     }
   },
   {
     "nome": "Débora Sant'Anna Freitas",
-    "oab": { "numero": "600025", "uf": "ES" },
-    "areasAtuacao": ["civel", "trabalhista"],
-    "especialidades": ["erro_medico", "assedio_sexual"],
-    "localizacao": { "cidade": "Vitória", "uf": "ES" },
-    "contatos": { "whatsapp": "5527988880025", "email": "debora.freitas@example.com" },
+    "oab": {
+      "numero": "600025",
+      "uf": "ES"
+    },
+    "areasAtuacao": [
+      "civel",
+      "trabalhista"
+    ],
+    "especialidades": [
+      "erro_medico",
+      "assedio_sexual"
+    ],
+    "localizacao": {
+      "cidade": "Vitória",
+      "uf": "ES"
+    },
+    "contatos": {
+      "whatsapp": "5527988880025",
+      "email": "debora.freitas@example.com"
+    },
     "bio": "7 anos com atuação mista, priorizando casos sensíveis como erro médico e assédio sexual no trabalho. Sigilo e acolhimento em cada atendimento.",
-    "foto": "https://i.pravatar.cc/400?img=47",
+    "foto": "https://images.unsplash.com/photo-1573497161161-c3e73707e25c?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
     "situacaoOab": "aprovado",
     "curriculo": {
-      "formacao": ["Direito - UFES (2013)"],
-      "especializacoes": ["Direito Civil", "Direito do Trabalho"],
-      "cursos": ["Responsabilidade Civil e Assédio no Trabalho"],
-      "experiencias": ["7 anos com atuação mista, priorizando casos sensíveis"]
+      "formacao": [
+        "Direito - UFES (2013)"
+      ],
+      "especializacoes": [
+        "Direito Civil",
+        "Direito do Trabalho"
+      ],
+      "cursos": [
+        "Responsabilidade Civil e Assédio no Trabalho"
+      ],
+      "experiencias": [
+        "7 anos com atuação mista, priorizando casos sensíveis"
+      ]
+    }
+  },
+  {
+    "nome": "Helena Prado Martins",
+    "oab": {
+      "numero": "700101",
+      "uf": "SP"
+    },
+    "areasAtuacao": [
+      "previdenciario"
+    ],
+    "especialidades": [
+      "aposentadoria",
+      "pensao_por_morte",
+      "bpc_loas",
+      "revisao_beneficio"
+    ],
+    "localizacao": {
+      "cidade": "São Paulo",
+      "uf": "SP"
+    },
+    "contatos": {
+      "whatsapp": "5511999990101",
+      "email": "helena.prado@example.com"
+    },
+    "bio": "Há 15 anos ajudo famílias a conseguir aposentadoria e pensão por morte no INSS. Explico cada etapa sem juridiquês e acompanho o pedido até sair.",
+    "foto": "https://images.unsplash.com/photo-1770058428154-9eee8a6a1fbb?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
+    "situacaoOab": "aprovado",
+    "curriculo": {
+      "formacao": [
+        "Direito - PUC-SP (2009)"
+      ],
+      "especializacoes": [
+        "Direito Previdenciário"
+      ],
+      "cursos": [
+        "Cálculos previdenciários"
+      ],
+      "experiencias": [
+        "15 anos atuando em benefícios do INSS"
+      ]
+    }
+  },
+  {
+    "nome": "Sérgio Ribeiro Lopes",
+    "oab": {
+      "numero": "700102",
+      "uf": "SP"
+    },
+    "areasAtuacao": [
+      "previdenciario"
+    ],
+    "especialidades": [
+      "beneficio_incapacidade",
+      "auxilio_acidente",
+      "revisao_beneficio",
+      "aposentadoria"
+    ],
+    "localizacao": {
+      "cidade": "Campinas",
+      "uf": "SP"
+    },
+    "contatos": {
+      "whatsapp": "5519999990102",
+      "email": "sergio.lopes@example.com"
+    },
+    "bio": "Atuo com auxílio-doença, auxílio-acidente e perícias do INSS. Já fui perito assistente e sei o que o médico do INSS precisa ver no seu laudo.",
+    "foto": "https://images.unsplash.com/photo-1676989880361-091e12efc056?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
+    "situacaoOab": "aprovado",
+    "curriculo": {
+      "formacao": [
+        "Direito - PUC-Campinas (2011)"
+      ],
+      "especializacoes": [
+        "Direito Previdenciário"
+      ],
+      "cursos": [
+        "Perícia médica previdenciária"
+      ],
+      "experiencias": [
+        "12 anos em benefícios por incapacidade"
+      ]
+    }
+  },
+  {
+    "nome": "Cláudia Nogueira Alves",
+    "oab": {
+      "numero": "700103",
+      "uf": "MG"
+    },
+    "areasAtuacao": [
+      "previdenciario"
+    ],
+    "especialidades": [
+      "bpc_loas",
+      "salario_maternidade",
+      "pensao_por_morte"
+    ],
+    "localizacao": {
+      "cidade": "Belo Horizonte",
+      "uf": "MG"
+    },
+    "contatos": {
+      "whatsapp": "5531999990103",
+      "email": "claudia.nogueira@example.com"
+    },
+    "bio": "Trabalho com BPC/LOAS, salário-maternidade e pensão por morte, principalmente para quem teve o pedido negado pelo INSS e não sabe por onde recomeçar.",
+    "foto": "https://images.unsplash.com/photo-1758600432948-5cec2a3fecb9?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
+    "situacaoOab": "aprovado",
+    "curriculo": {
+      "formacao": [
+        "Direito - UFMG (2013)"
+      ],
+      "especializacoes": [
+        "Direito Previdenciário e Assistencial"
+      ],
+      "cursos": [
+        "Benefícios assistenciais"
+      ],
+      "experiencias": [
+        "10 anos atendendo famílias de baixa renda"
+      ]
+    }
+  },
+  {
+    "nome": "Ricardo Almeida Torres",
+    "oab": {
+      "numero": "700104",
+      "uf": "SP"
+    },
+    "areasAtuacao": [
+      "transito"
+    ],
+    "especialidades": [
+      "multa_transito",
+      "cnh_suspensa",
+      "lei_seca"
+    ],
+    "localizacao": {
+      "cidade": "São Paulo",
+      "uf": "SP"
+    },
+    "contatos": {
+      "whatsapp": "5511999990104",
+      "email": "ricardo.torres@example.com"
+    },
+    "bio": "Recorro de multas e processos de suspensão de CNH desde 2012. Analiso o auto de infração com calma e só entro com recurso quando há chance real.",
+    "foto": "https://images.unsplash.com/photo-1566753323558-f4e0952af115?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
+    "situacaoOab": "aprovado",
+    "curriculo": {
+      "formacao": [
+        "Direito - Mackenzie (2010)"
+      ],
+      "especializacoes": [
+        "Direito de Trânsito"
+      ],
+      "cursos": [
+        "Processo administrativo de trânsito"
+      ],
+      "experiencias": [
+        "12 anos em recursos de multa e CNH"
+      ]
+    }
+  },
+  {
+    "nome": "Paulo Henrique Dias",
+    "oab": {
+      "numero": "700105",
+      "uf": "SP"
+    },
+    "areasAtuacao": [
+      "transito"
+    ],
+    "especialidades": [
+      "veiculo_apreendido",
+      "documentacao_veiculo",
+      "multa_transito"
+    ],
+    "localizacao": {
+      "cidade": "Guarulhos",
+      "uf": "SP"
+    },
+    "contatos": {
+      "whatsapp": "5511999990105",
+      "email": "paulo.dias@example.com"
+    },
+    "bio": "Resolvo problemas com veículo apreendido, transferência e documentação no Detran, além de recursos de multa. Atendimento rápido, porque pátio cobra diária.",
+    "foto": "https://images.unsplash.com/photo-1549473448-b0acc73629dc?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
+    "situacaoOab": "aprovado",
+    "curriculo": {
+      "formacao": [
+        "Direito - UNG (2014)"
+      ],
+      "especializacoes": [
+        "Direito de Trânsito"
+      ],
+      "cursos": [
+        "Detran e licenciamento"
+      ],
+      "experiencias": [
+        "9 anos em direito de trânsito"
+      ]
+    }
+  },
+  {
+    "nome": "Juliana Castro Mendes",
+    "oab": {
+      "numero": "700106",
+      "uf": "RJ"
+    },
+    "areasAtuacao": [
+      "transito"
+    ],
+    "especialidades": [
+      "cnh_suspensa",
+      "lei_seca",
+      "multa_transito"
+    ],
+    "localizacao": {
+      "cidade": "Rio de Janeiro",
+      "uf": "RJ"
+    },
+    "contatos": {
+      "whatsapp": "5521999990106",
+      "email": "juliana.mendes@example.com"
+    },
+    "bio": "Defendo motoristas em processos de suspensão e cassação de CNH e em autuações da Lei Seca. Para quem depende da carteira para trabalhar, cada prazo conta.",
+    "foto": "https://images.unsplash.com/photo-1789058081339-cdf5f9cdd533?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
+    "situacaoOab": "aprovado",
+    "curriculo": {
+      "formacao": [
+        "Direito - UERJ (2012)"
+      ],
+      "especializacoes": [
+        "Direito de Trânsito"
+      ],
+      "cursos": [
+        "Lei Seca e defesa administrativa"
+      ],
+      "experiencias": [
+        "11 anos em defesa de motoristas"
+      ]
+    }
+  },
+  {
+    "nome": "Patrícia Moura Lins",
+    "oab": {
+      "numero": "700107",
+      "uf": "SP"
+    },
+    "areasAtuacao": [
+      "civel"
+    ],
+    "especialidades": [
+      "golpe_fraude",
+      "voo_viagem",
+      "seguro_negado",
+      "funeral_cemiterio",
+      "banco_cartao"
+    ],
+    "localizacao": {
+      "cidade": "São Paulo",
+      "uf": "SP"
+    },
+    "contatos": {
+      "whatsapp": "5511999990107",
+      "email": "patricia.lins@example.com"
+    },
+    "bio": "Defendo consumidores em golpes de Pix, fraudes bancárias, seguros negados e problemas com voo e plano funerário. Muita gente nem sabe que tem direito a ser ressarcida.",
+    "foto": "https://images.unsplash.com/photo-1566616213894-2d4e1baee5d8?auto=format&fit=facearea&facepad=3&w=400&h=400&q=75",
+    "situacaoOab": "aprovado",
+    "curriculo": {
+      "formacao": [
+        "Direito - USP (2012)"
+      ],
+      "especializacoes": [
+        "Direito do Consumidor"
+      ],
+      "cursos": [
+        "Fraudes bancárias e responsabilidade civil"
+      ],
+      "experiencias": [
+        "11 anos em direito do consumidor"
+      ]
     }
   }
 ]

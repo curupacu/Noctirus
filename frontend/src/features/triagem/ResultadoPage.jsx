@@ -5,16 +5,12 @@ import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
 import { useTitulo } from "../../lib/useTitulo";
 import "../painel/PainelPage.css";
+import { LABEL_AREA_CURTO as LABEL_AREA } from "../../lib/areas";
 
 // Mesma foto do destaque do painel do cliente (Unsplash).
 const FOTO_DESTAQUE =
   "https://images.unsplash.com/photo-1631217875019-8cb2649c3478?auto=format&fit=crop&w=720&h=560&q=75";
 
-const LABEL_AREA = {
-  civel: "Cível",
-  trabalhista: "Trabalhista",
-  indefinido: "Não identificada",
-};
 
 export function ResultadoPage() {
   useTitulo("Resultado da triagem");

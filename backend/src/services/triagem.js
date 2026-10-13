@@ -1,26 +1,21 @@
 import { GoogleGenAI } from "@google/genai";
 import Groq from "groq-sdk";
 
-// Triagem em duas etapas (RF005): todas as perguntas são abertas, respondidas com as
-// palavras do próprio cliente. A etapa 1 é igual pra todo mundo e serve pra identificar a
-// ÁREA (RF006); a etapa 2 depende da área identificada e serve pra identificar a
-// ESPECIALIDADE (RF007). O texto das perguntas mora só aqui — o frontend lê de
-// GET /triagem/perguntas, então revisar uma pergunta é mudar uma linha deste arquivo.
-// `ajuda` vira o exemplo dentro do campo; `minimo` é o tamanho mínimo da resposta.
+// Triagem em duas etapas (RF005). Redesenhada em 13/10/2026 depois de um teste com uma
+// pessoa de fora do time: as perguntas da etapa 2 repetiam o que ela já tinha contado na 1.
+// Agora a etapa 1 tem só duas perguntas abertas (o que aconteceu — com quem e o que quer
+// resolver — e quando), que bastam pra IA identificar a ÁREA (RF006) e já sugerir as
+// especialidades. Na etapa 2 o cliente CONFIRMA as especialidades sugeridas em chips (RF007)
+// e pode acrescentar algum detalhe se quiser. O texto das perguntas mora só aqui — o
+// frontend lê de GET /triagem/perguntas. `minimo` é o tamanho mínimo da resposta.
 export const PERGUNTAS_ETAPA1 = [
   {
     id: "oque",
     pergunta: "O que aconteceu?",
-    ajuda: "Conte com suas palavras, do jeito que você contaria pra um amigo.",
+    ajuda:
+      "Conte do seu jeito: o que aconteceu, com quem (uma empresa, um banco, o INSS, o Detran, um familiar...) e o que você quer resolver.",
     minimo: 20,
     maximo: 2000,
-  },
-  {
-    id: "envolvidos",
-    pergunta: "Com quem é o problema?",
-    ajuda: "Ex.: a empresa onde trabalho ou trabalhei, uma loja, um banco, meu ex-marido, um vizinho.",
-    minimo: 3,
-    maximo: 300,
   },
   {
     id: "quando",
@@ -31,53 +26,14 @@ export const PERGUNTAS_ETAPA1 = [
   },
 ];
 
-export const PERGUNTAS_ETAPA2 = {
-  trabalhista: [
-    {
-      id: "vinculo",
-      pergunta: "Como era (ou é) o seu trabalho lá?",
-      ajuda: "Ex.: carteira assinada há 3 anos como vendedor; trabalhava sem registro; sou o dono da empresa.",
-      minimo: 3,
-      maximo: 500,
-    },
-    {
-      id: "saida",
-      pergunta: "Você ainda trabalha lá? Se saiu, como foi a saída?",
-      ajuda: "Ex.: fui mandado embora sem justa causa; pedi demissão; ainda trabalho lá.",
-      minimo: 3,
-      maximo: 500,
-    },
-    {
-      id: "direitos",
-      pergunta: "O que você acha que não foi pago ou não foi respeitado?",
-      ajuda: "Ex.: rescisão, FGTS, horas extras, férias, fui humilhado pelo chefe, sofri um acidente.",
-      minimo: 3,
-      maximo: 1000,
-    },
-  ],
-  civel: [
-    {
-      id: "assunto",
-      pergunta: "Sobre o que é o problema?",
-      ajuda: "Ex.: uma compra, uma dívida, aluguel, pensão, divórcio, herança, plano de saúde, acidente de carro.",
-      minimo: 3,
-      maximo: 500,
-    },
-    {
-      id: "documentos",
-      pergunta: "Existe contrato, nota fiscal, boleto ou outro documento envolvido? Qual?",
-      ajuda: "Ex.: tenho o contrato de aluguel; tenho a nota fiscal; não tenho nada por escrito.",
-      minimo: 2,
-      maximo: 500,
-    },
-    {
-      id: "objetivo",
-      pergunta: "O que você gostaria que fosse resolvido?",
-      ajuda: "Ex.: receber meu dinheiro de volta, regularizar a pensão, dividir os bens.",
-      minimo: 3,
-      maximo: 500,
-    },
-  ],
+// Pergunta opcional da etapa 2 (igual pra todas as áreas — o resto da etapa 2 são os chips
+// de especialidade). Mesmo formato das outras pra caber em montarDescricao e no frontend.
+export const PERGUNTA_DETALHES = {
+  id: "detalhes",
+  pergunta: "Quer acrescentar algo?",
+  ajuda: "Opcional. Ex.: tenho os documentos, o prazo vence semana que vem, já tentei resolver sozinho.",
+  minimo: 0,
+  maximo: 1000,
 };
 
 // Junta perguntas e respostas num texto só ("Pergunta: resposta"), que é o que vai pra IA
@@ -110,6 +66,10 @@ export const CATEGORIAS_POR_AREA = {
     { valor: "indenizacao_dano_moral", label: "Indenização por dano moral" },
     { valor: "acidente_transito", label: "Acidente de trânsito" },
     { valor: "erro_medico", label: "Erro médico e direito à saúde" },
+    { valor: "seguro_negado", label: "Seguro negado (vida, carro, residência)" },
+    { valor: "funeral_cemiterio", label: "Funeral, cemitério e plano funerário" },
+    { valor: "golpe_fraude", label: "Golpe, fraude bancária e Pix" },
+    { valor: "voo_viagem", label: "Voo atrasado, cancelado ou bagagem extraviada" },
     { valor: "outro_civel", label: "Outro assunto cível" },
   ],
   trabalhista: [
@@ -130,7 +90,44 @@ export const CATEGORIAS_POR_AREA = {
     { valor: "estabilidade_gestante", label: "Estabilidade gestante ou acidentária" },
     { valor: "outro_trabalhista", label: "Outro direito trabalhista" },
   ],
+  // Áreas novas (13/10/2026), depois de pesquisa sobre o que mais leva brasileiros à
+  // Justiça: o INSS é o maior litigante do país (mais de 4 milhões de processos, CNJ) e
+  // ~11% dos advogados atuam em previdenciário (FGV/OAB); multa e CNH suspensa são uma
+  // especialidade à parte (direito de trânsito, administrativo).
+  previdenciario: [
+    { valor: "aposentadoria", label: "Aposentadoria (pedido, negativa ou revisão)" },
+    { valor: "beneficio_incapacidade", label: "Auxílio-doença e aposentadoria por invalidez" },
+    { valor: "bpc_loas", label: "BPC/LOAS (idoso ou pessoa com deficiência)" },
+    { valor: "pensao_por_morte", label: "Pensão por morte" },
+    { valor: "salario_maternidade", label: "Salário-maternidade" },
+    { valor: "auxilio_acidente", label: "Auxílio-acidente" },
+    { valor: "revisao_beneficio", label: "Revisão ou corte de benefício do INSS" },
+    { valor: "outro_previdenciario", label: "Outro assunto do INSS" },
+  ],
+  transito: [
+    { valor: "multa_transito", label: "Recurso de multa de trânsito" },
+    { valor: "cnh_suspensa", label: "CNH suspensa, cassada ou com muitos pontos" },
+    { valor: "lei_seca", label: "Lei Seca e bafômetro" },
+    { valor: "veiculo_apreendido", label: "Veículo apreendido ou guinchado" },
+    { valor: "documentacao_veiculo", label: "Documentação e transferência de veículo" },
+    { valor: "outro_transito", label: "Outro assunto de trânsito" },
+  ],
 };
+
+export const AREAS = {
+  civel: { label: "Cível", descricao: "Compras, contratos, dívidas, aluguel, família, herança, seguros, golpes" },
+  trabalhista: { label: "Trabalhista", descricao: "Emprego, demissão, salário, direitos de quem trabalha ou contrata" },
+  previdenciario: {
+    label: "Previdenciário (INSS)",
+    descricao: "Aposentadoria, auxílio-doença, BPC/LOAS, pensão por morte",
+  },
+  transito: { label: "Trânsito", descricao: "Multas, CNH suspensa ou cassada, Lei Seca, veículo apreendido" },
+};
+
+// Etapa 2 de cada área: só a pergunta opcional de detalhes (as especialidades são chips).
+export const PERGUNTAS_ETAPA2 = Object.fromEntries(
+  Object.keys(CATEGORIAS_POR_AREA).map((area) => [area, [PERGUNTA_DETALHES]]),
+);
 
 const PALAVRAS_TRABALHISTA = [
   "demiss", "demit", "salario", "salário", "trabalh", "emprego", "carteira assinada",
@@ -154,6 +151,24 @@ const PALAVRAS_CIVEL = [
   "condominio", "condomínio", "acidente de transito", "acidente de trânsito",
   "bati o carro", "capotei", "erro medico", "erro médico", "testamento",
   "uniao estavel", "união estável",
+  // Assuntos cíveis novos (13/10/2026).
+  "golpe", "fraude", "pix", "banco", "seguro", "seguradora", "funeral", "funeraria",
+  "funerária", "cemiterio", "cemitério", "voo", "companhia aerea", "companhia aérea", "bagagem",
+];
+
+const PALAVRAS_PREVIDENCIARIO = [
+  "inss", "aposentad", "auxilio doenca", "auxílio doença", "auxilio-doenca", "auxílio-doença",
+  "bpc", "loas", "pensao por morte", "pensão por morte", "pericia", "perícia", "beneficio",
+  "benefício", "salario maternidade", "salário maternidade", "salario-maternidade",
+  "salário-maternidade", "auxilio acidente", "auxílio acidente", "contribui", "carencia",
+  "carência", "segurado", "previdencia", "previdência",
+];
+
+const PALAVRAS_TRANSITO = [
+  "multa", "cnh", "carteira de motorista", "habilitacao", "habilitação", "detran",
+  "pontos na carteira", "bafometro", "bafômetro", "lei seca", "radar", "infracao de transito",
+  "infração de trânsito", "apreendid", "guinch", "patio", "pátio", "direito de dirigir",
+  "jari", "autuacao", "autuação", "renavam", "transferencia do carro", "transferência do carro",
 ];
 
 // Palavras-chave por subcategoria — usadas pra detectar categorias dentro da área já
@@ -190,6 +205,22 @@ const PALAVRAS_POR_CATEGORIA = {
   sem_carteira: ["sem carteira", "carteira nao assinada", "carteira não assinada", "informal", "sem registro"],
   jornada_intervalo: ["jornada excessiva", "jornada", "intervalo", "sem intervalo", "sem descanso"],
   estabilidade_gestante: ["gestante", "gravida", "grávida", "estabilidade", "acidentaria", "acidentária"],
+  seguro_negado: ["seguro", "seguradora", "sinistro", "apolice", "apólice"],
+  funeral_cemiterio: ["funeral", "funerari", "funerári", "cemiterio", "cemitério", "velorio", "velório", "sepult", "jazigo", "enterro"],
+  golpe_fraude: ["golpe", "fraude", "pix", "clonaram", "clonado", "invadiram minha conta", "estelionat"],
+  voo_viagem: ["voo", "vôo", "companhia aerea", "companhia aérea", "aeroporto", "bagagem", "mala extraviada", "overbooking"],
+  aposentadoria: ["aposentad", "tempo de contribuicao", "tempo de contribuição"],
+  beneficio_incapacidade: ["auxilio doenca", "auxílio doença", "auxilio-doenca", "auxílio-doença", "incapacidade", "invalidez", "pericia", "perícia", "afastad"],
+  bpc_loas: ["bpc", "loas", "beneficio assistencial", "benefício assistencial", "deficiencia", "deficiência"],
+  pensao_por_morte: ["pensao por morte", "pensão por morte", "faleceu", "falecimento", "morreu", "viuva", "viúva", "viuvo", "viúvo"],
+  salario_maternidade: ["salario maternidade", "salário maternidade", "salario-maternidade", "salário-maternidade", "licenca maternidade", "licença maternidade"],
+  auxilio_acidente: ["auxilio acidente", "auxílio acidente", "auxilio-acidente", "auxílio-acidente", "sequela"],
+  revisao_beneficio: ["revisao", "revisão", "cortaram", "cortado", "suspenderam o beneficio", "suspenderam o benefício", "valor errado"],
+  multa_transito: ["multa", "infracao", "infração", "radar", "autuacao", "autuação", "jari", "recurso"],
+  cnh_suspensa: ["cnh suspensa", "suspensao da cnh", "suspensão da cnh", "cassad", "pontos", "direito de dirigir"],
+  lei_seca: ["lei seca", "bafometro", "bafômetro", "alcool", "álcool", "embriag"],
+  veiculo_apreendido: ["apreendid", "guinch", "patio", "pátio", "remocao", "remoção"],
+  documentacao_veiculo: ["transferencia", "transferência", "documento do carro", "crlv", "renavam", "licenciamento"],
 };
 
 function contarOcorrencias(texto, palavras) {
@@ -213,7 +244,7 @@ function detectarCategorias({ area, descricao }) {
   }
 
   if (encontradas.size === 0) {
-    encontradas.add(area === "civel" ? "outro_civel" : "outro_trabalhista");
+    encontradas.add(`outro_${area}`);
   }
 
   return [...encontradas];
@@ -231,7 +262,7 @@ const PALAVRAS_EMPREGADOR = [
   "meu funcionário", "meus funcionarios", "meus funcionários", "minha funcionaria", "minha funcionária",
 ];
 
-function sugerirTipoAdvogado({ area, descricao, categorias }) {
+export function sugerirTipoAdvogado({ area, descricao, categorias }) {
   if (area === "trabalhista") {
     const base = contarOcorrencias(descricao, PALAVRAS_EMPREGADOR) > 0
       ? "Advogado trabalhista para empregador"
@@ -239,9 +270,10 @@ function sugerirTipoAdvogado({ area, descricao, categorias }) {
     const principal = categorias.find((c) => c !== "outro_trabalhista");
     return principal ? `${base} — ${LABEL_CATEGORIA[principal]}` : base;
   }
-  if (area === "civel") {
-    const principal = categorias.find((c) => c !== "outro_civel");
-    return principal ? `Advogado cível — ${LABEL_CATEGORIA[principal]}` : "Advogado cível";
+  if (AREAS[area]) {
+    const nomeArea = { civel: "cível", previdenciario: "previdenciário", transito: "de trânsito" }[area];
+    const principal = categorias.find((c) => c !== `outro_${area}`);
+    return principal ? `Advogado ${nomeArea} — ${LABEL_CATEGORIA[principal]}` : `Advogado ${nomeArea}`;
   }
   return "Não foi possível identificar a área — recomendamos falar com um advogado generalista";
 }
@@ -252,10 +284,14 @@ export function classificarPorRegras({ descricao = "", areaFixa } = {}) {
   let area = areaFixa || "indefinido";
 
   if (!areaFixa) {
-    const pontosTrabalhista = contarOcorrencias(descricao, PALAVRAS_TRABALHISTA);
-    const pontosCivel = contarOcorrencias(descricao, PALAVRAS_CIVEL);
-    if (pontosTrabalhista > pontosCivel) area = "trabalhista";
-    else if (pontosCivel > pontosTrabalhista) area = "civel";
+    const pontos = [
+      ["trabalhista", contarOcorrencias(descricao, PALAVRAS_TRABALHISTA)],
+      ["civel", contarOcorrencias(descricao, PALAVRAS_CIVEL)],
+      ["previdenciario", contarOcorrencias(descricao, PALAVRAS_PREVIDENCIARIO)],
+      ["transito", contarOcorrencias(descricao, PALAVRAS_TRANSITO)],
+    ].sort((x, y) => y[1] - x[1]);
+    // Só decide se uma área ganhou sozinha; empate ou nada encontrado = indefinido.
+    if (pontos[0][1] > 0 && pontos[0][1] > pontos[1][1]) area = pontos[0][0];
   }
 
   const categorias = area === "indefinido" ? [] : detectarCategorias({ area, descricao });
@@ -303,13 +339,15 @@ function construirPromptTriagem({ descricao, areaFixa }) {
         `Categorias (${areaFixa}): ${CATEGORIAS_POR_AREA[areaFixa].map((c) => c.valor).join(", ")}`,
       ]
     : [
-        'Se o caso não for cível nem trabalhista, ou faltar informação, use area = "indefinido" e categorias = [].',
-        "Escolha 'categorias' só entre estas opções, e só as que realmente se aplicam ao caso:",
-        `Categorias cíveis: ${CATEGORIAS_POR_AREA.civel.map((c) => c.valor).join(", ")}`,
-        `Categorias trabalhistas: ${CATEGORIAS_POR_AREA.trabalhista.map((c) => c.valor).join(", ")}`,
+        `Escolha a área entre: ${Object.keys(AREAS).join(", ")}.`,
+        "Previdenciário é tudo que envolve o INSS (aposentadoria, auxílio-doença, BPC/LOAS, pensão por morte).",
+        "Trânsito é multa, CNH suspensa ou cassada, Lei Seca e veículo apreendido; acidente de trânsito com pedido de indenização é cível.",
+        'Se o caso não for de nenhuma dessas áreas, ou faltar informação, use area = "indefinido" e categorias = [].',
+        "Escolha 'categorias' só entre estas opções da área escolhida, e só as que realmente se aplicam ao caso:",
+        ...Object.keys(AREAS).map((a) => `Categorias (${a}): ${CATEGORIAS_POR_AREA[a].map((c) => c.valor).join(", ")}`),
       ];
   return [
-    "Você é um triador jurídico de uma plataforma que só atende as áreas cível e trabalhista.",
+    `Você é um triador jurídico de uma plataforma que atende as áreas ${Object.values(AREAS).map((a) => a.label).join(", ")}.`,
     "A IA orienta, não decide sozinha — responda SOMENTE com o JSON pedido, sem texto fora dele.",
     ...instrucaoArea,
     `Respostas do cliente:\n${descricao}`,
@@ -317,13 +355,13 @@ function construirPromptTriagem({ descricao, areaFixa }) {
 }
 
 function interpretarRespostaIA(dados, areaFixa) {
-  if (!["civel", "trabalhista", "indefinido"].includes(dados.area)) {
+  if (![...Object.keys(AREAS), "indefinido"].includes(dados.area)) {
     throw new Error("Resposta da IA fora do formato esperado");
   }
 
   const area = areaFixa || dados.area;
   const categoriasValidas = (CATEGORIAS_POR_AREA[area] || []).map((c) => c.valor);
-  const outro = area === "civel" ? "outro_civel" : "outro_trabalhista";
+  const outro = `outro_${area}`;
   let categorias = (dados.categorias || []).filter((c) => categoriasValidas.includes(c));
   // A IA às vezes manda "outro" junto com a especialidade certa (visto rodando
   // scripts/avaliar-triagem.js em 08/10) — "outro" só fica quando não sobra nada específico.
@@ -352,7 +390,7 @@ async function classificarPorIA({ descricao, areaFixa }) {
       responseSchema: {
         type: "object",
         properties: {
-          area: { type: "string", enum: ["civel", "trabalhista", "indefinido"] },
+          area: { type: "string", enum: [...Object.keys(CATEGORIAS_POR_AREA), "indefinido"] },
           categorias: { type: "array", items: { type: "string", enum: TODAS_CATEGORIAS } },
           tipoAdvogadoSugerido: { type: "string" },
           confianca: { type: "number" },
@@ -377,7 +415,7 @@ async function classificarPorGroq({ descricao, areaFixa }) {
   const prompt = [
     construirPromptTriagem({ descricao, areaFixa }),
     "Responda só com um JSON contendo exatamente estes campos: " +
-      'area ("civel", "trabalhista" ou "indefinido"), categorias (lista de strings), ' +
+      `area (${[...Object.keys(CATEGORIAS_POR_AREA), "indefinido"].map((a) => `"${a}"`).join(", ")}), categorias (lista de strings), ` +
       "tipoAdvogadoSugerido (string), confianca (número de 0 a 1) e justificativa (string).",
   ].join("\n");
 

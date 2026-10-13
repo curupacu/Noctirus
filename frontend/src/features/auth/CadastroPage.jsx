@@ -12,11 +12,9 @@ import { useTitulo } from "../../lib/useTitulo";
 import { useAuth } from "./AuthContext";
 import { CampoSenha, EntradaLayout, LogoEntrada } from "./EntradaLayout";
 import { rotaInicial } from "./rotaInicial";
+import { LABEL_AREA, OPCOES_AREA } from "../../lib/areas";
 
-const AREAS = [
-  { valor: "civel", label: "Cível" },
-  { valor: "trabalhista", label: "Trabalhista" },
-];
+const AREAS = OPCOES_AREA;
 
 // Etapas do cadastro (uma por tela, como na referência). O advogado tem uma a mais, pra
 // escolher áreas e especialidades.
@@ -416,7 +414,7 @@ export function CadastroPage() {
               {categoriasPorArea &&
                 areasAtuacao.map((area) => (
                 <div key={area}>
-                  <p className="chips__grupo">Especialidades {area === "civel" ? "cíveis" : "trabalhistas"}</p>
+                  <p className="chips__grupo">Especialidades · {LABEL_AREA[area]}</p>
                   <ul className="chips">
                     {(categoriasPorArea?.[area] || []).map((c) => (
                       <li key={c.valor}>

@@ -25,8 +25,8 @@ export function EntradaLayout({ voltar = "/", rotuloVoltar = "Voltar", progresso
           <p className="entrada__painel-frase">Encontre o advogado certo pro seu caso.</p>
           <span className="entrada__painel-risco" />
           <p className="entrada__painel-texto">
-            Conte o que aconteceu com suas palavras. A gente identifica se o caso é cível ou
-            trabalhista e mostra quem atende esse assunto perto de você.
+            Conte o que aconteceu com suas palavras. A gente identifica a área do caso e mostra
+            quem atende esse assunto perto de você.
           </p>
         </div>
         <span className="entrada__painel-rodape">A Nocturis não presta serviços jurídicos.</span>

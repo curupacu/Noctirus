@@ -42,6 +42,10 @@
   --area-civel-bg: #dce6de;
   --area-trabalhista: #8b4332;
   --area-trabalhista-bg: #eddad2;
+  --area-previdenciario: #3f5577;
+  --area-previdenciario-bg: #dde3ee;
+  --area-transito: #8a6a14;
+  --area-transito-bg: #f1e7c8;
 
   /* Tipografia — corpo e interface em IBM Plex Sans. --font-serif é a serifada dos
      títulos do visual novo; entra tela por tela conforme cada uma é refeita (a Home foi a

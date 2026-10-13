@@ -12,6 +12,7 @@ import { useTitulo } from "../../lib/useTitulo";
 import "../advogados/AdvogadoPublicoPage.css";
 import "../auth/entrada.css";
 import "./EditarPerfilPage.css";
+import { LABEL_AREA } from "../../lib/areas";
 
 // Formulário de edição do advogado — antes vivia dentro de /perfil junto com o
 // dashboard; separado pra /perfil/editar a pedido do usuário (18/08/2026).
@@ -138,7 +139,6 @@ export function EditarPerfilPage() {
     return <Loading>Carregando perfil...</Loading>;
   }
 
-  const LABEL_AREA = { civel: "Cível", trabalhista: "Trabalhista" };
   const grupos = (advogado.areasAtuacao || [])
     .map((area) => ({ area, opcoes: categoriasPorArea?.[area] || [] }))
     .filter((g) => g.opcoes.length > 0);
