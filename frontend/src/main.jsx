@@ -3,6 +3,10 @@ import { createRoot } from 'react-dom/client'
 import * as Sentry from '@sentry/react'
 import './index.css'
 import App from './App.jsx'
+import { acordarServidor } from './lib/api'
+
+// Já cutuca o backend (Render grátis hiberna) enquanto a pessoa vê a Home ou o login.
+acordarServidor()
 
 // VITE_SENTRY_DSN é opcional de propósito — sem ela (dev local sem configurar), o app
 // roda normal, só sem reportar erro pra lugar nenhum.
