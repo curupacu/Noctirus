@@ -26,12 +26,9 @@ export function RecuperarSenhaPage() {
       await recuperarSenha(email.trim());
       setEnviado(true);
     } catch (err) {
-      if (err.code === "auth/invalid-email") setErro("Esse e-mail não parece válido.");
-      else if (err.code === "auth/too-many-requests") setErro("Muitas tentativas. Espere alguns minutos e tente de novo.");
-      // Conta inexistente cai aqui em projetos sem a proteção contra enumeração de e-mail —
-      // responde igual ao sucesso, pelo mesmo motivo do comentário lá em cima.
-      else if (err.code === "auth/user-not-found") setEnviado(true);
-      else setErro("Não foi possível enviar agora. Tente de novo em instantes.");
+      // O backend já responde igual pra quem tem e quem não tem conta; erro aqui é e-mail
+      // inválido, limite de pedidos ou servidor fora — a mensagem dele já vem em português.
+      setErro(err.message || "Não foi possível enviar agora. Tente de novo em instantes.");
     } finally {
       setEnviando(false);
     }

@@ -3,13 +3,13 @@ import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
   onAuthStateChanged,
-  sendPasswordResetEmail,
   signInWithEmailAndPassword,
   browserPopupRedirectResolver,
   signInWithPopup,
   signOut,
 } from "firebase/auth";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { api } from "../../lib/api";
 import { auth } from "../../lib/firebase";
 
 const AuthContext = createContext(null);
@@ -104,12 +104,11 @@ export function AuthProvider({ children }) {
     return { user: credencial.user, role: roleLogado };
   }
 
-  // Recuperação de senha: o próprio Firebase manda o e-mail com o link de redefinição (em
-  // português, por causa do languageCode) e, depois de trocar a senha, o link "Continuar"
-  // da página do Firebase traz a pessoa de volta pro login da Nocturis.
+  // Recuperação de senha: o backend gera o link do Firebase e manda o e-mail pela Nocturis;
+  // depois de trocar a senha, o "Continuar" da página do Firebase volta pro nosso login.
   async function recuperarSenha(email) {
-    auth.languageCode = "pt-BR";
-    await sendPasswordResetEmail(auth, email, { url: `${window.location.origin}/login` });
+    // Pelo backend (e-mail com a cara da Nocturis via Resend) — ver /auth/recuperar-senha.
+    await api.post("/auth/recuperar-senha", { email });
   }
 
   async function logout() {

@@ -110,6 +110,7 @@ export function criarFakeFirebase() {
   };
 
   const usuariosAuth = new Set();
+  const emailsAuth = new Set();
 
   const auth = {
     // Token de teste: base64 do JSON { uid, role, email }. `criarToken()` abaixo monta.
@@ -135,6 +136,17 @@ export function criarFakeFirebase() {
         throw erro;
       }
       usuariosAuth.delete(uid);
+    },
+    async generatePasswordResetLink(email) {
+      if (!emailsAuth.has(email)) {
+        const erro = new Error("no user record");
+        erro.code = "auth/user-not-found";
+        throw erro;
+      }
+      return `https://nocturis-web.firebaseapp.com/__/auth/action?mode=resetPassword&oobCode=teste&lang=en`;
+    },
+    _registrarEmail(email) {
+      emailsAuth.add(email);
     },
     // Só pros testes: registra um uid como "existente" na Auth (advogados do seed não têm
     // conta — ver ignorarSeUsuarioNaoExisteNaAuth em routes/users.js).

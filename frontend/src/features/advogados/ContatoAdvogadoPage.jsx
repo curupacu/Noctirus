@@ -34,7 +34,7 @@ export function ContatosLiberados({ contatos }) {
       )}
       {email && (
         <a
-          className="button button--secondary"
+          className={`button ${whatsapp ? "button--secondary" : "button--primary"}`}
           href={`mailto:${email}?subject=${encodeURIComponent("Contato via Nocturis")}`}
         >
           Enviar e-mail
