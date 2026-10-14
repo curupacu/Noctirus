@@ -1,34 +1,40 @@
+import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
+import { Loading } from "../components/Loading/Loading";
 import { AtualizacaoDisponivel } from "../components/AtualizacaoDisponivel/AtualizacaoDisponivel";
 import { AvisoServidor } from "../components/AvisoServidor/AvisoServidor";
 import { BottomNav } from "../components/BottomNav/BottomNav";
 import { Header } from "../components/Header/Header";
-import { AdminAdvogadosPage } from "../features/admin/AdminAdvogadosPage";
-import { AdvogadoPublicoPage } from "../features/advogados/AdvogadoPublicoPage";
-import { AdvogadosListPage } from "../features/advogados/AdvogadosListPage";
-import { ContatoAdvogadoPage } from "../features/advogados/ContatoAdvogadoPage";
-import { CadastroPage } from "../features/auth/CadastroPage";
-import { LoginPage } from "../features/auth/LoginPage";
-import { RecuperarSenhaPage } from "../features/auth/RecuperarSenhaPage";
 import { RotaProtegida } from "../features/auth/RotaProtegida";
-import { CartaoPage } from "../features/cartao/CartaoPage";
-import { MeusDadosPage } from "../features/conta/MeusDadosPage";
-import { PainelPage } from "../features/painel/PainelPage";
-import { MinhasSolicitacoesPage } from "../features/solicitacoes/MinhasSolicitacoesPage";
-import { QuadroCasosPage } from "../features/casos/QuadroCasosPage";
-import { EditarPerfilPage } from "../features/perfil/EditarPerfilPage";
-import { PerfilPage } from "../features/perfil/PerfilPage";
-import { MinhasTriagensPage } from "../features/triagem/MinhasTriagensPage";
-import { ResultadoPage } from "../features/triagem/ResultadoPage";
-import { TriagemPage } from "../features/triagem/TriagemPage";
 import { HomePage } from "./HomePage";
-import { NaoEncontradaPage } from "./NaoEncontradaPage";
-import { PrivacidadePage } from "./PrivacidadePage";
+
+// Cada tela vira um pedaço separado, baixado só quando é aberta — antes o site inteiro
+// (painel, quadro de casos, admin...) vinha junto já na Home (Lighthouse, 14/10/2026).
+const AdminAdvogadosPage = lazy(() => import("../features/admin/AdminAdvogadosPage").then((m) => ({ default: m.AdminAdvogadosPage })));
+const AdvogadoPublicoPage = lazy(() => import("../features/advogados/AdvogadoPublicoPage").then((m) => ({ default: m.AdvogadoPublicoPage })));
+const AdvogadosListPage = lazy(() => import("../features/advogados/AdvogadosListPage").then((m) => ({ default: m.AdvogadosListPage })));
+const ContatoAdvogadoPage = lazy(() => import("../features/advogados/ContatoAdvogadoPage").then((m) => ({ default: m.ContatoAdvogadoPage })));
+const CadastroPage = lazy(() => import("../features/auth/CadastroPage").then((m) => ({ default: m.CadastroPage })));
+const LoginPage = lazy(() => import("../features/auth/LoginPage").then((m) => ({ default: m.LoginPage })));
+const RecuperarSenhaPage = lazy(() => import("../features/auth/RecuperarSenhaPage").then((m) => ({ default: m.RecuperarSenhaPage })));
+const CartaoPage = lazy(() => import("../features/cartao/CartaoPage").then((m) => ({ default: m.CartaoPage })));
+const MeusDadosPage = lazy(() => import("../features/conta/MeusDadosPage").then((m) => ({ default: m.MeusDadosPage })));
+const PainelPage = lazy(() => import("../features/painel/PainelPage").then((m) => ({ default: m.PainelPage })));
+const MinhasSolicitacoesPage = lazy(() => import("../features/solicitacoes/MinhasSolicitacoesPage").then((m) => ({ default: m.MinhasSolicitacoesPage })));
+const QuadroCasosPage = lazy(() => import("../features/casos/QuadroCasosPage").then((m) => ({ default: m.QuadroCasosPage })));
+const EditarPerfilPage = lazy(() => import("../features/perfil/EditarPerfilPage").then((m) => ({ default: m.EditarPerfilPage })));
+const PerfilPage = lazy(() => import("../features/perfil/PerfilPage").then((m) => ({ default: m.PerfilPage })));
+const MinhasTriagensPage = lazy(() => import("../features/triagem/MinhasTriagensPage").then((m) => ({ default: m.MinhasTriagensPage })));
+const ResultadoPage = lazy(() => import("../features/triagem/ResultadoPage").then((m) => ({ default: m.ResultadoPage })));
+const TriagemPage = lazy(() => import("../features/triagem/TriagemPage").then((m) => ({ default: m.TriagemPage })));
+const NaoEncontradaPage = lazy(() => import("./NaoEncontradaPage").then((m) => ({ default: m.NaoEncontradaPage })));
+const PrivacidadePage = lazy(() => import("./PrivacidadePage").then((m) => ({ default: m.PrivacidadePage })));
 
 export function AppRouter() {
   return (
     <BrowserRouter>
       <Header />
+      <Suspense fallback={<Loading>Carregando...</Loading>}>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -138,6 +144,7 @@ export function AppRouter() {
         />
         <Route path="*" element={<NaoEncontradaPage />} />
       </Routes>
+      </Suspense>
       <BottomNav />
       <AtualizacaoDisponivel />
       <AvisoServidor />
