@@ -40,13 +40,10 @@ const CASOS_DO_ADVOGADO = [
     categorias: ["horas_extras", "jornada_intervalo"],
     etapa1: {
       oque: "Trabalho como atendente num mercado e faço quase todo dia duas horas a mais, mas isso nunca aparece no meu holerite.",
-      envolvidos: "O supermercado onde trabalho",
       quando: "Faz uns oito meses",
     },
     etapa2: {
-      vinculo: "Carteira assinada há 2 anos, como operadora de caixa",
-      saida: "Ainda trabalho lá",
-      direitos: "As horas extras nunca foram pagas e muitas vezes não tenho intervalo de almoço",
+      detalhes: "Carteira assinada há 2 anos, como operadora de caixa. Ainda trabalho lá. As horas extras nunca foram pagas e muitas vezes não tenho intervalo de almoço.",
     },
     situacao: "aceita",
     etapaCaso: "em_andamento",
@@ -61,13 +58,10 @@ const CASOS_DO_ADVOGADO = [
     categorias: ["demissao_sem_justa_causa", "verbas_rescisorias", "fgts_multa"],
     etapa1: {
       oque: "Fui mandado embora depois de quatro anos na empresa e até agora não recebi a rescisão nem a multa do FGTS.",
-      envolvidos: "A transportadora onde eu trabalhava",
       quando: "Mês passado",
     },
     etapa2: {
-      vinculo: "Carteira assinada há 4 anos como motorista",
-      saida: "Fui mandado embora sem justa causa",
-      direitos: "Rescisão, multa de 40% do FGTS e as férias vencidas",
+      detalhes: "Carteira assinada há 4 anos como motorista. Fui mandado embora sem justa causa. Rescisão, multa de 40% do FGTS e as férias vencidas.",
     },
     situacao: "aceita",
     etapaCaso: "em_andamento",
@@ -82,13 +76,10 @@ const CASOS_DO_ADVOGADO = [
     categorias: ["assedio_moral"],
     etapa1: {
       oque: "Meu chefe me humilha na frente dos colegas quase todo dia e já falou que vai me demitir se eu reclamar.",
-      envolvidos: "Meu chefe, na empresa onde trabalho",
       quando: "Começou há uns três meses e continua",
     },
     etapa2: {
-      vinculo: "Carteira assinada há 1 ano como auxiliar administrativa",
-      saida: "Ainda trabalho lá",
-      direitos: "Sou humilhada pelo chefe e me sinto muito mal pra trabalhar",
+      detalhes: "Carteira assinada há 1 ano como auxiliar administrativa. Ainda trabalho lá. Sou humilhada pelo chefe e me sinto muito mal pra trabalhar.",
     },
     situacao: "pendente",
     etapaCaso: "pendente",
@@ -103,13 +94,10 @@ const CASOS_DO_ADVOGADO = [
     categorias: ["aluguel_imoveis"],
     etapa1: {
       oque: "O dono do apartamento quer me tirar de lá antes do fim do contrato e não quer devolver o depósito.",
-      envolvidos: "O proprietário do apartamento que eu alugo",
       quando: "Semana passada",
     },
     etapa2: {
-      assunto: "Aluguel do apartamento onde moro",
-      documentos: "Tenho o contrato de aluguel e os comprovantes do depósito",
-      objetivo: "Ficar até o fim do contrato ou receber o depósito de volta",
+      detalhes: "Aluguel do apartamento onde moro. Tenho o contrato de aluguel e os comprovantes do depósito. Ficar até o fim do contrato ou receber o depósito de volta.",
     },
     situacao: "pendente",
     etapaCaso: "pendente",
@@ -124,13 +112,10 @@ const CASOS_DO_ADVOGADO = [
     categorias: ["fgts_multa"],
     etapa1: {
       oque: "Saí da empresa e descobri que eles não depositaram o meu FGTS durante quase um ano.",
-      envolvidos: "A loja onde eu trabalhava",
       quando: "Faz uns quatro meses",
     },
     etapa2: {
-      vinculo: "Carteira assinada por 3 anos como vendedora",
-      saida: "Pedi demissão",
-      direitos: "O FGTS não foi depositado",
+      detalhes: "Carteira assinada por 3 anos como vendedora. Pedi demissão. O FGTS não foi depositado.",
     },
     situacao: "aceita",
     etapaCaso: "concluido",
@@ -147,13 +132,10 @@ const CASO_DO_CLIENTE = {
   categorias: ["horas_extras"],
   etapa1: {
     oque: "Trabalho numa padaria e faço hora extra quase todo dia, mas nunca recebi nada a mais por isso.",
-    envolvidos: "A padaria onde eu trabalho",
     quando: "Desde o começo do ano",
   },
   etapa2: {
-    vinculo: "Carteira assinada há 1 ano e meio como atendente",
-    saida: "Ainda trabalho lá",
-    direitos: "As horas extras não são pagas",
+    detalhes: "Carteira assinada há 1 ano e meio como atendente. Ainda trabalho lá.",
   },
 };
 
