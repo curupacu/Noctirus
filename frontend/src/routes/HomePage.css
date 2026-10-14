@@ -727,7 +727,7 @@ main.home {
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: #f3d27a; /* dourado mais claro: 4,8:1 sobre o marrom (o --gold dava 3,1:1) */
 }
 
 .home-footer__list {

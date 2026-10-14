@@ -310,7 +310,7 @@ main.entrada {
   gap: 12px;
   margin: 24px 0;
   font-size: 13px;
-  color: var(--text-faint);
+  color: #75664f; /* 5,5:1 no fundo claro (o --text-faint dava 3,9:1) */
 }
 
 .entrada__ou::before,

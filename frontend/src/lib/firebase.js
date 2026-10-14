@@ -1,6 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, indexedDBLocalPersistence, setPersistence } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { browserLocalPersistence, indexedDBLocalPersistence, initializeAuth } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -17,7 +16,10 @@ const firebaseConfig = {
 };
 
 export const firebaseApp = initializeApp(firebaseConfig);
-export const auth = getAuth(firebaseApp);
+// initializeAuth em vez de getAuth: o getAuth carrega de cara o iframe de popup/redirect do
+// Firebase (~90 KB) em toda página, mesmo pra quem nunca clica em "Continuar com Google".
+// Sem o resolver aqui, ele só é baixado no signInWithPopup (ver AuthContext) — achado do
+// Lighthouse em 14/10/2026. Persistência: IndexedDB, com localStorage de reserva.
 // Era browserLocalPersistence (achando que era "o padrão mais seguro do SDK") — na
 // verdade essa suposição estava errada e era a causa provável do bug de sessão sumindo:
 // o SDK moderno já usa indexedDB como padrão por ser bem mais confiável que localStorage
@@ -26,10 +28,19 @@ export const auth = getAuth(firebaseApp);
 // hora que a sessão "sumiu" — ou seja, o dado sobrevivia, só não era mais a fonte de
 // verdade porque a gente tinha forçado localStorage explicitamente. Ficando explícito
 // mesmo assim, só que agora com o valor certo.
-setPersistence(auth, indexedDBLocalPersistence).catch((err) => {
-  console.error("Falha ao configurar persistência de sessão", err);
+export const auth = initializeAuth(firebaseApp, {
+  persistence: [indexedDBLocalPersistence, browserLocalPersistence],
 });
+
 // Só pro sininho de notificação (onSnapshot em tempo real) — o resto do app fala com o
 // Firestore só através da API (Admin SDK no backend), essa é a única leitura direta do
 // cliente, liberada nas firestore.rules (ver database/firestore.rules).
-export const db = getFirestore(firebaseApp);
+// Carregado sob demanda (14/10/2026) pra não pesar o primeiro carregamento da Home e do login.
+let firestore = null;
+export async function obterFirestore() {
+  if (!firestore) {
+    const { getFirestore } = await import("firebase/firestore");
+    firestore = getFirestore(firebaseApp);
+  }
+  return firestore;
+}

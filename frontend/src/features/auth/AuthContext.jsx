@@ -5,6 +5,7 @@ import {
   onAuthStateChanged,
   sendPasswordResetEmail,
   signInWithEmailAndPassword,
+  browserPopupRedirectResolver,
   signInWithPopup,
   signOut,
 } from "firebase/auth";
@@ -96,7 +97,7 @@ export function AuthProvider({ children }) {
   // manda pra dentro do app (role existe) ou pra completar o cadastro (role null).
   async function loginComGoogle() {
     const provider = new GoogleAuthProvider();
-    const credencial = await signInWithPopup(auth, provider);
+    const credencial = await signInWithPopup(auth, provider, browserPopupRedirectResolver);
     const tokenResult = await credencial.user.getIdTokenResult();
     const roleLogado = tokenResult.claims.role || null;
     setRole(roleLogado);
