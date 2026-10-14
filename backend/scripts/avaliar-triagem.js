@@ -115,6 +115,38 @@ const CASOS = [
     areaEsperada: "indefinido",
     categoriaEsperada: [],
   },
+  // --- Assuntos novos (13/10/2026): trânsito dentro de cível, INSS dentro de trabalhista ---
+  {
+    descricao: "Recebi uma multa de radar que acho injusta e já estou com muitos pontos, tenho medo da minha CNH ser suspensa.",
+    areaEsperada: "civel",
+    categoriaEsperada: ["multa_transito", "cnh_suspensa"],
+  },
+  {
+    descricao: "Fui parado na blitz da Lei Seca, me recusei a fazer o bafômetro e agora chegou o processo de suspensão da carteira.",
+    areaEsperada: "civel",
+    categoriaEsperada: ["lei_seca", "cnh_suspensa"],
+  },
+  {
+    descricao: "Meu marido faleceu mês passado e o INSS negou o meu pedido de pensão por morte dizendo que faltam documentos.",
+    areaEsperada: "trabalhista",
+    categoriaEsperada: ["pensao_por_morte"],
+  },
+  {
+    descricao: "Estou afastado por problema na coluna e o INSS cortou meu auxílio-doença depois da perícia, mas ainda não consigo trabalhar.",
+    areaEsperada: "trabalhista",
+    categoriaEsperada: ["beneficio_incapacidade", "revisao_beneficio"],
+  },
+  {
+    descricao: "Caí num golpe de Pix de alguém se passando pelo meu banco e o banco se recusa a devolver o dinheiro.",
+    areaEsperada: "civel",
+    categoriaEsperada: ["golpe_fraude", "banco_cartao"],
+  },
+  {
+    descricao: "A funerária cobrou bem mais do que o combinado no enterro da minha mãe e o plano funerário não cobriu o que prometia.",
+    areaEsperada: "civel",
+    categoriaEsperada: ["funeral_cemiterio"],
+  },
+
 ];
 
 function formatarCategorias(lista) {
@@ -141,13 +173,9 @@ async function main() {
 
   for (const [indice, caso] of CASOS.entries()) {
     if (indice > 0) await esperar(INTERVALO_ENTRE_CHAMADAS_MS);
-    // Mesmo caminho da triagem de verdade: etapa 1 decide a área, etapa 2 (com a área
-    // fixa) decide a especialidade. Aqui as duas etapas usam o mesmo texto do caso.
-    const etapa1 = await classificar({ descricao: caso.descricao });
-    const resultado =
-      etapa1.areaClassificada === "indefinido"
-        ? etapa1
-        : await classificar({ descricao: caso.descricao, areaFixa: etapa1.areaClassificada });
+    // Mesmo caminho da triagem de verdade (desde 13/10/2026): uma classificação só, que
+    // decide a área e já sugere as especialidades que o cliente confere em chips.
+    const resultado = await classificar({ descricao: caso.descricao });
 
     const areaOk = resultado.areaClassificada === caso.areaEsperada;
     const categoriaOk =
