@@ -28,3 +28,14 @@ export const limiteTriagem = rateLimit({
   skip: () => emTeste,
   message: { erro: "Muitas triagens em pouco tempo. Tente de novo em alguns minutos." },
 });
+
+// "Esqueci minha senha" manda e-mail — limite baixo pra ninguém usar a rota pra encher a
+// caixa de alguém nem pra varrer quais e-mails têm conta.
+export const limiteRecuperarSenha = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: () => emTeste,
+  message: { erro: "Muitos pedidos de nova senha. Tente de novo em alguns minutos." },
+});
