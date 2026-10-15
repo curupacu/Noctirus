@@ -39,7 +39,7 @@ export function MeusDadosPage() {
   async function excluirMinhaConta() {
     if (
       !window.confirm(
-        "Tem certeza que quer apagar sua conta? Essa ação não pode ser desfeita — seu cadastro" +
+        "Tem certeza que quer apagar sua conta? Essa ação não pode ser desfeita: seu cadastro" +
           " (e, se você for advogado, seu perfil público e currículo) serão removidos.",
       )
     ) {
@@ -85,7 +85,7 @@ export function MeusDadosPage() {
         <h2>Excluir minha conta</h2>
       </div>
       <p className="text-muted">
-        Apaga seu cadastro, suas triagens e seu acesso de vez — não dá pra desfazer. Pedidos de
+        Apaga seu cadastro, suas triagens e seu acesso de vez. Não dá pra desfazer. Pedidos de
         contato já enviados continuam no histórico do advogado que os recebeu.
       </p>
       <div className="actions">

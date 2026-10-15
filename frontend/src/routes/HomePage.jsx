@@ -31,7 +31,7 @@ const FAQ = [
   {
     pergunta: "A Nocturis é gratuita?",
     resposta:
-      "Sim, pra quem busca um advogado. A triagem e a busca de advogados não custam nada — você só precisa criar uma conta grátis pra fazer a triagem.",
+      "Sim, pra quem busca um advogado. A triagem e a busca de advogados não custam nada. Você só precisa criar uma conta grátis pra fazer a triagem.",
   },
   {
     pergunta: "Como funciona a triagem por IA?",
@@ -51,7 +51,7 @@ const FAQ = [
   {
     pergunta: "Preciso criar conta pra ver os advogados?",
     resposta:
-      "Não. Dá pra ver a lista de advogados sem cadastro — só crie conta se quiser fazer a triagem guiada ou salvar seus contatos.",
+      "Não. Dá pra ver a lista de advogados sem cadastro. Só crie conta se quiser fazer a triagem guiada ou salvar seus contatos.",
   },
 ];
 
@@ -126,7 +126,7 @@ const MOTIVOS = [
   {
     titulo: "Pra quem procura ajuda",
     texto:
-      "Você conta o que aconteceu do seu jeito, descobre a área do problema e vê quem atende esse assunto — sem pagar nada e sem precisar entender de Direito.",
+      "Você conta o que aconteceu do seu jeito, descobre a área do problema e vê quem atende esse assunto, sem pagar nada e sem precisar entender de Direito.",
   },
   {
     titulo: "Pra quem advoga",
@@ -237,7 +237,7 @@ function CartaoAdvogado({ advogado }) {
       <span className="home-lawyer__info">
         <span className="home-lawyer__name">{nome}</span>
         <span className="home-lawyer__meta">
-          {[areas, cidade && uf ? `${cidade}/${uf}` : cidade].filter(Boolean).join(" — ")}
+          {[areas, cidade && uf ? `${cidade}/${uf}` : cidade].filter(Boolean).join(" · ")}
         </span>
         {oabAprovada(advogado) && <span className="home-lawyer__badge">OAB verificada</span>}
       </span>

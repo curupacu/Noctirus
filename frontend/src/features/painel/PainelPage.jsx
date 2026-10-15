@@ -251,7 +251,7 @@ function PainelCliente() {
                 <span className="list-row__info">
                   <span className="list-row__title">
                     {LABEL_AREA[t.areaClassificada] || t.areaClassificada}
-                    {rotulos[t.especialidade] ? ` — ${rotulos[t.especialidade]}` : ""}
+                    {rotulos[t.especialidade] ? ` · ${rotulos[t.especialidade]}` : ""}
                   </span>
                   <span className="list-row__meta">{new Date(t.createdAt).toLocaleDateString("pt-BR")}</span>
                 </span>

@@ -24,7 +24,7 @@ export default defineConfig({
         'og-image.png',
       ],
       manifest: {
-        name: 'Nocturis — Advocacia Virtual',
+        name: 'Nocturis | Advocacia Virtual',
         short_name: 'Nocturis',
         description:
           'Triagem e direcionamento jurídico em áreas cível e trabalhista, com matching de advogados por localização e especialidade.',

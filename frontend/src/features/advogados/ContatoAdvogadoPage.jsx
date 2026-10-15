@@ -72,7 +72,7 @@ export function ContatoAdvogadoPage() {
   const [erroEnvio, setErroEnvio] = useState(null);
   const [enviada, setEnviada] = useState(null);
 
-  useTitulo(dado?.advogado ? `Pedir contato — ${dado.advogado.nome}` : "Pedir contato");
+  useTitulo(dado?.advogado ? `Pedir contato a ${dado.advogado.nome}` : "Pedir contato");
 
   // Sem triagem escolhida pela URL, já marca a mais recente que tem área identificada.
   useEffect(() => {
@@ -109,7 +109,7 @@ export function ContatoAdvogadoPage() {
   const triagensValidas = triagens.filter((t) => t.areaClassificada !== "indefinido");
   const escolhida = triagensValidas.find((t) => t.id === triagemId);
   const tituloTriagem = (t) =>
-    `${LABEL_AREA[t.areaClassificada]} — ${rotulos[t.especialidade || t.categorias?.[0]] || "assunto geral"}`;
+    `${LABEL_AREA[t.areaClassificada]} · ${rotulos[t.especialidade || t.categorias?.[0]] || "assunto geral"}`;
 
   return (
     <main>
@@ -130,7 +130,7 @@ export function ContatoAdvogadoPage() {
           <strong>Pedido enviado!</strong>
           <p className="text-muted" style={{ margin: 0 }}>
             {advogado.nome} recebeu seu pedido e as respostas da triagem. Você vai ser avisado aqui e
-            por e-mail quando ele responder — se aceitar, o WhatsApp e o e-mail dele aparecem pra você.
+            por e-mail quando ele responder. Se aceitar, o WhatsApp e o e-mail dele aparecem pra você.
           </p>
           <Link to="/minhas-solicitacoes" className="button button--secondary">
             Ver minhas solicitações

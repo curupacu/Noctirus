@@ -262,21 +262,21 @@ const CATEGORIAS_TRANSITO = ["multa_transito", "cnh_suspensa", "lei_seca", "veic
 
 export function sugerirTipoAdvogado({ area, descricao, categorias }) {
   const principalEspecifica = categorias.find((c) => !c.startsWith("outro_"));
-  if (CATEGORIAS_INSS.includes(principalEspecifica)) return `Advogado previdenciário — ${LABEL_CATEGORIA[principalEspecifica]}`;
-  if (CATEGORIAS_TRANSITO.includes(principalEspecifica)) return `Advogado de trânsito — ${LABEL_CATEGORIA[principalEspecifica]}`;
+  if (CATEGORIAS_INSS.includes(principalEspecifica)) return `Advogado previdenciário: ${LABEL_CATEGORIA[principalEspecifica]}`;
+  if (CATEGORIAS_TRANSITO.includes(principalEspecifica)) return `Advogado de trânsito: ${LABEL_CATEGORIA[principalEspecifica]}`;
   if (area === "trabalhista") {
     const base = contarOcorrencias(descricao, PALAVRAS_EMPREGADOR) > 0
       ? "Advogado trabalhista para empregador"
       : "Advogado trabalhista para direitos do trabalhador";
     const principal = categorias.find((c) => c !== "outro_trabalhista");
-    return principal ? `${base} — ${LABEL_CATEGORIA[principal]}` : base;
+    return principal ? `${base}: ${LABEL_CATEGORIA[principal]}` : base;
   }
   if (AREAS[area]) {
     const nomeArea = { civel: "cível" }[area] || area;
     const principal = categorias.find((c) => c !== `outro_${area}`);
-    return principal ? `Advogado ${nomeArea} — ${LABEL_CATEGORIA[principal]}` : `Advogado ${nomeArea}`;
+    return principal ? `Advogado ${nomeArea}: ${LABEL_CATEGORIA[principal]}` : `Advogado ${nomeArea}`;
   }
-  return "Não foi possível identificar a área — recomendamos falar com um advogado generalista";
+  return "Não foi possível identificar a área. Recomendamos falar com um advogado generalista";
 }
 
 // Fallback usado se a IA falhar, demorar mais de 5s, ou vier com baixa confiança (RNF003).
@@ -347,7 +347,7 @@ function construirPromptTriagem({ descricao, areaFixa }) {
       ];
   return [
     `Você é um triador jurídico de uma plataforma que atende as áreas ${Object.values(AREAS).map((a) => a.label).join(", ")}.`,
-    "A IA orienta, não decide sozinha — responda SOMENTE com o JSON pedido, sem texto fora dele.",
+    "A IA orienta, não decide sozinha: responda SOMENTE com o JSON pedido, sem texto fora dele.",
     ...instrucaoArea,
     `Respostas do cliente:\n${descricao}`,
   ].join("\n");
@@ -443,7 +443,7 @@ async function classificarPorGroqOuRegras({ descricao, areaFixa }) {
     }
     return resultado;
   } catch (erro) {
-    console.error("triagem: Groq falhou, usando fallback por regras —", erro.message || erro);
+    console.error("triagem: Groq falhou, usando fallback por regras:", erro.message || erro);
     return classificarPorRegras({ descricao, areaFixa });
   }
 }
@@ -464,7 +464,7 @@ export async function classificar({ descricao, areaFixa }) {
     // primeira vez, isso escondeu que a IA estava estourando a cota do free tier (10
     // req/min) na maioria das chamadas. Loga o motivo real (sem derrubar a triagem, que
     // continua caindo no Groq e depois no fallback por regras normalmente — RNF003).
-    console.error("triagem: Gemini falhou, tentando Groq —", erro.message || erro);
+    console.error("triagem: Gemini falhou, tentando Groq:", erro.message || erro);
     return classificarPorGroqOuRegras({ descricao, areaFixa });
   }
 }

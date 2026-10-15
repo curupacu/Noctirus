@@ -176,8 +176,8 @@ export function CartaoVerso({ dados }) {
 }
 
 export const TEMPLATES = [
-  { id: "vitrine", nome: "Vitrine", description: "Fundo noturno com a coruja d'água no canto — visual de impacto.", Component: CartaoVitrine },
-  { id: "claro", nome: "Claro", description: "Fundo branco, discreto e formal — bom pra imprimir.", Component: CartaoClaro },
+  { id: "vitrine", nome: "Vitrine", description: "Fundo noturno com a coruja d'água no canto. Visual de impacto.", Component: CartaoVitrine },
+  { id: "claro", nome: "Claro", description: "Fundo branco, discreto e formal, bom pra imprimir.", Component: CartaoClaro },
   { id: "dourado", nome: "Dourado", description: "Faixa marrom na base com contato e QR em destaque.", Component: CartaoDourado },
   { id: "pessoal", nome: "Pessoal", description: "Sua foto e seu nome em destaque, sem nenhuma marca da Nocturis.", Component: CartaoPessoal },
 ];

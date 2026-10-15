@@ -133,7 +133,7 @@ authRouter.post(
           paragrafos: [
             "Recebemos um pedido pra trocar a senha da sua conta na Nocturis.",
             "Clique no botão abaixo pra criar uma senha nova. Por segurança, o link vale por 1 hora.",
-            "Se não foi você que pediu, é só ignorar este e-mail — sua senha continua a mesma.",
+            "Se não foi você que pediu, é só ignorar este e-mail. Sua senha continua a mesma.",
           ],
           botaoTexto: "Criar senha nova",
           link: link.toString(),
@@ -141,7 +141,7 @@ authRouter.post(
       });
     } catch (erro) {
       if (erro.code !== "auth/user-not-found" && erro.code !== "auth/email-not-found") {
-        console.error("recuperar-senha: falha ao gerar ou enviar o link —", erro.message || erro);
+        console.error("recuperar-senha: falha ao gerar ou enviar o link:", erro.message || erro);
       }
     }
     res.json({ ok: true });

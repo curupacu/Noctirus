@@ -59,7 +59,7 @@ export async function avisarAdvogadoSobreOab({ uid, situacao, motivo }) {
       link: texto.link,
     });
   } catch (erro) {
-    console.error("avisosOab: falha ao criar notificação —", erro.message || erro);
+    console.error("avisosOab: falha ao criar notificação:", erro.message || erro);
   }
 
   try {
@@ -76,6 +76,6 @@ export async function avisarAdvogadoSobreOab({ uid, situacao, motivo }) {
       }),
     });
   } catch (erro) {
-    console.error("avisosOab: falha ao enviar e-mail —", erro.message || erro);
+    console.error("avisosOab: falha ao enviar e-mail:", erro.message || erro);
   }
 }

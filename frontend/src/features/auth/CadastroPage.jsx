@@ -345,7 +345,7 @@ export function CadastroPage() {
                       UF da OAB
                     </label>
                     <select id="oabUf" className="input" value={oabUf} onChange={(e) => setOabUf(e.target.value)}>
-                      <option value="">—</option>
+                      <option value="">UF</option>
                       {UFS.map((sigla) => (
                         <option key={sigla} value={sigla}>
                           {sigla}
@@ -375,7 +375,7 @@ export function CadastroPage() {
             <div>
               <h1 className="entrada__titulo">Em que você atua?</h1>
               <p className="entrada__sub" style={{ margin: 0 }}>
-                Escolha a área e, se quiser, as especialidades — é assim que os casos certos chegam até você.
+                Escolha a área e, se quiser, as especialidades. É assim que os casos certos chegam até você.
               </p>
             </div>
             <div>
@@ -404,7 +404,7 @@ export function CadastroPage() {
                       <button type="button" className="link-button" onClick={carregarCategorias}>
                         Tentar de novo
                       </button>{" "}
-                      — ou siga só com a área e escolha depois, no seu perfil.
+                      Ou siga só com a área e escolha depois, no seu perfil.
                     </>
                   ) : (
                     "Carregando especialidades..."

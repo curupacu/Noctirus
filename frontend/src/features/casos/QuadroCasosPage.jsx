@@ -30,7 +30,7 @@ async function buscar() {
 
 function tituloCaso(caso, rotulos) {
   const assunto = rotulos[caso.especialidade] || LABEL_AREA[caso.area] || "Caso";
-  return `${LABEL_AREA[caso.area] || ""}${caso.especialidade && rotulos[caso.especialidade] ? ` — ${assunto}` : ""}`;
+  return `${LABEL_AREA[caso.area] || ""}${caso.especialidade && rotulos[caso.especialidade] ? ` · ${assunto}` : ""}`;
 }
 
 function CartaoCaso({ caso, rotulos, onAbrir, onResponder, ocupado }) {
@@ -137,7 +137,7 @@ function DetalheCaso({ caso, rotulos, textosPerguntas, onFechar, onMudar, onResp
 
         {!pendente && (
           <p className="quadro-detalhe__aviso">
-            Seu contato foi liberado pra este cliente — ele vai te chamar pelo WhatsApp ou e-mail.
+            Seu contato foi liberado pra este cliente. Ele vai te chamar pelo WhatsApp ou e-mail.
           </p>
         )}
 
@@ -149,7 +149,7 @@ function DetalheCaso({ caso, rotulos, textosPerguntas, onFechar, onMudar, onResp
         {pendente ? (
           <>
             <p className="text-muted">
-              O nome do cliente aparece quando você aceitar — e ele recebe seu WhatsApp e e-mail.
+              O nome do cliente aparece quando você aceitar, e ele recebe seu WhatsApp e e-mail.
             </p>
             <div className="actions">
               <Button disabled={ocupado} onClick={() => onResponder(caso.id, "aceitar")}>

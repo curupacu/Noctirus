@@ -32,7 +32,7 @@ function formatarData(iso) {
 // Advogados e registrar a decisão. Recusar e revogar pedem motivo, que o advogado recebe
 // no sininho e por e-mail junto com o aviso.
 export function AdminAdvogadosPage() {
-  useTitulo("Admin — Validação de OAB");
+  useTitulo("Admin: Validação de OAB");
   const { dado: advogados, erro, setErro, recarregar } = useCarregar(() => api.get("/admin/advogados"));
   const [aba, setAba] = useState("em_analise");
   const [busca, setBusca] = useState("");
@@ -243,7 +243,7 @@ export function AdminAdvogadosPage() {
                         className="text-muted"
                         style={{ fontSize: "var(--font-size-sm)" }}
                       >
-                        {formatarData(h.em)} — {LABEL_SITUACAO_OAB[h.situacao] || h.situacao}
+                        {formatarData(h.em)}: {LABEL_SITUACAO_OAB[h.situacao] || h.situacao}
                         {h.motivo ? `: ${h.motivo}` : ""}
                       </li>
                     ))}

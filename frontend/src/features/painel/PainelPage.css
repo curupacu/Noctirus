@@ -397,7 +397,7 @@ a.painel__numero:hover {
 }
 
 .resultado__ajuste[open] summary::after {
-  content: "–";
+  content: "−";
 }
 
 .resultado #advogados {

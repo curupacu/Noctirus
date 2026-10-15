@@ -25,7 +25,7 @@ export function CampoLocalizacao({ cidade, uf, onCidade, onUf, required = false 
           autoComplete="address-level1"
           required={required}
         >
-          <option value="">—</option>
+          <option value="">UF</option>
           {UFS.map((sigla) => (
             <option key={sigla} value={sigla}>
               {sigla}

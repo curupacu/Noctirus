@@ -43,23 +43,23 @@ export function PrivacidadePage() {
       </p>
       <ul className="list-plain">
         <li>
-          <strong>Firebase (Google)</strong> — login e banco de dados;
+          <strong>Firebase (Google)</strong>: login e banco de dados;
         </li>
         <li>
-          <strong>Google Gemini e Groq</strong> — classificam a descrição do seu caso na
+          <strong>Google Gemini e Groq</strong>: classificam a descrição do seu caso na
           triagem. Hoje isso roda em camada gratuita das duas plataformas: se você não digitar
           nada de identificável na descrição (nome, CPF, endereço), o risco é baixo, mas é bom
           saber. Migrar pra um plano pago que não usa os dados pra treinar modelo é um item
           já planejado pra quando a Nocturis deixar de ser só um projeto de estudo;
         </li>
         <li>
-          <strong>Cloudinary</strong> — guarda a foto de perfil de advogados que fazem upload;
+          <strong>Cloudinary</strong>: guarda a foto de perfil de advogados que fazem upload;
         </li>
         <li>
-          <strong>Resend</strong> — envia o e-mail de notificação de resposta no chat;
+          <strong>Resend</strong>: envia o e-mail de notificação de resposta no chat;
         </li>
         <li>
-          <strong>Google Analytics</strong> — mede quantas pessoas visitam o site e quais
+          <strong>Google Analytics</strong>: mede quantas pessoas visitam o site e quais
           páginas usam, de forma agregada (não associamos isso ao seu nome ou e-mail).
         </li>
       </ul>
@@ -69,7 +69,7 @@ export function PrivacidadePage() {
       </div>
       <p>
         Você pode baixar uma cópia de tudo que temos sobre você ou apagar sua conta a qualquer
-        momento, direto pela plataforma, sem precisar pedir pra ninguém — veja em{" "}
+        momento, direto pela plataforma, sem precisar pedir pra ninguém. Veja em{" "}
         <Link to="/perfil">Meu perfil → Meus dados</Link> depois de entrar na sua conta.
         Apagar a conta remove seu cadastro e, se você for advogado, seu perfil público e
         currículo. Mensagens de chat que envolvem outra pessoa não são apagadas junto, porque

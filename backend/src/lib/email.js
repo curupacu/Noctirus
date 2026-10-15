@@ -16,7 +16,7 @@ function clienteEmail() {
 export async function enviarEmail({ to, subject, html }) {
   const resend = clienteEmail();
   if (!resend) {
-    console.log(`email: RESEND_API_KEY não configurada — não enviado (destinatário: ${to}, assunto: "${subject}")`);
+    console.log(`email: RESEND_API_KEY não configurada, não enviado (destinatário: ${to}, assunto: "${subject}")`);
     return { enviado: false };
   }
 
@@ -26,7 +26,7 @@ export async function enviarEmail({ to, subject, html }) {
   } catch (erro) {
     // Nunca derruba a rota que chamou isso (ex.: envio de mensagem no chat) — notificação
     // é um "nice to have", não pode impedir a ação principal do usuário.
-    console.error("email: falha ao enviar —", erro.message || erro);
+    console.error("email: falha ao enviar:", erro.message || erro);
     return { enviado: false };
   }
 }

@@ -129,7 +129,7 @@ export function EditarPerfilPage() {
         situacaoOab: "em_analise",
         situacaoOabMotivo: null,
       }));
-      setMensagemOab("Enviado! Sua OAB voltou pra análise — você recebe um aviso quando conferirmos.");
+      setMensagemOab("Enviado! Sua OAB voltou pra análise. Você recebe um aviso quando conferirmos.");
     } catch (err) {
       setMensagemOab(err.message);
     }

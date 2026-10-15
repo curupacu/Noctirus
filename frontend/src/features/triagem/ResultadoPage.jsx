@@ -145,7 +145,7 @@ export function ResultadoPage() {
       {opcoesDaArea.length > 0 && (
         <details className="card resultado__ajuste">
           <summary>Não é bem isso? Ajustar o assunto</summary>
-          <p className="text-muted">Marque o que mais combina com o seu caso — a lista de advogados se reorganiza.</p>
+          <p className="text-muted">Marque o que mais combina com o seu caso. A lista de advogados se reorganiza.</p>
           <div className="pill-toggle">
             {opcoesDaArea.map((c) => {
               const selecionada = categorias.includes(c.valor);

@@ -25,7 +25,7 @@ export function RespostasTriagem({ descricao, textosPerguntas = [] }) {
         return (
           <div key={i}>
             {pergunta && <dt>{pergunta}</dt>}
-            <dd>{resposta || "—"}</dd>
+            <dd>{resposta || "Não respondeu"}</dd>
           </div>
         );
       })}

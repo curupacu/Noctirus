@@ -101,7 +101,7 @@ export function CartaoPage() {
     <main>
       <h1>Meu cartão de visita</h1>
       <p className="text-muted">
-        Um cartão digital com seus dados e um QR code pro seu perfil público — pra
+        Um cartão digital com seus dados e um QR code pro seu perfil público, pra
         compartilhar no WhatsApp, nas redes ou imprimir.
       </p>
 

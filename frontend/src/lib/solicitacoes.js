@@ -1,7 +1,7 @@
 // Pedido de contato (RF010, RF013, RF014) — espelha backend/src/routes/solicitacoes.js.
 export const LABEL_SITUACAO_CLIENTE = {
   pendente: "Aguardando resposta",
-  aceita: "Aceito — contato liberado",
+  aceita: "Aceito: contato liberado",
   recusada: "Não pode atender agora",
 };
 

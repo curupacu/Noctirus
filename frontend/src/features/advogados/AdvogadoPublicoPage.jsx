@@ -43,7 +43,7 @@ export function AdvogadoPublicoPage() {
 
   useTitulo(
     dado?.advogado
-      ? `${dado.advogado.nome} — ${dado.advogado.localizacao?.cidade || "?"}/${dado.advogado.localizacao?.uf || "?"}`
+      ? `${dado.advogado.nome}, ${dado.advogado.localizacao?.cidade || "?"}/${dado.advogado.localizacao?.uf || "?"}`
       : "Advogado",
   );
 

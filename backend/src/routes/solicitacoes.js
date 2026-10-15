@@ -54,7 +54,7 @@ async function avisar({ destinatarioId, tipo, texto, link, assunto, titulo, para
   try {
     await criarNotificacao({ destinatarioId, tipo, texto, link });
   } catch (erro) {
-    console.error("solicitacoes: falha ao criar notificação —", erro.message || erro);
+    console.error("solicitacoes: falha ao criar notificação:", erro.message || erro);
   }
   try {
     const email = (await db.collection("users").doc(destinatarioId).get()).data()?.email;
@@ -65,7 +65,7 @@ async function avisar({ destinatarioId, tipo, texto, link, assunto, titulo, para
       html: templateAviso({ titulo, paragrafos, botaoTexto: botao, link: `${SITE_URL}${link}` }),
     });
   } catch (erro) {
-    console.error("solicitacoes: falha ao enviar e-mail —", erro.message || erro);
+    console.error("solicitacoes: falha ao enviar e-mail:", erro.message || erro);
   }
 }
 
@@ -103,7 +103,7 @@ solicitacoesRouter.post(
       return res.status(409).json({
         erro:
           emAberto.data().situacao === "pendente"
-            ? "Você já pediu contato a este advogado — aguarde a resposta"
+            ? "Você já pediu contato a este advogado. Aguarde a resposta"
             : "Este advogado já aceitou seu pedido",
         id: emAberto.id,
       });

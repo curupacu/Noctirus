@@ -61,7 +61,7 @@ function AvisoSituacaoOab({ advogado }) {
     em_analise: {
       titulo: "Sua OAB está em análise",
       texto:
-        "Estamos conferindo seu registro no Cadastro Nacional dos Advogados. Até lá, seu perfil não aparece pros clientes — você recebe um aviso assim que terminarmos.",
+        "Estamos conferindo seu registro no Cadastro Nacional dos Advogados. Até lá, seu perfil não aparece pros clientes. Você recebe um aviso assim que terminarmos.",
     },
     recusado: {
       titulo: "Não conseguimos confirmar sua OAB",
@@ -247,11 +247,11 @@ export function PerfilPage() {
 
         <div className="painel__numeros">
           <Link to="/casos" className="painel__numero">
-            <strong>{solicitacoes ? qtdPendentes : "—"}</strong>
+            <strong>{solicitacoes ? qtdPendentes : "..."}</strong>
             <span>Pedidos esperando resposta</span>
           </Link>
           <Link to="/casos" className="painel__numero">
-            <strong>{solicitacoes ? emAndamento.length : "—"}</strong>
+            <strong>{solicitacoes ? emAndamento.length : "..."}</strong>
             <span>Casos em andamento</span>
           </Link>
         </div>
