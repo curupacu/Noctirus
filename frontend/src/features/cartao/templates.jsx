@@ -255,40 +255,54 @@ function ClaroVerso({ dados }) {
   );
 }
 
+// Caixa em volta de cada face: é ela que serve de medida pro cqw. Se a medida ficasse no
+// próprio .cf, o padding e os cantos dele seriam calculados pela largura da tela (achado do
+// usuário, 25/10/2026: nas miniaturas o conteúdo ficava espremido no meio).
+function comCaixa(Face) {
+  function FaceNaCaixa(props) {
+    return (
+      <div className="cf-caixa">
+        <Face {...props} />
+      </div>
+    );
+  }
+  return FaceNaCaixa;
+}
+
 export const TEMPLATES = [
   {
     id: "foto",
     nome: "Com foto",
     descricao: "Sua foto em destaque, sem marca da Nocturis.",
-    Frente: FotoFrente,
-    Verso: FotoVerso,
+    Frente: comCaixa(FotoFrente),
+    Verso: comCaixa(FotoVerso),
   },
   {
     id: "classico",
     nome: "Clássico",
     descricao: "Marrom escuro com o emblema da balança.",
-    Frente: ClassicoFrente,
-    Verso: ClassicoVerso,
+    Frente: comCaixa(ClassicoFrente),
+    Verso: comCaixa(ClassicoVerso),
   },
   {
     id: "elegante",
     nome: "Elegante",
     descricao: "Faixas diagonais e nome em itálico.",
-    Frente: EleganteFrente,
-    Verso: EleganteVerso,
+    Frente: comCaixa(EleganteFrente),
+    Verso: comCaixa(EleganteVerso),
   },
   {
     id: "duas-cores",
     nome: "Duas cores",
     descricao: "Marrom e bege, com o QR em destaque.",
-    Frente: DuasCoresFrente,
-    Verso: DuasCoresVerso,
+    Frente: comCaixa(DuasCoresFrente),
+    Verso: comCaixa(DuasCoresVerso),
   },
   {
     id: "claro",
     nome: "Claro",
     descricao: "Fundo creme, bom pra impressora de casa.",
-    Frente: ClaroFrente,
-    Verso: ClaroVerso,
+    Frente: comCaixa(ClaroFrente),
+    Verso: comCaixa(ClaroVerso),
   },
 ];

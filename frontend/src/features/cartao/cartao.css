@@ -150,11 +150,15 @@
 }
 
 /* ---------- cartão (9 × 5 cm) ---------- */
+.cf-caixa {
+  container-type: inline-size;
+  width: 100%;
+}
+
 .cf {
   --cf-ouro: #c9a35a;
   --cf-escuro: #3a2619;
   --cf-creme: #f6eedf;
-  container-type: inline-size;
   position: relative;
   display: flex;
   overflow: hidden;
