@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { EsqueletoPainel } from "../../components/Esqueleto/Esqueleto";
@@ -72,14 +73,60 @@ function CartaoAdvogadoMini({ advogado, triagemId }) {
   );
 }
 
+function Seta({ direcao }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d={direcao === "voltar" ? "M15 18l-6-6 6-6" : "M9 18l6-6-6-6"} />
+    </svg>
+  );
+}
+
+// Vitrine que desliza. No celular passa com o dedo; no computador ganha setas (25/10/2026:
+// sem elas o último cartão ficava cortado e não tinha como ver o resto com o mouse).
 function Prateleira({ titulo, verTodos, classeTrilho = "", children }) {
+  const trilho = useRef(null);
+  const [pode, setPode] = useState({ voltar: false, avancar: false });
+
+  useEffect(() => {
+    const el = trilho.current;
+    if (!el) return undefined;
+    const medir = () =>
+      setPode({ voltar: el.scrollLeft > 4, avancar: el.scrollLeft + el.clientWidth < el.scrollWidth - 4 });
+    medir();
+    el.addEventListener("scroll", medir, { passive: true });
+    window.addEventListener("resize", medir);
+    return () => {
+      el.removeEventListener("scroll", medir);
+      window.removeEventListener("resize", medir);
+    };
+  }, [children]);
+
+  function rolar(sentido) {
+    const el = trilho.current;
+    el.scrollBy({ left: sentido * el.clientWidth * 0.8, behavior: "smooth" });
+  }
+
   return (
     <section className="prateleira">
       <div className="section-heading">
         <h2>{titulo}</h2>
-        {verTodos}
+        <div className="prateleira__acoes">
+          {verTodos}
+          {(pode.voltar || pode.avancar) && (
+            <span className="prateleira__setas">
+              <button type="button" onClick={() => rolar(-1)} disabled={!pode.voltar} aria-label="Ver anteriores">
+                <Seta direcao="voltar" />
+              </button>
+              <button type="button" onClick={() => rolar(1)} disabled={!pode.avancar} aria-label="Ver próximos">
+                <Seta direcao="avancar" />
+              </button>
+            </span>
+          )}
+        </div>
       </div>
-      <ul className={`prateleira__trilho ${classeTrilho}`}>{children}</ul>
+      <ul ref={trilho} className={`prateleira__trilho ${classeTrilho}`}>
+        {children}
+      </ul>
     </section>
   );
 }

@@ -210,6 +210,53 @@ a.painel__numero:hover {
   scrollbar-width: none;
 }
 
+.prateleira__acoes {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Setas só no computador (mouse): no celular a vitrine passa com o dedo. */
+.prateleira__setas {
+  display: none;
+  gap: 8px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .prateleira__setas {
+    display: inline-flex;
+  }
+}
+
+.prateleira__setas button {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--brown);
+  color: #fffdf8;
+  cursor: pointer;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.prateleira__setas button:hover:not(:disabled) {
+  background: var(--brown-deep);
+}
+
+.prateleira__setas button:disabled {
+  background: #e4d6c2;
+  color: #fffdf8;
+  cursor: default;
+}
+
+.prateleira__setas svg {
+  width: 18px;
+  height: 18px;
+}
+
 .prateleira__trilho::-webkit-scrollbar {
   display: none;
 }
