@@ -13,6 +13,7 @@ import { authRouter } from "./routes/auth.js";
 import { curriculosRouter } from "./routes/curriculos.js";
 import { healthRouter } from "./routes/health.js";
 import { solicitacoesRouter } from "./routes/solicitacoes.js";
+import { tarefasRouter } from "./routes/tarefas.js";
 import { triagemRouter } from "./routes/triagem.js";
 import { usersRouter } from "./routes/users.js";
 
@@ -61,6 +62,7 @@ app.use(advogadosRouter);
 app.use(curriculosRouter);
 app.use(triagemRouter);
 app.use(solicitacoesRouter);
+app.use(tarefasRouter);
 
 // Reporta pro Sentry antes do handler de sempre — sem SENTRY_DSN configurada
 // (instrument.js não chamou Sentry.init) isso vira um no-op, não quebra nada.

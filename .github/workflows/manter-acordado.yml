@@ -4,6 +4,8 @@ name: Manter backend acordado
 # depois disso leva até ~1 minuto. Esse agendamento chama o /health a cada 10 minutos
 # das 07h às 23h (horário de Brasília) pra demo e os testes não pegarem o servidor
 # dormindo. De madrugada ele dorme, pra não gastar as 750 h/mês do plano grátis.
+# Na mesma chamada saem os lembretes (ver backend/src/services/lembretes.js): no máximo um
+# por triagem e um por pedido, só entre 9h e 20h.
 # Pra desligar: Actions → "Manter backend acordado" → Disable workflow.
 on:
   schedule:
@@ -16,3 +18,5 @@ jobs:
     steps:
       - name: Chamar /health
         run: curl --silent --show-error --max-time 90 --retry 2 https://noctirus-backend.onrender.com/health
+      - name: Enviar lembretes
+        run: curl --silent --show-error --max-time 90 -X POST https://noctirus-backend.onrender.com/tarefas/lembretes

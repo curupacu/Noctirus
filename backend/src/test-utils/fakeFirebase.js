@@ -62,6 +62,8 @@ export function criarFakeFirebase() {
             const real = getByPath(dados, campo);
             if (op === "==") return real === valor;
             if (op === "in") return valor.includes(real);
+            if (op === ">=") return real >= valor;
+            if (op === "<=") return real <= valor;
             throw new Error(`fakeFirebase: operador não suportado "${op}"`);
           });
         }
@@ -73,7 +75,7 @@ export function criarFakeFirebase() {
             return ordenacao.direcao === "desc" ? -cmp : cmp;
           });
         }
-        return { docs: entradas.map(([id, dados]) => ({ id, data: () => dados })) };
+        return { docs: entradas.map(([id, dados]) => ({ id, ref: docRef(nome, id), data: () => dados })) };
       },
     };
   }
