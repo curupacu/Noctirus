@@ -1,0 +1,97 @@
+/* Mesmas animações do vídeo de referência: respira, as asas mexem com o "vento" e pisca. */
+.coruja-animada {
+  width: 220px;
+  height: auto;
+  overflow: visible;
+  transform-origin: 50% 62%;
+  animation: coruja-respira 5.5s ease-in-out infinite;
+}
+
+@keyframes coruja-respira {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.012);
+  }
+}
+
+.coruja-animada__asa--e {
+  transform-origin: 185px 118px;
+  animation: coruja-vento-e 6.5s ease-in-out infinite;
+}
+
+.coruja-animada__asa--d {
+  transform-origin: 200px 118px;
+  animation: coruja-vento-d 6.5s ease-in-out infinite;
+}
+
+@keyframes coruja-vento-e {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  38% {
+    transform: rotate(-1.4deg);
+  }
+  72% {
+    transform: rotate(0.5deg);
+  }
+}
+
+@keyframes coruja-vento-d {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  38% {
+    transform: rotate(1.4deg);
+  }
+  72% {
+    transform: rotate(-0.5deg);
+  }
+}
+
+/* Piscada: a pálpebra fica recortada dentro do olho e fecha de cima pra baixo. */
+.coruja-animada__palpebra {
+  transform-box: fill-box;
+  transform-origin: center top;
+  transform: scaleY(0);
+  animation: coruja-pisca 6s ease-in-out infinite;
+}
+
+@keyframes coruja-pisca {
+  0%,
+  88%,
+  100% {
+    transform: scaleY(0);
+  }
+  92% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0);
+  }
+}
+
+.coruja-animada__brilho {
+  animation: coruja-brilho 5.5s ease-in-out infinite;
+}
+
+@keyframes coruja-brilho {
+  0%,
+  100% {
+    opacity: 0.9;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .coruja-animada,
+  .coruja-animada * {
+    animation: none !important;
+  }
+}

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { Button } from "../../components/Button/Button";
-import { Loading } from "../../components/Loading/Loading";
+import { EsqueletoPagina } from "../../components/Esqueleto/Esqueleto";
 import { SeloOab } from "../../components/SeloOab/SeloOab";
 import { api } from "../../lib/api";
 import { textoLocalizacao } from "../../lib/localizacao";
@@ -73,7 +73,7 @@ export function AdminAdvogadosPage() {
     window.open(CNA_URL, "_blank", "noopener,noreferrer");
   }
 
-  if (!advogados && !erro) return <Loading>Carregando...</Loading>;
+  if (!advogados && !erro) return <EsqueletoPagina />;
 
   const lista = advogados || [];
   const contagem = Object.fromEntries(

@@ -1,6 +1,6 @@
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Avatar } from "../../components/Avatar/Avatar";
-import { Loading } from "../../components/Loading/Loading";
+import { EsqueletoPerfil } from "../../components/Esqueleto/Esqueleto";
 import { SeloOab } from "../../components/SeloOab/SeloOab";
 import { useAuth } from "../auth/AuthContext";
 import { api } from "../../lib/api";
@@ -39,7 +39,7 @@ export function AdvogadoPublicoPage() {
       api.get("/triagem/perguntas"),
     ]);
     return { advogado, curriculo, catalogoCategorias: perguntas.categorias };
-  }, [uid]);
+  }, [uid], { chave: `advogado:${uid}` });
 
   useTitulo(
     dado?.advogado
@@ -48,7 +48,7 @@ export function AdvogadoPublicoPage() {
   );
 
   if (erro) return <p role="alert">{erro}</p>;
-  if (!dado) return <Loading>Carregando...</Loading>;
+  if (!dado) return <EsqueletoPerfil />;
 
   const { advogado, curriculo, catalogoCategorias } = dado;
 

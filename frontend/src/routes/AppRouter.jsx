@@ -1,6 +1,6 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
-import { Loading } from "../components/Loading/Loading";
+import { EsqueletoPagina } from "../components/Esqueleto/Esqueleto";
 import { AtualizacaoDisponivel } from "../components/AtualizacaoDisponivel/AtualizacaoDisponivel";
 import { AvisoServidor } from "../components/AvisoServidor/AvisoServidor";
 import { BottomNav } from "../components/BottomNav/BottomNav";
@@ -33,7 +33,7 @@ export function AppRouter() {
   return (
     <BrowserRouter>
       <Header />
-      <Suspense fallback={<Loading>Carregando...</Loading>}>
+      <Suspense fallback={<EsqueletoPagina />}>
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />

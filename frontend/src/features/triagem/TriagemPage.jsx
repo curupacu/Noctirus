@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { EsqueletoPagina } from "../../components/Esqueleto/Esqueleto";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
 import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
@@ -65,7 +66,7 @@ export function TriagemPage() {
     api.get("/triagem/perguntas").then(setPerguntas).catch((err) => setErro(err.message));
   }, []);
 
-  if (!perguntas && !erro) return <Loading>Carregando...</Loading>;
+  if (!perguntas && !erro) return <EsqueletoPagina />;
   if (!perguntas) return <p role="alert">{erro}</p>;
 
   const telas = [...perguntas.etapa1.map((p) => ({ tipo: "pergunta", p })), { tipo: "area" }, { tipo: "assuntos" }];

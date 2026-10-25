@@ -4,7 +4,7 @@ import { Avatar } from "../../components/Avatar/Avatar";
 import { Button } from "../../components/Button/Button";
 import { CampoLocalizacao } from "../../components/CampoLocalizacao/CampoLocalizacao";
 import { Input } from "../../components/Input/Input";
-import { Loading } from "../../components/Loading/Loading";
+import { EsqueletoPagina } from "../../components/Esqueleto/Esqueleto";
 import { useAuth } from "../auth/AuthContext";
 import { CurriculoForm } from "../curriculo/CurriculoForm";
 import { api } from "../../lib/api";
@@ -136,7 +136,7 @@ export function EditarPerfilPage() {
   }
 
   if (carregando || !dadosUsuario || !advogado) {
-    return <Loading>Carregando perfil...</Loading>;
+    return <EsqueletoPagina />;
   }
 
   const grupos = (advogado.areasAtuacao || [])

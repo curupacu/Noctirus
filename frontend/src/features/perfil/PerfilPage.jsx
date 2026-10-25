@@ -4,7 +4,7 @@ import { Avatar } from "../../components/Avatar/Avatar";
 import { Input } from "../../components/Input/Input";
 import { Button } from "../../components/Button/Button";
 import { CampoLocalizacao } from "../../components/CampoLocalizacao/CampoLocalizacao";
-import { Loading } from "../../components/Loading/Loading";
+import { EsqueletoPagina, EsqueletoPainelAdvogado } from "../../components/Esqueleto/Esqueleto";
 import { OwlMark } from "../../components/OwlMark/OwlMark";
 import { AvisosCelular } from "../../components/AvisosCelular/AvisosCelular";
 import { PerfilCompletude } from "../../components/PerfilCompletude/PerfilCompletude";
@@ -206,7 +206,7 @@ export function PerfilPage() {
   }
 
   if (carregando || !dadosUsuario) {
-    return <Loading>Carregando perfil...</Loading>;
+    return role === "advogado" ? <EsqueletoPainelAdvogado /> : <EsqueletoPagina />;
   }
 
   if (role === "advogado" && advogado) {

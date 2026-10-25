@@ -29,11 +29,15 @@ async function fetchComRetry(url, opcoes, { retryGet = false } = {}) {
 
 // Aviso de "servidor acordando": se uma requisição passa de 3 s, avisa quem estiver
 // ouvindo (componente AvisoServidor) até ela terminar.
+// `acordando` = nenhuma resposta chegou ainda nesta visita, ou seja, o servidor está saindo
+// do modo de espera do Render. Aí o aviso vira a tela da coruja; depois disso, lentidão é só
+// uma requisição demorada (a IA da triagem, por exemplo) e o aviso fica pequeno.
 const ouvintesLentidao = new Set();
 let lentas = 0;
+let servidorJaRespondeu = false;
 
 function avisarLentidao() {
-  ouvintesLentidao.forEach((fn) => fn(lentas > 0));
+  ouvintesLentidao.forEach((fn) => fn(lentas > 0, !servidorJaRespondeu));
 }
 
 export function ouvirServidorLento(fn) {
@@ -51,7 +55,9 @@ async function medindoLentidao(promessa) {
     avisarLentidao();
   }, 3000);
   try {
-    return await promessa;
+    const resposta = await promessa;
+    servidorJaRespondeu = true;
+    return resposta;
   } catch (erro) {
     // Falha de rede (servidor fora ou sem internet): o "Failed to fetch" do navegador não
     // diz nada pra quem usa — troca por uma mensagem em português.

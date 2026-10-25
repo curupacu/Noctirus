@@ -3,7 +3,7 @@ import QRCode from "qrcode";
 import { useRef, useState } from "react";
 import { Button } from "../../components/Button/Button";
 import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
-import { Loading } from "../../components/Loading/Loading";
+import { EsqueletoPagina } from "../../components/Esqueleto/Esqueleto";
 import { api } from "../../lib/api";
 import { useCarregar } from "../../lib/useCarregar";
 import { useTitulo } from "../../lib/useTitulo";
@@ -47,7 +47,7 @@ export function CartaoPage() {
   }
 
   if (erroCarregar) return <p role="alert">{erroCarregar}</p>;
-  if (!dado) return <Loading>Carregando cartão...</Loading>;
+  if (!dado) return <EsqueletoPagina />;
 
   const { dadosUsuario, advogado, categoriasPorArea, qrCode } = dado;
 

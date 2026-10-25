@@ -1,6 +1,6 @@
 import { Link, Navigate } from "react-router-dom";
 import { Avatar } from "../../components/Avatar/Avatar";
-import { Loading } from "../../components/Loading/Loading";
+import { EsqueletoPainel } from "../../components/Esqueleto/Esqueleto";
 import { api } from "../../lib/api";
 import { textoLocalizacao } from "../../lib/localizacao";
 import { oabAprovada } from "../../lib/situacaoOab";
@@ -100,7 +100,7 @@ function PainelCliente() {
   const { dado, erro } = useCarregar(buscarPainel);
 
   if (erro) return <p role="alert">{erro}</p>;
-  if (!dado) return <Loading>Carregando...</Loading>;
+  if (!dado) return <EsqueletoPainel />;
 
   const { usuario, triagens, solicitacoes, ultima, daRegiao, rotulos } = dado;
   const primeiroNome = (usuario.nome || usuario.email || "").split(" ")[0];

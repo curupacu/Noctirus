@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { EsqueletoPagina } from "../../components/Esqueleto/Esqueleto";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { AdvogadoCard, AdvogadoDestaque } from "../../components/AdvogadoCard/AdvogadoCard";
 import { Loading } from "../../components/Loading/Loading";
@@ -85,7 +86,7 @@ export function ResultadoPage() {
   }, [categorias, resultado, id]);
 
   if (erro) return <p role="alert">{erro}</p>;
-  if (!resultado) return <Loading>Carregando...</Loading>;
+  if (!resultado) return <EsqueletoPagina />;
 
   const opcoesDaArea = catalogoCategorias?.[resultado.areaClassificada] || [];
   const catalogoEspecialidades = Object.fromEntries(

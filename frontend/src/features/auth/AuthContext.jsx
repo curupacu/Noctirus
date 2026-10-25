@@ -10,6 +10,7 @@ import {
 } from "firebase/auth";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { api } from "../../lib/api";
+import { limparMemoria } from "../../lib/useCarregar";
 import { auth } from "../../lib/firebase";
 
 const AuthContext = createContext(null);
@@ -23,6 +24,9 @@ export function AuthProvider({ children }) {
   // o Sentry. O painel que mostrava isso na tela de login saiu em outubro/2026; remover essa
   // ref e o Sentry.captureMessage quando o Sentry parar de registrar o aviso.
   const logoutExplicito = useRef(false);
+  // Conta que estava logada antes: se mudar sem passar por "sair", a memória das telas
+  // também é apagada (ver useCarregar).
+  const ultimoUid = useRef(null);
 
   useEffect(() => {
     // Limpa o registro que o painel de diagnóstico (já removido) lia.
@@ -55,6 +59,8 @@ export function AuthProvider({ children }) {
           }
         }
         logoutExplicito.current = false;
+        // Sem sessão: nada do que foi carregado pra conta anterior pode aparecer pra próxima.
+        limparMemoria();
         setUser(null);
         setRole(null);
         setLoading(false);
@@ -67,6 +73,8 @@ export function AuthProvider({ children }) {
       // fechado" do que no PC com wifi já estabilizado) travava em "Carregando..." pra
       // sempre e nunca marcava como logado, parecendo que a sessão tinha sumido de vez
       // (achado do usuário, 29/08: login "some" toda vez que fecha o app no Android).
+      if (ultimoUid.current && ultimoUid.current !== firebaseUser.uid) limparMemoria();
+      ultimoUid.current = firebaseUser.uid;
       setUser(firebaseUser);
       try {
         const tokenResult = await firebaseUser.getIdTokenResult();

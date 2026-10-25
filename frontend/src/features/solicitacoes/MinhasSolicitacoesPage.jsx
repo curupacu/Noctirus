@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Avatar } from "../../components/Avatar/Avatar";
-import { Loading } from "../../components/Loading/Loading";
+import { EsqueletoPagina } from "../../components/Esqueleto/Esqueleto";
 import { api } from "../../lib/api";
 import {
   formatarData,
@@ -36,7 +36,7 @@ export function MinhasSolicitacoesPage() {
   const [aba, setAba] = useState(null);
 
   if (erro) return <p role="alert">{erro}</p>;
-  if (!dado) return <Loading>Carregando...</Loading>;
+  if (!dado) return <EsqueletoPagina />;
   const { solicitacoes, rotulos } = dado;
   const contagem = Object.fromEntries(
     ABAS.map(({ situacao }) => [situacao, solicitacoes.filter((s) => s.situacao === situacao).length]),

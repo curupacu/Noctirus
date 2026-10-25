@@ -3,7 +3,7 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { Button } from "../../components/Button/Button";
 import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
-import { Loading } from "../../components/Loading/Loading";
+import { EsqueletoPagina } from "../../components/Esqueleto/Esqueleto";
 import { RespostasTriagem, textosDasPerguntas } from "../../components/RespostasTriagem/RespostasTriagem";
 import { api } from "../../lib/api";
 import { textoLocalizacao } from "../../lib/localizacao";
@@ -100,7 +100,7 @@ export function ContatoAdvogadoPage() {
   }
 
   if (erro) return <p role="alert">{erro}</p>;
-  if (!dado) return <Loading>Carregando...</Loading>;
+  if (!dado) return <EsqueletoPagina />;
 
   const { advogado, triagens, solicitacoes, rotulos, textosPerguntas } = dado;
   const existente = solicitacoes.find(

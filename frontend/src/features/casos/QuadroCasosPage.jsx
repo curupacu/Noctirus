@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Button } from "../../components/Button/Button";
-import { Loading } from "../../components/Loading/Loading";
+import { EsqueletoQuadro } from "../../components/Esqueleto/Esqueleto";
 import { api } from "../../lib/api";
 import { formatarData, LABEL_AREA, rotulosEspecialidades } from "../../lib/solicitacoes";
 import { useCarregar } from "../../lib/useCarregar";
@@ -315,7 +315,7 @@ export function QuadroCasosPage() {
     await mudar(id, { etapa: etapaDestino });
   }
 
-  if (!dado && !erro) return <Loading>Carregando...</Loading>;
+  if (!dado && !erro) return <EsqueletoQuadro />;
   const casos = dado?.casos || [];
   const rotulos = dado?.rotulos || {};
   const textosPerguntas = dado?.textosPerguntas || [];

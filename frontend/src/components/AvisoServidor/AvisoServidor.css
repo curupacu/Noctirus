@@ -49,3 +49,67 @@
     transform: rotate(360deg);
   }
 }
+
+/* ---------- espera longa: tela da coruja ---------- */
+.acordando {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 24px;
+  background: #61402c;
+  color: #f6eedf;
+  text-align: center;
+}
+
+.acordando__titulo {
+  margin: 28px 0 0;
+  font-family: var(--font-serif);
+  font-size: clamp(24px, 4vw, 32px);
+  color: #fffdf8;
+}
+
+.acordando__sub {
+  margin: 0;
+  font-size: 15px;
+  color: #e6d8bf;
+}
+
+.acordando__dica {
+  display: grid;
+  gap: 6px;
+  max-width: 460px;
+  min-height: 84px;
+  margin: 36px 0 0;
+  font-size: 17px;
+  line-height: 1.5;
+  color: #fffdf8;
+}
+
+.acordando__dica span {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #e6d8bf;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .acordando {
+    animation: acordando-entrar 0.3s ease both;
+  }
+
+  .acordando__dica {
+    animation: acordando-entrar 0.5s ease both;
+  }
+}
+
+@keyframes acordando-entrar {
+  from {
+    opacity: 0;
+  }
+}
