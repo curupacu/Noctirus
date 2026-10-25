@@ -5,53 +5,25 @@ main.quadro {
   max-width: 1320px;
 }
 
-/* ---------- topo (estilo do hero) ---------- */
+/* ---------- topo: título e os três números ---------- */
 .quadro-topo {
-  display: grid;
-  gap: 10px;
-  margin-bottom: 28px;
-  padding: 32px 32px 28px;
-  border-radius: 28px;
-  background: var(--brown);
-  color: #f6eedf;
-  box-shadow: 0 16px 40px rgba(59, 40, 28, 0.18);
-}
-
-.quadro-topo__etiqueta {
-  display: inline-flex;
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: #e6d8bf;
-}
-
-.quadro-topo__etiqueta::before {
-  content: "";
-  width: 28px;
-  height: 2px;
-  background: currentColor;
+  justify-content: space-between;
+  gap: 16px 24px;
+  margin-bottom: 24px;
 }
 
 .quadro-topo h1 {
   margin: 0;
-  font-size: clamp(32px, 5vw, 46px);
-  color: #fffdf8;
-}
-
-.quadro-topo p {
-  margin: 0;
-  font-size: 16px;
-  color: #e6d8bf;
+  font-size: clamp(32px, 5vw, 44px);
 }
 
 .quadro-topo__numeros {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  margin-top: 12px;
 }
 
 .quadro-topo__numero {
@@ -59,10 +31,11 @@ main.quadro {
   align-items: baseline;
   gap: 8px;
   padding: 10px 18px;
-  border: 1.5px solid rgba(246, 238, 223, 0.3);
+  border: 0;
   border-radius: 18px;
-  background: rgba(246, 238, 223, 0.08);
-  color: #f6eedf;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  color: var(--text-dim);
   font: inherit;
   cursor: default;
 }
@@ -72,7 +45,7 @@ main.quadro {
   font-size: 28px;
   font-weight: 400;
   line-height: 1;
-  color: #fffdf8;
+  color: var(--brown);
 }
 
 .quadro-topo__numero span {
@@ -101,7 +74,8 @@ main.quadro {
 }
 
 /* Cabeçalho com cor própria, como a faixa do cartão de triagem: pendentes marrom, em
-   andamento marrom escuro, concluídos bege (já terminou, pesa menos). */
+   andamento marrom escuro, concluídos o marrom mais escuro. Os cartões são brancos nas
+   três colunas (no bege, os concluídos se misturavam com o fundo). */
 .quadro-coluna__cabeca {
   display: flex;
   align-items: center;
@@ -117,8 +91,7 @@ main.quadro {
 }
 
 .quadro-coluna--concluido .quadro-coluna__cabeca {
-  background: #e4d6c2;
-  color: var(--text);
+  background: var(--brown-ink);
 }
 
 .quadro-coluna__titulo {
@@ -191,7 +164,7 @@ main.quadro {
 
 .quadro-cartao__abrir {
   display: grid;
-  gap: 6px;
+  gap: 14px;
   width: 100%;
   padding: 16px 18px;
   border: 0;
@@ -202,70 +175,128 @@ main.quadro {
   cursor: pointer;
 }
 
+/* Linha de cima: assunto à esquerda, prioridade (ou "Novo") à direita. */
+.quadro-cartao__linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
 .quadro-cartao__assunto {
+  min-width: 0;
   font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--brown);
 }
 
+.quadro-cartao__novo {
+  flex: none;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--brown);
+}
+
+.quadro-prioridade {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.quadro-prioridade__barras {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+
+.quadro-prioridade__barras span {
+  width: 4px;
+  border-radius: 1px;
+  background: #e4d6c2;
+}
+
+.quadro-prioridade__barras span:nth-child(1) {
+  height: 5px;
+}
+
+.quadro-prioridade__barras span:nth-child(2) {
+  height: 8px;
+}
+
+.quadro-prioridade__barras span:nth-child(3) {
+  height: 12px;
+}
+
+.quadro-prioridade__barras span.cheia {
+  background: var(--brown);
+}
+
+.quadro-prioridade--alta {
+  color: var(--brown);
+}
+
+/* Pessoa: inicial num círculo + nome e quando, lado a lado (não tudo empilhado). */
+.quadro-cartao__pessoa {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.quadro-cartao__inicial {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #efe2d0;
+  font-family: var(--font-serif);
+  font-size: 19px;
+  color: var(--brown);
+}
+
+.quadro-cartao__nome {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
 .quadro-cartao__titulo {
   font-family: var(--font-serif);
-  font-size: 21px;
+  font-size: 19px;
   font-weight: 400;
   line-height: 1.25;
 }
 
 .quadro-cartao__quando {
-  font-size: 14px;
-  color: var(--text-dim);
-}
-
-.quadro-cartao__rodape {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px 12px;
-  margin-top: 6px;
-}
-
-.quadro-etiqueta {
-  padding: 5px 12px;
-  border: 1.5px solid transparent;
-  border-radius: var(--radius-full);
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.quadro-etiqueta--alta,
-.quadro-etiqueta--novo {
-  background: var(--brown);
-  color: #fffdf8;
-}
-
-.quadro-etiqueta--media {
-  background: #efe2d0;
-  color: var(--brown);
-}
-
-.quadro-etiqueta--baixa {
-  border-color: #d8c7ae;
+  gap: 4px 12px;
+  font-size: 14px;
   color: var(--text-dim);
 }
 
 .quadro-cartao__nota {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  font-size: 13px;
+  gap: 4px;
   font-weight: 600;
   color: var(--brown);
 }
 
 .quadro-cartao__nota svg {
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
 }
 
 .quadro-cartao__acoes {
@@ -279,120 +310,9 @@ main.quadro {
   padding-inline: var(--space-sm);
 }
 
-/* Concluídos: mais discretos, pro olho ir primeiro ao que precisa de ação. */
-.quadro-coluna--concluido .quadro-cartao {
-  box-shadow: none;
-  background: #fbf8f3;
-}
-
-.quadro-coluna--concluido .quadro-cartao__titulo,
-.quadro-coluna--concluido .quadro-cartao__assunto {
-  color: var(--text-dim);
-}
-
-.quadro__fora {
-  margin-top: var(--space-xl);
-  display: grid;
-  gap: var(--space-sm);
-}
-
-.quadro__fora summary {
-  cursor: pointer;
-  color: var(--text-dim);
-}
-
-/* ---------- detalhe do caso ---------- */
-.quadro-detalhe {
-  position: fixed;
-  inset: 0;
-  z-index: 40;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.quadro-detalhe__fundo {
-  position: absolute;
-  inset: 0;
-  border: 0;
-  background: rgba(38, 28, 20, 0.45);
-  cursor: pointer;
-}
-
-.quadro-detalhe__painel {
-  position: relative;
-  width: min(520px, 100%);
-  height: 100%;
-  overflow-y: auto;
-  padding: var(--space-lg);
-  background: var(--bg);
-  box-shadow: -8px 0 24px rgba(38, 28, 20, 0.18);
-}
-
-.quadro-detalhe__topo {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--space-md);
-  align-items: flex-start;
-}
-
-.quadro-detalhe__fechar {
-  border: 0;
-  background: none;
-  font-size: 28px;
-  line-height: 1;
-  color: var(--text-dim);
-  cursor: pointer;
-}
-
-.quadro-detalhe__respostas {
-  display: grid;
-  gap: 14px;
-  margin: 0;
-  padding: 18px;
-  background: var(--surface);
-  border-radius: 18px;
-  box-shadow: var(--shadow-sm);
-}
-
-.quadro-detalhe__respostas dt {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--brown);
-}
-
-.quadro-detalhe__respostas dd {
-  margin: 2px 0 0;
-  font-size: 15px;
-  line-height: 1.55;
-}
-
-.quadro-detalhe__aviso {
-  margin: var(--space-md) 0 0;
-  padding: 12px 14px;
-  border-radius: 14px;
-  background: #f3ece2;
-  font-size: 14px;
-  color: var(--text-dim);
-}
-
-.quadro-detalhe__mover {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: var(--space-md);
-}
-
-.quadro-detalhe h3 {
-  margin: var(--space-lg) 0 var(--space-sm);
-  font-size: var(--font-size-base);
-}
-
 @media (max-width: 900px) {
-  .quadro-topo {
-    padding: 24px 20px 20px;
-  }
-
   .quadro-topo__numeros {
+    width: 100%;
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -410,13 +330,12 @@ main.quadro {
   }
 
   .quadro-topo__numero--ativo {
-    border-color: #fffdf8;
-    background: #fffdf8;
-    color: var(--brown);
+    background: var(--brown);
+    color: #f6eedf;
   }
 
   .quadro-topo__numero--ativo strong {
-    color: var(--brown);
+    color: #fffdf8;
   }
 
   .quadro__colunas {

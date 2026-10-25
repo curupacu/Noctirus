@@ -41,6 +41,22 @@ function quandoPediu(iso) {
   return `Pedido em ${formatarData(iso)}`;
 }
 
+// Prioridade como "sinal" de 3 barrinhas (alta = 3 cheias), sem etiqueta em bolinha.
+function Prioridade({ valor }) {
+  const nivel = { alta: 3, media: 2, baixa: 1 }[valor] || 2;
+  const label = PRIORIDADES.find((p) => p.valor === valor)?.label || "Média";
+  return (
+    <span className={`quadro-prioridade quadro-prioridade--${valor}`} title={`Prioridade ${label.toLowerCase()}`}>
+      <span className="quadro-prioridade__barras" aria-hidden="true">
+        {[1, 2, 3].map((n) => (
+          <span key={n} className={n <= nivel ? "cheia" : ""} />
+        ))}
+      </span>
+      {label}
+    </span>
+  );
+}
+
 function IconeNota() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -64,22 +80,25 @@ function CartaoCaso({ caso, rotulos, onAbrir, onResponder, ocupado }) {
       }}
     >
       <button type="button" className="quadro-cartao__abrir" onClick={() => onAbrir(caso.id)}>
-        <span className="quadro-cartao__assunto">{tituloCaso(caso, rotulos)}</span>
-        <strong className="quadro-cartao__titulo">{pendente ? "Pedido novo" : caso.clienteNome || "Cliente"}</strong>
-        <span className="quadro-cartao__quando">{quandoPediu(caso.createdAt)}</span>
-        <span className="quadro-cartao__rodape">
-          {pendente ? (
-            <span className="quadro-etiqueta quadro-etiqueta--novo">Esperando sua resposta</span>
-          ) : (
-            <span className={`quadro-etiqueta quadro-etiqueta--${caso.prioridade}`}>
-              Prioridade {PRIORIDADES.find((p) => p.valor === caso.prioridade)?.label.toLowerCase()}
+        <span className="quadro-cartao__linha">
+          <span className="quadro-cartao__assunto">{tituloCaso(caso, rotulos)}</span>
+          {pendente ? <span className="quadro-cartao__novo">Novo</span> : <Prioridade valor={caso.prioridade} />}
+        </span>
+        <span className="quadro-cartao__pessoa">
+          <span className="quadro-cartao__inicial" aria-hidden="true">
+            {pendente ? "?" : (caso.clienteNome || "C").trim()[0].toUpperCase()}
+          </span>
+          <span className="quadro-cartao__nome">
+            <strong className="quadro-cartao__titulo">{pendente ? "Pedido novo" : caso.clienteNome || "Cliente"}</strong>
+            <span className="quadro-cartao__quando">
+              {quandoPediu(caso.createdAt)}
+              {caso.anotacoes && (
+                <span className="quadro-cartao__nota" title="Tem anotação">
+                  <IconeNota /> anotação
+                </span>
+              )}
             </span>
-          )}
-          {caso.anotacoes && (
-            <span className="quadro-cartao__nota">
-              <IconeNota /> Anotação
-            </span>
-          )}
+          </span>
         </span>
       </button>
       {pendente && (
@@ -314,12 +333,9 @@ export function QuadroCasosPage() {
 
   return (
     <main className="quadro">
-      {/* Topo no estilo do hero da Home: faixa marrom, etiqueta com linha, título serifado
-          e os três números do quadro. No celular, os números trocam a coluna visível. */}
+      {/* Título e os três números do quadro. No celular, os números trocam a coluna visível. */}
       <section className="quadro-topo">
-        <span className="quadro-topo__etiqueta">Quadro de casos</span>
         <h1>Meus casos</h1>
-        <p>Abra um cartão pra ler as respostas do cliente, mudar a prioridade e anotar.</p>
         <nav className="quadro-topo__numeros" aria-label="Colunas do quadro">
           {COLUNAS.map(({ etapa, resumo }) => (
             <button
