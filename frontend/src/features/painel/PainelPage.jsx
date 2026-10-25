@@ -1,5 +1,4 @@
 import { Link, Navigate } from "react-router-dom";
-import { AreaIcon } from "../../components/AreaIcon/AreaIcon";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
@@ -13,6 +12,7 @@ import { rotaInicial } from "../auth/rotaInicial";
 import "./PainelPage.css";
 import { AvisoAceite, ModalAceite } from "../../components/AceiteDestaque/AceiteDestaque";
 import { AvisosCelular } from "../../components/AvisosCelular/AvisosCelular";
+import { CartaoTriagem } from "../../components/CartaoTriagem/CartaoTriagem";
 
 // Foto de banco de imagem (Unsplash, mesma da seção de serviços da Home).
 const FOTO_DESTAQUE =
@@ -256,22 +256,10 @@ function PainelCliente() {
       {ultimasTriagens.length === 0 && <p className="text-muted">Você ainda não fez nenhuma triagem.</p>}
 
       {ultimasTriagens.length > 0 && (
-        <ul className="list-plain list-plain--grade">
+        <ul className="lista-triagens">
           {ultimasTriagens.map((t) => (
             <li key={t.id}>
-              <Link to={`/triagem/${t.id}`} className="list-row">
-                <AreaIcon area={t.areaClassificada} />
-                <span className="list-row__info">
-                  <span className="list-row__title">
-                    {LABEL_AREA[t.areaClassificada] || t.areaClassificada}
-                    {rotulos[t.especialidade] ? ` · ${rotulos[t.especialidade]}` : ""}
-                  </span>
-                  <span className="list-row__meta">{new Date(t.createdAt).toLocaleDateString("pt-BR")}</span>
-                </span>
-                <span className="advogado-row__chevron" aria-hidden="true">
-                  ›
-                </span>
-              </Link>
+              <CartaoTriagem triagem={t} rotulos={rotulos} />
             </li>
           ))}
         </ul>

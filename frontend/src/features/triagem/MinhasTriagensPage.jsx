@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { AreaIcon } from "../../components/AreaIcon/AreaIcon";
+import { CartaoTriagem } from "../../components/CartaoTriagem/CartaoTriagem";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
 import { rotulosEspecialidades } from "../../lib/solicitacoes";
 import { useTitulo } from "../../lib/useTitulo";
-import { LABEL_AREA } from "../../lib/areas";
 
 
 
@@ -35,30 +34,10 @@ export function MinhasTriagensPage() {
       {triagens && triagens.length === 0 && <p>Você ainda não fez nenhuma triagem.</p>}
 
       {triagens && triagens.length > 0 && (
-        <ul className="list-plain">
+        <ul className="lista-triagens">
           {triagens.map((t) => (
             <li key={t.id}>
-              <Link to={`/triagem/${t.id}`} className="list-row">
-                <AreaIcon area={t.areaClassificada} />
-                <span className="list-row__info">
-                  {/* Assunto no título (antes repetia "Trabalhista / Advogado trabalhista
-                      para..." em todas as linhas). */}
-                  <span className="list-row__title">
-                    {rotulos[t.especialidade || t.categorias?.[0]] ||
-                      LABEL_AREA[t.areaClassificada] ||
-                      t.areaClassificada}
-                  </span>
-                  <span className="list-row__meta">
-                    {LABEL_AREA[t.areaClassificada] || t.areaClassificada} ·{" "}
-                    {(t.advogadosSugeridos || []).length} advogado
-                    {(t.advogadosSugeridos || []).length === 1 ? "" : "s"} ·{" "}
-                    {new Date(t.createdAt).toLocaleDateString("pt-BR")}
-                  </span>
-                </span>
-                <span className="advogado-row__chevron" aria-hidden="true">
-                  ›
-                </span>
-              </Link>
+              <CartaoTriagem triagem={t} rotulos={rotulos} />
             </li>
           ))}
         </ul>

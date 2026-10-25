@@ -9,14 +9,28 @@ main.painel {
 }
 
 .painel__ola {
-  margin: 0 0 4px;
-  font-size: 14px;
+  margin: 0 0 6px;
+  font-size: 17px;
   color: var(--text-dim);
 }
 
 .painel__titulo {
   margin: 0 0 var(--space-lg);
-  font-size: clamp(26px, 4vw, 34px);
+  font-size: clamp(30px, 4.6vw, 42px);
+}
+
+/* Títulos de seção maiores e mais espaço entre os blocos (25/10/2026): tudo no mesmo
+   tamanho deixava o painel "apertado e igual". */
+main.painel .section-heading {
+  margin: 48px 0 18px;
+}
+
+main.painel .section-heading h2 {
+  font-size: clamp(26px, 3.4vw, 34px);
+}
+
+main.painel .section-heading a {
+  font-size: 16px;
 }
 
 /* ---------- cartão de destaque ---------- */
@@ -49,7 +63,7 @@ main.painel {
   padding: 5px 12px;
   border-radius: var(--radius-full);
   background: rgba(246, 238, 223, 0.16);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   letter-spacing: 0.02em;
   color: #f6eedf;
@@ -157,19 +171,19 @@ a.painel__numero:hover {
 .painel__numero span {
   display: block;
   margin-top: 8px;
-  font-size: 14px;
+  font-size: 16px;
   color: var(--text-dim);
 }
 
 /* ---------- vitrines que deslizam ---------- */
 .prateleira {
-  margin-bottom: var(--space-lg);
+  margin-bottom: 8px;
 }
 
 .prateleira__trilho {
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 156px;
+  grid-auto-columns: 172px;
   gap: 14px;
   margin: 0 calc(-1 * var(--space-lg));
   padding: 4px var(--space-lg) var(--space-md);
@@ -190,8 +204,8 @@ a.painel__numero:hover {
 
 @media (min-width: 760px) {
   .prateleira__trilho {
-    grid-auto-columns: 176px;
-    gap: 18px;
+    grid-auto-columns: 200px;
+    gap: 20px;
   }
 }
 
@@ -227,20 +241,20 @@ a.painel__numero:hover {
 }
 
 .prateleira__nome {
-  margin: 12px 6px 2px;
-  font-size: 15px;
+  margin: 12px 6px 4px;
+  font-size: 17px;
   line-height: 1.3;
 }
 
 .prateleira__meta {
   margin: 0 6px;
-  font-size: 13px;
+  font-size: 15px;
   color: var(--text-dim);
 }
 
 .prateleira__selo {
   margin: 8px 6px 0;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -249,35 +263,37 @@ a.painel__numero:hover {
 
 /* Solicitação: cartão menor, com a situação numa etiqueta */
 .prateleira__trilho--pedidos {
-  grid-auto-columns: minmax(270px, 300px);
+  grid-auto-columns: minmax(290px, 320px);
 }
 
-/* Pedido de contato: advogado + assunto do caso em cima, situação colorida embaixo
-   (verde = liberado, âmbar = esperando, neutro = não pode atender). */
+/* Pedido de contato (25/10/2026): só cores da marca. Liberado = cartão creme com borda
+   dourada e etiqueta marrom; esperando = etiqueta dourada; não pode atender = bege. */
 .pedido-mini {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 16px;
+  gap: 18px;
   height: 100%;
-  padding: 18px;
+  padding: 20px;
   border: 2px solid transparent;
-  border-radius: 22px;
+  border-radius: 24px;
   background: var(--surface);
   box-shadow: var(--shadow-sm);
   color: var(--text);
   text-decoration: none;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .pedido-mini:hover {
   color: var(--text);
   text-decoration: none;
   box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .pedido-mini--aceita {
-  border-color: #9cc9ab;
-  background: #f1f8f3;
+  border-color: var(--gold);
+  background: var(--ok-bg-soft);
 }
 
 .pedido-mini__topo {
@@ -288,25 +304,25 @@ a.painel__numero:hover {
 
 .pedido-mini .avatar-placeholder {
   flex: none;
-  width: 56px;
-  height: 56px;
+  width: 64px;
+  height: 64px;
 }
 
 .pedido-mini__info {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
   min-width: 0;
 }
 
 .pedido-mini__info strong {
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.25;
 }
 
 .pedido-mini__caso {
-  font-size: 13px;
-  line-height: 1.35;
+  font-size: 15px;
+  line-height: 1.4;
   color: var(--text-dim);
 }
 
@@ -320,11 +336,11 @@ a.painel__numero:hover {
 .pedido-mini__situacao {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 6px 12px;
+  gap: 8px;
+  padding: 7px 14px;
   border-radius: var(--radius-full);
-  background: #f3ece2;
-  font-size: 13px;
+  background: var(--bg-section);
+  font-size: 14px;
   font-weight: 700;
   color: var(--text-dim);
 }
@@ -333,29 +349,29 @@ a.painel__numero:hover {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #a8998a;
+  background: var(--text-faint);
 }
 
 .pedido-mini--aceita .pedido-mini__situacao {
-  background: #dcefe3;
-  color: #2f6b45;
+  background: var(--brown);
+  color: #fffdf8;
 }
 
 .pedido-mini--aceita .pedido-mini__ponto {
-  background: #3f8f5c;
+  background: var(--gold);
 }
 
 .pedido-mini--pendente .pedido-mini__situacao {
-  background: #fbf0d6;
-  color: #7a5200;
+  background: var(--espera-bg);
+  color: var(--espera);
 }
 
 .pedido-mini--pendente .pedido-mini__ponto {
-  background: #d9a21b;
+  background: var(--gold);
 }
 
 .pedido-mini__data {
-  font-size: 12px;
+  font-size: 14px;
   color: var(--text-dim);
 }
 
@@ -413,11 +429,11 @@ a.painel__numero:hover {
 }
 
 .atalho strong {
-  font-size: 15px;
+  font-size: 17px;
 }
 
 .atalho span:last-child {
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.4;
   color: var(--text-dim);
 }

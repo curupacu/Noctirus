@@ -283,11 +283,11 @@ main.quadro {
 }
 
 .quadro-cartao--alta {
-  border-left-color: #b4462f;
+  border-left-color: var(--gold);
 }
 
 .quadro-cartao--alta .quadro-cartao__prioridade {
-  color: #b4462f;
+  color: var(--gold-ink);
 }
 
 .quadro-cartao--media {

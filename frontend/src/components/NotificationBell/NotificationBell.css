@@ -41,8 +41,8 @@
   height: 16px;
   padding: 0 3px;
   border-radius: var(--radius-full);
-  background: var(--red);
-  color: #fff;
+  background: var(--gold);
+  color: var(--ink-on-accent);
   font-size: 10px;
   font-weight: 700;
   line-height: 16px;

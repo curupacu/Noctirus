@@ -128,7 +128,7 @@ a:hover {
 }
 
 .badge--danger {
-  color: var(--ink-on-accent);
+  color: #fffdf8;
   background: var(--red);
   border-color: var(--red);
 }
@@ -1163,7 +1163,7 @@ a.list-row:hover {
   font-size: 16px;
 }
 
-/* Ação destrutiva (excluir conta) — contorno vermelho em vez do marrom de sempre. */
+/* Ação destrutiva (excluir conta): contorno marrom bem escuro, sem vermelho. */
 .button.button--perigo {
   border-color: var(--color-danger);
   color: var(--color-danger);

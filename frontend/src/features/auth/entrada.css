@@ -195,8 +195,8 @@ main.entrada {
   margin: 0;
   padding: 10px 14px;
   border-radius: 12px;
-  background: #f7e6df;
-  color: #8b4332;
+  background: var(--alerta-bg);
+  color: var(--alerta);
   font-size: 14px;
 }
 
