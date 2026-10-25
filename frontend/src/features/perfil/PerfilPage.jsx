@@ -5,6 +5,7 @@ import { Input } from "../../components/Input/Input";
 import { Button } from "../../components/Button/Button";
 import { CampoLocalizacao } from "../../components/CampoLocalizacao/CampoLocalizacao";
 import { Loading } from "../../components/Loading/Loading";
+import { OwlMark } from "../../components/OwlMark/OwlMark";
 import { AvisosCelular } from "../../components/AvisosCelular/AvisosCelular";
 import { PerfilCompletude } from "../../components/PerfilCompletude/PerfilCompletude";
 import { SeloOab } from "../../components/SeloOab/SeloOab";
@@ -25,30 +26,58 @@ function Icone({ d }) {
   );
 }
 
-const ATALHOS_ADVOGADO = (uid) => [
+// Atalhos com uma prévia do destino (25/10/2026): só o iconezinho não dizia pra onde o
+// cartão levava. Cada um mostra um pedacinho do que vai abrir, no marrom do destaque.
+const ATALHOS_ADVOGADO = ({ uid, nome, foto }) => [
   {
     to: "/perfil/editar",
     titulo: "Editar perfil",
     texto: "Foto, bio, especialidades e currículo",
-    icone: <Icone d="M4 20h4L19 9l-4-4L4 16v4ZM14 6l4 4" />,
+    previa: (
+      <span className="atalho__previa-foto">
+        <Avatar nome={nome} foto={foto} seed={uid} />
+        <span className="atalho__previa-lapis">
+          <Icone d="M4 20h4L19 9l-4-4L4 16v4ZM14 6l4 4" />
+        </span>
+      </span>
+    ),
   },
   {
     to: `/advogados/${uid}`,
     titulo: "Perfil público",
     texto: "Veja como o cliente te vê",
-    icone: <Icone d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Zm10 3a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />,
+    previa: (
+      <span className="atalho__previa-perfil">
+        <Avatar nome={nome} foto={foto} seed={uid} />
+        <span>
+          <strong>{nome || "Seu nome"}</strong>
+          <small>Pedir contato →</small>
+        </span>
+      </span>
+    ),
   },
   {
     to: "/cartao",
     titulo: "Cartão de visita",
     texto: "Compartilhe com seus clientes",
-    icone: <Icone d="M3 6h18v12H3zM7 10h5M7 14h8" />,
+    previa: (
+      <span className="atalho__previa-cartao">
+        <OwlMark className="atalho__previa-coruja" />
+        <strong>{nome || "Seu nome"}</strong>
+        <small>Advogado(a)</small>
+      </span>
+    ),
   },
   {
     to: "/meus-dados",
     titulo: "Meus dados",
     texto: "Baixe ou apague seus dados",
-    icone: <Icone d="M12 3 4 6v6c0 4.5 3.4 8 8 9 4.6-1 8-4.5 8-9V6l-8-3Z" />,
+    previa: (
+      <span className="atalho__previa-escudo">
+        <Icone d="M12 3 4 6v6c0 4.5 3.4 8 8 9 4.6-1 8-4.5 8-9V6l-8-3Zm-3 9 2 2 4-4" />
+        <small>LGPD</small>
+      </span>
+    ),
   },
 ];
 
@@ -264,12 +293,16 @@ export function PerfilPage() {
           <h2>Atalhos</h2>
         </div>
         <ul className="atalhos">
-          {ATALHOS_ADVOGADO(user.uid).map((atalho) => (
+          {ATALHOS_ADVOGADO({ uid: user.uid, nome, foto }).map((atalho) => (
             <li key={atalho.to}>
               <Link to={atalho.to} className="atalho">
-                <span className="atalho__icone">{atalho.icone}</span>
-                <strong>{atalho.titulo}</strong>
-                <span>{atalho.texto}</span>
+                <span className="atalho__previa" aria-hidden="true">
+                  {atalho.previa}
+                </span>
+                <span className="atalho__titulo">
+                  {atalho.titulo} <span aria-hidden="true">→</span>
+                </span>
+                <span className="atalho__texto">{atalho.texto}</span>
               </Link>
             </li>
           ))}

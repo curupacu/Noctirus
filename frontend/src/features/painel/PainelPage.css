@@ -411,10 +411,10 @@ a.painel__numero:hover {
 .atalho {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   height: 100%;
-  padding: 18px;
-  border-radius: 20px;
+  padding: 10px 10px 20px;
+  border-radius: 24px;
   background: var(--surface);
   box-shadow: var(--shadow-sm);
   color: var(--text);
@@ -429,30 +429,168 @@ a.painel__numero:hover {
   transform: translateY(-2px);
 }
 
-.atalho__icone {
+/* Prévia do destino, no marrom do cartão de destaque. */
+.atalho__previa {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
+  height: 118px;
   margin-bottom: 10px;
-  border-radius: 14px;
-  background: #f3ece2;
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--brown);
+  color: #f6eedf;
+}
+
+li:nth-child(even) > .atalho .atalho__previa {
+  background: var(--brown-deep);
+}
+
+.atalho__titulo {
+  padding: 0 10px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.atalho__titulo span {
+  display: inline-block;
   color: var(--brown);
+  transition: transform 0.15s ease;
 }
 
-.atalho__icone svg {
-  width: 22px;
-  height: 22px;
+.atalho:hover .atalho__titulo span {
+  transform: translateX(3px);
 }
 
-.atalho strong {
-  font-size: 17px;
-}
-
-.atalho span:last-child {
+.atalho__texto {
+  padding: 0 10px;
   font-size: 15px;
   line-height: 1.4;
   color: var(--text-dim);
+}
+
+.atalho__previa-lapis svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Editar perfil: a própria foto com um lápis */
+.atalho__previa-foto {
+  position: relative;
+}
+
+.atalho__previa-foto .avatar-placeholder {
+  width: 72px;
+  height: 72px;
+  border: 3px solid #f6eedf;
+  font-size: 26px;
+}
+
+.atalho__previa-lapis {
+  position: absolute;
+  right: -4px;
+  bottom: -2px;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 6px;
+  border-radius: 50%;
+  background: #f6eedf;
+  color: var(--brown);
+}
+
+/* Perfil público: mini cartão do perfil como o cliente vê */
+.atalho__previa-perfil {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 84%;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: #fffdf8;
+  color: var(--text);
+  box-shadow: 0 8px 18px rgba(20, 12, 6, 0.25);
+}
+
+.atalho__previa-perfil .avatar-placeholder {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  font-size: 15px;
+}
+
+.atalho__previa-perfil > span:last-child {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.atalho__previa-perfil strong {
+  overflow: hidden;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.atalho__previa-perfil small {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--brown);
+}
+
+/* Cartão de visita: cartãozinho creme levemente inclinado */
+.atalho__previa-cartao {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  width: 70%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #fffdf8;
+  color: var(--text);
+  box-shadow: 0 10px 20px rgba(20, 12, 6, 0.3);
+  transform: rotate(-4deg);
+}
+
+.atalho__previa-coruja {
+  width: 26px;
+  height: 18px;
+  margin-bottom: 4px;
+}
+
+.atalho__previa-cartao strong {
+  max-width: 100%;
+  overflow: hidden;
+  font-family: var(--font-serif);
+  font-size: 13px;
+  font-weight: 400;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.atalho__previa-cartao small {
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+/* Meus dados: escudo grande */
+.atalho__previa-escudo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.atalho__previa-escudo svg {
+  width: 46px;
+  height: 46px;
+}
+
+.atalho__previa-escudo small {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
 }
 
 /* Listas (triagens) em duas colunas no computador */
