@@ -221,13 +221,25 @@ function PainelCliente() {
         >
           {solicitacoes.slice(0, 8).map((s) => (
             <li key={s.id}>
-              <Link to="/minhas-solicitacoes" className="pedido-mini">
-                <Avatar nome={s.advogadoNome} foto={s.advogadoFoto} seed={s.advogadoId} />
-                <span className="pedido-mini__info">
-                  <strong>{s.advogadoNome || "Advogado"}</strong>
-                  <span className={`etiqueta${s.situacao === "aceita" ? " etiqueta--ok" : ""}`}>
+              <Link to="/minhas-solicitacoes" className={`pedido-mini pedido-mini--${s.situacao}`}>
+                <span className="pedido-mini__topo">
+                  <Avatar nome={s.advogadoNome} foto={s.advogadoFoto} seed={s.advogadoId} />
+                  <span className="pedido-mini__info">
+                    <strong>{s.advogadoNome || "Advogado"}</strong>
+                    <span className="pedido-mini__caso">
+                      {LABEL_AREA[s.area] || "Caso"}
+                      {rotulos[s.especialidade] ? ` · ${rotulos[s.especialidade]}` : ""}
+                    </span>
+                  </span>
+                </span>
+                <span className="pedido-mini__rodape">
+                  <span className="pedido-mini__situacao">
+                    <span className="pedido-mini__ponto" aria-hidden="true" />
                     {LABEL_SITUACAO_CLIENTE[s.situacao]}
                   </span>
+                  {s.createdAt && (
+                    <span className="pedido-mini__data">{new Date(s.createdAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" })}</span>
+                  )}
                 </span>
               </Link>
             </li>

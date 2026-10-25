@@ -249,16 +249,20 @@ a.painel__numero:hover {
 
 /* Solicitação: cartão menor, com a situação numa etiqueta */
 .prateleira__trilho--pedidos {
-  grid-auto-columns: 240px;
+  grid-auto-columns: minmax(270px, 300px);
 }
 
+/* Pedido de contato: advogado + assunto do caso em cima, situação colorida embaixo
+   (verde = liberado, âmbar = esperando, neutro = não pode atender). */
 .pedido-mini {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
   height: 100%;
-  padding: 14px;
-  border-radius: 20px;
+  padding: 18px;
+  border: 2px solid transparent;
+  border-radius: 22px;
   background: var(--surface);
   box-shadow: var(--shadow-sm);
   color: var(--text);
@@ -271,31 +275,88 @@ a.painel__numero:hover {
   box-shadow: var(--shadow-md);
 }
 
+.pedido-mini--aceita {
+  border-color: #9cc9ab;
+  background: #f1f8f3;
+}
+
+.pedido-mini__topo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.pedido-mini .avatar-placeholder {
+  flex: none;
+  width: 56px;
+  height: 56px;
+}
+
 .pedido-mini__info {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 6px;
+  gap: 3px;
   min-width: 0;
 }
 
 .pedido-mini__info strong {
-  font-size: 14px;
-  line-height: 1.3;
+  font-size: 16px;
+  line-height: 1.25;
 }
 
-.etiqueta {
-  padding: 3px 10px;
-  border-radius: var(--radius-full);
-  background: #f3ece2;
-  font-size: 12px;
-  font-weight: 600;
+.pedido-mini__caso {
+  font-size: 13px;
+  line-height: 1.35;
   color: var(--text-dim);
 }
 
-.etiqueta--ok {
-  background: var(--brown);
-  color: #fffdf8;
+.pedido-mini__rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.pedido-mini__situacao {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  background: #f3ece2;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-dim);
+}
+
+.pedido-mini__ponto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #a8998a;
+}
+
+.pedido-mini--aceita .pedido-mini__situacao {
+  background: #dcefe3;
+  color: #2f6b45;
+}
+
+.pedido-mini--aceita .pedido-mini__ponto {
+  background: #3f8f5c;
+}
+
+.pedido-mini--pendente .pedido-mini__situacao {
+  background: #fbf0d6;
+  color: #7a5200;
+}
+
+.pedido-mini--pendente .pedido-mini__ponto {
+  background: #d9a21b;
+}
+
+.pedido-mini__data {
+  font-size: 12px;
+  color: var(--text-dim);
 }
 
 /* ---------- atalhos em grade (advogado) ---------- */
