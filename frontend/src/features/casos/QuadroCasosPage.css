@@ -55,7 +55,7 @@ main.quadro {
 }
 
 .quadro-cartao--alta {
-  border-left-color: var(--gold);
+  border-left-color: var(--brown);
 }
 
 .quadro-cartao--media {
@@ -88,7 +88,7 @@ main.quadro {
 }
 
 .quadro-cartao--alta .quadro-cartao__prioridade {
-  color: var(--gold-ink);
+  color: var(--brown);
 }
 
 .quadro-cartao__titulo {
@@ -102,7 +102,7 @@ main.quadro {
 
 .quadro-cartao__nota {
   font-size: var(--font-size-xs);
-  color: var(--gold-ink);
+  color: var(--brown);
 }
 
 .quadro-cartao__acoes {
@@ -283,11 +283,11 @@ main.quadro {
 }
 
 .quadro-cartao--alta {
-  border-left-color: var(--gold);
+  border-left-color: var(--brown);
 }
 
 .quadro-cartao--alta .quadro-cartao__prioridade {
-  color: var(--gold-ink);
+  color: var(--brown);
 }
 
 .quadro-cartao--media {

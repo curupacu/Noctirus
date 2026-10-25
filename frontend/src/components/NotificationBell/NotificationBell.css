@@ -41,8 +41,8 @@
   height: 16px;
   padding: 0 3px;
   border-radius: var(--radius-full);
-  background: var(--gold);
-  color: var(--ink-on-accent);
+  background: #fffdf8;
+  color: var(--brown);
   font-size: 10px;
   font-weight: 700;
   line-height: 16px;

@@ -8,8 +8,8 @@
   padding: 0 14px;
   border: 0;
   border-radius: var(--radius-full);
-  background: #d9a21b;
-  color: #2b1d12;
+  background: #f6eedf;
+  color: var(--brown);
   font: inherit;
   font-size: 14px;
   font-weight: 700;
@@ -19,7 +19,7 @@
 }
 
 .install-button:hover {
-  background: #e6b23a;
+  background: #fffdf8;
 }
 
 .install-button:focus-visible {

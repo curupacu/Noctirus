@@ -4,9 +4,9 @@
   gap: 16px;
   margin-bottom: var(--space-lg);
   padding: 20px;
-  border: 2px solid #ecd9a8;
+  border: 2px solid var(--brown);
   border-radius: 22px;
-  background: #fdf6e6;
+  background: var(--surface);
 }
 
 .avisos-celular__icone {

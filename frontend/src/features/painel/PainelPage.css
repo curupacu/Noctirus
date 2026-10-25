@@ -267,8 +267,8 @@ a.painel__numero:hover {
   grid-auto-columns: minmax(280px, 320px);
 }
 
-/* Pedido de contato (25/10/2026): só cores da marca. Liberado = cartão creme com borda
-   dourada e etiqueta marrom; esperando = etiqueta dourada; não pode atender = bege. */
+/* Pedido de contato (25/10/2026): só marrom e bege. Liberado = borda e etiqueta marrom;
+   esperando = etiqueta bege com texto marrom; não pode atender = bege apagado. */
 .pedido-mini {
   display: flex;
   flex-direction: column;
@@ -293,8 +293,7 @@ a.painel__numero:hover {
 }
 
 .pedido-mini--aceita {
-  border-color: var(--gold);
-  background: var(--ok-bg-soft);
+  border-color: var(--brown);
 }
 
 .pedido-mini__topo {
@@ -360,7 +359,7 @@ a.painel__numero:hover {
 }
 
 .pedido-mini--aceita .pedido-mini__ponto {
-  background: var(--gold);
+  background: #f6eedf;
 }
 
 .pedido-mini--pendente .pedido-mini__situacao {
@@ -369,7 +368,7 @@ a.painel__numero:hover {
 }
 
 .pedido-mini--pendente .pedido-mini__ponto {
-  background: var(--gold);
+  background: var(--brown);
 }
 
 .pedido-mini__data {

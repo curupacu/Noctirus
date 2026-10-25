@@ -27,7 +27,7 @@
   transform: translateY(-2px);
 }
 
-/* Faixa do topo na cor da área: cível marrom, trabalhista dourado. */
+/* Faixa do topo na cor da área: cível marrom, trabalhista marrom mais escuro. */
 .cartao-triagem__faixa {
   display: flex;
   align-items: center;
@@ -38,8 +38,7 @@
 }
 
 .cartao-triagem--trabalhista .cartao-triagem__faixa {
-  background: var(--gold);
-  color: var(--ink-on-accent);
+  background: var(--brown-deep);
 }
 
 .cartao-triagem--indefinido .cartao-triagem__faixa {
@@ -54,7 +53,6 @@
   color: inherit;
 }
 
-.cartao-triagem--trabalhista .cartao-triagem__faixa .area-icon,
 .cartao-triagem--indefinido .cartao-triagem__faixa .area-icon {
   background: rgba(255, 253, 248, 0.45);
 }

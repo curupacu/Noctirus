@@ -34,26 +34,27 @@
   --cream-faint: #a8977b;
 
   /* Situações e alertas SÓ com a paleta da marca (25/10/2026: verde, vermelho e azul
-     destoavam do resto e foram tirados do site todo). Liberado/aceito = marrom,
-     esperando = dourado, erro = marrom bem escuro com fundo creme. */
+     destoavam do resto e foram tirados do site todo). Depois, o amarelo claro dos detalhes
+     também saiu ("ficou estranho"): fica o marrom simples. Liberado = marrom cheio,
+     esperando = bege com texto marrom, erro = marrom bem escuro com fundo creme. */
   --ok: var(--brown);
-  --ok-bg: #f3e8d6;
-  --ok-bg-soft: #fbf5ea;
-  --ok-border: #dcc49d;
-  --espera: var(--gold-ink);
-  --espera-bg: #f8ecc6;
+  --ok-bg: #efe2d0;
+  --ok-bg-soft: var(--surface);
+  --ok-border: var(--brown);
+  --espera: var(--brown);
+  --espera-bg: #efe2d0;
   --alerta: #6b3a1f;
   --alerta-bg: #f6ead9;
   --green: var(--ok);
   --red: var(--alerta);
 
-  /* Cor por área: cível marrom, trabalhista dourado (antes verde e terracota). */
+  /* Cor por área: cível marrom, trabalhista marrom mais escuro (antes verde e terracota). */
   --area-civel: var(--brown);
   --area-civel-bg: #efe2d0;
-  --area-trabalhista: var(--gold-ink);
-  --area-trabalhista-bg: #f6e8bf;
-  --area-previdenciario: var(--gold-ink);
-  --area-previdenciario-bg: #f6e8bf;
+  --area-trabalhista: var(--brown-deep);
+  --area-trabalhista-bg: #e6d6c2;
+  --area-previdenciario: var(--brown-deep);
+  --area-previdenciario-bg: #e6d6c2;
   --area-transito: var(--brown);
   --area-transito-bg: #efe2d0;
 

@@ -122,9 +122,9 @@ a:hover {
 }
 
 .badge--success {
-  color: var(--ink-on-accent);
-  background: var(--gold);
-  border-color: var(--gold);
+  color: #fffdf8;
+  background: var(--brown);
+  border-color: var(--brown);
 }
 
 .badge--danger {
@@ -134,9 +134,9 @@ a:hover {
 }
 
 .badge--gold {
-  color: var(--ink-on-accent);
-  background: var(--gold);
-  border-color: var(--gold);
+  color: #fffdf8;
+  background: var(--brown);
+  border-color: var(--brown);
 }
 
 /* Selo neutro pra "OAB verificada" — badge--success (dourado sólido) espalhava dourado
@@ -327,8 +327,8 @@ a:hover {
    (achado da auditoria de UX: chips todos iguais não deixam claro qual especialidade
    é a forte do advogado, ver docs/DESIGN.md "dourado com parcimônia"). */
 .chip--destaque {
-  background: color-mix(in srgb, var(--gold) 18%, var(--color-surface));
-  border-color: var(--gold);
+  background: var(--ok-bg);
+  border-color: var(--brown);
   font-weight: 700;
 }
 
@@ -618,7 +618,7 @@ h2 .accent {
 }
 
 .advogado-card:hover {
-  border-color: var(--gold);
+  border-color: var(--brown);
   box-shadow: var(--shadow-md);
   color: inherit;
   text-decoration: none;
@@ -924,7 +924,7 @@ a.list-row:hover .advogado-row__chevron {
   border: 0;
   background: none;
   font: inherit;
-  color: var(--gold-ink);
+  color: var(--brown);
   text-decoration: underline;
   cursor: pointer;
 }
