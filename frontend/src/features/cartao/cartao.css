@@ -1,371 +1,710 @@
-.cartao-preview-wrapper {
-  display: flex;
-  justify-content: center;
-  margin: var(--space-lg) 0;
+/* ---------- página ---------- */
+.cartao-pagina {
+  max-width: 980px;
 }
 
-.cartao-preview {
-  width: min(100%, 420px);
+/* Miniaturas dos modelos: o próprio cartão em tamanho pequeno, pra escolher vendo. */
+.cartao-modelos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 14px;
+  margin: 0 0 28px;
+  padding: 0;
+  list-style: none;
 }
 
-/* Flip 3D frente/verso — pedido do usuário (11/08). .cartao-flip é o <button> clicável;
-   .cartao-flip__inner é quem gira (0deg = frente, 180deg = verso); as duas faces ficam
-   empilhadas (a de trás com position:absolute + rotateY(180) pra compensar o giro do
-   pai e ficar de frente pro usuário quando virado). Isso SÓ controla a prévia
-   interativa — o download usa .cartao-export-target logo abaixo, sem transform nenhum,
-   pra não arriscar o html-to-image capturar um frame torto no meio do giro 3D. */
-.cartao-flip {
-  all: unset;
-  display: block;
+.cartao-modelo {
+  display: grid;
+  gap: 8px;
   width: 100%;
+  padding: 8px 8px 12px;
+  border: 2px solid transparent;
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  font: inherit;
+  color: var(--text);
+  text-align: left;
   cursor: pointer;
-  perspective: 1400px;
-  border-radius: var(--radius);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
-.cartao-flip:focus-visible {
-  outline: 2px solid var(--color-focus-ring);
-  outline-offset: 4px;
+.cartao-modelo:hover {
+  box-shadow: var(--shadow-md);
 }
 
-.cartao-flip__inner {
-  position: relative;
-  width: 100%;
-  transform-style: preserve-3d;
-  transition: transform 0.6s cubic-bezier(0.4, 0.1, 0.2, 1);
+.cartao-modelo--ativo {
+  border-color: var(--brown);
 }
 
-.cartao-flip__inner--virado {
-  transform: rotateY(180deg);
+.cartao-modelo strong {
+  padding: 0 4px;
+  font-size: 15px;
 }
 
-.cartao-flip__face {
-  backface-visibility: hidden;
+.cartao-modelo span {
+  padding: 0 4px;
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--text-dim);
 }
 
-.cartao-flip__face--verso {
-  position: absolute;
-  inset: 0;
-  transform: rotateY(180deg);
+.cartao-modelo .cf {
+  pointer-events: none;
 }
 
-.cartao-flip-hint {
-  text-align: center;
-  margin-top: var(--space-sm);
+/* Prévia grande: frente e verso lado a lado no computador, um embaixo do outro no celular. */
+.cartao-previa {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  margin-bottom: 8px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .cartao-flip__inner {
-    transition: none;
+.cartao-previa figure {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.cartao-previa figcaption {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-dim);
+}
+
+.cartao-previa .cf {
+  box-shadow: 0 14px 34px rgba(38, 28, 20, 0.22);
+}
+
+@media (max-width: 700px) {
+  .cartao-previa {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 
-/* Fora da tela de propósito — o botão de baixar sempre captura daqui, nunca da prévia
-   com o transform 3D do flip. Layout idêntico ao de .cartao-preview (mesma largura),
-   só sem o giro, pra garantir que o PNG exportado saia sempre reto e nítido. */
-.cartao-export-target {
+.cartao-downloads {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.cartao-download {
+  display: grid;
+  gap: 4px;
+  padding: 16px 18px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  font: inherit;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.cartao-download:hover:not(:disabled) {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.cartao-download:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.cartao-download--principal {
+  background: var(--brown);
+  color: #fffdf8;
+}
+
+.cartao-download strong {
+  font-size: 16px;
+}
+
+.cartao-download span {
+  font-size: 14px;
+  color: var(--text-dim);
+}
+
+.cartao-download--principal span {
+  color: #e6d8bf;
+}
+
+/* Fora da tela: os downloads capturam daqui (tamanho fixo, sem sombra). */
+.cartao-export {
   position: fixed;
   top: 0;
   left: -9999px;
-  width: min(100%, 420px);
+  display: grid;
+  gap: 20px;
+  width: 540px;
   pointer-events: none;
 }
 
-/* container-type: cqw permite fixar a tipografia como % da largura do próprio cartão —
-   sem isso o texto não escala junto quando o preview encolhe no mobile (min(100%, 420px)
-   acima) nem quando o html-to-image exporta em pixelRatio maior (baixarCartao, ver
-   CartaoPage.jsx). */
-.cartao-face {
+.cartao-export .cf {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* ---------- cartão (9 × 5 cm) ---------- */
+.cf {
+  --cf-ouro: #c9a35a;
+  --cf-escuro: #3a2619;
+  --cf-creme: #f6eedf;
   container-type: inline-size;
   position: relative;
-  width: 100%;
-  aspect-ratio: 7 / 4;
-  border-radius: var(--radius);
+  display: flex;
   overflow: hidden;
-  box-shadow: var(--shadow-md);
+  width: 100%;
+  aspect-ratio: 9 / 5;
+  border-radius: 2.6cqw;
   font-family: var(--font-body);
-  display: flex;
-  flex-direction: column;
+  line-height: 1.25;
 }
 
-/* min-height: 0 deixa o pad encolher de verdade quando pad + band (Dourado) juntos
-   passam da altura fixa do cartão — sem isso o pad nunca cede espaço e o conteúdo dele
-   (chip de especialidade) acaba atrás da faixa, que é sobreposta por cima (achado do
-   usuário, 11/08). O ajuste de verdade foi tirar a logo da faixa (ver templates.jsx) pra
-   sobrar altura o bastante — isso aqui só evita que o mesmo tipo de estouro vire
-   sobreposição de novo se o conteúdo crescer (nome grande, etc). */
-.cartao-face__pad {
-  position: relative;
-  z-index: 1;
-  flex: 1;
-  min-height: 0;
-  padding: 5.6cqw;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.cartao-face__pad--sem-rodape {
-  padding-bottom: 3.6cqw;
-}
-
-.cartao-face__owl-mark {
-  position: absolute;
-  z-index: 0;
-  top: 0;
-  right: 0;
-  width: 52%;
-  height: auto;
-  transform: translate(16%, -22%);
-  pointer-events: none;
-}
-
-.cartao-face__owl-mark--escura {
-  color: var(--gold);
-  opacity: 0.18;
-}
-
-.cartao-face__owl-mark--clara {
-  color: var(--surface-warm);
-  opacity: 0.1;
-}
-
-.cartao-face__nome {
+.cf p {
   margin: 0;
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 6.6cqw;
+}
+
+.cf-nome {
+  font-family: var(--font-serif);
+  font-size: 6cqw;
   line-height: 1.15;
 }
 
-.cartao-face__nome--sm {
-  font-size: 5.6cqw;
+.cf-cargo {
+  margin-top: 1cqw !important;
+  font-size: 2.5cqw;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
-.cartao-face__cargo {
-  margin: 0.5cqw 0 0;
-  font-size: 3.2cqw;
+.cf-regua {
+  display: block;
+  width: 9cqw;
+  height: 0.45cqw;
+  margin: 2.4cqw 0;
+  background: currentColor;
+}
+
+.cf-areas {
+  font-size: 2.8cqw;
   font-weight: 600;
 }
 
-.cartao-face__chip {
-  display: inline-block;
-  margin-top: 1.8cqw;
-  padding: 0.8cqw 2.4cqw;
-  border-radius: 999px;
-  font-size: 2.5cqw;
-  font-weight: 700;
-  border: 1px solid transparent;
+.cf-legenda {
+  font-size: 2.6cqw;
+  line-height: 1.4;
 }
 
-.cartao-face__footer {
+.cf-rodape {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   gap: 3cqw;
 }
 
-.cartao-face__contatos {
-  display: flex;
-  flex-direction: column;
-  gap: 1.1cqw;
+.cf-contatos {
+  display: grid;
+  gap: 1.2cqw;
   min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 2.55cqw;
 }
 
-.cartao-face__contatos p {
-  margin: 0;
+.cf-contatos li {
   display: flex;
   align-items: center;
-  gap: 1.3cqw;
-  font-size: 2.6cqw;
-  white-space: nowrap;
+  gap: 1.4cqw;
   overflow: hidden;
+  white-space: nowrap;
   text-overflow: ellipsis;
 }
 
-.cartao-face__contatos svg {
-  width: 3.1cqw;
-  height: 3.1cqw;
-  flex-shrink: 0;
+.cf-contatos__icone {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 3.2cqw;
+  height: 3.2cqw;
 }
 
-.cartao-face__qr {
-  flex-shrink: 0;
-  width: 18cqw;
-  height: 18cqw;
-  background: #fff;
-  border-radius: 1.6cqw;
-  padding: 1.1cqw;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.cartao-face__qr img {
+.cf-contatos__icone svg {
   width: 100%;
   height: 100%;
+}
+
+.cf-qr {
   display: block;
-}
-
-/* --- Vitrine --- */
-.cartao-face--vitrine {
-  background: var(--ink-950);
-  color: var(--cream);
-}
-
-.cartao-face--vitrine .cartao-face__nome {
-  color: var(--gold);
-}
-
-.cartao-face--vitrine .cartao-face__cargo {
-  color: var(--cream-dim);
-}
-
-.cartao-face--vitrine .cartao-face__chip {
-  background: rgba(217, 162, 58, 0.16);
-  color: var(--gold);
-  border-color: rgba(217, 162, 58, 0.45);
-}
-
-.cartao-face--vitrine .cartao-face__contatos {
-  color: var(--cream);
-}
-
-/* --- Claro --- */
-.cartao-face--claro {
-  background: var(--surface, #fff);
-  color: var(--ink-950);
-  border: 1px solid var(--border);
-}
-
-.cartao-face--claro .cartao-face__nome {
-  color: var(--ink-950);
-}
-
-.cartao-face--claro .cartao-face__cargo,
-.cartao-face--claro .cartao-face__contatos {
-  color: var(--text-dim, #5b4c36);
-}
-
-.cartao-face--claro .cartao-face__chip {
-  background: rgba(217, 162, 58, 0.14);
-  color: var(--gold-dim);
-  border-color: rgba(217, 162, 58, 0.4);
-}
-
-/* --- Dourado --- */
-.cartao-face--dourado {
-  background: var(--surface, #fff);
-  color: var(--ink-950);
-}
-
-.cartao-face--dourado .cartao-face__nome {
-  color: var(--ink-950);
-}
-
-.cartao-face--dourado .cartao-face__cargo {
-  color: var(--text-dim, #5b4c36);
-}
-
-.cartao-face--dourado .cartao-face__chip {
-  background: rgba(217, 162, 58, 0.14);
-  color: var(--gold-dim);
-  border-color: rgba(217, 162, 58, 0.4);
-}
-
-.cartao-face__band {
-  position: relative;
-  z-index: 1;
-  background: var(--surface-warm);
-  color: var(--cream);
-  padding: 3.4cqw 5.6cqw;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 3cqw;
-}
-
-.cartao-face__band .cartao-face__contatos {
-  color: var(--cream);
-}
-
-/* --- Pessoal --- */
-.cartao-face--pessoal {
-  background: var(--surface, #fff);
-  color: var(--ink-950);
-  border: 1px solid var(--border);
-}
-
-.cartao-face--pessoal .cartao-face__nome {
-  color: var(--ink-950);
-}
-
-.cartao-face--pessoal .cartao-face__cargo,
-.cartao-face--pessoal .cartao-face__contatos {
-  color: var(--text-dim, #5b4c36);
-}
-
-.cartao-face--pessoal .cartao-face__chip {
-  background: rgba(217, 162, 58, 0.14);
-  color: var(--gold-dim);
-  border-color: rgba(217, 162, 58, 0.4);
-}
-
-.cartao-face__cabecalho-pessoal {
-  display: flex;
-  align-items: center;
-  gap: 3cqw;
-}
-
-/* Sobrescreve o tamanho fixo em px de .avatar-placeholder (pensado pra UI normal, não
-   pro cartão que escala em cqw) — dobrando a classe com a base pra ganhar de propósito
-   sem precisar de !important. */
-.avatar-placeholder.cartao-face__avatar {
+  flex: none;
   width: 17cqw;
   height: 17cqw;
-  font-size: 6cqw;
-  flex-shrink: 0;
+  padding: 1cqw;
+  border-radius: 1.4cqw;
+  background: #fff;
 }
 
-/* --- Verso --- */
-.cartao-face--verso {
-  background: var(--surface-warm);
-  color: var(--cream);
+.cf-qr img {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
-/* Maior e centralizada, diferente da marca d'água de canto das frentes — o verso é só
-   marca, não tem dado pessoal disputando espaço com ela. */
-.cartao-face--verso .cartao-face__owl-mark--verso {
-  top: 50%;
-  left: 50%;
-  right: auto;
-  width: 62%;
-  transform: translate(-50%, -50%);
-  color: var(--gold);
-  opacity: 0.14;
+.cf-qr--grande {
+  width: 25cqw;
+  height: 25cqw;
 }
 
-.cartao-face__verso-conteudo {
+/* ---------- 1. Com foto ---------- */
+.cf--foto {
+  background: #fffdf8;
+  color: var(--cf-escuro);
+}
+
+.cf-foto {
+  position: relative;
+  flex: none;
+  width: 38%;
+  overflow: hidden;
+  background: var(--brown);
+}
+
+.cf-foto__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cf-foto__iniciais {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  font-family: var(--font-serif);
+  font-size: 11cqw;
+  color: var(--cf-creme);
+}
+
+/* Fio dourado separando a foto do texto */
+.cf-foto::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 0.8cqw;
+  background: var(--cf-ouro);
+}
+
+.cf-foto__info {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 5cqw 4.6cqw 4.4cqw;
+}
+
+.cf--foto .cf-nome {
+  font-size: 5.4cqw;
+}
+
+.cf--foto .cf-cargo {
+  color: var(--brown);
+}
+
+.cf--foto .cf-regua {
+  background: var(--cf-ouro);
+}
+
+.cf--foto .cf-areas,
+.cf--foto .cf-contatos {
+  color: #5e4e3b;
+}
+
+.cf--foto .cf-contatos {
+  font-size: 2.3cqw;
+}
+
+.cf--foto .cf-qr {
+  width: 14cqw;
+  height: 14cqw;
+  box-shadow: 0 0 0 0.3cqw #e7dccb;
+}
+
+.cf--foto-verso {
+  align-items: center;
+  gap: 5cqw;
+  padding: 6cqw 7cqw;
+  background: var(--brown);
+  color: var(--cf-creme);
+}
+
+.cf--foto-verso .cf-regua {
+  background: var(--cf-ouro);
+}
+
+.cf--foto-verso .cf-cargo,
+.cf--foto-verso .cf-legenda {
+  color: #e6d8bf;
+}
+
+/* ---------- 2. Clássico ---------- */
+.cf--classico {
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 5cqw 6cqw 8cqw;
+  background: var(--cf-escuro);
+  color: var(--cf-creme);
   text-align: center;
-  gap: 3.2cqw;
 }
 
-.cartao-face__logo-verso {
+.cf-classico__emblema {
+  display: grid;
+  place-items: center;
+  width: 15cqw;
+  height: 15cqw;
+  margin-bottom: 3.4cqw;
+  border: 0.45cqw solid var(--cf-ouro);
+  color: var(--cf-ouro);
+}
+
+.cf-classico__emblema svg {
+  width: 10cqw;
+  height: 10cqw;
+}
+
+.cf--classico .cf-nome {
+  font-family: var(--font-body);
+  font-size: 4.8cqw;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.cf--classico .cf-cargo {
+  font-size: 2.8cqw;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: none;
+  color: var(--cf-ouro);
+}
+
+/* Faixas finas no rodapé, como na referência */
+.cf-classico__faixa {
+  position: absolute;
+  right: 0;
+  bottom: 3.4cqw;
+  left: 0;
+  height: 2.6cqw;
+  border-top: 0.25cqw solid rgba(201, 163, 90, 0.45);
+  border-bottom: 0.25cqw solid rgba(201, 163, 90, 0.45);
+  background: rgba(246, 238, 223, 0.05);
+}
+
+.cf--classico-verso {
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 4cqw;
+  padding: 6cqw;
+  background: var(--cf-escuro);
+  color: var(--cf-creme);
+}
+
+.cf-marca-dagua {
+  position: absolute;
+  top: 50%;
+  right: -6cqw;
+  width: 55cqw;
+  height: 55cqw;
+  color: var(--cf-ouro);
+  opacity: 0.12;
+  transform: translateY(-50%);
+}
+
+.cf-classico__verso-texto {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-self: stretch;
+  min-width: 0;
+}
+
+.cf--classico-verso .cf-areas {
+  font-size: 3.4cqw;
+  font-weight: 700;
+}
+
+.cf-contatos--quadrado .cf-contatos__icone {
+  width: 4.2cqw;
+  height: 4.2cqw;
+  padding: 0.8cqw;
+  border-radius: 0.8cqw;
+  background: var(--cf-ouro);
+  color: var(--cf-escuro);
+}
+
+.cf--classico-verso .cf-qr {
+  position: relative;
+}
+
+/* ---------- 3. Elegante ---------- */
+.cf--elegante {
+  flex-direction: column;
+  justify-content: center;
+  padding: 6cqw 8cqw;
+  background: #4a2e20;
+  color: var(--cf-creme);
+}
+
+.cf-diagonal {
+  position: absolute;
+  width: 140cqw;
+  height: 9cqw;
+  background: rgba(246, 238, 223, 0.06);
+  transform: rotate(-28deg);
+}
+
+.cf-diagonal--a {
+  top: 6cqw;
+  right: -78cqw;
+  border-bottom: 0.4cqw solid var(--cf-ouro);
+}
+
+.cf-diagonal--b {
+  top: 18cqw;
+  right: -82cqw;
+  height: 4cqw;
+}
+
+.cf-diagonal--c {
+  bottom: 12cqw;
+  left: -88cqw;
+  border-top: 0.4cqw solid var(--cf-ouro);
+}
+
+.cf-elegante__icone {
+  position: relative;
+  width: 8cqw;
   height: 8cqw;
-  width: auto;
-  color: var(--cream);
+  margin-bottom: 2.6cqw;
+  color: var(--cf-ouro);
 }
 
-.cartao-face__qr--verso {
-  width: 26cqw;
-  height: 26cqw;
+.cf--elegante .cf-nome {
+  position: relative;
+  max-width: 75%;
+  font-size: 6.4cqw;
+  font-style: italic;
 }
 
-.cartao-face__verso-legenda {
-  margin: 0;
-  font-size: 2.6cqw;
+.cf--elegante .cf-regua {
+  position: relative;
+  width: 40cqw;
+  height: 0.3cqw;
+  margin: 2cqw 0 1.6cqw;
+  background: var(--cf-ouro);
+}
+
+.cf--elegante .cf-cargo {
+  position: relative;
+  font-size: 2.8cqw;
+  font-weight: 600;
   letter-spacing: 0.04em;
-  color: var(--cream-dim);
+  text-transform: none;
+}
+
+.cf--elegante-verso {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5cqw;
+}
+
+.cf--elegante-verso .cf-qr {
+  position: relative;
+}
+
+.cf-elegante__verso-texto {
+  position: relative;
+  display: grid;
+  justify-items: end;
+  gap: 3cqw;
+  min-width: 0;
+  text-align: right;
+}
+
+.cf--elegante-verso .cf-areas {
+  font-family: var(--font-serif);
+  font-size: 3.4cqw;
+  font-style: italic;
+  font-weight: 400;
+  color: var(--cf-ouro);
+}
+
+.cf--elegante-verso .cf-contatos li {
+  flex-direction: row-reverse;
+}
+
+.cf--elegante-verso .cf-contatos__icone {
+  color: var(--cf-ouro);
+}
+
+/* ---------- 4. Duas cores ---------- */
+.cf--duas {
+  background: #e9dcc6;
+}
+
+.cf-duas__escuro {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+  padding: 6cqw 5cqw 5cqw 6cqw;
+  background: var(--brown);
+  color: var(--cf-creme);
+  clip-path: polygon(0 0, 100% 0, 88% 100%, 0 100%);
+}
+
+.cf--duas .cf-nome {
+  max-width: 90%;
+  font-size: 5.4cqw;
+}
+
+.cf--duas .cf-cargo {
+  letter-spacing: 0.04em;
+  text-transform: none;
+  color: #e6d8bf;
+}
+
+.cf--duas .cf-contatos {
+  font-size: 2.4cqw;
+}
+
+.cf-duas__claro {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3cqw;
+  width: 32%;
+  margin-left: -4cqw;
+  padding-right: 2cqw;
+  color: var(--brown);
+}
+
+.cf-duas__icone {
+  width: 7cqw;
+  height: 7cqw;
+}
+
+.cf--duas-verso {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.6cqw;
+  background: var(--brown);
+  color: var(--cf-creme);
+  text-align: center;
+}
+
+.cf--duas-verso::before,
+.cf--duas-verso::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 14cqw;
+  background: #e9dcc6;
+}
+
+.cf--duas-verso::before {
+  left: 0;
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+.cf--duas-verso::after {
+  right: 0;
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+}
+
+.cf-duas-verso__icone {
+  width: 13cqw;
+  height: 13cqw;
+  margin-bottom: 1cqw;
+  color: #e9dcc6;
+}
+
+.cf--duas-verso .cf-cargo {
+  font-size: 3cqw;
+  letter-spacing: 0.3em;
+}
+
+.cf--duas-verso .cf-areas {
+  color: #e6d8bf;
+}
+
+/* ---------- 5. Claro + verso Nocturis ---------- */
+.cf--claro {
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 6cqw;
+  background: #fbf7f0;
+  color: var(--cf-escuro);
+  box-shadow: inset 0 0 0 0.3cqw #e7dccb;
+}
+
+.cf--claro .cf-cargo,
+.cf--claro .cf-regua {
+  color: var(--brown);
+}
+
+.cf--claro .cf-areas,
+.cf--claro .cf-contatos {
+  color: #5e4e3b;
+}
+
+.cf--nocturis {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3cqw;
+  background: var(--brown);
+  color: var(--cf-creme);
+}
+
+.cf-nocturis__coruja {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 70%;
+  color: var(--cf-creme);
+  opacity: 0.07;
+  transform: translate(-50%, -50%);
+}
+
+.cf-nocturis__logo {
+  position: relative;
+  width: auto;
+  height: 7cqw;
+  color: var(--cf-creme);
+}
+
+.cf--nocturis .cf-qr,
+.cf--nocturis .cf-legenda {
+  position: relative;
+}
+
+.cf--nocturis .cf-legenda {
+  letter-spacing: 0.08em;
+  color: #e6d8bf;
 }

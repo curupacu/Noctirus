@@ -1,183 +1,294 @@
-import { Avatar } from "../../components/Avatar/Avatar";
 import { Logo } from "../../components/Logo/Logo";
 import { OwlMark } from "../../components/OwlMark/OwlMark";
 
-function IconPhone() {
+// Modelos do cartão de visita (repaginação de 25/10/2026, a partir das referências do
+// usuário: cartão com foto, clássico escuro com emblema, elegante com faixas diagonais,
+// duas cores e um claro pra imprimir em casa). Cada modelo tem frente E verso combinando.
+// Tamanho real: 9 × 5 cm. Tudo escala em cqw (largura do próprio cartão), então a prévia
+// pequena, a grande e a imagem exportada saem iguais.
+
+function Icone({ children }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M15 17.5v-2a1.5 1.5 0 0 0-1.5-1.5H12a10 10 0 0 1-6-6V6.5A1.5 1.5 0 0 0 4.5 5h-2A1.5 1.5 0 0 0 1 6.5 16.5 16.5 0 0 0 17.5 23a1.5 1.5 0 0 0 1.5-1.5v-2a1.5 1.5 0 0 0-1.5-1.5H15z" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      {children}
     </svg>
   );
 }
 
-function IconMail() {
+const IconeZap = () => (
+  <Icone>
+    <path d="M3 21l1.7-5A8.5 8.5 0 1 1 8 19.3L3 21z" />
+  </Icone>
+);
+const IconeEmail = () => (
+  <Icone>
+    <rect x="2.5" y="5" width="19" height="14" rx="2" />
+    <path d="M3.5 6.5 12 13l8.5-6.5" />
+  </Icone>
+);
+const IconeLocal = () => (
+  <Icone>
+    <path d="M12 21s7-6.6 7-12a7 7 0 1 0-14 0c0 5.4 7 12 7 12z" />
+    <circle cx="12" cy="9" r="2.6" />
+  </Icone>
+);
+
+// Balança da Justiça, desenhada no mesmo traço dos ícones.
+function Balanca({ className }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="2.5" y="5" width="19" height="14" rx="2" />
-      <path d="M3.5 6.5 12 13l8.5-6.5" />
+    <svg className={className} viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M32 8v46M22 54h20M12 16h40M32 8l-3 4h6z" />
+      <path d="M12 16 5 32h14L12 16zM52 16l-7 16h14L52 16z" />
+      <path d="M5 32a7 4 0 0 0 14 0M45 32a7 4 0 0 0 14 0" />
     </svg>
   );
 }
 
-function IconPin() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 21s7-6.6 7-12a7 7 0 1 0-14 0c0 5.4 7 12 7 12z" />
-      <circle cx="12" cy="9" r="2.6" />
-    </svg>
-  );
+export function formatarTelefone(digitos) {
+  const d = String(digitos || "").replace(/\D/g, "").replace(/^55(?=\d{10,11}$)/, "");
+  if (d.length === 11) return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+  if (d.length === 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  return digitos || "";
 }
 
-// Contatos ficam sempre com o mesmo shape aqui — cada template só muda cor/layout ao
-// redor, não reimplementa a lista (o `contatos.whatsapp` já vem só dígitos, ver
-// AdvogadoPublicoPage.jsx, que monta o link wa.me com o mesmo valor cru).
-function Contatos({ dados }) {
+function oab(dados) {
+  return dados.oabNumero ? `OAB/${dados.oabUf} ${dados.oabNumero}` : "";
+}
+
+function Contatos({ dados, className = "" }) {
   return (
-    <div className="cartao-face__contatos">
+    <ul className={`cf-contatos ${className}`.trim()}>
       {dados.whatsapp && (
-        <p>
-          <IconPhone /> {dados.whatsapp}
-        </p>
+        <li>
+          <span className="cf-contatos__icone">
+            <IconeZap />
+          </span>
+          {formatarTelefone(dados.whatsapp)}
+        </li>
       )}
       {dados.email && (
-        <p>
-          <IconMail /> {dados.email}
-        </p>
+        <li>
+          <span className="cf-contatos__icone">
+            <IconeEmail />
+          </span>
+          {dados.email}
+        </li>
       )}
       {(dados.cidade || dados.uf) && (
-        <p>
-          <IconPin /> {[dados.cidade, dados.uf].filter(Boolean).join("/")}
-        </p>
+        <li>
+          <span className="cf-contatos__icone">
+            <IconeLocal />
+          </span>
+          {[dados.cidade, dados.uf].filter(Boolean).join("/")}
+        </li>
       )}
-    </div>
+    </ul>
   );
 }
 
-function QrCode({ dados }) {
+function Qr({ dados, className = "" }) {
   return (
-    <div className="cartao-face__qr">
+    <span className={`cf-qr ${className}`.trim()}>
       <img src={dados.qrCode} alt="QR code para o perfil público" />
-    </div>
+    </span>
   );
 }
 
-function cargo(dados) {
-  return `Advogado(a)${dados.oabNumero ? ` · OAB ${dados.oabNumero}/${dados.oabUf}` : ""}`;
+function Foto({ dados }) {
+  if (dados.foto) return <img className="cf-foto__img" src={dados.foto} alt="" crossOrigin="anonymous" />;
+  const iniciais = (dados.nome || "?")
+    .split(" ")
+    .filter(Boolean)
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+  return <span className="cf-foto__iniciais">{iniciais}</span>;
 }
 
-// Vitrine: mesmo visual noturno da Home/Login (fundo --ink-950 fixo). A coruja d'água no
-// canto é a única marca — sem repetir "Nocturis" por extenso (achado do usuário, 11/08: a
-// marca d'água sozinha já ficou boa, o logotipo por extenso do lado era redundante).
-function CartaoVitrine({ dados }) {
+/* ---------- 1. Com foto (o favorito do usuário, refeito) ---------- */
+function FotoFrente({ dados }) {
   return (
-    <div className="cartao-face cartao-face--vitrine">
-      <OwlMark className="cartao-face__owl-mark cartao-face__owl-mark--escura" />
-      <div className="cartao-face__pad">
+    <div className="cf cf--foto">
+      <div className="cf-foto">
+        <Foto dados={dados} />
+      </div>
+      <div className="cf-foto__info">
         <div>
-          <p className="cartao-face__nome">{dados.nome}</p>
-          <p className="cartao-face__cargo">{cargo(dados)}</p>
-          {dados.especialidade && <span className="cartao-face__chip">{dados.especialidade}</span>}
+          <p className="cf-nome">{dados.nome}</p>
+          <p className="cf-cargo">Advocacia</p>
+          <span className="cf-regua" />
+          <p className="cf-areas">{dados.areas}</p>
         </div>
-        <div className="cartao-face__footer">
+        <div className="cf-rodape">
           <Contatos dados={dados} />
-          <QrCode dados={dados} />
+          <Qr dados={dados} />
         </div>
       </div>
     </div>
   );
 }
 
-// Claro: mesmo tratamento de marca d'água da Vitrine, só que num fundo branco/creme —
-// bom pra imprimir.
-function CartaoClaro({ dados }) {
+function FotoVerso({ dados }) {
   return (
-    <div className="cartao-face cartao-face--claro">
-      <OwlMark className="cartao-face__owl-mark cartao-face__owl-mark--clara" />
-      <div className="cartao-face__pad">
-        <div>
-          <p className="cartao-face__nome">{dados.nome}</p>
-          <p className="cartao-face__cargo">{cargo(dados)}</p>
-          {dados.especialidade && <span className="cartao-face__chip">{dados.especialidade}</span>}
-        </div>
-        <div className="cartao-face__footer">
-          <Contatos dados={dados} />
-          <QrCode dados={dados} />
-        </div>
+    <div className="cf cf--foto-verso">
+      <Qr dados={dados} className="cf-qr--grande" />
+      <div>
+        <p className="cf-nome">{dados.nome}</p>
+        <p className="cf-cargo">{oab(dados)}</p>
+        <span className="cf-regua" />
+        <p className="cf-legenda">Aponte a câmera do celular pro código e veja meu perfil.</p>
       </div>
     </div>
   );
 }
 
-// Dourado: faixa marrom (--surface-warm) na base só com contato + QR — sem logo dentro
-// dela. Achado do usuário (11/08): com o logotipo por extenso ali dentro, a faixa
-// "subia" demais e cortava o chip de especialidade lá em cima; tirar a logo (que já não
-// era necessária, ver Vitrine/Claro) resolveu.
-function CartaoDourado({ dados }) {
+/* ---------- 2. Clássico: marrom escuro com emblema dourado ---------- */
+function ClassicoFrente({ dados }) {
   return (
-    <div className="cartao-face cartao-face--dourado">
-      <OwlMark className="cartao-face__owl-mark cartao-face__owl-mark--clara" />
-      <div className="cartao-face__pad cartao-face__pad--sem-rodape">
-        <div>
-          <p className="cartao-face__nome">{dados.nome}</p>
-          <p className="cartao-face__cargo">{cargo(dados)}</p>
-          {dados.especialidade && <span className="cartao-face__chip">{dados.especialidade}</span>}
-        </div>
+    <div className="cf cf--classico">
+      <div className="cf-classico__emblema">
+        <Balanca />
       </div>
-      <div className="cartao-face__band">
+      <p className="cf-nome">{dados.nome}</p>
+      <p className="cf-cargo">Advogado(a) {oab(dados) && `· ${oab(dados)}`}</p>
+      <span className="cf-classico__faixa" />
+    </div>
+  );
+}
+
+function ClassicoVerso({ dados }) {
+  return (
+    <div className="cf cf--classico-verso">
+      <Balanca className="cf-marca-dagua" />
+      <div className="cf-classico__verso-texto">
+        <p className="cf-areas">{dados.areas}</p>
+        <Contatos dados={dados} className="cf-contatos--quadrado" />
+      </div>
+      <Qr dados={dados} />
+    </div>
+  );
+}
+
+/* ---------- 3. Elegante: faixas diagonais e nome em itálico ---------- */
+function EleganteFrente({ dados }) {
+  return (
+    <div className="cf cf--elegante">
+      <span className="cf-diagonal cf-diagonal--a" />
+      <span className="cf-diagonal cf-diagonal--b" />
+      <Balanca className="cf-elegante__icone" />
+      <p className="cf-nome">{dados.nome}</p>
+      <span className="cf-regua" />
+      <p className="cf-cargo">Advogado(a) {oab(dados) && `· ${oab(dados)}`}</p>
+    </div>
+  );
+}
+
+function EleganteVerso({ dados }) {
+  return (
+    <div className="cf cf--elegante cf--elegante-verso">
+      <span className="cf-diagonal cf-diagonal--c" />
+      <Qr dados={dados} />
+      <div className="cf-elegante__verso-texto">
+        <p className="cf-areas">{dados.areas}</p>
         <Contatos dados={dados} />
-        <QrCode dados={dados} />
       </div>
     </div>
   );
 }
 
-// Pessoal: pedido do usuário (11/08) — nenhuma marca da Nocturis em lugar nenhum, só a
-// foto real do advogado (mesmo componente Avatar do resto do app; cai pras iniciais
-// coloridas se não tiver foto, igual em Perfil/AdvogadoPublicoPage) e o nome. O QR
-// continua — é funcional (link pro perfil), não é marca.
-function CartaoPessoal({ dados }) {
+/* ---------- 4. Duas cores: marrom e bege lado a lado ---------- */
+function DuasCoresFrente({ dados }) {
   return (
-    <div className="cartao-face cartao-face--pessoal">
-      <div className="cartao-face__pad">
-        <div className="cartao-face__cabecalho-pessoal">
-          <Avatar nome={dados.nome} foto={dados.foto} seed={dados.uid} className="cartao-face__avatar" />
-          <div>
-            <p className="cartao-face__nome cartao-face__nome--sm">{dados.nome}</p>
-            <p className="cartao-face__cargo">{cargo(dados)}</p>
-            {dados.especialidade && <span className="cartao-face__chip">{dados.especialidade}</span>}
-          </div>
+    <div className="cf cf--duas">
+      <div className="cf-duas__escuro">
+        <div>
+          <p className="cf-nome">{dados.nome}</p>
+          <p className="cf-cargo">Advogado(a) {oab(dados) && `· ${oab(dados)}`}</p>
         </div>
-        <div className="cartao-face__footer">
-          <Contatos dados={dados} />
-          <QrCode dados={dados} />
-        </div>
+        <Contatos dados={dados} />
+      </div>
+      <div className="cf-duas__claro">
+        <Qr dados={dados} />
+        <Balanca className="cf-duas__icone" />
       </div>
     </div>
   );
 }
 
-// Verso: pedido do usuário (11/08) — igual pra qualquer template escolhido (é a marca,
-// não o dado pessoal, que já está na frente). Logo por extenso + coruja d'água grande
-// centralizada + QR maior, pensado pra ser fácil de escanear sem precisar entender o
-// resto do cartão — o "selo" da Nocturis.
-export function CartaoVerso({ dados }) {
+function DuasCoresVerso({ dados }) {
   return (
-    <div className="cartao-face cartao-face--verso">
-      <OwlMark className="cartao-face__owl-mark cartao-face__owl-mark--verso" />
-      <div className="cartao-face__pad cartao-face__verso-conteudo">
-        <Logo className="cartao-face__logo-verso" />
-        <div className="cartao-face__qr cartao-face__qr--verso">
-          <img src={dados.qrCode} alt="QR code para o perfil público" />
-        </div>
-        <p className="cartao-face__verso-legenda">nocturis-web.web.app</p>
+    <div className="cf cf--duas-verso">
+      <Balanca className="cf-duas-verso__icone" />
+      <p className="cf-cargo">Advocacia</p>
+      <p className="cf-areas">{dados.areas}</p>
+    </div>
+  );
+}
+
+/* ---------- 5. Claro: fundo creme, bom pra impressora de casa; verso com a Nocturis ---------- */
+function ClaroFrente({ dados }) {
+  return (
+    <div className="cf cf--claro">
+      <div>
+        <p className="cf-nome">{dados.nome}</p>
+        <p className="cf-cargo">Advogado(a) {oab(dados) && `· ${oab(dados)}`}</p>
+        <span className="cf-regua" />
+        <p className="cf-areas">{dados.areas}</p>
       </div>
+      <div className="cf-rodape">
+        <Contatos dados={dados} />
+        <Qr dados={dados} />
+      </div>
+    </div>
+  );
+}
+
+function ClaroVerso({ dados }) {
+  return (
+    <div className="cf cf--nocturis">
+      <OwlMark className="cf-nocturis__coruja" />
+      <Logo className="cf-nocturis__logo" />
+      <Qr dados={dados} className="cf-qr--grande" />
+      <p className="cf-legenda">nocturis.com.br</p>
     </div>
   );
 }
 
 export const TEMPLATES = [
-  { id: "vitrine", nome: "Vitrine", description: "Fundo noturno com a coruja d'água no canto. Visual de impacto.", Component: CartaoVitrine },
-  { id: "claro", nome: "Claro", description: "Fundo branco, discreto e formal, bom pra imprimir.", Component: CartaoClaro },
-  { id: "dourado", nome: "Dourado", description: "Faixa marrom na base com contato e QR em destaque.", Component: CartaoDourado },
-  { id: "pessoal", nome: "Pessoal", description: "Sua foto e seu nome em destaque, sem nenhuma marca da Nocturis.", Component: CartaoPessoal },
+  {
+    id: "foto",
+    nome: "Com foto",
+    descricao: "Sua foto em destaque, sem marca da Nocturis.",
+    Frente: FotoFrente,
+    Verso: FotoVerso,
+  },
+  {
+    id: "classico",
+    nome: "Clássico",
+    descricao: "Marrom escuro com o emblema da balança.",
+    Frente: ClassicoFrente,
+    Verso: ClassicoVerso,
+  },
+  {
+    id: "elegante",
+    nome: "Elegante",
+    descricao: "Faixas diagonais e nome em itálico.",
+    Frente: EleganteFrente,
+    Verso: EleganteVerso,
+  },
+  {
+    id: "duas-cores",
+    nome: "Duas cores",
+    descricao: "Marrom e bege, com o QR em destaque.",
+    Frente: DuasCoresFrente,
+    Verso: DuasCoresVerso,
+  },
+  {
+    id: "claro",
+    nome: "Claro",
+    descricao: "Fundo creme, bom pra impressora de casa.",
+    Frente: ClaroFrente,
+    Verso: ClaroVerso,
+  },
 ];

@@ -1,86 +1,61 @@
 import { toPng } from "html-to-image";
 import QRCode from "qrcode";
 import { useRef, useState } from "react";
-import { Button } from "../../components/Button/Button";
-import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
 import { EsqueletoPagina } from "../../components/Esqueleto/Esqueleto";
+import { LABEL_AREA_CURTO } from "../../lib/areas";
 import { api } from "../../lib/api";
 import { useCarregar } from "../../lib/useCarregar";
 import { useTitulo } from "../../lib/useTitulo";
 import { useAuth } from "../auth/AuthContext";
 import "./cartao.css";
-import { CartaoVerso, TEMPLATES } from "./templates";
-import { LABEL_AREA_CURTO } from "../../lib/areas";
+import { TEMPLATES } from "./templates";
 
-const LABEL_AREA = LABEL_AREA_CURTO;
 const CHAVE_TEMPLATE = "nocturis:cartao:template";
 
+function lerModeloSalvo() {
+  try {
+    const salvo = localStorage.getItem(CHAVE_TEMPLATE);
+    return TEMPLATES.some((t) => t.id === salvo) ? salvo : TEMPLATES[0].id;
+  } catch {
+    return TEMPLATES[0].id;
+  }
+}
+
+function nomeDeArquivo(nome) {
+  return (nome || "advogado")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+// Cartão de visita do advogado (repaginado em 25/10/2026): 5 modelos com frente e verso
+// combinando, escolhidos pela miniatura do próprio cartão, e prévia das duas faces lado a lado.
 export function CartaoPage() {
   useTitulo("Cartão de visita");
   const { user } = useAuth();
-  const [templateId, setTemplateId] = useState(
-    () => localStorage.getItem(CHAVE_TEMPLATE) || TEMPLATES[0].id,
-  );
-  const [baixando, setBaixando] = useState(false);
+  const [templateId, setTemplateId] = useState(lerModeloSalvo);
+  const [baixando, setBaixando] = useState(null);
   const [erroDownload, setErroDownload] = useState(null);
-  const [virado, setVirado] = useState(false);
-  const cartaoRef = useRef(null);
+  const frenteRef = useRef(null);
+  const versoRef = useRef(null);
 
   const { dado, erro: erroCarregar } = useCarregar(async () => {
     const perfilUrl = `${window.location.origin}/advogados/${user.uid}`;
-    const [usuario, advogado, perguntas, qrCode] = await Promise.all([
+    const [usuario, advogado, qrCode] = await Promise.all([
       api.get("/users/me"),
       api.get(`/advogados/${user.uid}`),
-      api.get("/triagem/perguntas"),
-      QRCode.toDataURL(perfilUrl, {
-        margin: 1,
-        width: 240,
-        color: { dark: "#221b12", light: "#ffffff" },
-      }),
+      QRCode.toDataURL(perfilUrl, { margin: 1, width: 320, color: { dark: "#221b12", light: "#ffffff" } }),
     ]);
-    return { dadosUsuario: usuario, advogado, categoriasPorArea: perguntas.categorias, qrCode };
+    return { dadosUsuario: usuario, advogado, qrCode };
   }, [user.uid]);
-
-  function selecionarTemplate(id) {
-    setTemplateId(id);
-    localStorage.setItem(CHAVE_TEMPLATE, id);
-  }
 
   if (erroCarregar) return <p role="alert">{erroCarregar}</p>;
   if (!dado) return <EsqueletoPagina />;
 
-  const { dadosUsuario, advogado, categoriasPorArea, qrCode } = dado;
-
-  async function baixarCartao() {
-    if (!cartaoRef.current) return;
-    setErroDownload(null);
-    setBaixando(true);
-    try {
-      const dataUrl = await toPng(cartaoRef.current, { pixelRatio: 3, cacheBust: true });
-      const nomeArquivo = (dadosUsuario.nome || "advogado")
-        .toLowerCase()
-        .normalize("NFD")
-        .replace(/[̀-ͯ]/g, "")
-        .replace(/[^a-z0-9]+/g, "-")
-        .replace(/(^-|-$)/g, "");
-      const link = document.createElement("a");
-      link.download = `cartao-nocturis-${nomeArquivo || "advogado"}${virado ? "-verso" : ""}.png`;
-      link.href = dataUrl;
-      link.click();
-    } catch {
-      setErroDownload("Não foi possível gerar a imagem. Tente de novo.");
-    } finally {
-      setBaixando(false);
-    }
-  }
-
-  const todasCategorias = Object.values(categoriasPorArea || {}).flat();
-  const especialidadePrincipal = advogado.especialidades?.[0]
-    ? todasCategorias.find((c) => c.valor === advogado.especialidades[0])?.label
-    : null;
-  const areaPrincipal = (advogado.areasAtuacao || []).map((a) => LABEL_AREA[a] || a).join(" · ");
-
-  const dadosCartao = {
+  const { dadosUsuario, advogado, qrCode } = dado;
+  const dados = {
     uid: user.uid,
     nome: dadosUsuario.nome,
     foto: advogado.foto,
@@ -90,71 +65,104 @@ export function CartaoPage() {
     uf: advogado.localizacao?.uf,
     whatsapp: advogado.contatos?.whatsapp,
     email: advogado.contatos?.email,
-    especialidade: especialidadePrincipal || areaPrincipal || null,
+    areas: (advogado.areasAtuacao || []).map((a) => LABEL_AREA_CURTO[a] || a).join(" · ") || "Advocacia",
     qrCode,
   };
 
-  const templateAtivo = TEMPLATES.find((t) => t.id === templateId) || TEMPLATES[0];
-  const TemplateEscolhido = templateAtivo.Component;
+  const modelo = TEMPLATES.find((t) => t.id === templateId) || TEMPLATES[0];
+
+  function escolher(id) {
+    setTemplateId(id);
+    try {
+      localStorage.setItem(CHAVE_TEMPLATE, id);
+    } catch {
+      // sem localStorage: só não lembra o modelo na próxima visita
+    }
+  }
+
+  async function baixar(lado) {
+    const alvo = lado === "verso" ? versoRef.current : frenteRef.current;
+    if (!alvo) return;
+    setErroDownload(null);
+    setBaixando(lado);
+    try {
+      const dataUrl = await toPng(alvo, { pixelRatio: 3, cacheBust: true });
+      const link = document.createElement("a");
+      link.download = `cartao-${nomeDeArquivo(dados.nome)}-${modelo.id}-${lado}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch {
+      setErroDownload("Não foi possível gerar a imagem. Tente de novo.");
+    } finally {
+      setBaixando(null);
+    }
+  }
+
+  const { Frente, Verso } = modelo;
 
   return (
-    <main>
+    <main className="cartao-pagina">
       <h1>Meu cartão de visita</h1>
       <p className="text-muted">
-        Um cartão digital com seus dados e um QR code pro seu perfil público, pra
-        compartilhar no WhatsApp, nas redes ou imprimir.
+        Escolha um modelo. Seus dados e um QR code pro seu perfil já vêm preenchidos, prontos pra
+        mandar no WhatsApp ou imprimir (tamanho padrão de 9 × 5 cm).
       </p>
 
       <div className="section-heading">
-        <h2>Modelo</h2>
+        <h2>Modelos</h2>
       </div>
-      <div className="choice-grid">
+      <ul className="cartao-modelos">
         {TEMPLATES.map((t) => (
-          <ChoiceCard
-            key={t.id}
-            type="radio"
-            name="cartao-template"
-            label={t.nome}
-            description={t.description}
-            checked={templateId === t.id}
-            onChange={() => selecionarTemplate(t.id)}
-          />
+          <li key={t.id}>
+            <button
+              type="button"
+              className={`cartao-modelo${t.id === templateId ? " cartao-modelo--ativo" : ""}`}
+              aria-pressed={t.id === templateId}
+              onClick={() => escolher(t.id)}
+            >
+              <t.Frente dados={dados} />
+              <strong>{t.nome}</strong>
+              <span>{t.descricao}</span>
+            </button>
+          </li>
         ))}
+      </ul>
+
+      <div className="section-heading">
+        <h2>{modelo.nome}</h2>
+      </div>
+      <div className="cartao-previa">
+        <figure>
+          <Frente dados={dados} />
+          <figcaption>Frente</figcaption>
+        </figure>
+        <figure>
+          <Verso dados={dados} />
+          <figcaption>Verso</figcaption>
+        </figure>
       </div>
 
-      <div className="cartao-preview-wrapper">
-        <div className="cartao-preview">
-          <button
-            type="button"
-            className="cartao-flip"
-            onClick={() => setVirado((v) => !v)}
-            aria-label={virado ? "Ver a frente do cartão" : "Ver o verso do cartão"}
-          >
-            <div className={`cartao-flip__inner${virado ? " cartao-flip__inner--virado" : ""}`}>
-              <div className="cartao-flip__face cartao-flip__face--frente">
-                <TemplateEscolhido dados={dadosCartao} />
-              </div>
-              <div className="cartao-flip__face cartao-flip__face--verso">
-                <CartaoVerso dados={dadosCartao} />
-              </div>
-            </div>
-          </button>
+      {/* Fora da tela: o download captura daqui, sem sombra nem cantos de prévia. */}
+      <div className="cartao-export" aria-hidden="true">
+        <div ref={frenteRef}>
+          <Frente dados={dados} />
         </div>
-      </div>
-      <p className="text-muted cartao-flip-hint">Toque no cartão pra ver o verso.</p>
-
-      {/* Fora da tela — o download sempre captura daqui (sem o transform 3D do flip
-          acima), pra garantir que o PNG saia sempre reto. */}
-      <div className="cartao-export-target" aria-hidden="true">
-        <div ref={cartaoRef}>{virado ? <CartaoVerso dados={dadosCartao} /> : <TemplateEscolhido dados={dadosCartao} />}</div>
+        <div ref={versoRef}>
+          <Verso dados={dados} />
+        </div>
       </div>
 
       {erroDownload && <p role="alert">{erroDownload}</p>}
 
-      <div className="actions">
-        <Button onClick={baixarCartao} disabled={baixando}>
-          {baixando ? "Gerando imagem..." : `Baixar ${virado ? "verso" : "frente"} (PNG)`}
-        </Button>
+      <div className="cartao-downloads">
+        <button type="button" className="cartao-download cartao-download--principal" onClick={() => baixar("frente")} disabled={!!baixando}>
+          <strong>{baixando === "frente" ? "Gerando..." : "Baixar a frente"}</strong>
+          <span>Imagem PNG em alta resolução</span>
+        </button>
+        <button type="button" className="cartao-download" onClick={() => baixar("verso")} disabled={!!baixando}>
+          <strong>{baixando === "verso" ? "Gerando..." : "Baixar o verso"}</strong>
+          <span>Imagem PNG em alta resolução</span>
+        </button>
       </div>
     </main>
   );
