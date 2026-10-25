@@ -759,11 +759,6 @@ main.home {
   font-size: 13px;
 }
 
-/* ---------- CTA fixo no celular ---------- */
-.home-cta-fixa {
-  display: none;
-}
-
 /* ---------- responsivo ---------- */
 @media (max-width: 1000px) {
   /* Celular e tablet são usados com o dedo: alvos de toque de pelo menos 44px. */
@@ -969,27 +964,6 @@ main.home {
     padding-left: 20px;
   }
 
-  .home-cta-fixa {
-    display: block;
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 20;
-    padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
-    background: var(--home-cream);
-    border-top: 1px solid #e7dcbd;
-    box-shadow: 0 -6px 18px rgba(59, 40, 28, 0.12);
-  }
-
-  .home-cta-fixa .home-btn {
-    width: 100%;
-    justify-content: center;
-  }
-
-  main.home {
-    padding-bottom: 76px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {

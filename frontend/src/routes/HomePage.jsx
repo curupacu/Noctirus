@@ -536,15 +536,6 @@ export function HomePage() {
         </div>
       </footer>
 
-      {/* Só aparece no celular (ver HomePage.css): quem rola até o fim perde de vista o
-          botão do topo, e essa barra mantém "Criar conta" sempre ao alcance. */}
-      {!user && (
-        <div className="home-cta-fixa">
-          <Link to="/cadastro" className="home-btn home-btn--gold">
-            Criar conta grátis
-          </Link>
-        </div>
-      )}
     </main>
   );
 }
