@@ -12,7 +12,6 @@ import { HomePage } from "./HomePage";
 // (painel, quadro de casos, admin...) vinha junto já na Home (Lighthouse, 14/10/2026).
 const AdminAdvogadosPage = lazy(() => import("../features/admin/AdminAdvogadosPage").then((m) => ({ default: m.AdminAdvogadosPage })));
 const AdvogadoPublicoPage = lazy(() => import("../features/advogados/AdvogadoPublicoPage").then((m) => ({ default: m.AdvogadoPublicoPage })));
-const AdvogadosListPage = lazy(() => import("../features/advogados/AdvogadosListPage").then((m) => ({ default: m.AdvogadosListPage })));
 const ContatoAdvogadoPage = lazy(() => import("../features/advogados/ContatoAdvogadoPage").then((m) => ({ default: m.ContatoAdvogadoPage })));
 const CadastroPage = lazy(() => import("../features/auth/CadastroPage").then((m) => ({ default: m.CadastroPage })));
 const LoginPage = lazy(() => import("../features/auth/LoginPage").then((m) => ({ default: m.LoginPage })));
@@ -41,7 +40,9 @@ export function AppRouter() {
         <Route path="/cadastro" element={<CadastroPage />} />
         <Route path="/recuperar-senha" element={<RecuperarSenhaPage />} />
         <Route path="/privacidade" element={<PrivacidadePage />} />
-        <Route path="/advogados" element={<AdvogadosListPage />} />
+        {/* A lista com todos os advogados saiu (25/10/2026): o cliente chega neles pela
+            triagem e pelo painel. Link antigo volta pro início. */}
+        <Route path="/advogados" element={<Navigate to="/" replace />} />
         <Route path="/advogados/:uid" element={<AdvogadoPublicoPage />} />
         <Route
           path="/advogados/:uid/contato"

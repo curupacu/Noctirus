@@ -34,9 +34,6 @@ export function NaoEncontradaPage() {
         <Link to="/" className="button button--primary">
           Voltar pro início
         </Link>
-        <Link to="/advogados" className="button button--secondary">
-          Ver advogados
-        </Link>
       </div>
     </main>
   );

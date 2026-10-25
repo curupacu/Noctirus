@@ -307,9 +307,6 @@ export function HomePage() {
                 <Link to={destinoConta} className="home-btn home-btn--gold">
                   {user ? "Ir pro meu painel" : "Criar conta"}
                 </Link>
-                <Link to="/advogados" className="home-hero__sublink">
-                  Ou veja os advogados sem criar conta
-                </Link>
               </div>
             </div>
 
@@ -425,11 +422,6 @@ export function HomePage() {
             </>
           )}
 
-          <div className="home-team__more">
-            <Link to="/advogados" className="home-link-dark">
-              Ver todos os advogados <Seta />
-            </Link>
-          </div>
         </div>
       </section>
 

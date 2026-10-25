@@ -203,7 +203,6 @@ function PainelCliente() {
       {pertoDeMim.length > 0 && (
         <Prateleira
           titulo={`Advogados perto de você (${usuario.localizacao.uf})`}
-          verTodos={<Link to="/advogados">Ver todos</Link>}
         >
           {pertoDeMim.map((a) => (
             <li key={a.uid}>

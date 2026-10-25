@@ -196,13 +196,8 @@ export function ResultadoPage() {
           <p className="text-muted" style={{ margin: 0 }}>
             {resultado.areaClassificada === "indefinido"
               ? "Tente uma nova triagem contando um pouco mais sobre o que aconteceu."
-              : "A Nocturis ainda está crescendo na sua região. Você pode ver advogados da mesma área em outros estados."}
+              : "A Nocturis ainda está crescendo na sua região. Quando um advogado desse assunto se cadastrar perto de você, ele aparece aqui."}
           </p>
-          {resultado.areaClassificada !== "indefinido" && (
-            <Link to={`/advogados?area=${resultado.areaClassificada}`} className="button button--secondary">
-              Ver advogados de outros estados
-            </Link>
-          )}
         </div>
       )}
       {advogados && !revelando && advogados.length > 0 && (

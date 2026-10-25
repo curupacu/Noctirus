@@ -23,17 +23,6 @@ function IconTriagem() {
   );
 }
 
-function IconAdvogados() {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="9" cy="8" r="3.2" />
-      <path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6" />
-      <circle cx="17.5" cy="9" r="2.3" />
-      <path d="M15.7 14.3c2.5.5 4.3 2.7 4.3 5.7" />
-    </svg>
-  );
-}
-
 function IconPerfil() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -52,7 +41,6 @@ export function itensNavegacao(role) {
     // Advogado: o quadro de casos é o que ele mais usa — antes só dava pra chegar pelo
     // painel. "Perfil" dele aponta pra edição, já que o Início (/perfil) é o painel.
     ...(role === "advogado" ? [{ to: "/casos", label: "Casos", Icon: IconTriagem }] : []),
-    { to: "/advogados", label: "Advogados", Icon: IconAdvogados },
     { to: role === "advogado" ? "/perfil/editar" : "/perfil", label: "Perfil", Icon: IconPerfil },
   ];
   // Pro advogado, rotaInicial já é "/perfil" — sem isso, "Início" e "Perfil" viravam dois
