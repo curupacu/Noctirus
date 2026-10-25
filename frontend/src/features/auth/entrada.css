@@ -519,3 +519,24 @@ main.entrada {
     transform: translateX(12px);
   }
 }
+
+/* Pergunta dos avisos no celular na tela de "Conta criada!" */
+.entrada-sucesso__avisos {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  padding-top: 16px;
+  border-top: 1px solid #eadfcd;
+}
+
+.entrada-sucesso__avisos .entrada-sucesso__texto {
+  margin-bottom: 4px;
+  font-size: 15px;
+}
+
+.entrada-sucesso__avisos strong {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--text);
+}

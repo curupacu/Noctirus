@@ -1,0 +1,85 @@
+.avisos-celular {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: var(--space-lg);
+  padding: 20px;
+  border: 2px solid #ecd9a8;
+  border-radius: 22px;
+  background: #fdf6e6;
+}
+
+.avisos-celular__icone {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--brown);
+  color: #fffdf8;
+}
+
+.avisos-celular__icone svg {
+  width: 24px;
+  height: 24px;
+}
+
+.avisos-celular__corpo {
+  flex: 1;
+  min-width: 0;
+}
+
+.avisos-celular h2 {
+  margin: 0 0 4px;
+  font-size: clamp(18px, 2.6vw, 21px);
+}
+
+.avisos-celular p {
+  margin: 0 0 12px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+
+.avisos-celular__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+
+.avisos-celular__erro {
+  color: #a3392c;
+}
+
+/* ---------- passo a passo do iPhone (cartão e janela de instalar) ---------- */
+.passos-iphone {
+  margin: 0 0 12px;
+  padding-left: 22px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text);
+  text-align: left;
+}
+
+.passos-iphone li + li {
+  margin-top: 6px;
+}
+
+.passos-iphone__icone {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: #fffdf8;
+  color: #1a73e8;
+  vertical-align: middle;
+  box-shadow: 0 0 0 1px #e4d8c4;
+}
+
+.passos-iphone__icone svg {
+  width: 16px;
+  height: 16px;
+}

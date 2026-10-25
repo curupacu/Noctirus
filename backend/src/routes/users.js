@@ -110,6 +110,19 @@ usersRouter.post(
 // tem sobre ele sem precisar pedir pro admin. Junta o próprio cadastro com tudo que
 // referencia o uid nas outras coleções (como cliente e/ou como advogado, dependendo do
 // papel), igual o admin já enxerga espalhado em telas diferentes, só que num lugar só.
+// Aparelho que aceitou receber avisos no celular (ver services/push.js). Guarda os 5 mais
+// recentes: a mesma pessoa pode usar celular e computador, e token velho morre sozinho.
+const schemaTokenPush = z.object({ token: z.string().trim().min(20).max(4096) });
+
+usersRouter.post("/users/me/avisos-celular", verificarToken, validarBody(schemaTokenPush), async (req, res) => {
+  const ref = db.collection("users").doc(req.user.uid);
+  const doc = await ref.get();
+  if (!doc.exists) return res.status(404).json({ erro: "Usuário não encontrado" });
+  const atuais = (doc.data().tokensPush || []).filter((t) => t !== req.body.token);
+  await ref.update({ tokensPush: [...atuais, req.body.token].slice(-5) });
+  res.json({ ok: true });
+});
+
 usersRouter.get("/users/me/dados", verificarToken, async (req, res) => {
   const { uid, role } = req.user;
 

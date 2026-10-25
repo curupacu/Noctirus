@@ -6,6 +6,7 @@ import { CampoLocalizacao } from "../../components/CampoLocalizacao/CampoLocaliz
 import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
 import { Input } from "../../components/Input/Input";
 import { api } from "../../lib/api";
+import { ativarAvisos, suportaAvisos } from "../../lib/avisosCelular";
 import { auth } from "../../lib/firebase";
 import { UFS } from "../../lib/localizacao";
 import { useTitulo } from "../../lib/useTitulo";
@@ -93,12 +94,26 @@ export function CadastroPage() {
     }
   }, [location.state]);
 
-  // Depois do "Conta criada!", entra no app.
+  // Logo depois de criar a conta é a melhor hora de perguntar dos avisos no celular (pedido
+  // do usuário, 25/10/2026): a pessoa acabou de pedir ajuda e quer saber da resposta. Onde o
+  // navegador não suporta (iPhone fora do app instalado), o painel explica como instalar.
+  const perguntarAvisos = Boolean(concluido) && suportaAvisos() && Notification.permission === "default";
+  const [ativandoAvisos, setAtivandoAvisos] = useState(false);
+
+  // Depois do "Conta criada!", entra no app (sozinho, se não tiver a pergunta dos avisos).
   useEffect(() => {
-    if (!concluido) return;
+    if (!concluido || perguntarAvisos) return;
     const timer = setTimeout(() => navigate(rotaInicial(concluido)), 1800);
     return () => clearTimeout(timer);
-  }, [concluido, navigate]);
+  }, [concluido, perguntarAvisos, navigate]);
+
+  async function responderAvisos(ativar) {
+    if (ativar) {
+      setAtivandoAvisos(true);
+      await ativarAvisos().catch(() => {});
+    }
+    navigate(rotaInicial(concluido));
+  }
 
   async function cadastrarComGoogle() {
     setErro(null);
@@ -486,7 +501,24 @@ export function CadastroPage() {
                 ? "Sua OAB foi pra análise. Enquanto isso, já dá pra completar seu perfil."
                 : "Estamos preparando seu painel..."}
             </p>
-            <div className="entrada-sucesso__girando" aria-hidden="true" />
+            {perguntarAvisos ? (
+              <div className="entrada-sucesso__avisos">
+                <p className="entrada-sucesso__texto">
+                  <strong>Quer receber avisos no celular?</strong>{" "}
+                  {concluido === "advogado"
+                    ? "A gente te avisa na hora quando um cliente pedir contato."
+                    : "A gente te avisa na hora quando o advogado responder."}
+                </p>
+                <Button variant="primary" onClick={() => responderAvisos(true)} disabled={ativandoAvisos}>
+                  {ativandoAvisos ? "Ativando..." : "Ativar avisos"}
+                </Button>
+                <button type="button" className="link-button" onClick={() => responderAvisos(false)}>
+                  Agora não
+                </button>
+              </div>
+            ) : (
+              <div className="entrada-sucesso__girando" aria-hidden="true" />
+            )}
           </div>
         </div>
       )}

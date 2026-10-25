@@ -253,3 +253,29 @@ describe("DELETE /users/me", () => {
     expect((await cell.fake.db.collection("curriculos").doc("a1").get()).exists).toBe(false);
   });
 });
+
+describe("POST /users/me/avisos-celular", () => {
+  const TOKEN = "token-do-aparelho-com-mais-de-vinte-letras";
+
+  it("guarda o aparelho sem repetir e só os 5 mais recentes", async () => {
+    cell.fake.db._seed("users", "c1", { role: "cliente", tokensPush: ["a1".repeat(12), "b2".repeat(12), "c3".repeat(12), "d4".repeat(12), TOKEN] });
+    const resposta = await request(app)
+      .post("/users/me/avisos-celular")
+      .set("Authorization", `Bearer ${cell.fake.criarToken({ uid: "c1", role: "cliente" })}`)
+      .send({ token: "novo-aparelho-com-mais-de-vinte-letras" });
+    expect(resposta.status).toBe(200);
+    await request(app).post("/users/me/avisos-celular").set("Authorization", `Bearer ${cell.fake.criarToken({ uid: "c1", role: "cliente" })}`).send({ token: TOKEN });
+    const tokens = (await cell.fake.db.collection("users").doc("c1").get()).data().tokensPush;
+    expect(tokens).toHaveLength(5);
+    expect(tokens.at(-1)).toBe(TOKEN);
+    expect(tokens.filter((t) => t === TOKEN)).toHaveLength(1);
+    expect(tokens).not.toContain("a1".repeat(12));
+  });
+
+  it("recusa sem login e token inválido", async () => {
+    expect((await request(app).post("/users/me/avisos-celular").send({ token: TOKEN })).status).toBe(401);
+    cell.fake.db._seed("users", "c1", { role: "cliente" });
+    const resposta = await request(app).post("/users/me/avisos-celular").set("Authorization", `Bearer ${cell.fake.criarToken({ uid: "c1", role: "cliente" })}`).send({ token: "x" });
+    expect(resposta.status).toBe(400);
+  });
+});

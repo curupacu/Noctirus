@@ -51,13 +51,16 @@ export default defineConfig({
             icons: [{ src: '/favicon-192.png', sizes: '192x192' }],
           },
           {
-            name: 'Ver advogados',
-            url: '/advogados',
+            name: 'Meus pedidos',
+            url: '/minhas-solicitacoes',
             icons: [{ src: '/favicon-192.png', sizes: '192x192' }],
           },
         ],
       },
       workbox: {
+        // Avisos no celular: o push-sw.js (pasta public) monta o aviso e abre a tela certa
+        // ao tocar nele. Ver backend/src/services/push.js.
+        importScripts: ['/push-sw.js'],
         // API/Firestore ficam de fora de propósito — cache de dado dinâmico aqui vira
         // dado velho mentindo pro usuário (contato, denúncia, conversa). Só o app shell
         // (JS/CSS/HTML/ícones) é pré-cacheado; o resto segue sempre pela rede.

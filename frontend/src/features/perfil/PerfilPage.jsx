@@ -5,6 +5,7 @@ import { Input } from "../../components/Input/Input";
 import { Button } from "../../components/Button/Button";
 import { CampoLocalizacao } from "../../components/CampoLocalizacao/CampoLocalizacao";
 import { Loading } from "../../components/Loading/Loading";
+import { AvisosCelular } from "../../components/AvisosCelular/AvisosCelular";
 import { PerfilCompletude } from "../../components/PerfilCompletude/PerfilCompletude";
 import { SeloOab } from "../../components/SeloOab/SeloOab";
 import { useAuth } from "../auth/AuthContext";
@@ -207,6 +208,7 @@ export function PerfilPage() {
         <h1 className="painel__titulo">Seu escritório na Nocturis</h1>
 
         <AvisoSituacaoOab advogado={advogado} />
+        <AvisosCelular papel="advogado" />
 
         {/* Cartão de destaque: o que precisa da atenção do advogado agora. */}
         <section className="destaque">

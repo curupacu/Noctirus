@@ -12,6 +12,7 @@ import { useAuth } from "../auth/AuthContext";
 import { rotaInicial } from "../auth/rotaInicial";
 import "./PainelPage.css";
 import { AvisoAceite, ModalAceite } from "../../components/AceiteDestaque/AceiteDestaque";
+import { AvisosCelular } from "../../components/AvisosCelular/AvisosCelular";
 
 // Foto de banco de imagem (Unsplash, mesma da seção de serviços da Home).
 const FOTO_DESTAQUE =
@@ -128,6 +129,7 @@ function PainelCliente() {
       {/* Advogado aceitou: tela de destaque (uma vez) + cartão no topo do painel (com X). */}
       <ModalAceite solicitacoes={solicitacoes} />
       <AvisoAceite solicitacoes={solicitacoes} />
+      <AvisosCelular papel="cliente" />
 
       {/* Conta criada antes da cidade/UF virar obrigatória (outubro/2026) — sem isso o
           resultado da triagem não tem como mostrar advogados perto da pessoa. */}

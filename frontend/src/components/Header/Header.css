@@ -120,8 +120,7 @@
   gap: 6px;
 }
 
-.site-header .notification-bell__toggle,
-.site-header .install-button {
+.site-header .notification-bell__toggle {
   width: 40px;
   height: 40px;
   border: 0;
@@ -129,8 +128,7 @@
   color: #f6eedf;
 }
 
-.site-header .notification-bell__toggle:hover,
-.site-header .install-button:hover {
+.site-header .notification-bell__toggle:hover {
   border: 0;
   background: rgba(246, 238, 223, 0.14);
 }
