@@ -7,11 +7,41 @@ function tempoRelativo(iso) {
   const segundos = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
   if (segundos < 60) return "agora";
   const minutos = Math.floor(segundos / 60);
-  if (minutos < 60) return `${minutos}min`;
+  if (minutos < 60) return `há ${minutos} min`;
   const horas = Math.floor(minutos / 60);
-  if (horas < 24) return `${horas}h`;
-  return `${Math.floor(horas / 24)}d`;
+  if (horas < 24) return `há ${horas} h`;
+  const dias = Math.floor(horas / 24);
+  if (dias === 1) return "ontem";
+  if (dias < 30) return `há ${dias} dias`;
+  return new Date(iso).toLocaleDateString("pt-BR", { day: "numeric", month: "short" });
 }
+
+// Ícone por tipo de aviso: dá pra saber do que se trata antes de ler o texto.
+const ICONE_PADRAO = (
+  <>
+    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+  </>
+);
+const ICONE_RELOGIO = (
+  <>
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 7v5l3 2" />
+  </>
+);
+const ICONES = {
+  solicitacao_aceita: <path d="M20 6 9 17l-5-5" />,
+  solicitacao_recusada: <path d="M18 6 6 18M6 6l12 12" />,
+  solicitacao_nova: (
+    <>
+      <path d="M22 12h-6l-2 3h-4l-2-3H2" />
+      <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+    </>
+  ),
+  situacao_oab: <path d="M12 3 5 6v6c0 4.4 3 7.8 7 9 4-1.2 7-4.6 7-9V6l-7-3Z" />,
+  lembrete_triagem: ICONE_RELOGIO,
+  lembrete_pedidos: ICONE_RELOGIO,
+};
 
 export function NotificationBell({ notificacoes, naoLidas, marcarComoLida }) {
   const [aberto, setAberto] = useState(false);
@@ -25,6 +55,10 @@ export function NotificationBell({ notificacoes, naoLidas, marcarComoLida }) {
     if (n.link) navigate(n.link);
   }
 
+  function marcarTodas() {
+    notificacoes.filter((n) => !n.lida).forEach((n) => marcarComoLida(n.id));
+  }
+
   return (
     <div className="notification-bell" ref={ref}>
       <button
@@ -32,31 +66,58 @@ export function NotificationBell({ notificacoes, naoLidas, marcarComoLida }) {
         className="notification-bell__toggle"
         onClick={() => setAberto((v) => !v)}
         aria-label={naoLidas > 0 ? `Notificações (${naoLidas} não lidas)` : "Notificações"}
+        aria-expanded={aberto}
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+          {ICONE_PADRAO}
         </svg>
         {naoLidas > 0 && <span className="notification-bell__badge">{naoLidas > 9 ? "9+" : naoLidas}</span>}
       </button>
 
       {aberto && (
         <div className="notification-bell__panel">
-          <span className="notification-bell__title">Notificações</span>
-          {notificacoes.length === 0 && (
-            <p className="text-muted notification-bell__vazio">Nada por aqui ainda.</p>
+          <div className="notification-bell__topo">
+            <span className="notification-bell__title">Notificações</span>
+            {naoLidas > 0 && (
+              <button type="button" className="notification-bell__todas" onClick={marcarTodas}>
+                Marcar todas como lidas
+              </button>
+            )}
+          </div>
+
+          {notificacoes.length === 0 ? (
+            <div className="notification-bell__vazio">
+              <span className="notification-bell__icone" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  {ICONE_PADRAO}
+                </svg>
+              </span>
+              <p>Nada por aqui ainda. Quando tiver novidade do seu caso, ela aparece aqui.</p>
+            </div>
+          ) : (
+            <ul className="notification-bell__lista">
+              {notificacoes.map((n) => (
+                <li key={n.id}>
+                  <button
+                    type="button"
+                    className={`notification-bell__item${n.lida ? "" : " notification-bell__item--nao-lida"}`}
+                    onClick={() => abrirNotificacao(n)}
+                  >
+                    <span className="notification-bell__icone" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        {ICONES[n.tipo] || ICONE_PADRAO}
+                      </svg>
+                    </span>
+                    <span className="notification-bell__conteudo">
+                      <span className="notification-bell__texto">{n.texto}</span>
+                      <span className="notification-bell__quando">{tempoRelativo(n.createdAt)}</span>
+                    </span>
+                    {!n.lida && <span className="notification-bell__ponto" aria-label="Não lida" />}
+                  </button>
+                </li>
+              ))}
+            </ul>
           )}
-          {notificacoes.map((n) => (
-            <button
-              key={n.id}
-              type="button"
-              className={`notification-bell__item${n.lida ? "" : " notification-bell__item--nao-lida"}`}
-              onClick={() => abrirNotificacao(n)}
-            >
-              <span className="notification-bell__texto">{n.texto}</span>
-              <span className="notification-bell__quando">{tempoRelativo(n.createdAt)}</span>
-            </button>
-          ))}
         </div>
       )}
     </div>
