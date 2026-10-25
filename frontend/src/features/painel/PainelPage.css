@@ -262,8 +262,9 @@ a.painel__numero:hover {
 }
 
 /* Solicitação: cartão menor, com a situação numa etiqueta */
-.prateleira__trilho--pedidos {
-  grid-auto-columns: minmax(290px, 320px);
+/* Classe dobrada pra ganhar da largura padrão das vitrines (que muda no computador). */
+.prateleira__trilho.prateleira__trilho--pedidos {
+  grid-auto-columns: minmax(280px, 320px);
 }
 
 /* Pedido de contato (25/10/2026): só cores da marca. Liberado = cartão creme com borda
@@ -335,6 +336,7 @@ a.painel__numero:hover {
 
 .pedido-mini__situacao {
   display: inline-flex;
+  white-space: nowrap;
   align-items: center;
   gap: 8px;
   padding: 7px 14px;
