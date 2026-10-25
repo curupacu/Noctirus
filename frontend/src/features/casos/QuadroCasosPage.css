@@ -1,65 +1,188 @@
 /* Quadro de casos do advogado (RF012). Três colunas no computador; no celular, uma coluna
-   por vez escolhida pelas abas. Visual provisório — ganha o acabamento final na fase de
-   UX/UI (docs/SPRINTS.md). */
+   por vez, escolhida pelos números do topo. Visual de 25/10/2026: topo no estilo do hero
+   da Home, colunas com cabeçalho de cor própria e cartões com ordem de leitura clara. */
 main.quadro {
   max-width: 1320px;
 }
 
-.quadro__abas {
-  display: none;
+/* ---------- topo (estilo do hero) ---------- */
+.quadro-topo {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 28px;
+  padding: 32px 32px 28px;
+  border-radius: 28px;
+  background: var(--brown);
+  color: #f6eedf;
+  box-shadow: 0 16px 40px rgba(59, 40, 28, 0.18);
 }
 
+.quadro-topo__etiqueta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #e6d8bf;
+}
+
+.quadro-topo__etiqueta::before {
+  content: "";
+  width: 28px;
+  height: 2px;
+  background: currentColor;
+}
+
+.quadro-topo h1 {
+  margin: 0;
+  font-size: clamp(32px, 5vw, 46px);
+  color: #fffdf8;
+}
+
+.quadro-topo p {
+  margin: 0;
+  font-size: 16px;
+  color: #e6d8bf;
+}
+
+.quadro-topo__numeros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.quadro-topo__numero {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 10px 18px;
+  border: 1.5px solid rgba(246, 238, 223, 0.3);
+  border-radius: 18px;
+  background: rgba(246, 238, 223, 0.08);
+  color: #f6eedf;
+  font: inherit;
+  cursor: default;
+}
+
+.quadro-topo__numero strong {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1;
+  color: #fffdf8;
+}
+
+.quadro-topo__numero span {
+  font-size: 15px;
+}
+
+/* ---------- colunas ---------- */
 .quadro__colunas {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-md);
+  gap: 18px;
   align-items: start;
-  margin-top: var(--space-lg);
 }
 
 .quadro-coluna {
   min-height: 240px;
-  padding: var(--space-md);
-  background: var(--bg-section);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  transition: border-color 0.15s ease, background-color 0.15s ease;
+  overflow: hidden;
+  border-radius: 24px;
+  background: #f3ece2;
+  transition: outline-color 0.15s ease;
 }
 
 .quadro-coluna--sobre {
-  border-color: var(--brown);
-  background: var(--surface-hover);
+  outline: 2px dashed var(--brown);
+  outline-offset: -2px;
+}
+
+/* Cabeçalho com cor própria, como a faixa do cartão de triagem: pendentes marrom, em
+   andamento marrom escuro, concluídos bege (já terminou, pesa menos). */
+.quadro-coluna__cabeca {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 16px 20px;
+  background: var(--brown);
+  color: #f6eedf;
+}
+
+.quadro-coluna--em_andamento .quadro-coluna__cabeca {
+  background: var(--brown-deep);
+}
+
+.quadro-coluna--concluido .quadro-coluna__cabeca {
+  background: #e4d6c2;
+  color: var(--text);
 }
 
 .quadro-coluna__titulo {
-  margin: 0 0 var(--space-sm);
-  font-size: var(--font-size-base);
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 400;
+  color: inherit;
 }
 
-.quadro-coluna__vazio {
-  font-size: var(--font-size-sm);
+.quadro-coluna__qtd {
+  min-width: 32px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  background: #f6eedf;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--brown);
 }
 
 .quadro-coluna__lista {
   display: grid;
-  gap: var(--space-sm);
+  gap: 12px;
+  padding: 14px;
 }
 
-/* Cartão: a faixa da esquerda diz a prioridade — dourado (alta), marrom (média), borda
-   neutra (baixa). O texto "Prioridade x" repete a informação pra não depender de cor. */
+.quadro-coluna__vazio {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  padding: 32px 20px 12px;
+  text-align: center;
+  color: var(--text-faint);
+}
+
+.quadro-coluna__vazio svg {
+  width: 34px;
+  height: 34px;
+}
+
+.quadro-coluna__vazio p {
+  margin: 0;
+  font-size: 15px;
+  color: var(--text-dim);
+}
+
+/* ---------- cartão ---------- */
 .quadro-cartao {
+  border-left: 5px solid transparent;
+  border-radius: 18px;
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-left: 4px solid var(--border);
-  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 
+.quadro-cartao:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+/* A barrinha lateral só aparece onde diz algo: prioridade alta. */
 .quadro-cartao--alta {
   border-left-color: var(--brown);
-}
-
-.quadro-cartao--media {
-  border-left-color: var(--brown-400);
 }
 
 .quadro-cartao[draggable="true"] {
@@ -68,9 +191,9 @@ main.quadro {
 
 .quadro-cartao__abrir {
   display: grid;
-  gap: 2px;
+  gap: 6px;
   width: 100%;
-  padding: var(--space-sm) var(--space-md);
+  padding: 16px 18px;
   border: 0;
   background: none;
   font: inherit;
@@ -79,41 +202,92 @@ main.quadro {
   cursor: pointer;
 }
 
-.quadro-cartao__prioridade {
-  font-size: 11px;
-  font-weight: 600;
+.quadro-cartao__assunto {
+  font-size: 12px;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--text-faint);
-}
-
-.quadro-cartao--alta .quadro-cartao__prioridade {
   color: var(--brown);
 }
 
 .quadro-cartao__titulo {
-  font-size: var(--font-size-sm);
+  font-family: var(--font-serif);
+  font-size: 21px;
+  font-weight: 400;
+  line-height: 1.25;
 }
 
-.quadro-cartao__meta {
-  font-size: var(--font-size-xs);
+.quadro-cartao__quando {
+  font-size: 14px;
+  color: var(--text-dim);
+}
+
+.quadro-cartao__rodape {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-top: 6px;
+}
+
+.quadro-etiqueta {
+  padding: 5px 12px;
+  border: 1.5px solid transparent;
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.quadro-etiqueta--alta,
+.quadro-etiqueta--novo {
+  background: var(--brown);
+  color: #fffdf8;
+}
+
+.quadro-etiqueta--media {
+  background: #efe2d0;
+  color: var(--brown);
+}
+
+.quadro-etiqueta--baixa {
+  border-color: #d8c7ae;
   color: var(--text-dim);
 }
 
 .quadro-cartao__nota {
-  font-size: var(--font-size-xs);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--brown);
+}
+
+.quadro-cartao__nota svg {
+  width: 14px;
+  height: 14px;
 }
 
 .quadro-cartao__acoes {
   display: flex;
-  gap: var(--space-xs);
-  padding: 0 var(--space-md) var(--space-sm);
+  gap: 8px;
+  padding: 0 18px 16px;
 }
 
 .quadro-cartao__acoes .button {
   flex: 1;
   padding-inline: var(--space-sm);
+}
+
+/* Concluídos: mais discretos, pro olho ir primeiro ao que precisa de ação. */
+.quadro-coluna--concluido .quadro-cartao {
+  box-shadow: none;
+  background: #fbf8f3;
+}
+
+.quadro-coluna--concluido .quadro-cartao__titulo,
+.quadro-coluna--concluido .quadro-cartao__assunto {
+  color: var(--text-dim);
 }
 
 .quadro__fora {
@@ -214,14 +388,39 @@ main.quadro {
 }
 
 @media (max-width: 900px) {
-  .quadro__abas {
-    display: flex;
-    margin-top: var(--space-md);
+  .quadro-topo {
+    padding: 24px 20px 20px;
+  }
+
+  .quadro-topo__numeros {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .quadro-topo__numero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 10px 12px;
+    cursor: pointer;
+  }
+
+  .quadro-topo__numero span {
+    font-size: 13px;
+  }
+
+  .quadro-topo__numero--ativo {
+    border-color: #fffdf8;
+    background: #fffdf8;
+    color: var(--brown);
+  }
+
+  .quadro-topo__numero--ativo strong {
+    color: var(--brown);
   }
 
   .quadro__colunas {
     grid-template-columns: minmax(0, 1fr);
-    margin-top: var(--space-sm);
   }
 
   .quadro-coluna {
@@ -232,83 +431,10 @@ main.quadro {
     display: block;
   }
 
-  .quadro-coluna__titulo {
-    display: none;
-  }
-
   /* Abaixo do BottomNav fixo. */
   .quadro-detalhe__painel {
     padding-bottom: calc(var(--bottom-nav-height) + var(--space-lg));
   }
-}
-
-/* ---- Repaginação (13/10/2026): colunas claras, cartões com sombra, texto maior ---- */
-.quadro-coluna {
-  padding: 14px;
-  border: 0;
-  border-radius: 24px;
-  background: #f3ece2;
-}
-
-.quadro-coluna--sobre {
-  outline: 2px dashed var(--brown);
-  outline-offset: -2px;
-}
-
-.quadro-coluna__titulo {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 4px 6px 14px;
-  font-family: var(--font-serif);
-  font-weight: 400;
-  font-size: 18px;
-}
-
-.quadro-coluna__lista {
-  gap: 10px;
-}
-
-.quadro-cartao {
-  border: 0;
-  border-left: 4px solid transparent;
-  border-radius: 16px;
-  box-shadow: var(--shadow-sm);
-  transition: box-shadow 0.15s ease, transform 0.15s ease;
-}
-
-.quadro-cartao:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
-}
-
-.quadro-cartao--alta {
-  border-left-color: var(--brown);
-}
-
-.quadro-cartao--alta .quadro-cartao__prioridade {
-  color: var(--brown);
-}
-
-.quadro-cartao--media {
-  border-left-color: var(--brown-400);
-}
-
-.quadro-cartao__abrir {
-  gap: 4px;
-  padding: 14px 16px;
-}
-
-.quadro-cartao__titulo {
-  font-size: 15px;
-}
-
-.quadro-cartao__meta {
-  font-size: 13px;
-}
-
-.quadro-cartao__nota {
-  color: var(--brown);
 }
 
 .quadro-detalhe__painel {

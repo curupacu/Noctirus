@@ -9,9 +9,9 @@ import { RespostasTriagem, textosDasPerguntas } from "../../components/Respostas
 import "./QuadroCasosPage.css";
 
 const COLUNAS = [
-  { etapa: "pendente", titulo: "Pendentes", vazio: "Nenhum pedido esperando resposta." },
-  { etapa: "em_andamento", titulo: "Em andamento", vazio: "Aceite um pedido pra ele vir pra cá." },
-  { etapa: "concluido", titulo: "Concluídos", vazio: "Arraste pra cá os casos que terminaram." },
+  { etapa: "pendente", titulo: "Pendentes", resumo: "esperando resposta", vazio: "Nenhum pedido esperando resposta." },
+  { etapa: "em_andamento", titulo: "Em andamento", resumo: "em andamento", vazio: "Aceite um pedido pra ele vir pra cá." },
+  { etapa: "concluido", titulo: "Concluídos", resumo: "concluídos", vazio: "Arraste pra cá os casos que terminaram." },
 ];
 
 const PRIORIDADES = [
@@ -33,6 +33,25 @@ function tituloCaso(caso, rotulos) {
   return `${LABEL_AREA[caso.area] || ""}${caso.especialidade && rotulos[caso.especialidade] ? ` · ${assunto}` : ""}`;
 }
 
+function quandoPediu(iso) {
+  const dias = Math.floor((Date.now() - new Date(iso).getTime()) / (24 * 60 * 60 * 1000));
+  if (dias <= 0) return "Pedido hoje";
+  if (dias === 1) return "Pedido ontem";
+  if (dias < 30) return `Pedido há ${dias} dias`;
+  return `Pedido em ${formatarData(iso)}`;
+}
+
+function IconeNota() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M4 20h4L19 9l-4-4L4 16v4Z" />
+    </svg>
+  );
+}
+
+// Ordem de leitura do cartão (25/10/2026): o assunto pequeno em cima, o nome grande no meio,
+// quando chegou embaixo e a prioridade como etiqueta no rodapé. Antes era tudo do mesmo
+// tamanho e "não dava pra saber onde ler primeiro" (achado do usuário).
 function CartaoCaso({ caso, rotulos, onAbrir, onResponder, ocupado }) {
   const pendente = caso.etapaCaso === "pendente";
   return (
@@ -45,11 +64,23 @@ function CartaoCaso({ caso, rotulos, onAbrir, onResponder, ocupado }) {
       }}
     >
       <button type="button" className="quadro-cartao__abrir" onClick={() => onAbrir(caso.id)}>
-        <span className="quadro-cartao__prioridade">Prioridade {PRIORIDADES.find((p) => p.valor === caso.prioridade)?.label.toLowerCase()}</span>
+        <span className="quadro-cartao__assunto">{tituloCaso(caso, rotulos)}</span>
         <strong className="quadro-cartao__titulo">{pendente ? "Pedido novo" : caso.clienteNome || "Cliente"}</strong>
-        <span className="quadro-cartao__meta">{tituloCaso(caso, rotulos)}</span>
-        <span className="quadro-cartao__meta">Pedido em {formatarData(caso.createdAt)}</span>
-        {caso.anotacoes && <span className="quadro-cartao__nota">Tem anotação</span>}
+        <span className="quadro-cartao__quando">{quandoPediu(caso.createdAt)}</span>
+        <span className="quadro-cartao__rodape">
+          {pendente ? (
+            <span className="quadro-etiqueta quadro-etiqueta--novo">Esperando sua resposta</span>
+          ) : (
+            <span className={`quadro-etiqueta quadro-etiqueta--${caso.prioridade}`}>
+              Prioridade {PRIORIDADES.find((p) => p.valor === caso.prioridade)?.label.toLowerCase()}
+            </span>
+          )}
+          {caso.anotacoes && (
+            <span className="quadro-cartao__nota">
+              <IconeNota /> Anotação
+            </span>
+          )}
+        </span>
       </button>
       {pendente && (
         <div className="quadro-cartao__acoes">
@@ -283,26 +314,28 @@ export function QuadroCasosPage() {
 
   return (
     <main className="quadro">
-      <h1>Meus casos</h1>
-      <p className="text-muted">
-        Os pedidos que você recebeu e os casos que aceitou. Abra um cartão pra ler as respostas do
-        cliente, mudar a prioridade e fazer anotações.
-      </p>
+      {/* Topo no estilo do hero da Home: faixa marrom, etiqueta com linha, título serifado
+          e os três números do quadro. No celular, os números trocam a coluna visível. */}
+      <section className="quadro-topo">
+        <span className="quadro-topo__etiqueta">Quadro de casos</span>
+        <h1>Meus casos</h1>
+        <p>Abra um cartão pra ler as respostas do cliente, mudar a prioridade e anotar.</p>
+        <nav className="quadro-topo__numeros" aria-label="Colunas do quadro">
+          {COLUNAS.map(({ etapa, resumo }) => (
+            <button
+              key={etapa}
+              type="button"
+              className={`quadro-topo__numero${abaCelular === etapa ? " quadro-topo__numero--ativo" : ""}`}
+              aria-pressed={abaCelular === etapa}
+              onClick={() => setAbaCelular(etapa)}
+            >
+              <strong>{daColuna(etapa).length}</strong>
+              <span>{resumo}</span>
+            </button>
+          ))}
+        </nav>
+      </section>
       {erro && <p role="alert">{erro}</p>}
-
-      <nav className="pill-toggle quadro__abas" aria-label="Colunas do quadro">
-        {COLUNAS.map(({ etapa, titulo }) => (
-          <button
-            key={etapa}
-            type="button"
-            className={`pill-toggle__item${abaCelular === etapa ? " pill-toggle__item--active" : ""}`}
-            aria-pressed={abaCelular === etapa}
-            onClick={() => setAbaCelular(etapa)}
-          >
-            {titulo} ({daColuna(etapa).length})
-          </button>
-        ))}
-      </nav>
 
       <div className="quadro__colunas">
         {COLUNAS.map(({ etapa, titulo, vazio }) => {
@@ -310,7 +343,7 @@ export function QuadroCasosPage() {
           return (
             <section
               key={etapa}
-              className={`quadro-coluna${abaCelular === etapa ? " quadro-coluna--aba-ativa" : ""}${sobre === etapa ? " quadro-coluna--sobre" : ""}`}
+              className={`quadro-coluna quadro-coluna--${etapa}${abaCelular === etapa ? " quadro-coluna--aba-ativa" : ""}${sobre === etapa ? " quadro-coluna--sobre" : ""}`}
               aria-label={titulo}
               onDragOver={(e) => {
                 if (etapa === "pendente") return;
@@ -320,10 +353,19 @@ export function QuadroCasosPage() {
               onDragLeave={() => setSobre(null)}
               onDrop={(e) => soltar(e, etapa)}
             >
-              <h2 className="quadro-coluna__titulo">
-                {titulo} <span className="text-muted">{lista.length}</span>
-              </h2>
-              {lista.length === 0 && <p className="text-muted quadro-coluna__vazio">{vazio}</p>}
+              <div className="quadro-coluna__cabeca">
+                <h2 className="quadro-coluna__titulo">{titulo}</h2>
+                <span className="quadro-coluna__qtd">{lista.length}</span>
+              </div>
+              {lista.length === 0 && (
+                <div className="quadro-coluna__vazio">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M22 12h-6l-2 3h-4l-2-3H2" />
+                    <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" />
+                  </svg>
+                  <p>{vazio}</p>
+                </div>
+              )}
               <ul className="list-plain quadro-coluna__lista">
                 {lista.map((caso) => (
                   <CartaoCaso
