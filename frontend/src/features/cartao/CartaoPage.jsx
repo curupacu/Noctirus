@@ -98,6 +98,27 @@ export function CartaoPage() {
     }
   }
 
+  // PDF pra imprimir (28/10/2026): ver pdfCartao.js. jsPDF só é baixado quando a pessoa pede.
+  async function baixarPdf(tipo) {
+    if (!frenteRef.current || !versoRef.current) return;
+    setErroDownload(null);
+    setBaixando(tipo);
+    try {
+      const { gerarPdfCartao } = await import("./pdfCartao");
+      await gerarPdfCartao({
+        frenteEl: frenteRef.current,
+        versoEl: versoRef.current,
+        tipo,
+        nome: dados.nome,
+        arquivo: `cartao-${nomeDeArquivo(dados.nome)}-${modelo.id}-${tipo === "folha" ? "frente-e-verso" : "3-cartoes"}.pdf`,
+      });
+    } catch {
+      setErroDownload("Não foi possível gerar o PDF. Tente de novo.");
+    } finally {
+      setBaixando(null);
+    }
+  }
+
   const { Frente, Verso } = modelo;
 
   return (
@@ -162,6 +183,14 @@ export function CartaoPage() {
         <button type="button" className="cartao-download" onClick={() => baixar("verso")} disabled={!!baixando}>
           <strong>{baixando === "verso" ? "Gerando..." : "Baixar o verso"}</strong>
           <span>Imagem PNG em alta resolução</span>
+        </button>
+        <button type="button" className="cartao-download" onClick={() => baixarPdf("folha")} disabled={!!baixando}>
+          <strong>{baixando === "folha" ? "Gerando..." : "PDF: frente e verso"}</strong>
+          <span>Uma folha A4 com os dois lados, pra imprimir</span>
+        </button>
+        <button type="button" className="cartao-download" onClick={() => baixarPdf("tres")} disabled={!!baixando}>
+          <strong>{baixando === "tres" ? "Gerando..." : "PDF: folha com 3 cartões"}</strong>
+          <span>3 frentes e 3 versos, pra recortar e dobrar</span>
         </button>
       </div>
     </main>
