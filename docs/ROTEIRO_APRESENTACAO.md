@@ -10,19 +10,20 @@ mantenham. A parte técnica da demonstração (o que clicar, contas, reset) est�
 | 1. Abertura | Gustavo Cereja | 1:00 | 1:00 |
 | 2. O problema | Gustavo Cereja | 1:30 | 2:30 |
 | 3. A solução e os objetivos | Gustavo Cereja | 1:00 | 3:30 |
-| 4. Pesquisa, design e o que mudou depois da banca | Gustavo Abade | 2:00 | 5:30 |
-| 5. Demonstração: o cliente | Gabriel Paulucci | 3:00 | 8:30 |
-| 6. Demonstração: o advogado e o admin | Guilherme Reche | 2:30 | 11:00 |
-| 7. Como funciona por dentro | Guilherme Reche | 2:00 | 13:00 |
-| 8. Ética, LGPD e fechamento | Gustavo Cereja | 1:30 | 14:30 |
+| 4. As duas logos: Aggrem e Nocturis | Gabriel Paulucci | 1:15 | 4:45 |
+| 5. O visual e o que mudou depois da banca | Gustavo Abade | 0:45 | 5:30 |
+| 6. Demonstração: o cliente | Gabriel Paulucci | 3:00 | 8:30 |
+| 7. Demonstração: o advogado e o admin | Guilherme Reche | 2:30 | 11:00 |
+| 8. Como funciona por dentro | Guilherme Reche | 2:00 | 13:00 |
+| 9. Ética, LGPD e fechamento | Gustavo Cereja | 1:30 | 14:30 |
 
 Sobram uns 30 segundos de folga pras trocas de fala. **Quem não está falando fica em
 silêncio e atento**: nada de mexer no celular nem cochichar.
 
 Quem opera o computador:
-- **Gabriel**, na janela do cliente, nos blocos 5 e 8.
-- **Guilherme**, nas janelas do advogado e do admin, nos blocos 6 e 7.
-- **Abade**, nos slides dos blocos 1 a 4.
+- **Abade**, nos slides dos blocos 1 a 5.
+- **Gabriel**, na janela do cliente, no bloco 6.
+- **Guilherme**, nas janelas do advogado e do admin, nos blocos 7 e 8.
 
 ---
 
@@ -32,7 +33,7 @@ Quem opera o computador:
 2. Abrir https://noctirus-backend.onrender.com/health e esperar responder (servidor acordado).
 3. Três janelas anônimas logadas: cliente, advogado (Marcos Autilio) e admin.
 4. **Um celular com a conta do cliente**, com os avisos ativados e a tela desbloqueada, na
-   mão do Gabriel. É ele que vai mostrar o aviso chegando no bloco 6.
+   mão do Gabriel. É ele que vai mostrar o aviso chegando no bloco 7.
 5. Caso de exemplo copiado pra colar na triagem.
 6. Vídeo de plano B aberto numa aba, pronto pra dar play se a internet cair.
 
@@ -43,9 +44,9 @@ Quem opera o computador:
 **Na tela:** slide de capa com o logo da Nocturis.
 
 > "Boa noite a todos. Nós somos o grupo da Aggrem: eu sou o Gustavo Cereja, líder e analista
-> do projeto; o Gustavo Abade cuidou do design; o Gabriel Paulucci, do front-end; e o
-> Guilherme Reche, do back-end e do banco de dados. Agradecemos às nossas orientadoras e
-> orientadores, a professora Roseane e o professor Eder.
+> do projeto; o Gabriel Paulucci cuidou do front-end; o Gustavo Abade, do design; e o
+> Guilherme Reche, do back-end e do banco de dados. Agradecemos à professora Roseane e ao
+> professor Eder, que orientaram o projeto.
 >
 > Hoje a gente vai apresentar a Nocturis, uma plataforma de triagem jurídica. Em uma frase:
 > **a Nocturis não presta serviço jurídico, ela classifica e direciona.** Nos próximos
@@ -79,38 +80,46 @@ pedir contato.
 >
 > Nossos objetivos foram três: facilitar o primeiro passo de quem precisa de ajuda, dar
 > visibilidade honesta pra quem advoga e fazer isso dentro das regras da OAB e da LGPD.
-> Agora o Abade vai mostrar como a gente desenhou essa experiência."
+> Antes de mostrar funcionando, o Gabriel vai apresentar as nossas marcas."
 
-## 4. Pesquisa, design e o que mudou depois da banca (Gustavo Abade, 2:00)
+## 4. As duas logos: Aggrem e Nocturis (Gabriel Paulucci, 1:15)
 
-**Na tela:** slides com a identidade visual (coruja, paleta marrom e creme), antes e depois.
+**Na tela:** slide com a logo da Aggrem e, depois, a logo da Nocturis.
 
-> "Obrigado, Cereja. A identidade da Nocturis parte da coruja, que simboliza sabedoria e
-> atenção, e de uma paleta marrom e creme, que passa seriedade sem ser fria como os sites
-> jurídicos tradicionais.
+> "Obrigado, Cereja. A gente tem duas marcas.
 >
-> Na banca de outubro, recebemos três críticas importantes. O visual escuro não agradou, o
-> lado do advogado estava fraco e o recurso de denúncias trazia risco jurídico. A gente
-> refez o visual inteiro com tema claro, criou um quadro de casos pro advogado e tirou as
-> denúncias, porque quem julga conduta profissional é a OAB.
+> A primeira é a **Aggrem**, a nossa empresa, que assina o projeto.
+> **[Gabriel: completar com o significado do nome e da logo da Aggrem, em duas ou três
+> frases.]**
 >
-> Também testamos com uma pessoa de fora do grupo. Ela achou a triagem repetitiva: eram sete
-> perguntas e algumas repetiam o que ela já tinha contado. A triagem virou quatro telas
-> curtas, e a IA já deixa os assuntos marcados pra pessoa só conferir.
->
-> O site funciona no computador e no celular, pode ser instalado como aplicativo e tirou
-> nota máxima de acessibilidade no Lighthouse, a ferramenta de auditoria do Google. O
-> Gabriel vai mostrar isso funcionando."
+> A segunda é a **Nocturis**, o produto. O nome vem de 'noturno', e o símbolo é a coruja: o
+> animal que enxerga no escuro. É exatamente o que a plataforma faz: ajuda a pessoa a enxergar
+> um problema que, pra ela, está no escuro, sem saber de que área é nem a quem recorrer. Os
+> olhos amarelos acesos são o ponto de luz da marca. O nome usa uma letra elegante e o marrom
+> passa seriedade e acolhimento ao mesmo tempo, sem a frieza dos sites jurídicos de sempre.
+> O Abade vai contar como essa identidade virou o visual do site."
 
-## 5. Demonstração: o cliente (Gabriel Paulucci, 3:00)
+## 5. O visual e o que mudou depois da banca (Gustavo Abade, 0:45)
+
+**Na tela:** slide com o antes (tema escuro) e o depois (tema claro).
+
+> "Valeu, Gabriel. Na banca de outubro, o visual escuro não agradou. A gente refez o site
+> inteiro com tema claro, na paleta marrom e creme da marca, com letras maiores e mais
+> espaço, pensando em quem acessa pelo celular. O resultado tirou nota máxima de
+> acessibilidade no Lighthouse, a ferramenta de auditoria do Google. Gabriel, mostra pra
+> eles."
+
+## 6. Demonstração: o cliente (Gabriel Paulucci, 3:00)
 
 **Na tela:** janela do cliente, painel aberto.
 
-> "Valeu, Abade. Essa é a conta de um cliente. No painel ele vê a última triagem, os pedidos
-> de contato e advogados da região dele. A ordem desses advogados muda todo dia: não existe
-> ranking de mais procurados.
+> "Essa é a conta de um cliente. No painel ele vê a última triagem, os pedidos de contato e
+> advogados da região dele. A ordem desses advogados muda todo dia: não existe ranking de
+> mais procurados.
 >
-> Vou fazer uma triagem nova." *(clica em Nova triagem)*
+> Vou fazer uma triagem nova. Ela tem só quatro telas: antes eram sete perguntas, e uma
+> pessoa de fora do grupo que testou achou repetitivo, então a gente encurtou." *(clica em
+> Nova triagem)*
 >
 > "Primeiro: o que aconteceu. Eu colo o caso de exemplo: trabalho num restaurante, faço duas
 > horas a mais quase todo dia e isso nunca aparece no pagamento." *(cola e avança)*
@@ -130,7 +139,7 @@ pedir contato.
 > "Ao pedir contato, eu vejo exatamente o que vai ser enviado e preciso autorizar. Enviei.
 > Agora é com o advogado. Guilherme, é com você."
 
-## 6. Demonstração: o advogado e o admin (Guilherme Reche, 2:30)
+## 7. Demonstração: o advogado e o admin (Guilherme Reche, 2:30)
 
 **Na tela:** janela do advogado (Marcos Autilio).
 
@@ -156,7 +165,7 @@ pedir contato.
 > aparecer, a OAB dele é conferida no Cadastro Nacional dos Advogados. Recusar ou revogar
 > exige um motivo, que o advogado recebe por aviso e por e-mail."
 
-## 7. Como funciona por dentro (Guilherme Reche, 2:00)
+## 8. Como funciona por dentro (Guilherme Reche, 2:00)
 
 **Na tela:** slide com o diagrama da arquitetura.
 
@@ -174,7 +183,7 @@ pedir contato.
 > automáticos, que rodam a cada atualização no GitHub. Os avisos no celular usam o Firebase
 > Cloud Messaging, e os e-mails saem pelo nosso próprio domínio."
 
-## 8. Ética, LGPD e fechamento (Gustavo Cereja, 1:30)
+## 9. Ética, LGPD e fechamento (Gustavo Cereja, 1:30)
 
 **Na tela:** slide com os princípios e, no fim, o slide de agradecimento.
 
@@ -203,8 +212,7 @@ pedir contato.
   narra por cima do vídeo.
 - **O aviso não chegou no celular:** seguir sem ele e mostrar a tela de contato liberado
   recarregando o painel do cliente.
-- **Estourou o tempo:** encurtar o bloco 7 (falar só da IA e dos testes) e o bloco 4 (pular
-  a parte do Lighthouse).
+- **Estourou o tempo:** encurtar o bloco 8 (falar só da IA e dos testes).
 
 ## Perguntas prováveis
 
@@ -213,6 +221,6 @@ Estão no fim de `ROTEIRO_DEMO.md`. Sugestão de quem responde:
 | Assunto | Quem responde |
 | --- | --- |
 | Ética, OAB, captação de clientela | Cereja |
-| Design, usabilidade, acessibilidade | Abade |
+| Marcas, visual, usabilidade | Gabriel (Abade completa se precisar) |
 | Telas, celular, aplicativo | Gabriel |
 | IA, banco de dados, segurança, LGPD técnica | Guilherme |
