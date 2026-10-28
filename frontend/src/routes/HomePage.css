@@ -516,6 +516,13 @@ main.home {
   }
 }
 
+.home-services__controls {
+  display: none;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+}
+
 .home-team__controls {
   display: flex;
   justify-content: center;
@@ -908,6 +915,10 @@ main.home {
 
   .home-service {
     scroll-snap-align: start;
+  }
+
+  .home-services__controls {
+    display: flex;
   }
 
   /* Rodapé: marca em cima, as duas listas de links lado a lado (antes era tudo numa coluna

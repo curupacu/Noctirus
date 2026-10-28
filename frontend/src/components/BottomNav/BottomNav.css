@@ -30,6 +30,17 @@
   transition: color 0.15s ease;
 }
 
+/* No celular o "hover" fica grudado depois do toque: sem isso o link herdava o sublinhado
+   e a cor de link do resto do site. */
+.bottom-nav__item:hover {
+  text-decoration: none;
+  color: var(--color-text-muted);
+}
+
+.bottom-nav__item--active:hover {
+  color: var(--brown);
+}
+
 .bottom-nav__item:active {
   transform: scale(0.93);
 }
@@ -57,15 +68,17 @@
 }
 
 .bottom-nav__item--active {
-  color: var(--text);
+  color: var(--brown);
+  text-decoration: none;
 }
 
 .bottom-nav__item--active .bottom-nav__icon-wrap {
   background: var(--brown);
 }
 
+/* Ícone creme sobre a pílula marrom (antes ficava preto no marrom, quase sumia). */
 .bottom-nav__item--active svg {
-  color: var(--ink-on-accent);
+  color: #fffdf8;
 }
 
 @media (prefers-reduced-motion: reduce) {

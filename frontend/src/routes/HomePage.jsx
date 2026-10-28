@@ -251,12 +251,13 @@ export function HomePage() {
   const { dado: advogados, erro: erroAdvogados } = useCarregar(buscarAdvogadosDestaque);
   const carregandoAdvogados = !advogados && !erroAdvogados;
   const carrossel = useRef(null);
+  const assuntos = useRef(null);
   const [motivo, setMotivo] = useState(0);
 
   const destinoConta = user ? rotaInicial(role) : "/cadastro";
 
-  function rolarCarrossel(sentido) {
-    const trilho = carrossel.current;
+  function rolarCarrossel(sentido, alvo = carrossel) {
+    const trilho = alvo.current;
     if (!trilho) return;
     const cartao = trilho.querySelector("li");
     const espaco = parseFloat(getComputedStyle(trilho).columnGap) || 0;
@@ -336,7 +337,7 @@ export function HomePage() {
             </div>
           </div>
 
-          <ul className="home-services__grid">
+          <ul className="home-services__grid" ref={assuntos}>
             {SERVICOS.map((s) => (
               <li key={s.titulo} className="home-service">
                 <div className="home-service__head">
@@ -365,6 +366,25 @@ export function HomePage() {
               </li>
             ))}
           </ul>
+          {/* Setas só no celular, onde os assuntos viram uma faixa que desliza (25/10/2026). */}
+          <div className="home-services__controls">
+            <button
+              type="button"
+              className="home-round home-round--dark"
+              onClick={() => rolarCarrossel(-1, assuntos)}
+              aria-label="Assuntos anteriores"
+            >
+              <Seta direcao="esquerda" />
+            </button>
+            <button
+              type="button"
+              className="home-round home-round--dark"
+              onClick={() => rolarCarrossel(1, assuntos)}
+              aria-label="Próximos assuntos"
+            >
+              <Seta />
+            </button>
+          </div>
         </div>
       </section>
 

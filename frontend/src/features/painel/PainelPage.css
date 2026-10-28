@@ -47,8 +47,9 @@ main.painel .section-heading a {
 
 .destaque__foto {
   width: 100%;
-  height: 150px;
+  height: 190px;
   object-fit: cover;
+  object-position: center 22%;
 }
 
 .destaque__corpo {

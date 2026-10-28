@@ -192,3 +192,15 @@
   font-size: 15px;
   color: var(--text-dim);
 }
+
+/* No celular o sininho não fica na beirada da tela: o painel preso à direita dele saía pela
+   esquerda (achado do usuário, 28/10). Ali ele fica fixo, com 12px de margem dos lados. */
+@media (max-width: 640px) {
+  .notification-bell__panel {
+    position: fixed;
+    top: 68px;
+    right: 12px;
+    left: 12px;
+    width: auto;
+  }
+}
