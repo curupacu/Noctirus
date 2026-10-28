@@ -1,8 +1,7 @@
-// Paleta fixa (não troca com o tema) pra iniciais de avatar de advogado — tons
-// derivados da marca (marrom, terracota, ameixa, verde-oliva, slate), nunca o dourado
-// de acento (reservado pro badge de OAB verificada, ver docs/DESIGN.md). O objetivo é
-// só diferenciar visualmente cada advogado numa lista, não classificar nada.
-const PALETA = ["#8A5E38", "#4A3420", "#4C5A72", "#5C6B4F", "#8C5A3D", "#6B4055"];
+// Paleta fixa pra iniciais de avatar: só tons de marrom da marca (28/10/2026: o
+// azul-acinzentado, o verde-oliva e o ameixa que tinham aqui destoavam do resto do site).
+// O objetivo é só diferenciar visualmente cada pessoa numa lista, não classificar nada.
+const PALETA = ["#765039", "#5C3E2B", "#8A5E38", "#3B281C", "#9B6B45", "#6E4A33"];
 
 export function corDoAvatar(semente) {
   const texto = String(semente || "");

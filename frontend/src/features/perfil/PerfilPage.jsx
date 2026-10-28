@@ -159,6 +159,8 @@ export function PerfilPage() {
           api.get(`/curriculos/${user.uid}`),
         ]);
         setAdvogado(dadosAdvogado);
+        // A foto do advogado mora no perfil público (advogados/{uid}), não em users.
+        if (dadosAdvogado?.foto) setFoto(dadosAdvogado.foto);
         setCurriculo(dadosCurriculo);
       }
       setCarregando(false);

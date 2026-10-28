@@ -364,28 +364,6 @@ main.quadro {
   cursor: pointer;
 }
 
-.quadro-detalhe__respostas {
-  display: grid;
-  gap: 14px;
-  margin: 0;
-  padding: 18px;
-  background: var(--surface);
-  border-radius: 18px;
-  box-shadow: var(--shadow-sm);
-}
-
-.quadro-detalhe__respostas dt {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--brown);
-}
-
-.quadro-detalhe__respostas dd {
-  margin: 2px 0 0;
-  font-size: 15px;
-  line-height: 1.55;
-}
-
 .quadro-detalhe__aviso {
   margin: var(--space-md) 0 0;
   padding: 12px 14px;

@@ -97,13 +97,6 @@ a:hover {
   animation: none;
 }
 
-.filter-bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: var(--space-md);
-}
-
 /* Neutro por padrão — a maioria dos badges é rótulo de status (papel, "em análise"...),
    dourado sólido em tudo ia contra "dourado com parcimônia" (ver docs/DESIGN.md).
    Variantes semânticas abaixo pra verificado/sucesso, erro e o destaque dourado
@@ -119,24 +112,6 @@ a:hover {
   border-radius: var(--radius-full);
   text-transform: none;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-}
-
-.badge--success {
-  color: #fffdf8;
-  background: var(--brown);
-  border-color: var(--brown);
-}
-
-.badge--danger {
-  color: #fffdf8;
-  background: var(--red);
-  border-color: var(--red);
-}
-
-.badge--gold {
-  color: #fffdf8;
-  background: var(--brown);
-  border-color: var(--brown);
 }
 
 /* Selo neutro pra "OAB verificada" — badge--success (dourado sólido) espalhava dourado
@@ -193,35 +168,6 @@ a:hover {
   font-size: var(--font-size-2xl);
 }
 
-.avatar-placeholder--hero {
-  width: 128px;
-  height: 128px;
-  font-size: var(--font-size-3xl);
-}
-
-/* Topo do perfil público do advogado — a foto era um círculo pequeno igual ao da
-   listagem, competindo com o número da OAB na mesma linha de subtítulo (achado do
-   usuário, comparando com a tela de perfil de apps tipo Tinder: lá a foto é a âncora
-   visual e a bio vem antes de qualquer credencial). Empilhado (não lado a lado) pra
-   foto grande não espremer o nome em telas estreitas — mesmo princípio do `main.splash`. */
-.advogado-hero {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-sm);
-  margin-bottom: var(--space-md);
-}
-
-.advogado-hero h1 {
-  margin: 0;
-}
-
-.advogado-hero__local {
-  margin: 0;
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
-}
-
 .hero-block {
   position: relative;
   overflow: hidden;
@@ -231,16 +177,6 @@ a:hover {
   border: 1px solid var(--border);
   color: var(--cream);
   margin-bottom: var(--space-lg);
-}
-
-/* Visual simples: sem marca d'água decorativa no card de destaque. */
-.hero-block__owl-mark {
-  display: none;
-}
-
-.hero-block > *:not(.hero-block__owl-mark) {
-  position: relative;
-  z-index: 1;
 }
 
 .hero-block h1,
@@ -253,52 +189,8 @@ a:hover {
   color: inherit;
 }
 
-.hero-block--dark {
-  background: var(--ink-800);
-  color: var(--cream);
-}
-
-.hero-block--dark .hero-block__owl-mark {
-  opacity: 0.22;
-}
-
-/* CTA de destaque do painel do cliente — mesma estrutura do .hero-block, mas com a
-   coruja colorida de verdade (não a silhueta translúcida) e uma textura de grão sutil,
-   pra dar presença de marca em vez de ficar um bloco marrom liso (achado do usuário,
-   18/08: tela do painel "muito sem graça"). Escopado com uma classe extra pra não
-   afetar os outros hero-blocks (resultado da triagem, etc.) que já funcionavam bem. */
-.hero-cta {
-  /* --ink-800 (marrom bem escuro), não --ink-950 (quase preto puro) — no tema escuro,
-     --bg do app já é --ink-950, então o card ficava preto-sobre-preto, sem nenhum
-     limite visível além da coruja (achado do usuário, 18/08). --ink-800 é constante de
-     marca (não troca de tema), então mantém contraste com a página nos dois temas. */
-  background: var(--ink-800);
-}
-
-.hero-cta .eyebrow {
-  color: var(--gold);
-}
-
-.hero-cta h2 {
-  font-size: var(--font-size-2xl);
-  max-width: 12ch;
-  text-wrap: balance;
-}
-
-.hero-cta p {
-  max-width: 34ch;
-  color: var(--cream-dim);
-}
-
-.hero-cta .button--primary {
-  padding: 14px 28px;
-  font-size: var(--font-size-lg);
-  margin-top: var(--space-sm);
-}
-
 /* Visual simples: sem animação de entrada no card de resultado. */
-.hero-reveal,
-.hero-reveal .badge--gold {
+.hero-reveal {
   animation: none;
 }
 
@@ -330,10 +222,6 @@ a:hover {
   background: var(--ok-bg);
   border-color: var(--brown);
   font-weight: 700;
-}
-
-.chip--overflow {
-  color: var(--color-text-muted);
 }
 
 .chip button {
@@ -394,15 +282,6 @@ fieldset label {
   margin: 0;
 }
 
-/* A bio é a primeira coisa em texto livre da pessoa no perfil — precisa ler como voz,
-   não como metadado (achado da auditoria de UX: currículo em lista plana não dava pra
-   entender quem era o advogado mesmo com a informação lá). */
-.advogado-bio {
-  font-size: var(--font-size-lg);
-  color: var(--color-text);
-  margin: var(--space-md) 0 var(--space-lg);
-}
-
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -428,68 +307,6 @@ fieldset label {
   transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
-/* Número grande de estatística dentro de um .card (dashboard do advogado) — era estilo
-   inline repetido em cada card; virou classe já que agora são 3 cards, não 2. */
-.stat-numero {
-  font-family: var(--font-display);
-  font-size: var(--font-size-2xl);
-  margin: 4px 0 0;
-}
-
-.card__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-md);
-  margin-bottom: var(--space-sm);
-}
-
-@media (max-width: 480px) {
-  /* bottom: var(--bottom-nav-height), não 0 — essas telas (Triagem) só
-     existem logadas, então o BottomNav (fixed, z-index 20) sempre está por cima dos
-     últimos 68px da viewport. Grudar em bottom:0 aqui escondia o botão de enviar atrás
-     do menu (achado da auditoria de UX estática, 29/07). */
-  .form-cta-sticky {
-    position: sticky;
-    bottom: var(--bottom-nav-height);
-    /* Era var(--bg) — a cor da tela, não a do card. Como o form mora dentro de um
-       .card (--surface), o retângulo sticky destacava como um bloco de cor errada
-       colado embaixo do botão (achado do usuário, 07/08). */
-    background: var(--surface);
-    margin: 0 calc(-1 * var(--space-lg));
-    padding: var(--space-md) var(--space-lg);
-    box-shadow: var(--shadow-up);
-    /* O form pai é `.card.stack` (flex column, align-items: flex-start) — sem isso, a
-       barra sticky encolhe pro tamanho do botão em vez de ocupar a largura toda do card,
-       flutuando estreita no meio do conteúdo em telas mobile de verdade (achado testando
-       viewport mobile genuína via iframe, 07/08 — só aparecia em largura real de celular,
-       não em desktop redimensionado). `width: 100%` sozinho não bastava: vira uma largura
-       FIXA (100% do conteúdo do form, sem contar a margem negativa), e margem negativa só
-       desloca a caixa, não estica — sobrava undefined 2×24px de vão do lado direito. Somar
-       a margem de volta na largura é o jeito certo de "sangrar" borda a borda. */
-    width: calc(100% + 2 * var(--space-lg));
-  }
-}
-
-/* Barra de ação do formulário: o botão principal ocupa o espaço e um secundário (ex.:
-   "Voltar" na etapa 2 da triagem) fica do lado; a mensagem de erro vai pra linha de baixo. */
-.form-cta-sticky {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.form-cta-sticky > .button:first-child {
-  flex: 1 1 auto;
-}
-
-.form-cta-sticky > [role="alert"] {
-  flex-basis: 100%;
-  margin: 0;
-}
-
 /* Abas de navegação (quadro de casos, fila do admin) dividem a linha por igual no celular,
    em vez de ficarem com larguras irregulares quando quebram linha. */
 @media (max-width: 640px) {
@@ -497,40 +314,6 @@ fieldset label {
     flex: 1 1 auto;
     padding-inline: var(--space-sm);
   }
-}
-
-/* No máximo uma palavra em destaque por título (ver docs/DESIGN.md) */
-h1 .accent,
-h2 .accent {
-  color: var(--gold);
-  font-style: italic;
-}
-
-.showcase {
-  max-width: 480px;
-  margin: 0 auto;
-  padding: var(--space-lg);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-}
-
-.showcase-group {
-  display: flex;
-  gap: var(--space-md);
-  align-items: flex-end;
-}
-
-.advogados-subtitulo {
-  margin-top: calc(-1 * var(--space-md));
-  margin-bottom: var(--space-lg);
-}
-
-.advogados-filtros {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-md);
-  margin-bottom: var(--space-lg);
 }
 
 .pill-toggle {
@@ -568,23 +351,6 @@ h2 .accent {
   color: var(--color-primary-text);
 }
 
-.advogados-limpar {
-  align-self: flex-start;
-  background: none;
-  border: none;
-  padding: 0;
-  font-family: var(--font-body);
-  font-size: var(--font-size-sm);
-  font-weight: 700;
-  color: var(--color-text-muted);
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.advogados-limpar:hover {
-  color: var(--color-yellow-700);
-}
-
 .advogados-lista {
   list-style: none;
   margin: 0;
@@ -592,42 +358,6 @@ h2 .accent {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
-}
-
-/* Card de advogado — era uma linha fina (nome + cidade), achado do usuário (11/08): não
-   dava vontade de clicar, todo mundo parecia igual. Virou um card de verdade com bio e
-   chips de especialidade (ver components/AdvogadoCard).
-   Hover só com border-color + shadow, de propósito — a versão antiga tinha
-   `transform: translateY` no card INTEIRO junto com um brilho que desliza via
-   `transition: left` num pseudo-elemento; perto da borda do card isso podia entrar num
-   loop (o deslocamento tira o cursor de cima do elemento -> sai do :hover -> volta pra
-   posição original -> :hover liga de novo), o que lia como um "pisca" estranho (achado
-   do usuário). Sem transform no elemento hitboxeado pelo hover, esse loop não existe. */
-.advogado-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  background: var(--color-surface);
-  border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-lg);
-  box-shadow: var(--shadow-sm);
-  color: inherit;
-  text-decoration: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
-}
-
-.advogado-card:hover {
-  border-color: var(--brown);
-  box-shadow: var(--shadow-md);
-  color: inherit;
-  text-decoration: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .advogado-card {
-    transition: none;
-  }
 }
 
 .advogado-card__top {
@@ -664,16 +394,6 @@ h2 .accent {
   flex-wrap: wrap;
   gap: var(--space-xs);
   margin-top: 4px;
-}
-
-.advogado-card__bio {
-  margin: 0;
-  font-size: var(--font-size-sm);
-  color: var(--color-text);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
 .advogado-row__chevron {
@@ -825,27 +545,6 @@ a.list-row:hover .advogado-row__chevron {
   transform: translateX(2px);
 }
 
-/* Botão de canal na tela de contato (ContatoAdvogadoPage) — nome do canal + o valor
-   (número/e-mail) abaixo, em vez do texto centralizado padrão do .button. */
-.button.contato-canal {
-  flex-direction: column;
-  align-items: flex-start;
-  text-align: left;
-  width: 100%;
-  gap: 2px;
-  padding: var(--space-md) var(--space-lg);
-}
-
-.contato-canal__label {
-  font-size: var(--font-size-lg);
-  font-weight: 800;
-}
-
-.contato-canal__valor {
-  font-size: var(--font-size-sm);
-  opacity: 0.75;
-}
-
 .list-row__title {
   font-weight: 800;
   color: var(--color-text);
@@ -878,10 +577,6 @@ a.list-row:hover .advogado-row__chevron {
   font-weight: 700;
 }
 
-.resultado-proximos-passos {
-  margin-top: var(--space-lg);
-}
-
 /* Rótulo pequeno acima de título/seção — caixa alta, tracking largo (padrão visto nos
    sites de advocacia da pesquisa: KM&M, Barr & Douds). Cor já muda sozinha com o tema
    porque usa --text-faint. */
@@ -912,7 +607,6 @@ a.list-row:hover .advogado-row__chevron {
   transition: transform 0.18s ease;
 }
 
-.advogado-card:hover .advogado-row__chevron,
 a.list-row:hover .advogado-row__chevron {
   transform: translateX(3px);
 }

@@ -51,7 +51,7 @@ const FAQ = [
   {
     pergunta: "Preciso criar conta pra ver os advogados?",
     resposta:
-      "Não. Dá pra ver a lista de advogados sem cadastro. Só crie conta se quiser fazer a triagem guiada ou salvar seus contatos.",
+      "Pra conhecer alguns advogados, não: eles aparecem aqui na página inicial. Pra fazer a triagem e ver quem atende o seu caso, perto de você, é só criar uma conta grátis.",
   },
 ];
 

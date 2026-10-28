@@ -156,22 +156,6 @@ main.home {
   background: var(--gold-dim);
 }
 
-.home-link-dark {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding-bottom: 2px;
-  border-bottom: 1px solid currentColor;
-  font-weight: 600;
-  font-size: 15px;
-  color: var(--brown-ink);
-}
-
-.home-link-dark svg {
-  width: 16px;
-  height: 16px;
-}
-
 /* ---------- 1. hero ---------- */
 .home-hero {
   position: relative;
@@ -254,17 +238,6 @@ main.home {
   align-items: flex-start;
   gap: 14px;
   margin-top: 36px;
-}
-
-.home-hero__sublink {
-  font-size: 14px;
-  color: var(--home-on-brown-dim);
-  border-bottom: 1px solid rgba(246, 238, 223, 0.35);
-  transition: color 0.15s ease;
-}
-
-.home-hero__sublink:hover {
-  color: var(--home-on-brown);
 }
 
 .home-hero__photo {
@@ -530,11 +503,6 @@ main.home {
   margin-top: 28px;
 }
 
-.home-team__more {
-  margin-top: 24px;
-  text-align: center;
-}
-
 /* ---------- 4. sobre ---------- */
 .home-why {
   position: relative;
@@ -772,18 +740,6 @@ main.home {
   .home-btn,
   .home-btn--sm {
     min-height: 44px;
-  }
-
-  /* Com 44px de altura a borda de baixo ficaria longe do texto — vira sublinhado de texto. */
-  .home-hero__sublink,
-  .home-link-dark {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
-    border-bottom: 0;
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 5px;
   }
 
   .home-round {

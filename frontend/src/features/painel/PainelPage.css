@@ -642,13 +642,6 @@ li:nth-child(even) > .atalho .atalho__previa {
 }
 
 /* Listas (triagens) em duas colunas no computador */
-@media (min-width: 760px) {
-  .painel .list-plain--grade {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-md);
-  }
-}
 
 /* ---------- resultado da triagem ---------- */
 .resultado__ajuste {
@@ -691,10 +684,6 @@ li:nth-child(even) > .atalho .atalho__previa {
     gap: var(--space-md);
   }
 
-  /* Cartões da mesma linha com a mesma altura */
-  .resultado .advogados-lista > li > .advogado-card {
-    height: 100%;
-  }
 }
 
 /* ---------- topo do "Meu perfil" (cliente/admin) ---------- */
