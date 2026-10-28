@@ -12,6 +12,7 @@ import {
 import { useCarregar } from "../../lib/useCarregar";
 import { useTitulo } from "../../lib/useTitulo";
 import { ContatosLiberados } from "../advogados/ContatoAdvogadoPage";
+import "../painel/PainelPage.css";
 import { ModalAceite } from "../../components/AceiteDestaque/AceiteDestaque";
 
 async function buscar() {
@@ -31,7 +32,7 @@ const ABAS = [
 // RF014: o cliente acompanha os pedidos de contato — advogado, data e situação. Nos aceitos
 // aparecem o WhatsApp/e-mail do advogado (RF010).
 export function MinhasSolicitacoesPage() {
-  useTitulo("Minhas solicitações");
+  useTitulo("Meus pedidos de contato");
   const { dado, erro } = useCarregar(buscar);
   const [aba, setAba] = useState(null);
 
@@ -47,7 +48,7 @@ export function MinhasSolicitacoesPage() {
 
   return (
     <main>
-      <h1>Minhas solicitações</h1>
+      <h1>Meus pedidos de contato</h1>
       <ModalAceite solicitacoes={solicitacoes} />
       <p className="text-muted">
         Os advogados que você pediu pra falar. Quando um aceita, o contato dele aparece aqui.
@@ -85,25 +86,27 @@ export function MinhasSolicitacoesPage() {
         <p className="text-muted">Nenhum pedido nesta situação.</p>
       )}
 
-      <ul className="list-plain">
+      {/* Mesmo cartão dos pedidos do painel (28/10/2026), com os contatos liberados embaixo. */}
+      <ul className="list-plain pedidos-lista">
         {daAba.map((s) => (
-          <li key={s.id} className={`card stack${s.situacao === "aceita" ? " pedido-aceito" : ""}`}>
-            <Link to={`/advogados/${s.advogadoId}`} className="media">
+          <li key={s.id} className={`pedido-mini pedido-mini--${s.situacao} pedido-cheio`}>
+            <Link to={`/advogados/${s.advogadoId}`} className="pedido-mini__topo">
               <Avatar nome={s.advogadoNome} foto={s.advogadoFoto} seed={s.advogadoId} />
-              <span className="stack" style={{ gap: 2 }}>
+              <span className="pedido-mini__info">
                 <strong>{s.advogadoNome || "Advogado"}</strong>
-                <span className="text-muted">
+                <span className="pedido-mini__caso">
                   {LABEL_AREA[s.area] || s.area}
                   {s.especialidade && rotulos[s.especialidade] ? ` · ${rotulos[s.especialidade]}` : ""}
                 </span>
               </span>
             </Link>
-            <p style={{ margin: 0 }}>
-              <span className={`badge${s.situacao === "aceita" ? " badge--seal" : ""}`}>
+            <span className="pedido-mini__rodape">
+              <span className="pedido-mini__situacao">
+                <span className="pedido-mini__ponto" aria-hidden="true" />
                 {LABEL_SITUACAO_CLIENTE[s.situacao]}
-              </span>{" "}
-              <span className="text-muted">Pedido em {formatarData(s.createdAt)}</span>
-            </p>
+              </span>
+              <span className="pedido-mini__data">Pedido em {formatarData(s.createdAt)}</span>
+            </span>
             {s.situacao === "aceita" && <ContatosLiberados contatos={s.contatos} />}
             {s.situacao === "recusada" && s.triagemId && (
               <Link to={`/triagem/${s.triagemId}`} className="button button--secondary">

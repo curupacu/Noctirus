@@ -227,16 +227,14 @@
   min-width: 0;
 }
 
+/* Motivo da compatibilidade como texto com o ✓, sem a "pílula" de fundo (28/10/2026). */
 .adv-destaque__motivos {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 10px;
-  padding: 5px 12px;
-  border-radius: var(--radius-full);
-  background: var(--ok-bg);
-  font-size: 13px;
-  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 700;
   color: var(--brown);
 }
 

@@ -46,7 +46,7 @@ export function ContatosLiberados({ contatos }) {
 
 // Pedir contato a um advogado (RF010): o cliente escolhe qual triagem vai junto, vê
 // exatamente o que vai ser enviado e precisa autorizar. O WhatsApp/e-mail do advogado só
-// aparece depois que ele aceitar — aqui ou em "Minhas solicitações".
+// aparece depois que ele aceitar — aqui ou em "Meus pedidos de contato".
 export function ContatoAdvogadoPage() {
   const { uid } = useParams();
   const [searchParams] = useSearchParams();

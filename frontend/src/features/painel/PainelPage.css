@@ -731,3 +731,20 @@ li:nth-child(even) > .atalho .atalho__previa {
   width: 100%;
   margin-bottom: var(--space-lg);
 }
+
+/* Lista completa de pedidos (Meus pedidos de contato): o mesmo cartão, um embaixo do outro,
+   com espaço pros botões de contato. */
+.pedidos-lista {
+  display: grid;
+  gap: 14px;
+  max-width: 720px;
+}
+
+.pedido-mini.pedido-cheio {
+  gap: 16px;
+}
+
+.pedido-mini.pedido-cheio .pedido-mini__topo {
+  color: var(--text);
+  text-decoration: none;
+}

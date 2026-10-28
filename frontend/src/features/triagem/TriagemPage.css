@@ -71,15 +71,25 @@ main.triagem {
   flex-direction: column;
 }
 
+/* Etiqueta da pergunta: linha fininha + caixa alta, igual à do destaque do painel. */
 .triagem__etiqueta {
+  display: inline-flex;
   align-self: flex-start;
+  align-items: center;
+  gap: 12px;
   margin-bottom: 12px;
-  padding: 5px 12px;
-  border-radius: var(--radius-full);
-  background: #f3ece2;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--brown);
+}
+
+.triagem__etiqueta::before {
+  content: "";
+  width: 28px;
+  height: 2px;
+  background: currentColor;
 }
 
 .triagem__pergunta {

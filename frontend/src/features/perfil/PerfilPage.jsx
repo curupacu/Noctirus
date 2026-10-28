@@ -391,7 +391,7 @@ export function PerfilPage() {
         {role === "cliente" && (
           <li>
             <Link to="/minhas-solicitacoes" className="list-row">
-              <span className="list-row__title">Minhas solicitações</span>
+              <span className="list-row__title">Meus pedidos de contato</span>
               <span className="advogado-row__chevron" aria-hidden="true">›</span>
             </Link>
           </li>
