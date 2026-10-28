@@ -98,10 +98,10 @@ Atualizado em 14/10/2026 (triagem curta, destaque dos advogados mais compatívei
   triagem curta com confirmação dos assuntos, filtro pela região do cliente, cobertura de
   multas/CNH e benefícios do INSS.
 - Qualidade:
-  - **178 testes automatizados** rodando no GitHub Actions.
+  - **187 testes automatizados** rodando no GitHub Actions.
   - Triagem avaliada com **26 casos reais: 26/26 na área e 26/26 no assunto** (14/10/2026, incluindo multas, CNH, pensão por morte, golpe de Pix e funeral); ela nunca trava, porque se a IA principal falhar
     entra a segunda (Gemini → Groq) e, por último, a classificação por regras.
-  - Lighthouse (celular): acessibilidade **100**, boas práticas **100**, SEO **92–100**.
+  - Lighthouse (celular): acessibilidade **100**, boas práticas **100**, SEO **92 a 100**.
 - LGPD: consentimento no cadastro; "Meus dados" pra baixar ou apagar tudo (apagar a conta
   apaga também as triagens); contatos e nome só depois do aceite.
 
