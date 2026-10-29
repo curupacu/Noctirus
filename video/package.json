@@ -1,0 +1,17 @@
+{
+  "name": "nocturis-video",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "estudio": "remotion studio src/index.jsx",
+    "render": "remotion render src/index.jsx Promo out/nocturis-promo.mp4"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.539",
+    "@remotion/google-fonts": "4.0.539",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "remotion": "4.0.539"
+  }
+}
