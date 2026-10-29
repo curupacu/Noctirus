@@ -1,4 +1,5 @@
-import { AbsoluteFill, Easing, Img, interpolate, Sequence, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import { Audio } from "@remotion/media";
+import { AbsoluteFill, Easing, Img, interpolate, Sequence, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { CorujaEstatica, CorujaLogo } from "./Coruja";
 import { ADVOGADOS } from "./Telas";
 import { COR, SANS, SERIF } from "./tema";
@@ -180,7 +181,7 @@ function CenaLogo() {
   const f = useCurrentFrame();
   return (
     <AbsoluteFill style={{ background: COR.noite, alignItems: "center", justifyContent: "center", overflow: "hidden" }}>
-      <div style={{ scale: `${interpolate(f, [0, 60, 75], [1, 1.04, 1.5], { ...C, easing: ENTRADA })}`, opacity: interpolate(f, [66, 75], [1, 0], C) }}>
+      <div style={{ scale: `${interpolate(f, [0, 72, 88], [1, 1.04, 1.5], { ...C, easing: ENTRADA })}`, opacity: interpolate(f, [79, 88], [1, 0], C) }}>
         <CorujaLogo largura={760} velocidade={1.65} />
       </div>
     </AbsoluteFill>
@@ -188,12 +189,14 @@ function CenaLogo() {
 }
 
 const PROBLEMAS = ["DEMITIDO?", "COBRANÇA INDEVIDA?", "PENSÃO?", "DESPEJO?"];
+// A música tem ~112 batidas por minuto: uma batida a cada 16 quadros.
+const BATIDA2 = 32;
 
 function CenaProblemas() {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const i = Math.min(PROBLEMAS.length - 1, Math.floor(f / 22));
-  const local = f - i * 22;
+  const i = Math.min(PROBLEMAS.length - 1, Math.floor(f / BATIDA2));
+  const local = f - i * BATIDA2;
   const claro = i % 2 === 1;
   const s = spring({ frame: local, fps, config: { damping: 11, stiffness: 220 } });
   const palavra = PROBLEMAS[i];
@@ -262,7 +265,7 @@ function CenaTriagem() {
   const f = useCurrentFrame();
   const letras = Math.floor(interpolate(f, [16, 58], [0, CASO.length], C));
   const pronto = letras > 30;
-  const tocou = f >= 66;
+  const tocou = f >= 64;
   return (
     <>
       <FaixasDeTexto texto="CONTE" cor={COR.marrom} opacidade={0.1} />
@@ -287,16 +290,16 @@ function CenaTriagem() {
               background: pronto ? COR.marrom : "#a8957f",
               padding: "28px 64px",
               borderRadius: 26,
-              scale: `${interpolate(f, [66, 70, 75], [1, 0.9, 1], C)}`,
+              scale: `${interpolate(f, [64, 68, 73], [1, 0.9, 1], C)}`,
             }}
           >
             Continuar
           </div>
         </div>
       </Celular>
-      <Toque x={690} y={1445} quando={66} />
-      <Etiqueta texto="Trabalhista" x={60} y={1440} quando={76} rotacao={-7} />
-      <Etiqueta texto="Horas extras" x={560} y={1610} quando={82} rotacao={6} />
+      <Toque x={690} y={1445} quando={64} />
+      <Etiqueta texto="Trabalhista" x={60} y={1440} quando={72} rotacao={-7} />
+      <Etiqueta texto="Horas extras" x={560} y={1610} quando={80} rotacao={6} />
     </>
   );
 }
@@ -304,7 +307,7 @@ function CenaTriagem() {
 function CartaoGrande({ advogado, i, f, fps }) {
   const s = spring({ frame: f - 22 - i * 5, fps, config: { damping: 13, stiffness: 140 } });
   // carrossel: depois de entrar em leque, desliza de lado como quem passa o dedo
-  const passa = interpolate(f, [62, 74], [0, -1], { ...C, easing: SAIDA });
+  const passa = interpolate(f, [64, 74], [0, -1], { ...C, easing: SAIDA });
   const posicao = i - 1 + passa;
   return (
     <div
@@ -363,7 +366,7 @@ function CenaResultado() {
       {ADVOGADOS.map((a, i) => (
         <CartaoGrande key={a.nome} advogado={a} i={i} f={f} fps={fps} />
       ))}
-      <Toque x={700} y={1180} quando={60} />
+      <Toque x={700} y={1180} quando={64} />
       <div style={{ position: "absolute", bottom: 150, left: 0, right: 0, textAlign: "center", fontFamily: SANS, fontWeight: 700, fontSize: 48, color: COR.creme, opacity: interpolate(f, [30, 40], [0, 1], C) }}>
         perto de você
       </div>
@@ -374,8 +377,8 @@ function CenaResultado() {
 function CenaAceito() {
   const f = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const aviso = spring({ frame: f - 12, fps, config: { damping: 10, stiffness: 150 } });
-  const tremida = f > 14 && f < 22 ? Math.sin(f * 3) * 6 : 0;
+  const aviso = spring({ frame: f - 13, fps, config: { damping: 10, stiffness: 150 } });
+  const tremida = f > 17 && f < 25 ? Math.sin(f * 3) * 6 : 0;
   const advogado = ADVOGADOS[0];
   return (
     <>
@@ -399,7 +402,7 @@ function CenaAceito() {
                 padding: "34px 0",
                 borderRadius: 28,
                 marginTop: 20,
-                scale: `${interpolate(f, [58, 62, 67], [1, 0.92, 1], C)}`,
+                scale: `${interpolate(f, [64, 68, 73], [1, 0.92, 1], C)}`,
               }}
             >
               Chamar no WhatsApp
@@ -434,7 +437,7 @@ function CenaAceito() {
           <span style={{ fontFamily: SANS, fontSize: 36, lineHeight: 1.3, color: COR.textoSuave }}>Thiago aceitou o seu pedido de contato!</span>
         </div>
       </div>
-      <Toque x={560} y={1410} quando={58} />
+      <Toque x={560} y={1410} quando={64} />
     </>
   );
 }
@@ -469,22 +472,72 @@ function CenaFinal() {
   );
 }
 
-// Ordem e duração (em quadros, 30 por segundo).
+// Ordem e duração (em quadros, 30 por segundo), presas à batida da música.
 const CENAS = [
-  { Comp: CenaLogo, dur: 75, fundo: COR.noite, crua: true },
-  { Comp: CenaProblemas, dur: 90, fundo: COR.marrom },
-  { Comp: CenaPergunta, dur: 75, fundo: COR.marromFundo, de: "lado" },
-  { Comp: CenaTriagem, dur: 105, fundo: COR.creme },
-  { Comp: CenaResultado, dur: 100, fundo: COR.marrom, de: "lado" },
-  { Comp: CenaAceito, dur: 95, fundo: COR.creme },
-  { Comp: CenaFinal, dur: 95, fundo: COR.marromFundo, de: "lado" },
+  { Comp: CenaLogo, dur: 88, fundo: COR.noite, crua: true },
+  { Comp: CenaProblemas, dur: 129, fundo: COR.marrom },
+  { Comp: CenaPergunta, dur: 96, fundo: COR.marromFundo, de: "lado" },
+  { Comp: CenaTriagem, dur: 97, fundo: COR.creme },
+  { Comp: CenaResultado, dur: 96, fundo: COR.marrom, de: "lado" },
+  { Comp: CenaAceito, dur: 97, fundo: COR.creme },
+  { Comp: CenaFinal, dur: 128, fundo: COR.marromFundo, de: "lado" },
 ];
 export const DURACAO_REELS = CENAS.reduce((t, c) => t + c.dur, 0);
+const INICIOS = CENAS.map((_, i) => CENAS.slice(0, i).reduce((t, c) => t + c.dur, 0));
+
+// Efeitos (pacote Sonniss GDC 2024, livres pra uso): [arquivo, quadro, volume, duração em quadros]
+// Originais: whoosh = Chupapsound "WHOOSH PASS SF LOW"; zoom/clique/aviso/digitar = CB Sounddesign
+// Activation 2 (UI Zooms 103, UI Click 33, Feedback 36 up, Counter mid 54); impacto = Bluezone
+// modern cinematic impact 022; pop = Doex Qantum UI "UI_Select_Plastic_05".
+const EFEITOS = [
+  ["sfx/clique.wav", 19, 0.5], // piscada
+  ["sfx/impacto.wav", 23, 0.4, 75], // asas abrindo na batida forte
+  ["sfx/whoosh.wav", 74, 0.5, 30], // zoom saindo da logo
+  ...[0, 1, 2, 3].map((k) => ["sfx/pop.wav", INICIOS[1] + k * BATIDA2, 0.6, 20]), // palavras
+  ["sfx/zoom.wav", INICIOS[2] - 5, 0.6],
+  ["sfx/pop.wav", INICIOS[2] + 34, 0.6, 20], // "A Nocturis te ajuda."
+  ["sfx/whoosh.wav", INICIOS[3], 0.45, 30], // celular subindo
+  ["sfx/digitar.wav", INICIOS[3] + 16, 0.25, 42],
+  ["sfx/clique.wav", INICIOS[3] + 64, 0.7],
+  ["sfx/pop.wav", INICIOS[3] + 72, 0.55, 18],
+  ["sfx/pop.wav", INICIOS[3] + 80, 0.55, 18],
+  ["sfx/zoom.wav", INICIOS[4] - 5, 0.6],
+  ["sfx/whoosh.wav", INICIOS[4] + 20, 0.35, 30], // cartões em leque
+  ["sfx/clique.wav", INICIOS[4] + 64, 0.7],
+  ["sfx/zoom.wav", INICIOS[4] + 64, 0.45],
+  ["sfx/zoom.wav", INICIOS[5] - 5, 0.6],
+  ["sfx/aviso.wav", INICIOS[5] + 15, 0.8], // aviso de pedido aceito
+  ["sfx/clique.wav", INICIOS[5] + 64, 0.7],
+  ["sfx/zoom.wav", INICIOS[6] - 5, 0.6],
+  ["sfx/impacto.wav", INICIOS[6] + 14, 0.35, 70], // asas no final
+  ["sfx/pop.wav", INICIOS[6] + 40, 0.6, 20], // botão nocturis.com.br
+];
+
+function Trilha() {
+  const { durationInFrames } = useVideoConfig();
+  return (
+    <>
+      {/* "Gimme That Groove" (Mixkit, licença livre). Começa 1,35 s adiante pra primeira
+          batida forte (2,15 s da música) cair nas asas da coruja abrindo. */}
+      <Audio
+        src={staticFile("musica.mp3")}
+        trimBefore={40}
+        volume={(f) => interpolate(f, [0, 8, durationInFrames - 30, durationInFrames], [0, 0.75, 0.75, 0], C)}
+      />
+      {EFEITOS.map(([arquivo, quando, volume, dur], i) => (
+        <Sequence key={i} from={quando} durationInFrames={dur ?? 30} layout="none">
+          <Audio src={staticFile(arquivo)} volume={volume} />
+        </Sequence>
+      ))}
+    </>
+  );
+}
 
 export function Reels() {
   let inicio = 0;
   return (
     <AbsoluteFill style={{ background: COR.noite }}>
+      <Trilha />
       {CENAS.map(({ Comp, dur, fundo, de, crua }, i) => {
         const from = inicio;
         inicio += dur;
