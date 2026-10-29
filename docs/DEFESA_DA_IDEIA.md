@@ -105,3 +105,14 @@ resposta madura é:
   "Existem plataformas jurídicas grandes, como o Jusbrasil, e a OAB-SP mostra que o tema está em debate. A
   diferença da Nocturis é o foco em quem não sabe nem por onde começar, com a triagem, e o desenho pensado desde
   o início pra respeitar as regras de publicidade."
+
+## 5. Complementos (29/10/2026)
+
+- **Golpe do falso advogado:** a OAB registrou mais de 2.100 denúncias até maio de 2025 e a OAB-SP lançou o
+  ConfirmADV, um sistema de verificação de identidade profissional, depois de 1.600 denúncias
+  ([Migalhas](https://www.migalhas.com.br/quentes/429558/falso-advogado-oab-sp-lanca-sistema-apos-1-600-denuncias)).
+  A Nocturis só mostra advogado com inscrição conferida no CNA: protege o cliente do mesmo problema que a OAB
+  está combatendo.
+- **Fala de ética proativa** logo depois da demonstração (ver resposta no chat de 29/10).
+- **Limitações a admitir antes de perguntarem:** só duas áreas, IA em camada gratuita (dito na política de
+  privacidade), dados de demonstração, poucos testes com usuários reais, a decisão da OAB-SP.
