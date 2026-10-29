@@ -3,7 +3,7 @@ import { EsqueletoPagina } from "../../components/Esqueleto/Esqueleto";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/Button/Button";
 import { ChoiceCard } from "../../components/ChoiceCard/ChoiceCard";
-import { Loading } from "../../components/Loading/Loading";
+import { CorujaAnimada } from "../../components/CorujaAnimada/CorujaAnimada";
 import { api } from "../../lib/api";
 import { AREAS } from "../../lib/areas";
 import { useTitulo } from "../../lib/useTitulo";
@@ -26,6 +26,18 @@ function SetaVoltar() {
   );
 }
 
+// A coruja da Nocturis como guia da triagem (28/10/2026, ideia do usuário a partir de
+// referências de apps com mascote): pequena, respirando e piscando, com a dica de cada passo
+// num balão. É a própria marca, então dá um toque simpático sem virar desenho caricato.
+function GuiaCoruja({ children }) {
+  return (
+    <div className="triagem-guia">
+      <CorujaAnimada />
+      <p className="triagem-guia__balao">{children}</p>
+    </div>
+  );
+}
+
 function TelaAnalisando() {
   const [indice, setIndice] = useState(0);
   useEffect(() => {
@@ -35,7 +47,9 @@ function TelaAnalisando() {
   return (
     <div className="triagem-analisando" role="status" aria-live="polite">
       <div className="triagem-analisando__cartao">
-        <Loading />
+        <span className="triagem-analisando__coruja">
+          <CorujaAnimada />
+        </span>
         <h2>Montando seu resultado</h2>
         <p>{FRASES_ANALISE[indice]}</p>
       </div>
@@ -186,11 +200,11 @@ export function TriagemPage() {
             <label className="triagem__pergunta" htmlFor={`p-${tela.p.id}`}>
               {tela.p.pergunta}
             </label>
-            {passo === 0 && (
-              <p className="triagem__dica">
-                Não precisa saber nada de Direito. Escreva do seu jeito, como contaria pra um amigo.
-              </p>
-            )}
+            <GuiaCoruja>
+              {passo === 0
+                ? "Não precisa saber nada de Direito. Escreva do seu jeito, como contaria pra um amigo."
+                : "Se não lembrar direitinho, uma ideia aproximada já ajuda."}
+            </GuiaCoruja>
             <textarea
               id={`p-${tela.p.id}`}
               className="input triagem__campo"
@@ -217,11 +231,11 @@ export function TriagemPage() {
                   }.`
                 : "Seu problema é mais parecido com qual destes?"}
             </h1>
-            <p className="triagem__dica">
+            <GuiaCoruja>
               {areaSugerida && areaSugerida !== "indefinido"
                 ? "Se não fizer sentido pra você, é só escolher outra opção."
                 : "Não deu pra ter certeza só com o que você contou. Escolha a que chega mais perto."}
-            </p>
+            </GuiaCoruja>
             <div className="choice-grid">
               {Object.entries(AREAS).map(([valorArea, { label, descricao }]) => (
                 <ChoiceCard
@@ -244,11 +258,11 @@ export function TriagemPage() {
             <h1 className="triagem__pergunta">
               {sugeridas.length > 0 ? "Confere se é isso:" : "Qual destes assuntos é o seu caso?"}
             </h1>
-            <p className="triagem__dica">
+            <GuiaCoruja>
               {sugeridas.length > 0
-                ? "Já marcamos o que entendemos do que você contou. Desmarque o que não for, ou marque mais."
+                ? "Já marquei o que entendi do que você contou. Desmarque o que não for, ou marque mais."
                 : "Marque um ou mais. Isso ajuda a achar quem atende exatamente o seu caso."}
-            </p>
+            </GuiaCoruja>
             <ul className="chips">
               {chips.map((c) => (
                 <li key={c.valor}>

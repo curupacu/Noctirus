@@ -748,3 +748,89 @@ li:nth-child(even) > .atalho .atalho__previa {
   color: var(--text);
   text-decoration: none;
 }
+
+/* Atalhos do cliente no perfil (28/10/2026) */
+.atalho__previa-campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 80%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #fffdf8;
+  color: var(--text);
+  box-shadow: 0 8px 18px rgba(20, 12, 6, 0.25);
+}
+
+.atalho__previa-campo strong {
+  font-family: var(--font-serif);
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.atalho__previa-campo span {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 8px;
+  border: 1px solid #e4d6c2;
+  border-radius: 8px;
+  font-size: 10px;
+  color: var(--text-faint);
+}
+
+.atalho__previa-campo i {
+  width: 1px;
+  height: 11px;
+  background: var(--brown);
+}
+
+.atalho__previa-triagem {
+  transform: rotate(-3deg);
+}
+
+.atalho__previa-triagem small {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--brown);
+}
+
+.atalho__previa-triagem strong {
+  font-size: 13px;
+}
+
+.atalho__previa-linhas {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.atalho__previa-linhas i {
+  height: 4px;
+  border-radius: 2px;
+  background: #efe2d0;
+}
+
+.atalho__previa-linhas i:last-child {
+  width: 60%;
+}
+
+.atalho__previa-check {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--brown);
+  color: #fffdf8;
+}
+
+.atalho__previa-check svg {
+  width: 18px;
+  height: 18px;
+}

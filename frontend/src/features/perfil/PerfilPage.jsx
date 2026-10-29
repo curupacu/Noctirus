@@ -81,6 +81,66 @@ const ATALHOS_ADVOGADO = ({ uid, nome, foto }) => [
   },
 ];
 
+// Atalhos do cliente (28/10/2026), no mesmo formato dos do advogado: antes eram duas linhas
+// simples de lista no fim do perfil.
+const ATALHOS_CLIENTE = [
+  {
+    to: "/triagem",
+    titulo: "Nova triagem",
+    texto: "Conte outro caso",
+    previa: (
+      <span className="atalho__previa-campo">
+        <strong>O que aconteceu?</strong>
+        <span>
+          Conte do seu jeito<i />
+        </span>
+      </span>
+    ),
+  },
+  {
+    to: "/minhas-triagens",
+    titulo: "Minhas triagens",
+    texto: "Os casos que você já contou",
+    previa: (
+      <span className="atalho__previa-cartao atalho__previa-triagem">
+        <small>Trabalhista</small>
+        <strong>Horas extras</strong>
+        <span className="atalho__previa-linhas">
+          <i />
+          <i />
+        </span>
+      </span>
+    ),
+  },
+  {
+    to: "/minhas-solicitacoes",
+    titulo: "Meus pedidos",
+    texto: "Quem aceitou falar com você",
+    previa: (
+      <span className="atalho__previa-perfil">
+        <span className="atalho__previa-check">
+          <Icone d="M20 6 9 17l-5-5" />
+        </span>
+        <span>
+          <strong>Pedido aceito</strong>
+          <small>Chamar no WhatsApp →</small>
+        </span>
+      </span>
+    ),
+  },
+  {
+    to: "/configuracoes",
+    titulo: "Configurações",
+    texto: "Acessibilidade, avisos e seus dados",
+    previa: (
+      <span className="atalho__previa-escudo">
+        <Icone d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm7.4 0a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z" />
+        <small>Ajustes</small>
+      </span>
+    ),
+  },
+];
+
 // Enquanto a OAB não está aprovada o perfil não aparece pra nenhum cliente (RF009) — o
 // advogado precisa saber disso logo de cara, e o porquê quando foi recusado/revogado.
 function AvisoSituacaoOab({ advogado }) {
@@ -367,21 +427,30 @@ export function PerfilPage() {
       {mensagem && <p role="status">{mensagem}</p>}
 
       <div className="section-heading">
-        <h2>Mais</h2>
+        <h2>{role === "cliente" ? "Atalhos" : "Mais"}</h2>
       </div>
+      {role === "cliente" ? (
+        <ul className="atalhos">
+          {ATALHOS_CLIENTE.map((atalho) => (
+            <li key={atalho.to}>
+              <Link to={atalho.to} className="atalho">
+                <span className="atalho__previa" aria-hidden="true">
+                  {atalho.previa}
+                </span>
+                <span className="atalho__titulo">
+                  {atalho.titulo} <span aria-hidden="true">→</span>
+                </span>
+                <span className="atalho__texto">{atalho.texto}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      ) : (
       <ul className="list-plain">
         {role === "admin" && (
           <li>
             <Link to="/admin/advogados" className="list-row">
               <span className="list-row__title">Painel administrativo</span>
-              <span className="advogado-row__chevron" aria-hidden="true">›</span>
-            </Link>
-          </li>
-        )}
-        {role === "cliente" && (
-          <li>
-            <Link to="/minhas-solicitacoes" className="list-row">
-              <span className="list-row__title">Meus pedidos de contato</span>
               <span className="advogado-row__chevron" aria-hidden="true">›</span>
             </Link>
           </li>
@@ -393,6 +462,7 @@ export function PerfilPage() {
           </Link>
         </li>
       </ul>
+      )}
     </main>
   );
 }
