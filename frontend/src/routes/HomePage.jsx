@@ -546,6 +546,7 @@ export function HomePage() {
               <li><Link to="/cadastro">Criar conta</Link></li>
               <li><Link to="/login">Entrar</Link></li>
               <li><Link to="/cadastro">Sou advogado</Link></li>
+              <li><Link to="/termos">Termos de uso</Link></li>
               <li><Link to="/privacidade">Política de privacidade</Link></li>
             </ul>
           </div>

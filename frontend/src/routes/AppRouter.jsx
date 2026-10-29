@@ -28,6 +28,7 @@ const ResultadoPage = lazy(() => import("../features/triagem/ResultadoPage").the
 const TriagemPage = lazy(() => import("../features/triagem/TriagemPage").then((m) => ({ default: m.TriagemPage })));
 const NaoEncontradaPage = lazy(() => import("./NaoEncontradaPage").then((m) => ({ default: m.NaoEncontradaPage })));
 const PrivacidadePage = lazy(() => import("./PrivacidadePage").then((m) => ({ default: m.PrivacidadePage })));
+const TermosPage = lazy(() => import("./TermosPage").then((m) => ({ default: m.TermosPage })));
 
 export function AppRouter() {
   return (
@@ -40,6 +41,7 @@ export function AppRouter() {
         <Route path="/cadastro" element={<CadastroPage />} />
         <Route path="/recuperar-senha" element={<RecuperarSenhaPage />} />
         <Route path="/privacidade" element={<PrivacidadePage />} />
+        <Route path="/termos" element={<TermosPage />} />
         {/* A lista com todos os advogados saiu (25/10/2026): o cliente chega neles pela
             triagem e pelo painel. Link antigo volta pro início. */}
         <Route path="/advogados" element={<Navigate to="/" replace />} />

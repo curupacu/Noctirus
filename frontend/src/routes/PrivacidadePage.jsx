@@ -11,7 +11,7 @@ export function PrivacidadePage() {
     <main>
       <span className="eyebrow">Nocturis</span>
       <h1>Política de privacidade</h1>
-      <p className="text-muted">Última atualização: agosto de 2026.</p>
+      <p className="text-muted">Última atualização: outubro de 2026.</p>
 
       <div className="section-heading">
         <h2>Quais dados coletamos</h2>
@@ -30,7 +30,7 @@ export function PrivacidadePage() {
         <li>Autenticar seu login e mostrar seus próprios dados de volta pra você;</li>
         <li>Classificar sua triagem (área do direito, advogados compatíveis);</li>
         <li>Mostrar seu perfil público, se você for advogado;</li>
-        <li>Avisar por e-mail quando um advogado responde uma conversa;</li>
+        <li>Avisar por e-mail e no celular quando um advogado responde o seu pedido de contato;</li>
         <li>Conferir o registro na OAB de quem se cadastra como advogado.</li>
       </ul>
 
@@ -43,7 +43,7 @@ export function PrivacidadePage() {
       </p>
       <ul className="list-plain">
         <li>
-          <strong>Firebase (Google)</strong>: login e banco de dados;
+          <strong>Firebase (Google)</strong>: login, banco de dados e avisos no celular;
         </li>
         <li>
           <strong>Google Gemini e Groq</strong>: classificam a descrição do seu caso na
@@ -56,7 +56,7 @@ export function PrivacidadePage() {
           <strong>Cloudinary</strong>: guarda a foto de perfil de advogados que fazem upload;
         </li>
         <li>
-          <strong>Resend</strong>: envia o e-mail de notificação de resposta no chat;
+          <strong>Resend</strong>: envia os e-mails de aviso, como pedido aceito e recuperação de senha;
         </li>
         <li>
           <strong>Google Analytics</strong>: mede quantas pessoas visitam o site e quais
@@ -70,10 +70,14 @@ export function PrivacidadePage() {
       <p>
         Você pode baixar uma cópia de tudo que temos sobre você ou apagar sua conta a qualquer
         momento, direto pela plataforma, sem precisar pedir pra ninguém. Veja em{" "}
-        <Link to="/perfil">Meu perfil → Meus dados</Link> depois de entrar na sua conta.
+        <Link to="/configuracoes#dados">Configurações → Privacidade e dados</Link> depois de entrar na sua conta.
         Apagar a conta remove seu cadastro e, se você for advogado, seu perfil público e
-        currículo. Mensagens de chat que envolvem outra pessoa não são apagadas junto, porque
-        também são registro do outro lado da conversa.
+        currículo. Pedidos de contato já enviados continuam no histórico do advogado que os
+        recebeu, porque também são registro do outro lado.
+      </p>
+
+      <p>
+        As regras de uso da plataforma estão nos <Link to="/termos">termos de uso</Link>.
       </p>
 
       <div className="section-heading">

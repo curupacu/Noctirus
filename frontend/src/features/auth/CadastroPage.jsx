@@ -458,7 +458,11 @@ export function CadastroPage() {
               onChange={(e) => setAceitouPoliticaPrivacidade(e.target.checked)}
             />
             <span>
-              Li e aceito a{" "}
+              Li e aceito os{" "}
+              <Link to="/termos" target="_blank" rel="noreferrer" className="entrada__link">
+                termos de uso
+              </Link>{" "}
+              e a{" "}
               <Link to="/privacidade" target="_blank" rel="noreferrer" className="entrada__link">
                 política de privacidade
               </Link>
