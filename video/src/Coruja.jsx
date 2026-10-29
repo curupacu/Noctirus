@@ -35,9 +35,11 @@ export function CorujaLogo({ largura = 560, velocidade = 1, comNome = true, corN
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
+  // o halo de luz também apaga quando o olho fecha (antes ele continuava aceso na piscada)
+  const aberto = interpolate(palpebra, [-46, -10], [1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
 
   // 2) asas abrindo do centro
-  const asas = spring({ frame: quadro - 40, fps, config: { damping: 14, stiffness: 90, mass: 0.9 } });
+  const asas = spring({ frame: quadro - 40, fps, config: { damping: 11, stiffness: 120, mass: 0.8 } });
   const giro = interpolate(asas, [0, 1], [62, 0]);
   const escalaAsa = interpolate(asas, [0, 1], [0.55, 1]);
   const opacAsa = interpolate(asas, [0, 0.25], [0, 1], { extrapolateRight: "clamp" });
@@ -108,7 +110,7 @@ export function CorujaLogo({ largura = 560, velocidade = 1, comNome = true, corN
             ry="30"
             fill="#FFF28D"
             filter="url(#brilho-olho)"
-            opacity={brilho * interpolate(asas, [0, 1], [0.75, 0.18])}
+            opacity={brilho * aberto * interpolate(asas, [0, 1], [0.75, 0.18])}
           />
         ))}
         {OLHOS.map((o, i) => (

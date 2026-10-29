@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "estudio": "remotion studio src/index.jsx",
-    "render": "remotion render src/index.jsx Promo out/nocturis-promo.mp4"
+    "render": "remotion render src/index.jsx Reels out/nocturis-reels.mp4",
+    "render:horizontal": "remotion render src/index.jsx Promo out/nocturis-promo.mp4"
   },
   "dependencies": {
     "@remotion/cli": "4.0.539",
