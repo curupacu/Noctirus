@@ -170,3 +170,31 @@
   background: rgba(246, 238, 223, 0.24);
   color: #fffdf8;
 }
+
+/* Engrenagem das Configurações, no lugar do antigo "Sair": mesmo jeito do sininho. */
+.site-header__config {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: #f6eedf;
+  transition: background-color 0.15s ease;
+}
+
+.site-header__config svg {
+  width: 22px;
+  height: 22px;
+}
+
+.site-header__config:hover,
+.site-header__config--ativo {
+  background: rgba(246, 238, 223, 0.14);
+  color: #fffdf8;
+}
+
+.site-header__config:focus-visible {
+  outline: 2px solid #fffdf8;
+  outline-offset: 2px;
+}

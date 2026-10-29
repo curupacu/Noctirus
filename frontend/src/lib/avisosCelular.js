@@ -47,3 +47,11 @@ export async function ativarAvisos() {
   if (permissao === "granted") await registrarAparelho();
   return permissao;
 }
+
+// Desligar pelas Configurações: apaga o token deste aparelho no Firebase. O backend já tira
+// da lista os tokens que o Firebase recusa, então o próximo envio limpa o registro.
+export async function desativarAvisos() {
+  const { getMessaging, deleteToken, isSupported } = await import("firebase/messaging");
+  if (!(await isSupported())) return;
+  await deleteToken(getMessaging(firebaseApp));
+}

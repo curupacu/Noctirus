@@ -921,3 +921,22 @@ a.list-row:hover {
   background: var(--area-transito-bg);
   color: var(--area-transito);
 }
+
+/* Configurações > Acessibilidade (28/10/2026). O CSS do site usa quase tudo em px, então o
+   tamanho do texto aumenta a página inteira por zoom (letras, botões e espaços juntos). */
+html[data-texto="grande"] {
+  zoom: 1.12;
+}
+
+html[data-texto="maior"] {
+  zoom: 1.25;
+}
+
+html[data-movimento="reduzido"] *,
+html[data-movimento="reduzido"] *::before,
+html[data-movimento="reduzido"] *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}

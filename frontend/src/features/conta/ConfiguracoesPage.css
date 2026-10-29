@@ -1,0 +1,176 @@
+/* Configurações (28/10/2026): um cartão por assunto, com linhas "texto à esquerda, ação à
+   direita". Só marrom, bege e creme, sem pílulas. */
+main.config {
+  max-width: 760px;
+}
+
+.config__secao {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+
+.config__secao h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.config__descricao {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.config__linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: 1px solid #f1e9dc;
+}
+
+.config__linha--coluna {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.config__linha-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.config__linha-texto label,
+.config__linha-texto strong {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.config__linha-texto p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--color-text-muted);
+}
+
+.config__linha .button {
+  flex-shrink: 0;
+}
+
+/* Tamanho do texto: três cartões com "Aa" crescendo, em vez de abas arredondadas. */
+.config__tamanhos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-sm);
+}
+
+.config__tamanho {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-height: 84px;
+  padding: var(--space-sm);
+  border: 1.5px solid #e4d6c2;
+  border-radius: var(--radius-sm);
+  background: #fffdf8;
+  color: var(--brown);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.config__tamanho span {
+  font-family: var(--font-serif);
+  line-height: 1.1;
+}
+
+.config__tamanho--normal span {
+  font-size: 22px;
+}
+
+.config__tamanho--grande span {
+  font-size: 28px;
+}
+
+.config__tamanho--maior span {
+  font-size: 34px;
+}
+
+.config__tamanho:hover {
+  border-color: var(--brown);
+}
+
+.config__tamanho--ativo,
+.config__tamanho--ativo:hover {
+  background: var(--brown);
+  border-color: var(--brown);
+  color: #fffdf8;
+}
+
+.config__tamanho:focus-visible,
+.config__chave:focus-visible {
+  outline: 2px solid var(--brown);
+  outline-offset: 2px;
+}
+
+/* Chave liga/desliga. */
+.config__chave {
+  position: relative;
+  flex-shrink: 0;
+  width: 52px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 15px;
+  background: #e4d6c2;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.config__chave-bolinha {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #fffdf8;
+  box-shadow: 0 1px 3px rgba(59, 40, 28, 0.25);
+  transition: transform 0.2s ease;
+}
+
+.config__chave--ligada {
+  background: var(--brown);
+}
+
+.config__chave--ligada .config__chave-bolinha {
+  transform: translateX(22px);
+}
+
+.config__link {
+  align-self: flex-start;
+  font-weight: 700;
+  color: var(--brown);
+}
+
+.config__secao .passos-iphone {
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .config__linha:not(.config__linha--coluna) {
+    flex-wrap: wrap;
+  }
+
+  .config__linha:not(.config__linha--coluna) .config__linha-texto {
+    flex: 1 1 200px;
+  }
+}

@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { EsqueletoPagina } from "../../components/Esqueleto/Esqueleto";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { AdvogadoCard, AdvogadoDestaque } from "../../components/AdvogadoCard/AdvogadoCard";
+import { BotaoOuvir } from "../../components/BotaoOuvir/BotaoOuvir";
 import { Loading } from "../../components/Loading/Loading";
 import { api } from "../../lib/api";
+import { movimentoReduzido } from "../../lib/preferencias";
 import { useTitulo } from "../../lib/useTitulo";
 import "../painel/PainelPage.css";
 import { LABEL_AREA_CURTO as LABEL_AREA } from "../../lib/areas";
@@ -47,7 +49,7 @@ export function ResultadoPage() {
     // sempre — achado ao vivo, 18/08).
     if (!temResultado) return;
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (movimentoReduzido()) {
       setRevelando(false);
       return;
     }
@@ -103,6 +105,15 @@ export function ResultadoPage() {
   const especialidade = catalogoEspecialidades[resultado.especialidade || resultado.categorias?.[0]];
   const qtd = advogados?.length ?? 0;
   const indefinido = resultado.areaClassificada === "indefinido";
+  const procurando = !indefinido && (advogados === null || revelando);
+  const tituloDestaque = indefinido ? "Não deu pra identificar a área" : especialidade || `Caso ${area.toLowerCase()}`;
+  const textoDestaque = indefinido
+    ? "Tente uma nova triagem contando um pouco mais sobre o que aconteceu."
+    : procurando
+      ? "Procurando advogados que atendem esse assunto..."
+      : qtd > 0
+        ? `${qtd} advogado${qtd === 1 ? "" : "s"} atende${qtd === 1 ? "" : "m"} esse assunto${regiao ? ` em ${regiao.uf}` : ""}. Escolha um e peça contato.`
+        : "Ainda não temos advogado aprovado pra esse assunto na sua região.";
 
   return (
     <main className="painel resultado">
@@ -117,18 +128,8 @@ export function ResultadoPage() {
           <span className="destaque__etiqueta">
             {area} · {resultado.origem === "ia" ? "identificado por IA" : "identificado por regras"}
           </span>
-          <h2 className="destaque__titulo">
-            {indefinido ? "Não deu pra identificar a área" : especialidade || `Caso ${area.toLowerCase()}`}
-          </h2>
-          <p className="destaque__texto">
-            {indefinido
-              ? "Tente uma nova triagem contando um pouco mais sobre o que aconteceu."
-              : advogados === null || revelando
-                ? "Procurando advogados que atendem esse assunto..."
-                : qtd > 0
-                  ? `${qtd} advogado${qtd === 1 ? "" : "s"} atende${qtd === 1 ? "" : "m"} esse assunto${regiao ? ` em ${regiao.uf}` : ""}. Escolha um e peça contato.`
-                  : "Ainda não temos advogado aprovado pra esse assunto na sua região."}
-          </p>
+          <h2 className="destaque__titulo">{tituloDestaque}</h2>
+          <p className="destaque__texto">{textoDestaque}</p>
           <div className="destaque__acoes">
             {!indefinido && qtd > 0 && (
               <a href="#advogados" className="button button--primary">
@@ -138,6 +139,10 @@ export function ResultadoPage() {
             <Link to="/triagem" className={indefinido ? "button button--primary" : "destaque__link"}>
               {indefinido ? "Fazer nova triagem" : "Contar outro caso"}
             </Link>
+            <BotaoOuvir
+              className="destaque__link"
+              texto={procurando ? "" : `${tituloDestaque}. ${textoDestaque}`}
+            />
           </div>
         </div>
       </section>

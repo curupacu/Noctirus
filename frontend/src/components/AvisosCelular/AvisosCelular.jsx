@@ -7,6 +7,7 @@ import {
   registrarAparelho,
   suportaAvisos,
 } from "../../lib/avisosCelular";
+import { lerPreferencias } from "../../lib/preferencias";
 import { PassosIphone } from "./PassosIphone";
 import "./AvisosCelular.css";
 
@@ -23,6 +24,8 @@ function foiDispensadoFazPouco() {
 }
 
 function situacaoInicial() {
+  // Desligou nas Configurações: nem pergunta de novo nem registra o aparelho em silêncio.
+  if (lerPreferencias().avisosDesligados) return "oculto";
   if (suportaAvisos()) {
     if (Notification.permission === "granted") return "ativo";
     if (Notification.permission === "denied") return "oculto";

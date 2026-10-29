@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { Input } from "../../components/Input/Input";
 import { Button } from "../../components/Button/Button";
@@ -69,13 +69,13 @@ const ATALHOS_ADVOGADO = ({ uid, nome, foto }) => [
     ),
   },
   {
-    to: "/meus-dados",
-    titulo: "Meus dados",
-    texto: "Baixe ou apague seus dados",
+    to: "/configuracoes",
+    titulo: "Configurações",
+    texto: "Acessibilidade, avisos e seus dados",
     previa: (
       <span className="atalho__previa-escudo">
-        <Icone d="M12 3 4 6v6c0 4.5 3.4 8 8 9 4.6-1 8-4.5 8-9V6l-8-3Zm-3 9 2 2 4-4" />
-        <small>LGPD</small>
+        <Icone d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm7.4 0a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z" />
+        <small>Ajustes</small>
       </span>
     ),
   },
@@ -126,8 +126,7 @@ function AvisoSituacaoOab({ advogado }) {
 // mudam — pra eles /perfil já era só um formulário pequeno, sem esse problema.
 export function PerfilPage() {
   useTitulo("Meu perfil");
-  const { user, role, logout } = useAuth();
-  const navigate = useNavigate();
+  const { user, role } = useAuth();
 
   const [dadosUsuario, setDadosUsuario] = useState(null);
   const [nome, setNome] = useState("");
@@ -318,7 +317,7 @@ export function PerfilPage() {
       <h1>Meu perfil</h1>
 
       {/* Topo com foto, nome e e-mail (cliente e admin) — antes era só um selo "Cliente" e
-          o botão de foto solto. O "Sair" também fica aqui, não só no cabeçalho. */}
+          o botão de foto solto. O "Sair" mora nas Configurações. */}
       <section className="card perfil-topo">
         <Avatar nome={nome} foto={foto} seed={user.uid} className="avatar-placeholder--grande" />
         <div className="perfil-topo__info">
@@ -344,15 +343,6 @@ export function PerfilPage() {
               />
             </>
           )}
-          <Button
-            variant="secondary"
-            onClick={async () => {
-              await logout();
-              navigate("/");
-            }}
-          >
-            Sair
-          </Button>
         </div>
         {erroFoto && <p role="alert">{erroFoto}</p>}
       </section>
@@ -396,14 +386,12 @@ export function PerfilPage() {
             </Link>
           </li>
         )}
-        {role !== "admin" && (
-          <li>
-            <Link to="/meus-dados" className="list-row">
-              <span className="list-row__title">Meus dados</span>
-              <span className="advogado-row__chevron" aria-hidden="true">›</span>
-            </Link>
-          </li>
-        )}
+        <li>
+          <Link to="/configuracoes" className="list-row">
+            <span className="list-row__title">Configurações</span>
+            <span className="advogado-row__chevron" aria-hidden="true">›</span>
+          </Link>
+        </li>
       </ul>
     </main>
   );

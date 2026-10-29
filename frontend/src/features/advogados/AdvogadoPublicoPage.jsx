@@ -1,4 +1,5 @@
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { BotaoOuvir } from "../../components/BotaoOuvir/BotaoOuvir";
 import { Avatar } from "../../components/Avatar/Avatar";
 import { EsqueletoPerfil } from "../../components/Esqueleto/Esqueleto";
 import { SeloOab } from "../../components/SeloOab/SeloOab";
@@ -92,6 +93,7 @@ export function AdvogadoPublicoPage() {
             <section className="card">
               <h2>Sobre</h2>
               <p className="perfil-adv__bio">{advogado.bio}</p>
+              <BotaoOuvir texto={`${advogado.nome}. ${advogado.bio}`} />
             </section>
           )}
 

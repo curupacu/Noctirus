@@ -5,6 +5,10 @@ import './components/Input/Input.css'
 import './index.css'
 import App from './App.jsx'
 import { acordarServidor } from './lib/api'
+import { aplicarPreferencias } from './lib/preferencias'
+
+// Tamanho do texto e animações escolhidos nas Configurações, antes da primeira tela aparecer.
+aplicarPreferencias()
 
 // Já cutuca o backend (Render grátis hiberna) enquanto a pessoa vê a Home ou o login.
 acordarServidor()

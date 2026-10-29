@@ -17,7 +17,7 @@ const CadastroPage = lazy(() => import("../features/auth/CadastroPage").then((m)
 const LoginPage = lazy(() => import("../features/auth/LoginPage").then((m) => ({ default: m.LoginPage })));
 const RecuperarSenhaPage = lazy(() => import("../features/auth/RecuperarSenhaPage").then((m) => ({ default: m.RecuperarSenhaPage })));
 const CartaoPage = lazy(() => import("../features/cartao/CartaoPage").then((m) => ({ default: m.CartaoPage })));
-const MeusDadosPage = lazy(() => import("../features/conta/MeusDadosPage").then((m) => ({ default: m.MeusDadosPage })));
+const ConfiguracoesPage = lazy(() => import("../features/conta/ConfiguracoesPage").then((m) => ({ default: m.ConfiguracoesPage })));
 const PainelPage = lazy(() => import("../features/painel/PainelPage").then((m) => ({ default: m.PainelPage })));
 const MinhasSolicitacoesPage = lazy(() => import("../features/solicitacoes/MinhasSolicitacoesPage").then((m) => ({ default: m.MinhasSolicitacoesPage })));
 const QuadroCasosPage = lazy(() => import("../features/casos/QuadroCasosPage").then((m) => ({ default: m.QuadroCasosPage })));
@@ -128,13 +128,15 @@ export function AppRouter() {
         <Route path="/solicitacoes" element={<Navigate to="/casos" replace />}
         />
         <Route
-          path="/meus-dados"
+          path="/configuracoes"
           element={
-            <RotaProtegida papeis={["cliente", "advogado"]}>
-              <MeusDadosPage />
+            <RotaProtegida papeis={["cliente", "advogado", "admin"]}>
+              <ConfiguracoesPage />
             </RotaProtegida>
           }
         />
+        {/* "Meus dados" virou uma parte das Configurações (28/10/2026). */}
+        <Route path="/meus-dados" element={<Navigate to="/configuracoes#dados" replace />} />
         <Route
           path="/admin/advogados"
           element={
