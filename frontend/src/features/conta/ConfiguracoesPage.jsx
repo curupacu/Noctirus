@@ -12,7 +12,7 @@ import {
   registrarAparelho,
   suportaAvisos,
 } from "../../lib/avisosCelular";
-import { salvarPreferencia, usePreferencias } from "../../lib/preferencias";
+import { redefinirAcessibilidade, salvarPreferencia, usePreferencias } from "../../lib/preferencias";
 import { usePwaInstall } from "../../lib/usePwaInstall";
 import { useTitulo } from "../../lib/useTitulo";
 import { useAuth } from "../auth/AuthContext";
@@ -239,10 +239,6 @@ function SecaoDados() {
           {excluindo ? "Excluindo..." : "Excluir"}
         </Button>
       </div>
-
-      <Link to="/privacidade" className="config__link">
-        Ler a política de privacidade
-      </Link>
     </section>
   );
 }
@@ -301,6 +297,22 @@ export function ConfiguracoesPage() {
           texto="Tira as transições, os efeitos de entrada e a coruja animada."
         />
 
+        <Chave
+          id="config-negrito"
+          ligada={prefs.negrito}
+          onMudar={(ligada) => salvarPreferencia("negrito", ligada)}
+          titulo="Texto em negrito"
+          texto="Deixa os textos mais grossos, mais fáceis de ler."
+        />
+
+        <Chave
+          id="config-contraste"
+          ligada={prefs.contraste}
+          onMudar={(ligada) => salvarPreferencia("contraste", ligada)}
+          titulo="Contraste reforçado"
+          texto="Escurece os textos mais claros e as bordas."
+        />
+
         {temVoz && (
           <Chave
             id="config-ouvir"
@@ -310,11 +322,39 @@ export function ConfiguracoesPage() {
             texto="Mostra um botão pra ouvir em voz alta o resultado da triagem e o perfil dos advogados."
           />
         )}
+
+        <div className="config__linha">
+          <div className="config__linha-texto">
+            <strong>Voltar ao padrão</strong>
+            <p>Desfaz todos os ajustes de acessibilidade.</p>
+          </div>
+          <Button variant="secondary" onClick={redefinirAcessibilidade}>
+            Redefinir
+          </Button>
+        </div>
       </section>
 
       {role !== "admin" && <SecaoAvisos />}
       <SecaoApp />
       {role !== "admin" && <SecaoDados />}
+
+      <section className="card config__secao" aria-labelledby="config-ajuda">
+        <h2 id="config-ajuda">Ajuda e informações</h2>
+        <ul className="list-plain config__links">
+          <li>
+            <a href="/#perguntas" className="list-row">
+              <span className="list-row__title">Perguntas frequentes</span>
+              <span className="advogado-row__chevron" aria-hidden="true">›</span>
+            </a>
+          </li>
+          <li>
+            <Link to="/privacidade" className="list-row">
+              <span className="list-row__title">Política de privacidade</span>
+              <span className="advogado-row__chevron" aria-hidden="true">›</span>
+            </Link>
+          </li>
+        </ul>
+      </section>
 
       <section className="card config__secao" aria-labelledby="config-conta">
         <h2 id="config-conta">Conta</h2>

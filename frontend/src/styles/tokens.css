@@ -24,9 +24,9 @@
 
   /* Dourado chapado — sem degradê em lugar nenhum. --gold-ink é o mesmo tom escurecido
      pra texto e link sobre fundo claro: o dourado puro não tem contraste no branco. */
-  --gold: #d9a41e;
-  --gold-dim: #c08f17;
-  --gold-ink: #87600a;
+  --gold: #e6d3b8; /* 28/10/2026: o dourado virou bege; o site é só marrom, bege e creme */
+  --gold-dim: #a07a58;
+  --gold-ink: var(--brown);
 
   /* Creme — texto sobre o marrom */
   --cream: #f6eedf;

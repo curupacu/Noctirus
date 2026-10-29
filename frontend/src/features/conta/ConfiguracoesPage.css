@@ -155,10 +155,13 @@ main.config {
   transform: translateX(22px);
 }
 
-.config__link {
-  align-self: flex-start;
-  font-weight: 700;
-  color: var(--brown);
+.config__links {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+.config__links .list-row {
+  margin: 0;
 }
 
 .config__secao .passos-iphone {

@@ -9,6 +9,8 @@ const PADRAO = {
   texto: "normal", // normal | grande | maior
   movimento: "normal", // normal | reduzido
   ouvir: false, // botão "Ouvir" nos textos principais
+  negrito: false, // texto corrido em negrito
+  contraste: false, // textos claros e bordas mais escuros
   avisosDesligados: false, // a pessoa desligou os avisos no celular por aqui
 };
 
@@ -27,6 +29,8 @@ export function aplicarPreferencias(prefs = atuais) {
   const raiz = document.documentElement;
   raiz.dataset.texto = prefs.texto;
   raiz.dataset.movimento = prefs.movimento;
+  raiz.dataset.negrito = prefs.negrito ? "sim" : "nao";
+  raiz.dataset.contraste = prefs.contraste ? "alto" : "normal";
 }
 
 export function lerPreferencias() {
@@ -42,6 +46,11 @@ export function salvarPreferencia(nome, valor) {
   }
   aplicarPreferencias();
   ouvintes.forEach((avisar) => avisar());
+}
+
+// "Voltar ao padrão": só as de acessibilidade (os avisos têm o próprio botão).
+export function redefinirAcessibilidade() {
+  ["texto", "movimento", "ouvir", "negrito", "contraste"].forEach((nome) => salvarPreferencia(nome, PADRAO[nome]));
 }
 
 export function usePreferencias() {

@@ -940,3 +940,14 @@ html[data-movimento="reduzido"] *::after {
   transition-duration: 0.001ms !important;
   scroll-behavior: auto !important;
 }
+
+html[data-negrito="sim"] body {
+  font-weight: 600;
+}
+
+html[data-contraste="alto"] {
+  --text-dim: #3b281c;
+  --text-faint: #5e4e3b;
+  --color-text-muted: #3b281c;
+  --border: #a07a58;
+}
