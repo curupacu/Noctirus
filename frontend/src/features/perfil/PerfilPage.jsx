@@ -430,7 +430,7 @@ export function PerfilPage() {
         <h2>{role === "cliente" ? "Atalhos" : "Mais"}</h2>
       </div>
       {role === "cliente" ? (
-        <ul className="atalhos">
+        <ul className="atalhos atalhos--duas">
           {ATALHOS_CLIENTE.map((atalho) => (
             <li key={atalho.to}>
               <Link to={atalho.to} className="atalho">

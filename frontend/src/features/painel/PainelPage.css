@@ -834,3 +834,10 @@ li:nth-child(even) > .atalho .atalho__previa {
   width: 18px;
   height: 18px;
 }
+
+/* O perfil do cliente é uma coluna estreita: quatro atalhos lado a lado espremiam a prévia. */
+@media (min-width: 760px) {
+  .atalhos.atalhos--duas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
