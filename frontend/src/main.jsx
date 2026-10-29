@@ -30,7 +30,7 @@ function ErroFallback() {
     <main>
       <span className="eyebrow">Erro</span>
       <h1>Algo deu errado</h1>
-      <p className="text-muted">Recarregue a página pra tentar de novo.</p>
+      <p className="text-muted">Recarregue a página para tentar de novo.</p>
       <button className="button button--primary" onClick={() => window.location.reload()}>
         Recarregar
       </button>

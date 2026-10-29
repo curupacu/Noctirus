@@ -129,7 +129,7 @@ export function EditarPerfilPage() {
         situacaoOab: "em_analise",
         situacaoOabMotivo: null,
       }));
-      setMensagemOab("Enviado! Sua OAB voltou pra análise. Você recebe um aviso quando conferirmos.");
+      setMensagemOab("Enviado! Sua OAB voltou para análise. Você recebe um aviso quando conferirmos.");
     } catch (err) {
       setMensagemOab(err.message);
     }
@@ -146,7 +146,7 @@ export function EditarPerfilPage() {
   return (
     <main className="editar-perfil">
       <Link to="/perfil" className="perfil-adv__voltar">
-        ← Voltar pro painel
+        ← Voltar para o painel
       </Link>
       <h1>Editar perfil</h1>
 
@@ -179,7 +179,7 @@ export function EditarPerfilPage() {
           <p className="text-muted" style={{ margin: 0 }}>
             Não conseguimos confirmar o número informado
             {advogado.situacaoOabMotivo ? ` (${advogado.situacaoOabMotivo})` : ""}. Confira os dados
-            e envie de novo pra análise.
+            e envie de novo para análise.
           </p>
           <div className="row">
             <Input
@@ -198,7 +198,7 @@ export function EditarPerfilPage() {
               required
             />
           </div>
-          <Button type="submit">Reenviar pra análise</Button>
+          <Button type="submit">Reenviar para análise</Button>
         </form>
       )}
       {mensagemOab && <p role="status">{mensagemOab}</p>}
@@ -234,7 +234,7 @@ export function EditarPerfilPage() {
           </div>
           <CampoLocalizacao cidade={cidade} uf={uf} onCidade={setCidade} onUf={setUf} required />
           <p className="text-muted" style={{ margin: 0 }}>
-            O WhatsApp só é mostrado pro cliente depois que você aceita o pedido dele.
+            O WhatsApp só é mostrado para o cliente depois que você aceita o pedido dele.
           </p>
         </section>
 

@@ -204,8 +204,8 @@ function PainelCliente() {
               </span>
               <h2 className="destaque__titulo">
                 {qtd > 0
-                  ? `${qtd} advogado${qtd === 1 ? "" : "s"} pro seu caso`
-                  : "Ainda procurando advogado pra você"}
+                  ? `${qtd} advogado${qtd === 1 ? "" : "s"} para o seu caso`
+                  : "Ainda procurando advogado para você"}
               </h2>
               <p className="destaque__texto">
                 {qtd > 0
@@ -238,7 +238,7 @@ function PainelCliente() {
 
       {ultima && ultima.advogados.length > 0 && (
         <Prateleira
-          titulo={`Pro seu caso${especialidadeUltima ? `: ${especialidadeUltima}` : ""}`}
+          titulo={`Para o seu caso${especialidadeUltima ? `: ${especialidadeUltima}` : ""}`}
           verTodos={<Link to={`/triagem/${ultima.id}`}>Ver todos</Link>}
         >
           {ultima.advogados.slice(0, 10).map((a) => (

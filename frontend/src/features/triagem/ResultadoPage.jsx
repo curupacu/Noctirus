@@ -106,14 +106,14 @@ export function ResultadoPage() {
   const qtd = advogados?.length ?? 0;
   const indefinido = resultado.areaClassificada === "indefinido";
   const procurando = !indefinido && (advogados === null || revelando);
-  const tituloDestaque = indefinido ? "Não deu pra identificar a área" : especialidade || `Caso ${area.toLowerCase()}`;
+  const tituloDestaque = indefinido ? "Não deu para identificar a área" : especialidade || `Caso ${area.toLowerCase()}`;
   const textoDestaque = indefinido
     ? "Tente uma nova triagem contando um pouco mais sobre o que aconteceu."
     : procurando
       ? "Procurando advogados que atendem esse assunto..."
       : qtd > 0
         ? `${qtd} advogado${qtd === 1 ? "" : "s"} atende${qtd === 1 ? "" : "m"} esse assunto${regiao ? ` em ${regiao.uf}` : ""}. Escolha um e peça contato.`
-        : "Ainda não temos advogado aprovado pra esse assunto na sua região.";
+        : "Ainda não temos advogado aprovado para esse assunto na sua região.";
 
   return (
     <main className="painel resultado">
@@ -182,7 +182,7 @@ export function ResultadoPage() {
       )}
       {!regiao && resultado.areaClassificada !== "indefinido" && (
         <div className="card stack">
-          <strong>Informe sua cidade pra ver advogados perto de você</strong>
+          <strong>Informe sua cidade para ver advogados perto de você</strong>
           <p className="text-muted" style={{ margin: 0 }}>
             Por enquanto mostramos advogados de todos os estados.
           </p>
@@ -196,7 +196,7 @@ export function ResultadoPage() {
         <div className="card stack">
           <strong>
             {resultado.areaClassificada === "indefinido"
-              ? "Não deu pra identificar a área do seu caso."
+              ? "Não deu para identificar a área do seu caso."
               : `Ainda não temos advogado ${(LABEL_AREA[resultado.areaClassificada] || "").toLowerCase()} aprovado${regiao ? ` em ${regiao.uf}` : ""}.`}
           </strong>
           <p className="text-muted" style={{ margin: 0 }}>

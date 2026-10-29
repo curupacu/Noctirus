@@ -51,7 +51,7 @@ export function MinhasSolicitacoesPage() {
       <h1>Meus pedidos de contato</h1>
       <ModalAceite solicitacoes={solicitacoes} />
       <p className="text-muted">
-        Os advogados que você pediu pra falar. Quando um aceita, o contato dele aparece aqui.
+        Os advogados que você pediu para falar. Quando um aceita, o contato dele aparece aqui.
       </p>
 
       {solicitacoes.length === 0 && (
@@ -110,7 +110,7 @@ export function MinhasSolicitacoesPage() {
             {s.situacao === "aceita" && <ContatosLiberados contatos={s.contatos} />}
             {s.situacao === "recusada" && s.triagemId && (
               <Link to={`/triagem/${s.triagemId}`} className="button button--secondary">
-                Ver outros advogados pro mesmo caso
+                Ver outros advogados para o mesmo caso
               </Link>
             )}
           </li>

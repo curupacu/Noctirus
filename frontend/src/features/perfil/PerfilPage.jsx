@@ -151,7 +151,7 @@ function AvisoSituacaoOab({ advogado }) {
     em_analise: {
       titulo: "Sua OAB está em análise",
       texto:
-        "Estamos conferindo seu registro no Cadastro Nacional dos Advogados. Até lá, seu perfil não aparece pros clientes. Você recebe um aviso assim que terminarmos.",
+        "Estamos conferindo seu registro no Cadastro Nacional dos Advogados. Até lá, seu perfil não aparece para os clientes. Você recebe um aviso assim que terminarmos.",
     },
     recusado: {
       titulo: "Não conseguimos confirmar sua OAB",
@@ -160,7 +160,7 @@ function AvisoSituacaoOab({ advogado }) {
     },
     revogado: {
       titulo: "Sua aprovação foi revogada",
-      texto: `Motivo: ${advogado.situacaoOabMotivo || "não informado"}. Seu perfil não aparece mais pros clientes.`,
+      texto: `Motivo: ${advogado.situacaoOabMotivo || "não informado"}. Seu perfil não aparece mais para os clientes.`,
     },
   }[situacao];
 

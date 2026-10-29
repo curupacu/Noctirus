@@ -418,7 +418,7 @@ function CenaFinal() {
         <Sequence from={330} layout="none">
           <AbsoluteFill style={{ background: COR.marromFundo, alignItems: "center", justifyContent: "center", gap: 50 }}>
             <CorujaLogo largura={460} velocidade={1.6} />
-            <div style={{ fontFamily: SERIF, fontSize: 62, color: COR.cremeClaro, opacity: texto, translate: `0 ${(1 - texto) * 30}px` }}>Encontre o advogado certo pro seu caso.</div>
+            <div style={{ fontFamily: SERIF, fontSize: 62, color: COR.cremeClaro, opacity: texto, translate: `0 ${(1 - texto) * 30}px` }}>Encontre o advogado certo para o seu caso.</div>
             <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 36, letterSpacing: 2, color: "#e6d3b8", opacity: texto }}>nocturis.com.br</div>
           </AbsoluteFill>
         </Sequence>

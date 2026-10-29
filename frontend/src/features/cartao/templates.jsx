@@ -137,7 +137,7 @@ function FotoVerso({ dados }) {
         <p className="cf-nome">{dados.nome}</p>
         <p className="cf-cargo">{oab(dados)}</p>
         <span className="cf-regua" />
-        <p className="cf-legenda">Aponte a câmera do celular pro código e veja meu perfil.</p>
+        <p className="cf-legenda">Aponte a câmera do celular para o código e veja meu perfil.</p>
       </div>
     </div>
   );
@@ -301,7 +301,7 @@ export const TEMPLATES = [
   {
     id: "claro",
     nome: "Claro",
-    descricao: "Fundo creme, bom pra impressora de casa.",
+    descricao: "Fundo creme, bom para impressora de casa.",
     Frente: comCaixa(ClaroFrente),
     Verso: comCaixa(ClaroVerso),
   },

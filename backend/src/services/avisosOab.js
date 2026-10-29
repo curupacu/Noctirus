@@ -10,11 +10,11 @@ const SITE_URL = "https://nocturis.com.br";
 function mensagens({ situacao, motivo }) {
   if (situacao === "aprovado") {
     return {
-      notificacao: "Sua OAB foi verificada. Seu perfil já aparece pros clientes.",
+      notificacao: "Sua OAB foi verificada. Seu perfil já aparece para os clientes.",
       assunto: "Sua OAB foi verificada na Nocturis",
       titulo: "Sua OAB foi verificada",
       paragrafos: [
-        "Conferimos seu registro na OAB e seu perfil já aparece pros clientes que fazem triagem na sua área.",
+        "Conferimos seu registro na OAB e seu perfil já aparece para os clientes que fazem triagem na sua área.",
         "Vale completar o perfil com foto e currículo: é o que o cliente olha antes de escolher.",
       ],
       botao: "Ver meu painel",
@@ -28,7 +28,7 @@ function mensagens({ situacao, motivo }) {
       titulo: "Não conseguimos confirmar sua OAB",
       paragrafos: [
         `Motivo: ${motivo}`,
-        "Se o número ou a UF estiverem errados, corrija no seu perfil e envie de novo pra análise.",
+        "Se o número ou a UF estiverem errados, corrija no seu perfil e envie de novo para análise.",
       ],
       botao: "Corrigir minha OAB",
       link: "/perfil/editar",
@@ -40,7 +40,7 @@ function mensagens({ situacao, motivo }) {
     titulo: "Sua aprovação foi revogada",
     paragrafos: [
       `Motivo: ${motivo}`,
-      "Seu perfil deixou de aparecer pros clientes. A Nocturis só exibe advogados com inscrição ativa na OAB.",
+      "Seu perfil deixou de aparecer para os clientes. A Nocturis só exibe advogados com inscrição ativa na OAB.",
     ],
     botao: "Ver meu painel",
     link: "/perfil",

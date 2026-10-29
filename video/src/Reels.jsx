@@ -452,7 +452,7 @@ function CenaFinal() {
       <FaixasDeTexto texto="TRIAGEM GRÁTIS" cor={COR.creme} opacidade={0.1} tamanho={190} />
       <CorujaLogo largura={600} velocidade={2.4} />
       <div style={{ fontFamily: SERIF, fontSize: 84, lineHeight: 1.15, textAlign: "center", color: COR.cremeClaro, padding: "0 70px", opacity: texto, translate: `0 ${(1 - texto) * 60}px` }}>
-        Encontre o advogado certo pro seu caso.
+        Encontre o advogado certo para o seu caso.
       </div>
       <div
         style={{

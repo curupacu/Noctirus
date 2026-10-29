@@ -188,7 +188,7 @@ export function TriagemPage() {
             </label>
             {passo === 0 && (
               <p className="triagem__dica">
-                Não precisa saber nada de Direito. Escreva do seu jeito, como contaria pra um amigo.
+                Não precisa saber nada de Direito. Escreva do seu jeito, como contaria para um amigo.
               </p>
             )}
             <textarea
@@ -219,8 +219,8 @@ export function TriagemPage() {
             </h1>
             <p className="triagem__dica">
               {areaSugerida && areaSugerida !== "indefinido"
-                ? "Se não fizer sentido pra você, é só escolher outra opção."
-                : "Não deu pra ter certeza só com o que você contou. Escolha a que chega mais perto."}
+                ? "Se não fizer sentido para você, é só escolher outra opção."
+                : "Não deu para ter certeza só com o que você contou. Escolha a que chega mais perto."}
             </p>
             <div className="choice-grid">
               {Object.entries(AREAS).map(([valorArea, { label, descricao }]) => (

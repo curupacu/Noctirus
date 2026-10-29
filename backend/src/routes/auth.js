@@ -21,7 +21,7 @@ const schemaCompletarCadastro = z.object({
   // Consentimento explícito (LGPD, art. 8º) — sem isso marcado, a conta não é criada.
   // A tela de cadastro precisa linkar pra política de privacidade perto dessa opção.
   aceitouPoliticaPrivacidade: z.literal(true, {
-    message: "É preciso aceitar a política de privacidade pra criar a conta",
+    message: "É preciso aceitar a política de privacidade para criar a conta",
   }),
   // oab tem formato próprio (numero/uf) validado por validarFormatoOab, ver abaixo —
   // aqui só garante que é um objeto, não valida os campos internos pra não duplicar regra.
@@ -131,8 +131,8 @@ authRouter.post(
         html: templateAviso({
           titulo: "Vamos criar uma senha nova",
           paragrafos: [
-            "Recebemos um pedido pra trocar a senha da sua conta na Nocturis.",
-            "Clique no botão abaixo pra criar uma senha nova. Por segurança, o link vale por 1 hora.",
+            "Recebemos um pedido para trocar a senha da sua conta na Nocturis.",
+            "Clique no botão abaixo para criar uma senha nova. Por segurança, o link vale por 1 hora.",
             "Se não foi você que pediu, é só ignorar este e-mail. Sua senha continua a mesma.",
           ],
           botaoTexto: "Criar senha nova",

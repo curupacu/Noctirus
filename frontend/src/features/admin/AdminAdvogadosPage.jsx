@@ -97,7 +97,7 @@ export function AdminAdvogadosPage() {
       <h1>Validação de OAB</h1>
       <p className="text-muted">
         Confira o número no Cadastro Nacional dos Advogados antes de decidir. Só advogado aprovado
-        aparece pros clientes, e ele é avisado de toda decisão.
+        aparece para os clientes, e ele é avisado de toda decisão.
       </p>
 
       <nav className="pill-toggle" aria-label="Situação da OAB">

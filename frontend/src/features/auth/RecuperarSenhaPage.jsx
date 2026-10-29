@@ -43,10 +43,10 @@ export function RecuperarSenhaPage() {
         <div className="entrada__form entrada__passo" role="status">
           <p className="entrada__sub" style={{ margin: 0 }}>
             Se existir uma conta com <strong>{email.trim()}</strong>, você vai receber em alguns minutos
-            um link pra criar uma senha nova. Olhe também a caixa de spam.
+            um link para criar uma senha nova. Olhe também a caixa de spam.
           </p>
           <Link to="/login" className="button button--primary">
-            Voltar pro login
+            Voltar para o login
           </Link>
           <Button variant="secondary" onClick={() => setEnviado(false)}>
             Não chegou? Enviar de novo
@@ -55,7 +55,7 @@ export function RecuperarSenhaPage() {
       ) : (
         <>
           <p className="entrada__sub">
-            Sem problema. Informe o e-mail da sua conta e enviamos um link pra você criar uma senha
+            Sem problema. Informe o e-mail da sua conta e enviamos um link para você criar uma senha
             nova.
           </p>
           <form className="entrada__form" onSubmit={enviar}>

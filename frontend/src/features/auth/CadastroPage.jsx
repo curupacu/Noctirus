@@ -238,7 +238,7 @@ export function CadastroPage() {
               <LogoEntrada />
               <h1 className="entrada__titulo">Vamos criar sua conta</h1>
               <p className="entrada__sub" style={{ margin: 0 }}>
-                É grátis. Primeiro, conta pra gente quem é você.
+                É grátis. Primeiro, conte para nós quem é você.
               </p>
             </div>
             <div className="choice-grid">
@@ -280,7 +280,7 @@ export function CadastroPage() {
               <h1 className="entrada__titulo">Seus dados</h1>
               <p className="entrada__sub" style={{ margin: 0 }}>
                 {role === "advogado"
-                  ? "Seu nome aparece no seu perfil profissional. O e-mail é pra você entrar."
+                  ? "Seu nome aparece no seu perfil profissional. O e-mail é para você entrar."
                   : "Só você vê seus dados. O advogado só vê seu nome se aceitar seu pedido de contato."}
               </p>
             </div>
@@ -340,7 +340,7 @@ export function CadastroPage() {
               <p className="entrada__sub" style={{ margin: 0 }}>
                 {role === "advogado"
                   ? "Os clientes da sua região veem você primeiro. Sua OAB fica em análise até a gente conferir no Cadastro Nacional dos Advogados."
-                  : "Usamos sua cidade pra mostrar primeiro os advogados perto de você."}
+                  : "Usamos sua cidade para mostrar primeiro os advogados perto de você."}
               </p>
             </div>
             <CampoLocalizacao cidade={cidade} uf={uf} onCidade={setCidade} onUf={setUf} />
@@ -378,7 +378,7 @@ export function CadastroPage() {
                   onChange={(e) => setWhatsapp(e.target.value)}
                 />
                 <p className="entrada__sub" style={{ margin: 0, fontSize: 13 }}>
-                  O WhatsApp e o e-mail só são mostrados pro cliente quando você aceita o pedido dele.
+                  O WhatsApp e o e-mail só são mostrados para o cliente quando você aceita o pedido dele.
                 </p>
               </>
             )}
@@ -415,7 +415,7 @@ export function CadastroPage() {
                 <p className="entrada__sub" style={{ margin: "16px 0 0" }}>
                   {erroCategorias ? (
                     <>
-                      Não deu pra carregar as especialidades agora.{" "}
+                      Não deu para carregar as especialidades agora.{" "}
                       <button type="button" className="link-button" onClick={carregarCategorias}>
                         Tentar de novo
                       </button>{" "}
@@ -502,7 +502,7 @@ export function CadastroPage() {
             </h2>
             <p className="entrada-sucesso__texto">
               {concluido === "advogado"
-                ? "Sua OAB foi pra análise. Enquanto isso, já dá pra completar seu perfil."
+                ? "Sua OAB foi para análise. Enquanto isso, já dá para completar seu perfil."
                 : "Estamos preparando seu painel..."}
             </p>
             {perguntarAvisos ? (

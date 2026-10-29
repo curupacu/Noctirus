@@ -35,13 +35,13 @@ const schemaCaso = z
     anotacoes: z.string().max(2000, "Anotação longa demais (máx. 2000)").optional(),
     arquivado: z.boolean().optional(),
   })
-  .refine((dados) => Object.keys(dados).length > 0, { message: "Nada pra atualizar" });
+  .refine((dados) => Object.keys(dados).length > 0, { message: "Nada para atualizar" });
 
 const schemaNovaSolicitacao = z.object({
   advogadoId: z.string().min(1),
   triagemId: z.string().min(1, "Escolha a triagem que vai junto com o pedido"),
   autorizaCompartilhar: z.literal(true, {
-    message: "É preciso autorizar o envio das respostas da triagem pro advogado",
+    message: "É preciso autorizar o envio das respostas da triagem para o advogado",
   }),
 });
 
@@ -140,7 +140,7 @@ solicitacoesRouter.post(
       titulo: "Você recebeu um pedido de contato",
       paragrafos: [
         `Um cliente com um caso ${LABEL_AREA[solicitacao.area] || ""} quer falar com você e autorizou você a ver as respostas da triagem dele.`,
-        "Leia o caso e responda: se aceitar, ele recebe seu WhatsApp e e-mail pra combinar o atendimento.",
+        "Leia o caso e responda: se aceitar, ele recebe seu WhatsApp e e-mail para combinar o atendimento.",
       ],
       botao: "Ver pedido",
     });
@@ -251,7 +251,7 @@ solicitacoesRouter.patch(
       assunto: aceitou ? `${advogadoNome} aceitou seu pedido de contato` : "Resposta ao seu pedido de contato",
       titulo: aceitou ? `${advogadoNome} aceitou seu pedido` : `${advogadoNome} não pode atender agora`,
       paragrafos: aceitou
-        ? ["O WhatsApp e o e-mail do advogado já aparecem nas suas solicitações. Chame ele pra combinar o atendimento."]
+        ? ["O WhatsApp e o e-mail do advogado já aparecem nas suas solicitações. Chame ele para combinar o atendimento."]
         : ["Isso acontece quando a agenda está cheia ou o caso foge da área dele. Você pode pedir contato a outro advogado compatível."],
       botao: "Ver minhas solicitações",
     });
@@ -274,7 +274,7 @@ solicitacoesRouter.patch(
       return res.status(404).json({ erro: "Caso não encontrado" });
     }
     if (doc.data().situacao !== "aceita") {
-      return res.status(409).json({ erro: "Só dá pra organizar no quadro um pedido já aceito" });
+      return res.status(409).json({ erro: "Só dá para organizar no quadro um pedido já aceito" });
     }
 
     const { etapa, prioridade, anotacoes, arquivado } = req.body;

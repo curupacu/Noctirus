@@ -114,7 +114,7 @@ export function ContatoAdvogadoPage() {
   return (
     <main>
       <Link to={`/advogados/${uid}`} className="perfil-adv__voltar">
-        ← Voltar pro perfil
+        ← Voltar para o perfil
       </Link>
       <span className="eyebrow">Pedir contato</span>
       <div className="media">
@@ -130,7 +130,7 @@ export function ContatoAdvogadoPage() {
           <strong>Pedido enviado!</strong>
           <p className="text-muted" style={{ margin: 0 }}>
             {advogado.nome} recebeu seu pedido e as respostas da triagem. Você vai ser avisado aqui e
-            por e-mail quando ele responder. Se aceitar, o WhatsApp e o e-mail dele aparecem pra você.
+            por e-mail quando ele responder. Se aceitar, o WhatsApp e o e-mail dele aparecem para você.
           </p>
           <Link to="/minhas-solicitacoes" className="button button--secondary">
             Ver minhas solicitações
@@ -153,7 +153,7 @@ export function ContatoAdvogadoPage() {
         <div className="card stack">
           <strong>Faça uma triagem antes de pedir contato</strong>
           <p className="text-muted" style={{ margin: 0 }}>
-            O pedido leva as respostas da sua triagem, pra o advogado entender o caso antes de responder.
+            O pedido leva as respostas da sua triagem, para o advogado entender o caso antes de responder.
           </p>
           <Link to="/triagem" className="button button--primary">
             Fazer triagem
@@ -181,7 +181,7 @@ export function ContatoAdvogadoPage() {
           )}
           {(trocando || !escolhida) && triagensValidas.length > 0 && (
             <div className="input-group">
-              <label className="input-label">Qual caso você quer levar pra esse advogado?</label>
+              <label className="input-label">Qual caso você quer levar para esse advogado?</label>
               <div className="choice-grid">
                 {triagensValidas.slice(0, 5).map((t) => (
                   <ChoiceCard
@@ -210,8 +210,8 @@ export function ContatoAdvogadoPage() {
 
           <ChoiceCard
             type="checkbox"
-            label="Autorizo enviar as respostas da minha triagem pra este advogado"
-            description="Sem isso o pedido não é enviado. Seu nome só aparece pro advogado se ele aceitar."
+            label="Autorizo enviar as respostas da minha triagem para este advogado"
+            description="Sem isso o pedido não é enviado. Seu nome só aparece para o advogado se ele aceitar."
             checked={autoriza}
             onChange={() => setAutoriza((v) => !v)}
           />
@@ -219,7 +219,7 @@ export function ContatoAdvogadoPage() {
           <Button type="submit" disabled={enviando || !autoriza || !escolhida}>
             {enviando ? "Enviando..." : "Enviar pedido de contato"}
           </Button>
-          {!autoriza && <p className="text-muted" style={{ margin: 0 }}>Marque a autorização acima pra enviar.</p>}
+          {!autoriza && <p className="text-muted" style={{ margin: 0 }}>Marque a autorização acima para enviar.</p>}
           {erroEnvio && <p role="alert">{erroEnvio}</p>}
         </form>
       )}

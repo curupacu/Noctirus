@@ -86,7 +86,7 @@ export function AvisosCelular({ papel = "cliente" }) {
       if (permissao === "granted") setSituacao("pronto");
       else if (permissao === "denied") setSituacao("negado");
     } catch {
-      setErro("Não deu pra ativar agora. Tente de novo em instantes.");
+      setErro("Não deu para ativar agora. Tente de novo em instantes.");
     } finally {
       setOcupado(false);
     }
@@ -112,7 +112,7 @@ export function AvisosCelular({ papel = "cliente" }) {
         {situacao === "negado" && (
           <>
             <h2>Os avisos ficaram bloqueados</h2>
-            <p>Se mudar de ideia, dá pra liberar nas configurações do navegador, em Notificações.</p>
+            <p>Se mudar de ideia, dá para liberar nas configurações do navegador, em Notificações.</p>
             <button type="button" className="link-button" onClick={() => setSituacao("oculto")}>
               Entendi
             </button>

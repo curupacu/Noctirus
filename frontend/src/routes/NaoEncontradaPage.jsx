@@ -32,7 +32,7 @@ export function NaoEncontradaPage() {
       </p>
       <div className="actions">
         <Link to="/" className="button button--primary">
-          Voltar pro início
+          Voltar para o início
         </Link>
       </div>
     </main>

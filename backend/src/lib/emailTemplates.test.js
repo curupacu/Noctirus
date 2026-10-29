@@ -5,12 +5,12 @@ describe("templateAviso", () => {
   it("monta título, parágrafos e botão com link", () => {
     const html = templateAviso({
       titulo: "Sua OAB foi verificada",
-      paragrafos: ["Seu perfil já aparece pros clientes."],
+      paragrafos: ["Seu perfil já aparece para os clientes."],
       botaoTexto: "Ver meu painel",
       link: "https://nocturis.com.br/perfil",
     });
     expect(html).toContain("Sua OAB foi verificada");
-    expect(html).toContain("Seu perfil já aparece pros clientes.");
+    expect(html).toContain("Seu perfil já aparece para os clientes.");
     expect(html).toContain("https://nocturis.com.br/perfil");
   });
 

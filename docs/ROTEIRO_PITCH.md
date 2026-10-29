@@ -37,7 +37,7 @@ O que todos têm em comum:
 5. **Encontro (1:15 a 1:40).** Ligação pelo WhatsApp e uma montagem rápida dos dois resolvendo a papelada, com
    cortes encaixados de um pro outro (ele assina, o advogado carimba; ele fecha a pasta, o advogado abre).
 6. **Final (1:40 a 2:00).** Ele mais leve, saindo de casa. O advogado com a agenda cheia. Tela final com a
-   coruja animada: "Encontre o advogado certo pro seu caso. nocturis.com.br".
+   coruja animada: "Encontre o advogado certo para o seu caso. nocturis.com.br".
 
 **Cuidado ético:** o final não pode prometer resultado ("ganhou a causa", "recebeu tudo"). O Código de Ética
 da OAB proíbe propaganda que promete vitória. Terminar em "ele foi orientado e entendeu os direitos dele".

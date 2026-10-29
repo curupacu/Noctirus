@@ -24,7 +24,7 @@ export function TermosPage() {
       </p>
       <p>
         A Nocturis é um projeto acadêmico, desenvolvido pela Aggrem como Trabalho de Conclusão
-        de Curso, e é gratuita pra clientes e advogados.
+        de Curso, e é gratuita para clientes e advogados.
       </p>
 
       <div className="section-heading">
@@ -32,8 +32,8 @@ export function TermosPage() {
       </div>
       <p>
         A triagem é feita de forma automática, por inteligência artificial ou por regras, a
-        partir do que você escreve. Ela serve pra orientar, não é uma análise jurídica e pode
-        errar. Se o assunto identificado não combinar com o seu caso, dá pra ajustar na própria
+        partir do que você escreve. Ela serve para orientar, não é uma análise jurídica e pode
+        errar. Se o assunto identificado não combinar com o seu caso, dá para ajustar na própria
         tela do resultado ou fazer uma nova triagem.
       </p>
 
@@ -60,7 +60,7 @@ export function TermosPage() {
         </li>
         <li>
           Ao pedir contato, o advogado vê a sua triagem. Seu WhatsApp e seu e-mail só são
-          mostrados pra ele depois que ele aceita o pedido;
+          mostrados para ele depois que ele aceita o pedido;
         </li>
         <li>
           A escolha do advogado e a contratação são decisões suas, combinadas diretamente com
@@ -73,7 +73,7 @@ export function TermosPage() {
       </div>
       <ul className="list-plain">
         <li>
-          Só aparece pros clientes quem tem a inscrição na OAB conferida pela nossa equipe no
+          Só aparece para os clientes quem tem a inscrição na OAB conferida pela nossa equipe no
           Cadastro Nacional dos Advogados. A aprovação pode ser revogada se a inscrição deixar
           de estar regular;
         </li>
@@ -96,7 +96,7 @@ export function TermosPage() {
       </div>
       <ul className="list-plain">
         <li>Criar conta com dados falsos ou se passar por outra pessoa;</li>
-        <li>Usar a plataforma pra enviar propaganda, ofensas ou conteúdo ilegal;</li>
+        <li>Usar a plataforma para enviar propaganda, ofensas ou conteúdo ilegal;</li>
         <li>Tentar acessar dados de outras pessoas ou atrapalhar o funcionamento do site.</li>
       </ul>
       <p>Contas que fizerem isso podem ser suspensas ou apagadas.</p>
@@ -106,7 +106,7 @@ export function TermosPage() {
       </div>
       <p>
         Por ser um projeto acadêmico, a Nocturis roda em serviços gratuitos e pode ficar fora
-        do ar ou mais lenta em alguns momentos. Fazemos o possível pra manter tudo
+        do ar ou mais lenta em alguns momentos. Fazemos o possível para manter tudo
         funcionando, mas não garantimos que o site vai estar disponível o tempo todo.
       </p>
 

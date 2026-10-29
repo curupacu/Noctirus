@@ -59,7 +59,7 @@ export async function gerarPdfCartao({ frenteEl, versoEl, tipo, nome, arquivo })
   } else {
     const x = (210 - 2 * L) / 2;
     doc.setFontSize(9);
-    doc.text("Recorte o contorno de cada cartão, dobre na linha do meio (frente pra fora) e cole.", 105, 30, {
+    doc.text("Recorte o contorno de cada cartão, dobre na linha do meio (frente para fora) e cole.", 105, 30, {
       align: "center",
     });
     for (const y of [42, 112, 182]) {

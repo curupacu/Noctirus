@@ -228,7 +228,7 @@ advogadosRouter.patch(
     const atual = advogadoDoc.data();
     if (!podeMudarSituacao(atual.situacaoOab, situacao)) {
       return res.status(409).json({
-        erro: `Não dá pra passar de "${atual.situacaoOab || "em_analise"}" pra "${situacao}"`,
+        erro: `Não dá para passar de "${atual.situacaoOab || "em_analise"}" para "${situacao}"`,
       });
     }
 

@@ -101,7 +101,7 @@ export function ModalAceite({ solicitacoes }) {
         <span className="aceite-modal__etiqueta">Pedido aceito</span>
         <h2 id="aceite-titulo">{atual.advogadoNome || "O advogado"} aceitou seu pedido!</h2>
         <p>
-          O contato foi liberado pra você. Chame {primeiroNome} agora pra combinar os próximos passos. Quanto antes,
+          O contato foi liberado para você. Chame {primeiroNome} agora para combinar os próximos passos. Quanto antes,
           melhor.
         </p>
         <div className="aceite-modal__acoes" onClickCapture={() => marcarVisto(atual.id)}>
@@ -143,7 +143,7 @@ export function AvisoAceite({ solicitacoes }) {
         </span>
         <h2>{atual.advogadoNome || "O advogado"} aceitou seu pedido</h2>
         <p>
-          Chame pra conversar sobre o seu caso. Os contatos também ficam em{" "}
+          Chame para conversar sobre o seu caso. Os contatos também ficam em{" "}
           <Link to="/minhas-solicitacoes">Meus pedidos</Link>.
         </p>
         <ContatosLiberados contatos={atual.contatos} />

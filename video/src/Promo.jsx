@@ -146,7 +146,7 @@ function Final() {
     <AbsoluteFill style={{ background: COR.marromFundo, alignItems: "center", justifyContent: "center", gap: 56 }}>
       <CorujaLogo largura={400} velocidade={1.7} />
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 18, opacity: texto, transform: `translateY(${(1 - texto) * 30}px)` }}>
-        <div style={{ fontFamily: SERIF, fontSize: 60, color: COR.creme }}>Encontre o advogado certo pro seu caso.</div>
+        <div style={{ fontFamily: SERIF, fontSize: 60, color: COR.creme }}>Encontre o advogado certo para o seu caso.</div>
         <div style={{ fontFamily: SANS, fontWeight: 700, fontSize: 34, letterSpacing: 2, color: "#e6d3b8" }}>nocturis.com.br</div>
       </div>
     </AbsoluteFill>

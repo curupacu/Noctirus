@@ -104,7 +104,7 @@ function SecaoAvisos() {
         setSituacao("bloqueado");
       }
     } catch {
-      setErro("Não deu pra ligar agora. Tente de novo em instantes.");
+      setErro("Não deu para ligar agora. Tente de novo em instantes.");
     } finally {
       setOcupado(false);
     }
@@ -118,7 +118,7 @@ function SecaoAvisos() {
       salvarPreferencia("avisosDesligados", true);
       setSituacao("desligado");
     } catch {
-      setErro("Não deu pra desligar agora. Tente de novo em instantes.");
+      setErro("Não deu para desligar agora. Tente de novo em instantes.");
     } finally {
       setOcupado(false);
     }
@@ -126,8 +126,8 @@ function SecaoAvisos() {
 
   const textos = {
     ligado: "Ligados neste aparelho. A Nocturis te avisa quando tiver novidade nos seus pedidos.",
-    desligado: "Desligados. Ligue pra saber na hora quando tiver novidade nos seus pedidos.",
-    bloqueado: "Bloqueados pelo navegador. Pra liberar, abra as configurações do navegador, em Notificações.",
+    desligado: "Desligados. Ligue para saber na hora quando tiver novidade nos seus pedidos.",
+    bloqueado: "Bloqueados pelo navegador. Para liberar, abra as configurações do navegador, em Notificações.",
     instalar: "No iPhone, os avisos só funcionam com a Nocturis instalada na tela de início:",
     indisponivel: "Este navegador não recebe avisos. Abra a Nocturis no Chrome ou instale o app.",
   };
@@ -169,7 +169,7 @@ function SecaoApp() {
       ) : podeInstalar ? (
         <>
           <p className="config__descricao">
-            Instale a Nocturis pra abrir direto da tela de início, como um app, e receber avisos.
+            Instale a Nocturis para abrir direto da tela de início, como um app, e receber avisos.
           </p>
           <div className="actions">
             <Button onClick={instalar}>Instalar a Nocturis</Button>
@@ -182,7 +182,7 @@ function SecaoApp() {
         </>
       ) : (
         <p className="config__descricao">
-          Pra instalar, abra a Nocturis no Chrome (celular ou computador) ou no Safari do iPhone.
+          Para instalar, abra a Nocturis no Chrome (celular ou computador) ou no Safari do iPhone.
         </p>
       )}
     </section>
@@ -260,7 +260,7 @@ function SecaoDados() {
         <div className="config__linha-texto">
           <strong>Excluir minha conta</strong>
           <p>
-            Apaga seu cadastro, suas triagens e seu acesso. Não dá pra desfazer. Pedidos já
+            Apaga seu cadastro, suas triagens e seu acesso. Não dá para desfazer. Pedidos já
             enviados continuam no histórico do advogado que os recebeu.
           </p>
         </div>
@@ -348,7 +348,7 @@ export function ConfiguracoesPage() {
             ligada={prefs.ouvir}
             onMudar={(ligada) => salvarPreferencia("ouvir", ligada)}
             titulo="Ouvir os textos"
-            texto="Mostra um botão pra ouvir em voz alta o resultado da triagem e o perfil dos advogados."
+            texto="Mostra um botão para ouvir em voz alta o resultado da triagem e o perfil dos advogados."
           />
         )}
 

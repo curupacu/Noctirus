@@ -27,7 +27,7 @@ export function PrivacidadePage() {
         <h2>Para que usamos</h2>
       </div>
       <ul className="list-plain">
-        <li>Autenticar seu login e mostrar seus próprios dados de volta pra você;</li>
+        <li>Autenticar seu login e mostrar seus próprios dados de volta para você;</li>
         <li>Classificar sua triagem (área do direito, advogados compatíveis);</li>
         <li>Mostrar seu perfil público, se você for advogado;</li>
         <li>Avisar por e-mail e no celular quando um advogado responde o seu pedido de contato;</li>
@@ -39,7 +39,7 @@ export function PrivacidadePage() {
       </div>
       <p>
         Não vendemos nem compartilhamos seus dados com anunciantes. Usamos alguns serviços de
-        terceiros pra a plataforma funcionar, cada um só com o que precisa pra fazer sua parte:
+        terceiros para a plataforma funcionar, cada um só com o que precisa para fazer sua parte:
       </p>
       <ul className="list-plain">
         <li>
@@ -49,8 +49,8 @@ export function PrivacidadePage() {
           <strong>Google Gemini e Groq</strong>: classificam a descrição do seu caso na
           triagem. Hoje isso roda em camada gratuita das duas plataformas: se você não digitar
           nada de identificável na descrição (nome, CPF, endereço), o risco é baixo, mas é bom
-          saber. Migrar pra um plano pago que não usa os dados pra treinar modelo é um item
-          já planejado pra quando a Nocturis deixar de ser só um projeto de estudo;
+          saber. Migrar para um plano pago que não usa os dados para treinar modelo é um item
+          já planejado para quando a Nocturis deixar de ser só um projeto de estudo;
         </li>
         <li>
           <strong>Cloudinary</strong>: guarda a foto de perfil de advogados que fazem upload;
@@ -69,7 +69,7 @@ export function PrivacidadePage() {
       </div>
       <p>
         Você pode baixar uma cópia de tudo que temos sobre você ou apagar sua conta a qualquer
-        momento, direto pela plataforma, sem precisar pedir pra ninguém. Veja em{" "}
+        momento, direto pela plataforma, sem precisar pedir para ninguém. Veja em{" "}
         <Link to="/configuracoes#dados">Configurações → Privacidade e dados</Link> depois de entrar na sua conta.
         Apagar a conta remove seu cadastro e, se você for advogado, seu perfil público e
         currículo. Pedidos de contato já enviados continuam no histórico do advogado que os

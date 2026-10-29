@@ -43,7 +43,7 @@ export function AppRouter() {
         <Route path="/privacidade" element={<PrivacidadePage />} />
         <Route path="/termos" element={<TermosPage />} />
         {/* A lista com todos os advogados saiu (25/10/2026): o cliente chega neles pela
-            triagem e pelo painel. Link antigo volta pro início. */}
+            triagem e pelo painel. Link antigo volta para o início. */}
         <Route path="/advogados" element={<Navigate to="/" replace />} />
         <Route path="/advogados/:uid" element={<AdvogadoPublicoPage />} />
         <Route

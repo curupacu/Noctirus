@@ -26,7 +26,7 @@ export function PerfilCompletude({ itens }) {
         <div className="completude__fill" style={{ width: `${pct}%` }} />
       </div>
       <p className="text-muted completude__hint">
-        Perfis completos aparecem com mais confiança pra quem está buscando advogado.
+        Perfis completos aparecem com mais confiança para quem está buscando advogado.
       </p>
       <ul className="completude__list">
         {itens.map((item) => (

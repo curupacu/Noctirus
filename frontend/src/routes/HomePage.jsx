@@ -31,7 +31,7 @@ const FAQ = [
   {
     pergunta: "A Nocturis é gratuita?",
     resposta:
-      "Sim, pra quem busca um advogado. A triagem e a busca de advogados não custam nada. Você só precisa criar uma conta grátis pra fazer a triagem.",
+      "Sim, para quem busca um advogado. A triagem e a busca de advogados não custam nada. Você só precisa criar uma conta grátis para fazer a triagem.",
   },
   {
     pergunta: "Como funciona a triagem por IA?",
@@ -41,7 +41,7 @@ const FAQ = [
   {
     pergunta: "Meus dados estão seguros?",
     resposta:
-      "Sim. Só guardamos o que é necessário pra te atender e nunca vendemos seus dados a ninguém. Você pode baixar ou apagar tudo quando quiser, direto no seu perfil.",
+      "Sim. Só guardamos o que é necessário para te atender e nunca vendemos seus dados a ninguém. Você pode baixar ou apagar tudo quando quiser, direto no seu perfil.",
   },
   {
     pergunta: "Como eu falo com o advogado?",
@@ -49,9 +49,9 @@ const FAQ = [
       "Direto: a Nocturis te dá o WhatsApp ou e-mail do advogado e vocês combinam por lá, sem intermediário nem taxa por contato.",
   },
   {
-    pergunta: "Preciso criar conta pra ver os advogados?",
+    pergunta: "Preciso criar conta para ver os advogados?",
     resposta:
-      "Pra conhecer alguns advogados, não: eles aparecem aqui na página inicial. Pra fazer a triagem e ver quem atende o seu caso, perto de você, é só criar uma conta grátis.",
+      "Para conhecer alguns advogados, não: eles aparecem aqui na página inicial. Para fazer a triagem e ver quem atende o seu caso, perto de você, é só criar uma conta grátis.",
   },
 ];
 
@@ -124,14 +124,14 @@ const MOTIVOS = [
       "A maioria das pessoas não sabe de que área é o seu problema, nem que tipo de advogado procurar. Ao mesmo tempo, advogados em início de carreira têm dificuldade de encontrar os primeiros clientes. A Nocturis liga essas duas pontas.",
   },
   {
-    titulo: "Pra quem procura ajuda",
+    titulo: "Para quem procura ajuda",
     texto:
       "Você conta o que aconteceu do seu jeito, descobre a área do problema e vê quem atende esse assunto, sem pagar nada e sem precisar entender de Direito.",
   },
   {
-    titulo: "Pra quem advoga",
+    titulo: "Para quem advoga",
     texto:
-      "Depois que a OAB é conferida, o advogado aparece pra quem já chegou com um caso da área dele. Menos tempo esperando indicação, mais tempo atendendo.",
+      "Depois que a OAB é conferida, o advogado aparece para quem já chegou com um caso da área dele. Menos tempo esperando indicação, mais tempo atendendo.",
   },
 ];
 
@@ -298,7 +298,7 @@ export function HomePage() {
 
           <div className="home-hero__grid">
             <div className="home-hero__copy">
-              <h1 className="home-hero__title">Encontre o advogado certo pro seu caso.</h1>
+              <h1 className="home-hero__title">Encontre o advogado certo para o seu caso.</h1>
               <span className="home-hero__rule" aria-hidden="true" />
               <p className="home-hero__lead">
                 Descreva sua situação com suas palavras. A gente identifica a área do caso e mostra
@@ -306,7 +306,7 @@ export function HomePage() {
               </p>
               <div className="home-hero__actions">
                 <Link to={destinoConta} className="home-btn home-btn--gold">
-                  {user ? "Ir pro meu painel" : "Criar conta"}
+                  {user ? "Ir para o meu painel" : "Criar conta"}
                 </Link>
               </div>
             </div>
@@ -328,7 +328,7 @@ export function HomePage() {
             <div className="home-services__copy">
               <p className="home-eyebrow">Como funciona</p>
               <h2 id="servicos-titulo" className="home-title">
-                Você não precisa saber nada de Direito pra começar. Em menos de dois minutos você
+                Você não precisa saber nada de Direito para começar. Em menos de dois minutos você
                 descobre a área do seu problema e já vê com quem falar.
               </h2>
               <Link to={destinoConta} className="home-btn home-btn--gold home-btn--sm">

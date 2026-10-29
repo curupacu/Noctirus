@@ -8,7 +8,7 @@ import "./AvisoServidor.css";
 const DICAS = [
   "A triagem é gratuita: você conta o caso do seu jeito e a gente diz de que área ele é.",
   "O advogado só vê o seu nome depois de aceitar o seu pedido de contato.",
-  "Se a área sugerida não fizer sentido, dá pra trocar antes de ver os advogados.",
+  "Se a área sugerida não fizer sentido, dá para trocar antes de ver os advogados.",
   "Todo advogado da Nocturis tem a OAB conferida no Cadastro Nacional dos Advogados.",
   "Você pode baixar ou apagar os seus dados quando quiser, em Meus dados.",
   "A Nocturis não presta serviço jurídico: ela classifica o caso e direciona.",
@@ -53,7 +53,7 @@ export function AvisoServidor() {
       <span className="aviso-servidor__girando" aria-hidden="true" />
       <span>
         <strong>Só mais um instante...</strong>
-        <span>O servidor está demorando um pouco pra responder.</span>
+        <span>O servidor está demorando um pouco para responder.</span>
       </span>
     </div>
   );

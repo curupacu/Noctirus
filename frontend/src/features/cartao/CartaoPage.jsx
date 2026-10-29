@@ -125,7 +125,7 @@ export function CartaoPage() {
     <main className="cartao-pagina">
       <h1>Meu cartão de visita</h1>
       <p className="text-muted">
-        Escolha um modelo. Seus dados e um QR code pro seu perfil já vêm preenchidos, prontos pra
+        Escolha um modelo. Seus dados e um QR code para o seu perfil já vêm preenchidos, prontos para
         mandar no WhatsApp ou imprimir (tamanho padrão de 9 × 5 cm).
       </p>
 
@@ -186,11 +186,11 @@ export function CartaoPage() {
         </button>
         <button type="button" className="cartao-download" onClick={() => baixarPdf("folha")} disabled={!!baixando}>
           <strong>{baixando === "folha" ? "Gerando..." : "PDF: frente e verso"}</strong>
-          <span>Uma folha A4 com os dois lados, pra imprimir</span>
+          <span>Uma folha A4 com os dois lados, para imprimir</span>
         </button>
         <button type="button" className="cartao-download" onClick={() => baixarPdf("tres")} disabled={!!baixando}>
           <strong>{baixando === "tres" ? "Gerando..." : "PDF: folha com 3 cartões"}</strong>
-          <span>3 frentes e 3 versos, pra recortar e dobrar</span>
+          <span>3 frentes e 3 versos, para recortar e dobrar</span>
         </button>
       </div>
     </main>

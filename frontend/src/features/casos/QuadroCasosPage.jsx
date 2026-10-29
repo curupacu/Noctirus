@@ -10,8 +10,8 @@ import "./QuadroCasosPage.css";
 
 const COLUNAS = [
   { etapa: "pendente", titulo: "Pendentes", resumo: "esperando resposta", vazio: "Nenhum pedido esperando resposta." },
-  { etapa: "em_andamento", titulo: "Em andamento", resumo: "em andamento", vazio: "Aceite um pedido pra ele vir pra cá." },
-  { etapa: "concluido", titulo: "Concluídos", resumo: "concluídos", vazio: "Arraste pra cá os casos que terminaram." },
+  { etapa: "em_andamento", titulo: "Em andamento", resumo: "em andamento", vazio: "Aceite um pedido para ele vir para cá." },
+  { etapa: "concluido", titulo: "Concluídos", resumo: "concluídos", vazio: "Arraste para cá os casos que terminaram." },
 ];
 
 const PRIORIDADES = [
@@ -120,7 +120,7 @@ function AcoesMover({ caso, ocupado, onMudar, onFechar }) {
     <div className="quadro-detalhe__mover">
       {caso.etapaCaso !== "em_andamento" && (
         <Button variant="secondary" disabled={ocupado} onClick={() => onMudar(caso.id, { etapa: "em_andamento" })}>
-          Voltar pra em andamento
+          Voltar para em andamento
         </Button>
       )}
       {caso.etapaCaso !== "concluido" && (
@@ -187,7 +187,7 @@ function DetalheCaso({ caso, rotulos, textosPerguntas, onFechar, onMudar, onResp
 
         {!pendente && (
           <p className="quadro-detalhe__aviso">
-            Seu contato foi liberado pra este cliente. Ele vai te chamar pelo WhatsApp ou e-mail.
+            Seu contato foi liberado para este cliente. Ele vai te chamar pelo WhatsApp ou e-mail.
           </p>
         )}
 
@@ -414,7 +414,7 @@ export function QuadroCasosPage() {
                       </span>
                     </span>
                     <Button variant="secondary" disabled={ocupado} onClick={() => mudar(c.id, { arquivado: false })}>
-                      Voltar pro quadro
+                      Voltar para o quadro
                     </Button>
                   </li>
                 ))}

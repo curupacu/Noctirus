@@ -56,7 +56,7 @@ export function LoginPage() {
     <EntradaLayout voltar="/" rotuloVoltar="Voltar para o início">
       <LogoEntrada />
       <h1 className="entrada__titulo">Que bom te ver de novo</h1>
-      <p className="entrada__sub">Entre pra acompanhar sua triagem e seus pedidos de contato.</p>
+      <p className="entrada__sub">Entre para acompanhar sua triagem e seus pedidos de contato.</p>
 
       <BotaoGoogle onClick={entrarComGoogle} disabled={enviando}>
         Continuar com Google

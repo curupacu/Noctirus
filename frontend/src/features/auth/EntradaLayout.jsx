@@ -22,7 +22,7 @@ export function EntradaLayout({ voltar = "/", rotuloVoltar = "Voltar", progresso
         <LinhasFundo />
         <Logo className="entrada__painel-logo" />
         <div>
-          <p className="entrada__painel-frase">Encontre o advogado certo pro seu caso.</p>
+          <p className="entrada__painel-frase">Encontre o advogado certo para o seu caso.</p>
           <span className="entrada__painel-risco" />
           <p className="entrada__painel-texto">
             Conte o que aconteceu com suas palavras. A gente identifica a área do caso e mostra
