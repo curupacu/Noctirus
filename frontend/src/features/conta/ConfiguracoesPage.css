@@ -178,16 +178,7 @@ main.config {
   }
 }
 
-/* Enfeite (28/10/2026), no jeito dos atalhos do advogado: atalhos com prévia no topo e um
-   ícone marrom no título de cada cartão. */
-main.config {
-  max-width: 920px;
-}
-
-.config__atalhos {
-  margin-top: var(--space-lg);
-}
-
+/* Ícone marrom no título de cada cartão (28/10/2026). */
 .config__secao {
   scroll-margin-top: 96px;
 }
@@ -212,76 +203,4 @@ main.config {
 .config__titulo-icone svg {
   width: 22px;
   height: 22px;
-}
-
-/* Prévia "Acessibilidade": três A crescendo */
-.config-previa-letras {
-  display: flex;
-  align-items: flex-end;
-  gap: 6px;
-  font-family: var(--font-serif);
-  line-height: 1;
-}
-
-.config-previa-letras span:nth-child(1) {
-  font-size: 24px;
-  opacity: 0.7;
-}
-
-.config-previa-letras span:nth-child(2) {
-  font-size: 36px;
-  opacity: 0.85;
-}
-
-.config-previa-letras span:nth-child(3) {
-  font-size: 50px;
-}
-
-/* Prévia "Avisos": uma notificaçãozinha */
-.config-previa-aviso {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  border-radius: 12px;
-  background: #fffdf8;
-  color: var(--brown);
-  box-shadow: 0 6px 16px rgba(30, 20, 12, 0.25);
-}
-
-.config-previa-aviso svg {
-  width: 20px;
-  height: 20px;
-}
-
-.config-previa-aviso > span {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-}
-
-.config-previa-aviso strong {
-  font-size: 12px;
-  color: var(--text);
-}
-
-.config-previa-aviso small {
-  font-size: 10px;
-  color: var(--text-dim);
-}
-
-/* Prévia "App": um celular com a coruja na tela */
-.config-previa-celular {
-  display: grid;
-  place-items: center;
-  width: 50px;
-  height: 84px;
-  border: 3px solid #f6eedf;
-  border-radius: 12px;
-  transform: translateY(14px);
-}
-
-.config-previa-celular__coruja {
-  width: 30px;
-  height: auto;
 }

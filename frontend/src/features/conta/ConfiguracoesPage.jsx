@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { PassosIphone } from "../../components/AvisosCelular/PassosIphone";
-import { OwlMark } from "../../components/OwlMark/OwlMark";
 import { Button } from "../../components/Button/Button";
 import { api } from "../../lib/api";
 import {
@@ -18,7 +17,6 @@ import { usePwaInstall } from "../../lib/usePwaInstall";
 import { useTitulo } from "../../lib/useTitulo";
 import { useAuth } from "../auth/AuthContext";
 import "../../components/AvisosCelular/AvisosCelular.css";
-import "../painel/PainelPage.css";
 import "./ConfiguracoesPage.css";
 
 const TAMANHOS = [
@@ -55,84 +53,6 @@ function Titulo({ id, icone, children }) {
     </h2>
   );
 }
-
-// Atalhos do topo, no formato dos atalhos do advogado: cada um mostra um pedacinho da parte
-// da tela pra onde leva.
-const ATALHOS = [
-  {
-    alvo: "acessibilidade",
-    titulo: "Acessibilidade",
-    texto: "Tamanho do texto, contraste e mais",
-    previa: (
-      <span className="config-previa-letras">
-        <span>A</span>
-        <span>A</span>
-        <span>A</span>
-      </span>
-    ),
-  },
-  {
-    alvo: "avisos",
-    titulo: "Avisos",
-    texto: "Novidades dos pedidos no celular",
-    soParaContas: true,
-    previa: (
-      <span className="config-previa-aviso">
-        <Icone nome="avisos" />
-        <span>
-          <strong>Pedido aceito</strong>
-          <small>agora</small>
-        </span>
-      </span>
-    ),
-  },
-  {
-    alvo: "app",
-    titulo: "App",
-    texto: "Instale a Nocturis no aparelho",
-    previa: (
-      <span className="config-previa-celular">
-        <OwlMark className="config-previa-celular__coruja" />
-      </span>
-    ),
-  },
-  {
-    alvo: "dados",
-    titulo: "Seus dados",
-    texto: "Baixe ou apague seus dados",
-    soParaContas: true,
-    previa: (
-      <span className="atalho__previa-escudo">
-        <Icone nome="dados" />
-        <small>LGPD</small>
-      </span>
-    ),
-  },
-  {
-    alvo: "ajuda",
-    titulo: "Ajuda",
-    texto: "Perguntas, termos e privacidade",
-    soAdmin: true,
-    previa: (
-      <span className="atalho__previa-escudo">
-        <Icone nome="ajuda" />
-        <small>Ajuda</small>
-      </span>
-    ),
-  },
-  {
-    alvo: "conta",
-    titulo: "Conta",
-    texto: "Sair da conta",
-    soAdmin: true,
-    previa: (
-      <span className="atalho__previa-escudo">
-        <Icone nome="conta" />
-        <small>Sair</small>
-      </span>
-    ),
-  },
-];
 
 function Chave({ id, ligada, onMudar, titulo, texto }) {
   return (
@@ -372,22 +292,6 @@ export function ConfiguracoesPage() {
       <p className="text-muted">
         As opções de acessibilidade ficam salvas neste aparelho.
       </p>
-
-      <ul className="atalhos config__atalhos">
-        {ATALHOS.filter((a) => (role === "admin" ? !a.soParaContas : !a.soAdmin)).map((atalho) => (
-          <li key={atalho.alvo}>
-            <a href={"#" + atalho.alvo} className="atalho">
-              <span className="atalho__previa" aria-hidden="true">
-                {atalho.previa}
-              </span>
-              <span className="atalho__titulo">
-                {atalho.titulo} <span aria-hidden="true">↓</span>
-              </span>
-              <span className="atalho__texto">{atalho.texto}</span>
-            </a>
-          </li>
-        ))}
-      </ul>
 
       <section className="card config__secao" id="acessibilidade" aria-labelledby="config-acessibilidade">
         <Titulo id="config-acessibilidade" icone="acessibilidade">Acessibilidade</Titulo>
