@@ -8,7 +8,6 @@ import { useCarregar } from "../../lib/useCarregar";
 import { useNotificacoes } from "../../lib/useNotificacoes";
 import { Avatar } from "../Avatar/Avatar";
 import { itensNavegacao } from "../BottomNav/BottomNav";
-import { InstallButton } from "../InstallButton/InstallButton";
 import { NotificationBell } from "../NotificationBell/NotificationBell";
 import "./Header.css";
 
@@ -59,7 +58,6 @@ export function Header() {
       )}
 
       <div className="site-header__actions">
-        <InstallButton />
 
         {!loading && (
           <>
