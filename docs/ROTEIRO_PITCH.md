@@ -102,3 +102,19 @@ da OAB proíbe propaganda que promete vitória. Terminar em "ele foi orientado e
 Gravem por lugar, não pela ordem do roteiro: tudo do escritório (cenas 1, 4 e o advogado da 5 e da 6, trocando
 a mesa e os objetos), depois tudo da casa (2, o funcionário da 5 e a saída da 6), depois as gravações de tela e
 os detalhes das mãos. Levem um papel com a lista de planos e risquem cada um que gravarem.
+
+## Roteiro final do grupo (01/11/2026): sem fala e sem narrador, cerca de 2 min
+
+O vídeo passa sozinho na apresentação (ninguém fala ao vivo). Quem conta a história são a imagem, a música e
+os textos de tela (Reels, triagem, notificação, WhatsApp, vinheta).
+
+| # | Cena | O que aparece | Edição |
+| --- | --- | --- | --- |
+| 1 | Demissão (0:00 a 0:15) | Câmera do lado de fora da sala fechada; ouve-se o chefe xingando, abafado. Ele sai com a caixa das coisas dele. | Chefe gravado limpo e abafado na edição (passa-baixa + eco). Cor fria e dessaturada até a notificação. Assédio moral = caso trabalhista. |
+| 2 | Casa (0:15 a 0:30) | Abre a porta, boletos no chão, cai no sofá, pega o celular. | Silêncio quase total, só som ambiente. |
+| 3 | Instagram (0:30 a 0:55) | Por cima do ombro, o Reels da Nocturis tocando no celular dele. | Corte pro nocturis-reels.mp4 em tela cheia. A música sai baixa do celular e vira a trilha do filme (L-cut). |
+| 4 | Descoberta (0:55 a 1:05) | Ele arregala os olhos; 3 a 4 s dos dedos digitando a triagem no site de verdade ("meu chefe me xingava e me demitiu") e o resultado. | Gravação de tela do próprio celular. |
+| 5 | Advogado (1:05 a 1:20) | Escritório vazio, agenda em branco, cara de desânimo. A notificação chega e ele se anima. | Brincadeira na notificação: a imagem congela, o cartão "Novo pedido de contato" da Nocturis desce do topo do quadro com quique e som, a corujinha pisca, e a cor vira quente a partir daqui. |
+| 6 | WhatsApp (1:20 a 1:30) | Tela dividida: cliente de um lado olhando pra direita, advogado do outro olhando pra esquerda, cada um no celular. | Balões de conversa animados na tela (sem número de telefone real). Mostra que o contato só libera depois do aceite. |
+| 7 | Encontro (1:30 a 1:42) | Os dois numa mesa com a papelada: o advogado explica, o cliente concorda, aperto de mão. | Cortes de movimento (assina / carimba, fecha / abre a pasta). Sem prometer resultado. |
+| 8 | Final (1:42 a 2:00) | Advogado com a agenda cheia, sorrindo; vinheta da coruja: "Encontre o advogado certo para o seu caso." | Música sobe e termina junto da vinheta. |
