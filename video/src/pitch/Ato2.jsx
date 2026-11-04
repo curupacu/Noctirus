@@ -9,7 +9,7 @@ const s = (segundos) => Math.round(segundos * FPS);
 const C = { extrapolateLeft: "clamp", extrapolateRight: "clamp" };
 
 // Antes da Nocturis o mundo é frio e apagado; o Reels fica com as cores dele.
-function Frio({ brilho = 1.4, children }) {
+export function Frio({ brilho = 1.4, children }) {
   return (
     <AbsoluteFill style={{ filter: `brightness(${brilho}) contrast(1.08) saturate(0.7)` }}>
       {children}
@@ -110,7 +110,12 @@ const BLOCOS = [
 const INICIOS = BLOCOS.map((_, i) => BLOCOS.slice(0, i).reduce((t, b) => t + s(b.dur), 0));
 export const DURACAO_ATO2 = BLOCOS.reduce((t, b) => t + s(b.dur), 0);
 
-export function Ato2() {
+// Em que segundo da música o Ato 2 termina (o filme inteiro continua a trilha daí).
+const MUSICA_DE = REELS_DE + REELS_DUR + 40 / 30 - 0.4;
+export const MUSICA_FIM_ATO2 = MUSICA_DE + (DURACAO_ATO2 - (INICIOS[3] - 12)) / FPS;
+
+// `sozinho`: rascunho avulso (a música some no fim). No filme inteiro a música segue.
+export function Ato2({ sozinho = true }) {
   const f = useCurrentFrame();
   const fimReels = INICIOS[3];
   const toque = INICIOS[INICIOS.length - 1] + s((TOQUE.momento - TOQUE.de) / TOQUE.velocidade);
@@ -131,14 +136,14 @@ export function Ato2() {
       <Sequence from={fimReels - 12}>
         <Audio
           src={staticFile("musica.mp3")}
-          trimBefore={s(REELS_DE + REELS_DUR + 40 / 30 - 0.4)}
-          volume={(q) => interpolate(q, [0, 12, DURACAO_ATO2 - fimReels, DURACAO_ATO2 - fimReels + 12], [0, 0.55, 0.55, 0], C)}
+          trimBefore={s(MUSICA_DE)}
+          volume={(q) => interpolate(q, [0, 12, DURACAO_ATO2 - fimReels, DURACAO_ATO2 - fimReels + 12], [0, 0.55, 0.55, sozinho ? 0 : 0.55], C)}
         />
       </Sequence>
       <Sequence from={toque} durationInFrames={30}>
         <Audio src={staticFile("sfx/clique.wav")} volume={0.8} />
       </Sequence>
-      <AbsoluteFill style={{ background: "black", opacity: escuro }} />
+      {sozinho && <AbsoluteFill style={{ background: "black", opacity: escuro }} />}
     </AbsoluteFill>
   );
 }
