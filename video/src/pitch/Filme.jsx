@@ -46,17 +46,18 @@ function Plano({ arquivo, de, ate, zoom = [1, 1], origem = "50% 50%", velocidade
 
 // ---------- Ato 1: demissão (um plano só, recortado em vários pela edição) ----------
 const DEMISSAO = [
-  { de: 0.8, ate: 2.4, zoom: [1, 1.05] }, // ele trabalhando, o chefe entra
-  { de: 2.4, ate: 3.7, zoom: [1.5, 1.55], origem: "62% 55%" }, // a mão no ombro, ele vira
-  { de: 3.7, ate: 5.3, zoom: [1.7, 2.3], origem: "6% 32%", crash: true }, // o chefe gritando
-  { de: 5.3, ate: 6.7, zoom: [2.1, 2.2], origem: "72% 30%" }, // a cara dele
-  { de: 6.7, ate: 10.4, zoom: [1.1, 1.2], origem: "60% 50%" }, // ele pega o papel e sai
-];
+  { de: 0.5, ate: 4.7, zoom: [1, 1.06] }, // o escritório parado, ele trabalhando (com o texto)
+  { de: 4.7, ate: 6.6, zoom: [1.35, 1.4], origem: "45% 55%" }, // o chefe chega e puxa ele pelo ombro
+  { de: 6.6, ate: 8.3, zoom: [1.8, 2.0], origem: "6% 30%" }, // o chefe gritando
+  { de: 8.3, ate: 9.7, zoom: [1.15, 1.2], origem: "0% 45%" }, // os dois frente a frente
+  { de: 9.7, ate: 13.6, zoom: [1.1, 1.15], origem: "60% 50%" }, // ele pega o papel e vai embora
+]
 const DUR_DEMISSAO = DEMISSAO.reduce((t, p) => t + s(p.ate - p.de), 0);
 
 function Demissao() {
   let inicio = 0;
   return (
+    <AbsoluteFill>
     <Frio brilho={1.0}>
       {DEMISSAO.map((p, i) => {
         const de = inicio;
@@ -68,12 +69,26 @@ function Demissao() {
         );
       })}
     </Frio>
+    <Legenda />
+    </AbsoluteFill>
+  );
+}
+
+// Texto de abertura, discreto, como em filme.
+function Legenda() {
+  const f = useCurrentFrame();
+  const op = interpolate(f, [15, 35, 100, 122], [0, 1, 1, 0], C);
+  return (
+    <div style={{ position: "absolute", left: 90, bottom: 90, opacity: op, translate: `0 ${(1 - op) * 12}px`, color: "white", textShadow: "0 2px 16px rgba(0,0,0,0.55)" }}>
+      <div style={{ fontFamily: SANS, fontWeight: 600, fontSize: 30, letterSpacing: "0.22em", textTransform: "uppercase" }}>Escritório</div>
+      <div style={{ fontFamily: SERIF, fontSize: 54, marginTop: 6 }}>Segunda-feira, 9h</div>
+    </div>
   );
 }
 
 // ---------- Ato 3: advogado ----------
 // A imagem congela no desânimo, a notificação desce, e daí em diante tudo esquenta.
-const ADV = { triste: [0.3, 3.9], congela: 1.3, lendo: [3.9, 9.4], festa: [9.4, 13.2] };
+const ADV = { triste: [0.3, 3.9], congela: 1.3, lendo: [3.9, 9.4], festa: [9.4, 10.9] };
 const DUR_ADV =
   s(ADV.triste[1] - ADV.triste[0]) + s(ADV.congela) + s((ADV.lendo[1] - ADV.lendo[0]) / 1.4) + s(ADV.festa[1] - ADV.festa[0]);
 
@@ -135,7 +150,7 @@ function Advogado() {
         <Plano arquivo="advogado.mp4" de={ADV.lendo[0]} ate={ADV.lendo[1]} velocidade={1.4} zoom={[1.12, 1.2]} origem="35% 40%" />
       </Sequence>
       <Sequence from={t3}>
-        <Plano arquivo="advogado.mp4" de={ADV.festa[0]} ate={ADV.festa[1]} zoom={[1.2, 1.55]} origem="30% 38%" />
+        <Plano arquivo="advogado.mp4" de={ADV.festa[0]} ate={ADV.festa[1]} zoom={[1.2, 1.4]} origem="30% 38%" />
       </Sequence>
     </>
   );
@@ -227,11 +242,10 @@ function Conversa() {
   );
 }
 
-// ---------- Aperto de mão: de longe chegando, corta no movimento pro de perto ----------
+// ---------- Aperto de mão (o take mais de perto, o único em que as mãos se encontram) ----------
 const MAOS = [
-  { arquivo: "maos-longe.mp4", de: 0.6, ate: 2.5, zoom: [1.15, 1.25], origem: "48% 45%" },
-  { arquivo: "maos-perto.mp4", de: 1.0, ate: 3.6, zoom: [1.1, 1.25], origem: "58% 55%", velocidade: 0.8 },
-];
+  { arquivo: "maos-perto.mp4", de: 0.2, ate: 3.6, zoom: [1.1, 1.25], origem: "58% 55%", velocidade: 0.85 },
+]
 const DUR_MAOS = MAOS.reduce((t, p) => t + s((p.ate - p.de) / (p.velocidade ?? 1)), 0);
 
 function Maos() {
@@ -289,13 +303,9 @@ function Trilha() {
 
 // [arquivo, quadro no filme, volume, duração]
 const EFEITOS = [
-  ["sfx/whoosh.wav", INICIO.demissao + s(2.4 - 0.8 + 3.7 - 2.4) - 4, 0.35, 25], // zoom no chefe
-  ["sfx/impacto.wav", INICIO.demissao + s(2.4 - 0.8 + 3.7 - 2.4), 0.3, 70],
   ["sfx/aviso.wav", INICIO.advogado + s(ADV.triste[1] - ADV.triste[0]) + 4, 0.8, 45], // notificação
-  ["sfx/powerup.wav", INICIO.advogado + DUR_ADV - s(ADV.festa[1] - ADV.festa[0]) + 6, 0.35, 60], // comemoração
-  ...MENSAGENS.map((_, i) => ["sfx/pop.wav", INICIO.conversa + 30 + i * PASSO_MSG, 0.5, 20]),
-  ["sfx/whoosh.wav", INICIO.maos + s((2.5 - 0.6) / 1) - 6, 0.3, 25],
-];
+  ...MENSAGENS.map((_, i) => ["sfx/pop.wav", INICIO.conversa + 30 + i * PASSO_MSG, 0.35, 20]),
+]
 
 export function Filme() {
   return (
