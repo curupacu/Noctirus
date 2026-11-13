@@ -17,7 +17,14 @@ const EFEITOS = [
   ["sfx/whoosh.wav", 100, 0.3, 30],
 ];
 
-export function Vinheta() {
+// `ingles` (no pitch): a voz do grupo diz "Nocturis" quando o nome é escrito e a frase em
+// inglês quando a frase aparece, com a tradução em letra menor embaixo.
+const VOZ = [
+  ["pitch/voz-nocturis.wav", 68],
+  ["pitch/voz-frase.wav", 104],
+];
+
+export function Vinheta({ ingles = false }) {
   const f = useCurrentFrame();
   const { width, height } = useVideoConfig();
   const vertical = height > width;
@@ -59,7 +66,30 @@ export function Vinheta() {
         </div>
       </div>
 
-      {EFEITOS.map(([arquivo, quando, volume, dur], i) => (
+      {ingles && (
+        <div
+          style={{
+            position: "absolute",
+            bottom: vertical ? 330 : 120,
+            width: "100%",
+            textAlign: "center",
+            fontFamily: SERIF,
+            fontStyle: "italic",
+            fontSize: vertical ? 44 : 34,
+            color: COR.bege,
+            opacity: interpolate(f, [110, 130], [0, 0.75], C),
+          }}
+        >
+          Find the right lawyer for your case.
+        </div>
+      )}
+      {ingles &&
+        VOZ.map(([arquivo, quando]) => (
+          <Sequence key={arquivo} from={quando} layout="none">
+            <Audio src={staticFile(arquivo)} volume={1} />
+          </Sequence>
+        ))}
+      {EFEITOS.filter(([arquivo]) => !(ingles && arquivo === "sfx/whoosh.wav")).map(([arquivo, quando, volume, dur], i) => (
         <Sequence key={i} from={quando} durationInFrames={dur ?? 30} layout="none">
           <Audio src={staticFile(arquivo)} volume={volume} />
         </Sequence>

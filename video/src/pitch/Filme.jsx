@@ -7,7 +7,7 @@ import { Ato2, DURACAO_ATO2, Frio, MUSICA_FIM_ATO2 } from "./Ato2";
 
 // Pitch da Nocturis, versão 1 com as gravações do grupo (04/11/2026). Sem falas e sem o som
 // das gravações: só a música do Reels (que vira a trilha), efeitos e a vinheta no fim.
-// Ainda falta a cena dele chegando em casa (entra entre a demissão e o sofá).
+// Pendentes: música triste antes do Reels e a voz em inglês na vinheta.
 const FPS = 30;
 const s = (segundos) => Math.round(segundos * FPS);
 const C = { extrapolateLeft: "clamp", extrapolateRight: "clamp" };
@@ -83,6 +83,33 @@ function Legenda() {
       <div style={{ fontFamily: SANS, fontWeight: 600, fontSize: 30, letterSpacing: "0.22em", textTransform: "uppercase" }}>Escritório</div>
       <div style={{ fontFamily: SERIF, fontSize: 54, marginTop: 6 }}>Segunda-feira, 9h</div>
     </div>
+  );
+}
+
+// ---------- Chegando em casa: ele vai até a porta, digita a senha, abre e vê os boletos ----------
+const CASA = [
+  { arquivo: "casa.mp4", de: 2.9, ate: 6.6, zoom: [1, 1.06], origem: "60% 45%" }, // chega cansado na porta
+  { arquivo: "boletos.mp4", de: 1.2, ate: 4.6, zoom: [1.1, 1.18], origem: "85% 30%", brilho: 1.6 }, // a senha da fechadura
+  { arquivo: "boletos.mp4", de: 5.6, ate: 9.6, zoom: [1.05, 1.15], origem: "50% 70%", brilho: 1.3 }, // a porta abre: boletos no chão
+];
+const DUR_CASA = CASA.reduce((t, p) => t + s(p.ate - p.de), 0);
+
+function Casa() {
+  let inicio = 0;
+  return (
+    <AbsoluteFill>
+      {CASA.map(({ brilho = 1.15, ...p }, i) => {
+        const de = inicio;
+        inicio += s(p.ate - p.de);
+        return (
+          <Sequence key={i} from={de} durationInFrames={s(p.ate - p.de)}>
+            <Frio brilho={brilho}>
+              <Plano {...p} />
+            </Frio>
+          </Sequence>
+        );
+      })}
+    </AbsoluteFill>
   );
 }
 
@@ -267,14 +294,15 @@ function Maos() {
 }
 
 // ---------- Montagem ----------
-const DUR_VINHETA = 180;
+const DUR_VINHETA = 215; // um pouco mais longa que a original, pra voz em inglês terminar
 const PARTES = [
   { id: "demissao", dur: DUR_DEMISSAO, Comp: Demissao },
+  { id: "casa", dur: DUR_CASA, Comp: Casa },
   { id: "ato2", dur: DURACAO_ATO2, Comp: () => <Ato2 sozinho={false} /> },
   { id: "advogado", dur: DUR_ADV, Comp: Advogado },
   { id: "conversa", dur: DUR_CONVERSA, Comp: Conversa },
   { id: "maos", dur: DUR_MAOS, Comp: Maos },
-  { id: "vinheta", dur: DUR_VINHETA, Comp: Vinheta },
+  { id: "vinheta", dur: DUR_VINHETA, Comp: () => <Vinheta ingles /> },
 ];
 const INICIO = Object.fromEntries(PARTES.map((p, i) => [p.id, PARTES.slice(0, i).reduce((t, q) => t + q.dur, 0)]));
 export const DURACAO_FILME = PARTES.reduce((t, p) => t + p.dur, 0);
@@ -289,8 +317,9 @@ function Trilha() {
     const f = q + comeco;
     return interpolate(
       f,
-      [comeco, comeco + 15, notif, notif + 10, INICIO.vinheta + 60, fim - 20],
-      [0.55, 0.12, 0.12, 0.6, 0.55, 0],
+      // na vinheta a música abaixa pra voz em inglês e some no fim
+      [comeco, comeco + 15, notif, notif + 10, INICIO.vinheta + 55, INICIO.vinheta + 66, fim - 30, fim],
+      [0.55, 0.12, 0.12, 0.6, 0.55, 0.18, 0.18, 0],
       C,
     );
   };
@@ -303,6 +332,9 @@ function Trilha() {
 
 // [arquivo, quadro no filme, volume, duração]
 const EFEITOS = [
+  // o grito do chefe ("Você vai embora agora!"), do próprio take, bem abafado: é como ele ouve
+  // a demissão, em choque. O take começa em 2:29,5 e a fala em 2:35,4.
+  ["pitch/grito-abafado.wav", INICIO.demissao + s(155.4 - 149.5), 1, s(3.2)],
   ["sfx/aviso.wav", INICIO.advogado + s(ADV.triste[1] - ADV.triste[0]) + 4, 0.8, 45], // notificação
   ...MENSAGENS.map((_, i) => ["sfx/pop.wav", INICIO.conversa + 30 + i * PASSO_MSG, 0.35, 20]),
 ]
