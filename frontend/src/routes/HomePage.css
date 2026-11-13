@@ -33,9 +33,12 @@ main.home {
   padding: 0 32px;
 }
 
+/* Anel duplo (escuro por dentro, dourado por fora): aparece tanto nas partes marrons quanto
+   nas creme. Só o dourado sumia no fundo claro (contraste ~1,3:1, WCAG 2.4.7). */
 .home :focus-visible {
-  outline: 2px solid var(--gold);
-  outline-offset: 3px;
+  outline: 3px solid var(--brown-ink);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 6px var(--gold);
 }
 
 .home a {
@@ -761,8 +764,26 @@ main.home {
     gap: 0;
   }
 
+  /* No celular os links viram uma segunda linha rolável, em vez de sumirem (não havia menu). */
+  .home-nav {
+    flex-wrap: wrap;
+    height: auto;
+    row-gap: 10px;
+    padding: 16px 0 10px;
+  }
+
   .home-nav__links {
-    display: none;
+    order: 3;
+    width: 100%;
+    margin-left: 0;
+    gap: 22px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .home-nav__links a {
+    white-space: nowrap;
+    font-size: 14px;
   }
 
   .home-nav .home-btn {
@@ -941,4 +962,11 @@ main.home {
   .home-faq__chev {
     transition: none;
   }
+}
+
+/* aviso de espera/erro da vitrine de advogados (o backend gratuito hiberna) */
+.home-team__aviso {
+  margin: 12px 0 0;
+  font-size: 0.95rem;
+  color: var(--text-dim, #5e4e3b);
 }

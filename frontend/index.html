@@ -42,7 +42,7 @@
       }
     </script>
 
-    <title>Nocturis | Advocacia Virtual: Triagem e Direcionamento Jurídico</title>
+    <title>Nocturis | Triagem jurídica gratuita e advogados por área</title>
     <meta
       name="description"
       content="Nocturis: descreva seu problema jurídico e receba direcionamento imediato: triagem por IA identifica se é caso cível ou trabalhista e indica advogados compatíveis por área e localização. Contato direto, sem intermediário."
@@ -55,7 +55,7 @@
     <meta property="og:site_name" content="Nocturis" />
     <meta property="og:locale" content="pt_BR" />
     <meta property="og:url" content="https://nocturis.com.br/" />
-    <meta property="og:title" content="Nocturis | Advocacia Virtual: Triagem e Direcionamento Jurídico" />
+    <meta property="og:title" content="Nocturis | Triagem jurídica gratuita e advogados por área" />
     <meta
       property="og:description"
       content="Descreva seu problema jurídico e receba direcionamento imediato: triagem por IA e matching de advogados por área (cível/trabalhista) e localização."
@@ -66,7 +66,7 @@
 
     <!-- Twitter/X card -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Nocturis | Advocacia Virtual: Triagem e Direcionamento Jurídico" />
+    <meta name="twitter:title" content="Nocturis | Triagem jurídica gratuita e advogados por área" />
     <meta
       name="twitter:description"
       content="Descreva seu problema jurídico e receba direcionamento imediato: triagem por IA e matching de advogados por área e localização."
@@ -80,7 +80,7 @@
         "@context": "https://schema.org",
         "@type": "LegalService",
         "name": "Nocturis",
-        "alternateName": "Nocturis Advocacia Virtual",
+        "alternateName": "Nocturis Triagem Jurídica",
         "url": "https://nocturis.com.br/",
         "logo": "https://nocturis.com.br/favicon-512.png",
         "image": "https://nocturis.com.br/og-image.png",
@@ -113,7 +113,7 @@
             "name": "Como funciona a triagem por IA?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Você descreve seu problema com suas próprias palavras. A IA identifica se é uma questão cível ou trabalhista (o que inclui multas de trânsito e benefícios do INSS) e sugere advogados com a especialidade certa."
+              "text": "Você descreve seu problema com suas próprias palavras. A IA identifica a área e o assunto do caso e sugere advogados que atendem esse assunto. Hoje a Nocturis atende questões cíveis e trabalhistas, além de multas de trânsito e benefícios do INSS."
             }
           },
           {
@@ -121,7 +121,7 @@
             "name": "Meus dados estão seguros?",
             "acceptedAnswer": {
               "@type": "Answer",
-              "text": "Sim. Só guardamos o que é necessário para te atender e nunca vendemos seus dados a ninguém. Você pode baixar ou apagar tudo quando quiser, direto no seu perfil."
+              "text": "Guardamos só o necessário e nunca vendemos seus dados. A descrição do seu caso é analisada por um serviço de inteligência artificial de terceiros, por isso não escreva nome, CPF, endereço ou telefone nela. Você pode baixar ou apagar seus dados quando quiser, nas configurações."
             }
           },
           {
@@ -152,6 +152,9 @@
         if (location.hostname !== "nocturis.com.br") return;
         window.dataLayer = window.dataLayer || [];
         window.gtag = function () { window.dataLayer.push(arguments); };
+        // Sem cookies: o consentimento começa negado (consent mode), então o GA só conta visitas
+        // de forma anônima, sem identificar o navegador. Não precisa de banner de cookies.
+        gtag("consent", "default", { analytics_storage: "denied", ad_storage: "denied", ad_user_data: "denied", ad_personalization: "denied" });
         gtag("js", new Date());
         gtag("config", "G-9D7ZMLJ58K", { send_page_view: false });
         // Baixa o gtag só depois da página carregar (não disputa banda com o site).

@@ -321,3 +321,14 @@ describe("PATCH /solicitacoes/:id/caso (quadro de casos, RF012)", () => {
     expect(minhas.body[0].anotacoes).toBeUndefined();
   });
 });
+
+describe("advogado com a OAB fora de aprovado", () => {
+  it("não aceita pedido nem vê pedidos pendentes, mas pode recusar", async () => {
+    const { body } = await pedir();
+    cell.fake.db._seed("advogados", "a1", { situacaoOab: "revogado", contatos: CONTATOS, foto: null });
+    expect((await responder(body.id, "aceitar")).status).toBe(403);
+    const recebidas = await request(app).get("/solicitacoes/recebidas").set("Authorization", `Bearer ${token("a1", "advogado")}`);
+    expect(recebidas.body).toHaveLength(0);
+    expect((await responder(body.id, "recusar")).status).toBe(200);
+  });
+});

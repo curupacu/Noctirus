@@ -19,4 +19,4 @@ jobs:
       - name: Chamar /health
         run: curl --silent --show-error --max-time 90 --retry 2 https://noctirus-backend.onrender.com/health
       - name: Enviar lembretes
-        run: curl --silent --show-error --max-time 90 -X POST https://noctirus-backend.onrender.com/tarefas/lembretes
+        run: curl --silent --show-error --max-time 90 -X POST -H "x-tarefa-chave: ${{ secrets.TAREFAS_CHAVE }}" https://noctirus-backend.onrender.com/tarefas/lembretes

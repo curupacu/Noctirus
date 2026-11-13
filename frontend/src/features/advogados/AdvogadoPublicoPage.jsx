@@ -82,9 +82,11 @@ export function AdvogadoPublicoPage() {
           </p>
           <div className="perfil-adv__selos">
             <SeloOab advogado={advogado} />
-            <span className="badge">
-              OAB {advogado.oab?.numero}/{advogado.oab?.uf}
-            </span>
+            {advogado.demonstracao !== true && (
+              <span className="badge">
+                OAB {advogado.oab?.numero}/{advogado.oab?.uf}
+              </span>
+            )}
           </div>
         </section>
 

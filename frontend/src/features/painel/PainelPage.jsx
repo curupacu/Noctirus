@@ -4,7 +4,7 @@ import { Avatar } from "../../components/Avatar/Avatar";
 import { EsqueletoPainel } from "../../components/Esqueleto/Esqueleto";
 import { api } from "../../lib/api";
 import { textoLocalizacao } from "../../lib/localizacao";
-import { oabAprovada } from "../../lib/situacaoOab";
+import { labelSituacaoOab, oabAprovada } from "../../lib/situacaoOab";
 import { LABEL_AREA, LABEL_SITUACAO_CLIENTE, rotulosEspecialidades } from "../../lib/solicitacoes";
 import { useCarregar } from "../../lib/useCarregar";
 import { useTitulo } from "../../lib/useTitulo";
@@ -68,7 +68,7 @@ function CartaoAdvogadoMini({ advogado, triagemId }) {
       <Avatar nome={advogado.nome} foto={advogado.foto} seed={advogado.uid} className="prateleira__foto" />
       <strong className="prateleira__nome">{advogado.nome}</strong>
       <span className="prateleira__meta">{textoLocalizacao(advogado.localizacao)}</span>
-      {oabAprovada(advogado) && <span className="prateleira__selo">OAB verificada</span>}
+      {oabAprovada(advogado) && <span className="prateleira__selo">{labelSituacaoOab(advogado)}</span>}
     </Link>
   );
 }

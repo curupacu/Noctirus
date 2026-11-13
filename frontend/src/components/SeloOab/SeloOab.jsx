@@ -1,9 +1,9 @@
-import { labelSituacaoOab, oabAprovada } from "../../lib/situacaoOab";
+import { ehDemonstracao, labelSituacaoOab, oabAprovada } from "../../lib/situacaoOab";
 
 // Selo com a situação da OAB do advogado. Antes cada tela tinha a própria cópia desse
 // badge (com o mesmo ícone de check), lendo o antigo `verificado`.
 export function SeloOab({ advogado }) {
-  const aprovada = oabAprovada(advogado);
+  const aprovada = oabAprovada(advogado) && !ehDemonstracao(advogado);
   return (
     <span className={`badge${aprovada ? " badge--seal" : ""}`}>
       {aprovada && (

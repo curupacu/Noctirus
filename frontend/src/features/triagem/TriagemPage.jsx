@@ -189,6 +189,7 @@ export function TriagemPage() {
             {passo === 0 && (
               <p className="triagem__dica">
                 Não precisa saber nada de Direito. Escreva do seu jeito, como contaria para um amigo.
+                Não coloque nome, CPF, endereço ou telefone: o texto é analisado por um serviço de IA.
               </p>
             )}
             <textarea

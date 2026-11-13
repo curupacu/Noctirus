@@ -5,7 +5,7 @@ import { Logo } from "../components/Logo/Logo";
 import { useAuth } from "../features/auth/AuthContext";
 import { rotaInicial } from "../features/auth/rotaInicial";
 import { api } from "../lib/api";
-import { oabAprovada } from "../lib/situacaoOab";
+import { labelSituacaoOab, oabAprovada } from "../lib/situacaoOab";
 import { useCarregar } from "../lib/useCarregar";
 import { useTitulo } from "../lib/useTitulo";
 import "./HomePage.css";
@@ -36,12 +36,12 @@ const FAQ = [
   {
     pergunta: "Como funciona a triagem por IA?",
     resposta:
-      "Você descreve seu problema com suas próprias palavras. A IA identifica se é uma questão cível ou trabalhista (o que inclui multas de trânsito e benefícios do INSS) e sugere advogados com a especialidade certa.",
+      "Você descreve seu problema com suas próprias palavras. A IA identifica a área e o assunto do caso e sugere advogados que atendem esse assunto. Hoje a Nocturis atende questões cíveis e trabalhistas, além de multas de trânsito e benefícios do INSS.",
   },
   {
     pergunta: "Meus dados estão seguros?",
     resposta:
-      "Sim. Só guardamos o que é necessário para te atender e nunca vendemos seus dados a ninguém. Você pode baixar ou apagar tudo quando quiser, direto no seu perfil.",
+      "Guardamos só o necessário e nunca vendemos seus dados. A descrição do seu caso é analisada por um serviço de inteligência artificial de terceiros, por isso não escreva nome, CPF, endereço ou telefone nela. Você pode baixar ou apagar seus dados quando quiser, nas configurações.",
   },
   {
     pergunta: "Como eu falo com o advogado?",
@@ -239,7 +239,7 @@ function CartaoAdvogado({ advogado }) {
         <span className="home-lawyer__meta">
           {[areas, cidade && uf ? `${cidade}/${uf}` : cidade].filter(Boolean).join(" · ")}
         </span>
-        {oabAprovada(advogado) && <span className="home-lawyer__badge">OAB verificada</span>}
+        {oabAprovada(advogado) && <span className="home-lawyer__badge">{labelSituacaoOab(advogado)}</span>}
       </span>
     </Link>
   );
@@ -399,8 +399,8 @@ export function HomePage() {
               <path d="M0 5q7.5-5 15 0t15 0 15 0 15 0 15 0 15 0 15 0 15 0" />
             </svg>
             <p>
-              Profissionais com a OAB conferida pela Nocturis. Você vê a área, a cidade e o
-              currículo de cada um antes de decidir com quem falar.
+              Só aparece quem tem a OAB conferida pela Nocturis. Os perfis abaixo são de
+              demonstração do projeto: você vê a área, a cidade e o currículo antes de decidir com quem falar.
             </p>
           </div>
 
@@ -410,6 +410,16 @@ export function HomePage() {
                 <li key={i} className="home-lawyer home-lawyer--skeleton" />
               ))}
             </ul>
+          )}
+          {carregandoAdvogados && (
+            <p className="home-team__aviso" role="status">
+              Carregando os advogados. Na primeira visita do dia o servidor pode levar até 30 segundos para acordar.
+            </p>
+          )}
+          {erroAdvogados && (
+            <p className="home-team__aviso" role="status">
+              Não conseguimos carregar os advogados agora. Recarregue a página em alguns instantes.
+            </p>
           )}
 
           {advogados && advogados.length > 0 && (
@@ -552,7 +562,7 @@ export function HomePage() {
           </div>
         </div>
         <div className="home-container home-footer__bottom">
-          <span>© 2026 Nocturis · Desenvolvido pela Aggrem · Fotos: Unsplash</span>
+          <span>© 2026 Nocturis · Projeto acadêmico (TCC) desenvolvido pela Aggrem · Fotos: Unsplash</span>
           <span>A Nocturis é uma plataforma de triagem e direcionamento. Não presta serviços jurídicos.</span>
         </div>
       </footer>

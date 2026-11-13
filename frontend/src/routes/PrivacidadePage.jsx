@@ -60,7 +60,11 @@ export function PrivacidadePage() {
         </li>
         <li>
           <strong>Google Analytics</strong>: mede quantas pessoas visitam o site e quais
-          páginas usam, de forma agregada (não associamos isso ao seu nome ou e-mail).
+          páginas usam, de forma agregada e sem cookies (não associamos isso ao seu nome ou e-mail);
+        </li>
+        <li>
+          <strong>Sentry</strong>: registra erros técnicos do site e do servidor para a equipe
+          conseguir corrigir, guardados por tempo limitado.
         </li>
       </ul>
 

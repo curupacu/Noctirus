@@ -18,39 +18,22 @@ service cloud.firestore {
       return request.auth != null && request.auth.uid == uid;
     }
 
+    // users, advogados e currículos: o site nunca lê nem grava essas coleções direto, tudo passa
+    // pelo backend (Admin SDK, que ignora as rules). Por isso ficam fechadas para o cliente:
+    // antes `advogados` tinha leitura pública (vazava WhatsApp/e-mail que só deveriam aparecer
+    // depois do aceite, RF010) e o dono podia gravar campos sem a validação do backend
+    // (bio sem limite, foto de fora, e-mail de notificação trocado). Achado da auditoria de 11/2026.
     match /users/{uid} {
-      // Só o dono e o admin leem — o doc tem email/telefone (LGPD). Antes qualquer usuário
-      // logado lia o doc de qualquer outro, o que vazava dado pessoal de todo mundo pra
-      // quem quisesse ler direto pelo SDK do cliente.
       allow read: if dono(uid) || papel() == "admin";
-      allow create: if dono(uid);
-      // Edição não pode trocar papel nem status — role só muda via custom claim (backend)
-      // e status só pelo backend/admin.
-      allow update: if papel() == "admin" ||
-        (dono(uid) &&
-          request.resource.data.role == resource.data.role &&
-          request.resource.data.status == resource.data.status);
+      allow write: if false;
     }
 
     match /advogados/{uid} {
-      allow read: if true;
-      // O dono só pode mexer nos campos que o backend também deixa (áreas, especialidades,
-      // localização, contato) — nunca na situação da OAB nem na "oab". Sem essa trava, um
-      // advogado conseguia se auto-aprovar (`situacaoOab: "aprovado"`) escrevendo direto no Firestore pelo
-      // SDK do cliente, sem passar pelo backend — as chaves do Firebase web são públicas
-      // por design, "só o backend faz isso" não protege nada se a rule não travar também.
-      allow create, delete: if papel() == "admin";
-      allow update: if papel() == "admin" ||
-        (dono(uid) && papel() == "advogado" &&
-          request.resource.data.situacaoOab == resource.data.situacaoOab &&
-          request.resource.data.situacaoOabMotivo == resource.data.situacaoOabMotivo &&
-          request.resource.data.situacaoOabPor == resource.data.situacaoOabPor &&
-          request.resource.data.oab == resource.data.oab);
+      allow read, write: if false;
     }
 
     match /curriculos/{uid} {
-      allow read: if true;
-      allow write: if dono(uid) && papel() == "advogado";
+      allow read, write: if false;
     }
 
     // Triagem só é criada/lida pelo backend (classificação por IA/regras + matching);

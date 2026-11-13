@@ -186,9 +186,13 @@ solicitacoesRouter.get("/solicitacoes/minhas", verificarToken, requireRole("clie
 // Nome do cliente só depois de aceito.
 solicitacoesRouter.get("/solicitacoes/recebidas", verificarToken, requireRole("advogado"), async (req, res) => {
   const snapshot = await db.collection("solicitacoes").where("advogadoId", "==", req.user.uid).get();
+  // Com a OAB fora de "aprovado" (revogada, recusada, em análise) o advogado continua vendo os
+  // casos que já aceitou, mas não os pedidos pendentes: não pode ler relatos novos nem aceitá-los.
+  const aprovado = (await db.collection("advogados").doc(req.user.uid).get()).data()?.situacaoOab === "aprovado";
 
+  const docs = aprovado ? snapshot.docs : snapshot.docs.filter((doc) => doc.data().situacao !== "pendente");
   const lista = await Promise.all(
-    snapshot.docs.map(async (doc) => {
+    docs.map(async (doc) => {
       const s = doc.data();
       const aceita = s.situacao === "aceita";
       const clienteNome = aceita ? (await db.collection("users").doc(s.clienteId).get()).data()?.nome || null : null;
@@ -232,6 +236,12 @@ solicitacoesRouter.patch(
     }
 
     const aceitou = req.body.acao === "aceitar";
+    if (aceitou) {
+      const advogado = (await db.collection("advogados").doc(req.user.uid).get()).data();
+      if (advogado?.situacaoOab !== "aprovado") {
+        return res.status(403).json({ erro: "Sua OAB precisa estar aprovada para aceitar pedidos" });
+      }
+    }
     const situacao = aceitou ? "aceita" : "recusada";
     // Aceitar já coloca o caso em andamento no quadro; recusado sai do quadro.
     await ref.update({
