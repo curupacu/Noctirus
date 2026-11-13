@@ -335,13 +335,13 @@ function Trilha({ inicio: INICIO, duracao, musicaFim, triste }) {
     );
   };
   // piano triste ("Silent Descent", Mixkit) da demissão até ele achar a Nocturis
-  const entraTriste = s(1.6);
+  const entraTriste = s(9.0); // logo depois de o chefe terminar de gritar
   return (
     <>
       <Sequence from={entraTriste} durationInFrames={triste.fim - entraTriste}>
         <Audio
           src={staticFile("pitch/triste-silent-descent.mp3")}
-          volume={(q) => interpolate(q + entraTriste, [entraTriste, entraTriste + 30, triste.some, triste.fim], [0, 0.75, 0.75, 0], C)}
+          volume={(q) => interpolate(q + entraTriste, [entraTriste, entraTriste + 15, triste.some, triste.fim], [0, 0.75, 0.75, 0], C)}
         />
       </Sequence>
       <Sequence from={comeco}>
@@ -353,9 +353,9 @@ function Trilha({ inicio: INICIO, duracao, musicaFim, triste }) {
 
 // [arquivo, quadro no filme, volume, duração]
 const efeitos = (INICIO) => [
-  // só o ambiente do escritório nos primeiros 2 segundos (o take tem palavrão, então o resto fica
-  // mudo e a música triste assume)
-  ["pitch/som-ambiente.wav", INICIO.demissao, 1, s(2.6)],
+  // ambiente do escritório (o trecho antes de o chefe entrar, repetido) até o piano entrar: o
+  // take tem palavrão, então a voz do chefe nunca aparece
+  ["pitch/som-ambiente.wav", INICIO.demissao, 1, s(9.6)],
   ["sfx/aviso.wav", INICIO.advogado + s(ADV.triste[1] - ADV.triste[0]) + 4, 0.8, 45], // notificação
   ...MENSAGENS.map((_, i) => ["sfx/pop.wav", INICIO.conversa + 30 + i * PASSO_MSG, 0.35, 20]),
 ];
