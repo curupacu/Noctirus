@@ -86,7 +86,7 @@ export function Vinheta({ ingles = false }) {
       {ingles &&
         VOZ.map(([arquivo, quando]) => (
           <Sequence key={arquivo} from={quando} layout="none">
-            <Audio src={staticFile(arquivo)} volume={1} />
+            <Audio src={staticFile(arquivo)} volume={0.7} />
           </Sequence>
         ))}
       {EFEITOS.filter(([arquivo]) => !(ingles && arquivo === "sfx/whoosh.wav")).map(([arquivo, quando, volume, dur], i) => (

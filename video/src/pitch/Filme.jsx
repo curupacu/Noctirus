@@ -3,7 +3,7 @@ import { AbsoluteFill, Easing, Img, interpolate, Sequence, spring, staticFile, u
 import { CorujaEstatica } from "../Coruja";
 import { COR, SANS, SERIF } from "../tema";
 import { Vinheta } from "../Vinheta";
-import { Ato2, DURACAO_ATO2, Frio, MUSICA_FIM_ATO2 } from "./Ato2";
+import { Ato2, ATO2, Frio } from "./Ato2";
 
 // Pitch da Nocturis, versão 1 com as gravações do grupo (04/11/2026). Sem falas e sem o som
 // das gravações: só a música do Reels (que vira a trilha), efeitos e a vinheta no fim.
@@ -24,7 +24,8 @@ function Quente({ brilho = 1.1, children }) {
 
 // Um pedaço de take com enquadramento: `zoom` [início, fim] a partir de `origem`.
 // `crash` faz o zoom acontecer nos primeiros 6 quadros (o zoom brusco do susto).
-function Plano({ arquivo, de, ate, zoom = [1, 1], origem = "50% 50%", velocidade = 1, crash = false }) {
+// `volume` > 0 usa o som do próprio take, com entrada e saída suaves (sem corte seco).
+function Plano({ arquivo, de, ate, zoom = [1, 1], origem = "50% 50%", velocidade = 1, crash = false, volume = 0 }) {
   const f = useCurrentFrame();
   const dur = s((ate - de) / velocidade);
   const escala = crash
@@ -37,7 +38,7 @@ function Plano({ arquivo, de, ate, zoom = [1, 1], origem = "50% 50%", velocidade
         trimBefore={s(de)}
         trimAfter={s(ate)}
         playbackRate={velocidade}
-        muted
+        volume={(q) => volume * interpolate(q, [0, 8, dur - 8, dur], [0, 1, 1, 0], C)}
         style={{ width: "100%", height: "100%", objectFit: "cover" }}
       />
     </AbsoluteFill>
@@ -295,24 +296,34 @@ function Maos() {
 
 // ---------- Montagem ----------
 const DUR_VINHETA = 215; // um pouco mais longa que a original, pra voz em inglês terminar
-const PARTES = [
-  { id: "demissao", dur: DUR_DEMISSAO, Comp: Demissao },
-  { id: "casa", dur: DUR_CASA, Comp: Casa },
-  { id: "ato2", dur: DURACAO_ATO2, Comp: () => <Ato2 sozinho={false} /> },
-  { id: "advogado", dur: DUR_ADV, Comp: Advogado },
-  { id: "conversa", dur: DUR_CONVERSA, Comp: Conversa },
-  { id: "maos", dur: DUR_MAOS, Comp: Maos },
-  { id: "vinheta", dur: DUR_VINHETA, Comp: () => <Vinheta ingles /> },
-];
-const INICIO = Object.fromEntries(PARTES.map((p, i) => [p.id, PARTES.slice(0, i).reduce((t, q) => t + q.dur, 0)]));
-export const DURACAO_FILME = PARTES.reduce((t, p) => t + p.dur, 0);
+// Completo (com o Reels) ou simples (com prints do site no lugar do Reels).
+function montarFilme(simples) {
+  const ato2 = ATO2[simples ? "simples" : "completo"];
+  const partes = [
+    { id: "demissao", dur: DUR_DEMISSAO, Comp: Demissao },
+    { id: "casa", dur: DUR_CASA, Comp: Casa },
+    { id: "ato2", dur: ato2.duracao, Comp: () => <Ato2 sozinho={false} simples={simples} /> },
+    { id: "advogado", dur: DUR_ADV, Comp: Advogado },
+    { id: "conversa", dur: DUR_CONVERSA, Comp: Conversa },
+    { id: "maos", dur: DUR_MAOS, Comp: Maos },
+    { id: "vinheta", dur: DUR_VINHETA, Comp: () => <Vinheta ingles /> },
+  ];
+  const inicio = Object.fromEntries(partes.map((p, i) => [p.id, partes.slice(0, i).reduce((t, q) => t + q.dur, 0)]));
+  const duracao = partes.reduce((t, p) => t + p.dur, 0);
+  // a música triste some enquanto ele pega o celular e acaba quando o Reels (ou os prints) começa
+  const triste = { some: inicio.ato2 + ato2.inicios[1], fim: inicio.ato2 + ato2.inicios[2] };
+  return { partes, inicio, duracao, musicaFim: ato2.musicaFim, triste };
+}
+const FILME = { completo: montarFilme(false), simples: montarFilme(true) };
+export const DURACAO_FILME = FILME.completo.duracao;
+export const DURACAO_FILME_SIMPLES = FILME.simples.duracao;
 
-function Trilha() {
+function Trilha({ inicio: INICIO, duracao, musicaFim, triste }) {
   // a música do Reels continua do ponto em que o Ato 2 parou; fica quase muda enquanto o
   // advogado está desanimado e volta com a notificação
   const comeco = INICIO.advogado;
   const notif = INICIO.advogado + s(ADV.triste[1] - ADV.triste[0]);
-  const fim = DURACAO_FILME;
+  const fim = duracao;
   const volume = (q) => {
     const f = q + comeco;
     return interpolate(
@@ -323,32 +334,43 @@ function Trilha() {
       C,
     );
   };
+  // piano triste ("Silent Descent", Mixkit) da demissão até ele achar a Nocturis
+  const entraTriste = s(1.6);
   return (
-    <Sequence from={comeco}>
-      <Audio src={staticFile("musica.mp3")} trimBefore={s(MUSICA_FIM_ATO2)} volume={volume} />
-    </Sequence>
+    <>
+      <Sequence from={entraTriste} durationInFrames={triste.fim - entraTriste}>
+        <Audio
+          src={staticFile("pitch/triste-silent-descent.mp3")}
+          volume={(q) => interpolate(q + entraTriste, [entraTriste, entraTriste + 30, triste.some, triste.fim], [0, 0.75, 0.75, 0], C)}
+        />
+      </Sequence>
+      <Sequence from={comeco}>
+        <Audio src={staticFile("musica.mp3")} trimBefore={s(musicaFim)} volume={volume} />
+      </Sequence>
+    </>
   );
 }
 
 // [arquivo, quadro no filme, volume, duração]
-const EFEITOS = [
-  // o grito do chefe ("Você vai embora agora!"), do próprio take, bem abafado: é como ele ouve
-  // a demissão, em choque. O take começa em 2:29,5 e a fala em 2:35,4.
-  ["pitch/grito-abafado.wav", INICIO.demissao + s(155.4 - 149.5), 1, s(3.2)],
+const efeitos = (INICIO) => [
+  // só o ambiente do escritório nos primeiros 2 segundos (o take tem palavrão, então o resto fica
+  // mudo e a música triste assume)
+  ["pitch/som-ambiente.wav", INICIO.demissao, 1, s(2.6)],
   ["sfx/aviso.wav", INICIO.advogado + s(ADV.triste[1] - ADV.triste[0]) + 4, 0.8, 45], // notificação
   ...MENSAGENS.map((_, i) => ["sfx/pop.wav", INICIO.conversa + 30 + i * PASSO_MSG, 0.35, 20]),
-]
+];
 
-export function Filme() {
+export function Filme({ simples = false }) {
+  const filme = FILME[simples ? "simples" : "completo"];
   return (
     <AbsoluteFill style={{ background: "black" }}>
-      {PARTES.map(({ id, dur, Comp }) => (
-        <Sequence key={id} from={INICIO[id]} durationInFrames={dur}>
+      {filme.partes.map(({ id, dur, Comp }) => (
+        <Sequence key={id} from={filme.inicio[id]} durationInFrames={dur}>
           <Comp />
         </Sequence>
       ))}
-      <Trilha />
-      {EFEITOS.map(([arquivo, quando, volume, dur], i) => (
+      <Trilha {...filme} />
+      {efeitos(filme.inicio).map(([arquivo, quando, volume, dur], i) => (
         <Sequence key={i} from={quando} durationInFrames={dur ?? 30} layout="none">
           <Audio src={staticFile(arquivo)} volume={volume} />
         </Sequence>
