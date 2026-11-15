@@ -463,15 +463,15 @@ main.home {
 }
 
 .home-lawyer__meta {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--home-on-brown-dim);
 }
 
 .home-lawyer__badge {
   margin-top: 4px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--gold);
 }
@@ -772,18 +772,33 @@ main.home {
     padding: 16px 0 10px;
   }
 
+  .home-nav {
+    margin-bottom: 20px;
+  }
+
   .home-nav__links {
     order: 3;
     width: 100%;
     margin-left: 0;
     gap: 22px;
     overflow-x: auto;
-    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  .home-nav__links::-webkit-scrollbar {
+    display: none;
   }
 
   .home-nav__links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     white-space: nowrap;
-    font-size: 14px;
+    font-size: 15px;
+  }
+
+  .home-hero__copy {
+    padding-top: 12px;
   }
 
   .home-nav .home-btn {
@@ -860,8 +875,10 @@ main.home {
     max-width: none;
   }
 
+  /* no celular a foto do topo vira uma faixa baixa, pra não ocupar a tela inteira antes
+     do conteúdo */
   .home-hero__photo img {
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 16 / 9;
     object-position: center 25%;
   }
 
@@ -929,7 +946,7 @@ main.home {
   }
 
   .home-lawyer__meta {
-    font-size: 11px;
+    font-size: 13px;
   }
 
   .home-lawyer__initial {
@@ -968,5 +985,54 @@ main.home {
 .home-team__aviso {
   margin: 12px 0 0;
   font-size: 0.95rem;
-  color: var(--text-dim, #5e4e3b);
+  color: var(--brown-ink);
+}
+
+/* microtexto abaixo do botão do topo: explica por que a triagem pede conta */
+.home-hero__nota {
+  margin: 12px 0 0;
+  max-width: 420px;
+  font-size: 14px;
+  color: var(--home-on-brown-dim);
+}
+
+.home-services__texto {
+  margin: 0 0 24px;
+  font-size: 18px;
+  line-height: 1.55;
+}
+
+/* o card de assunto parecia clicável e não era: agora tem um link de verdade */
+.home-service__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 12px;
+  font-weight: 600;
+  color: var(--brown-ink);
+}
+
+.home-service__link:hover {
+  text-decoration: underline;
+}
+
+/* link "Pular para o conteúdo": invisível até receber foco pelo teclado */
+.home-pular {
+  position: absolute;
+  left: 16px;
+  top: -60px;
+  z-index: 50;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: var(--gold);
+  color: var(--brown-ink);
+  font-weight: 700;
+}
+
+.home-pular:focus {
+  top: 16px;
+}
+
+.home-hero__copy:focus {
+  outline: none;
 }

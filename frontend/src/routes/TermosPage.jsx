@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { RodapeLegal } from "../components/RodapeLegal/RodapeLegal";
 import { useTitulo } from "../lib/useTitulo";
 
 // Termos de uso (28/10/2026): pública, sem login, no mesmo formato da política de
@@ -59,8 +60,9 @@ export function TermosPage() {
           completo ou informações de outras pessoas;
         </li>
         <li>
-          Ao pedir contato, o advogado vê a sua triagem. Seu WhatsApp e seu e-mail só são
-          mostrados para ele depois que ele aceita o pedido;
+          Ao pedir contato, o advogado lê a sua triagem sem saber quem você é. Se ele aceitar,
+          passa a ver o seu nome, e você recebe o WhatsApp e o e-mail dele para combinarem o
+          atendimento;
         </li>
         <li>
           A escolha do advogado e a contratação são decisões suas, combinadas diretamente com
@@ -134,6 +136,7 @@ export function TermosPage() {
         Dúvida sobre estes termos? Fale com a gente pelo{" "}
         <a href="mailto:aggremtec@gmail.com">aggremtec@gmail.com</a>.
       </p>
+      <RodapeLegal />
     </main>
   );
 }

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { RodapeLegal } from "../components/RodapeLegal/RodapeLegal";
 import { useTitulo } from "../lib/useTitulo";
 
 // Política de privacidade (LGPD, Lei 13.709/18) — pública, sem exigir login, linkada no
@@ -91,6 +92,7 @@ export function PrivacidadePage() {
         Dúvida sobre seus dados? Fale com a gente pelo{" "}
         <a href="mailto:aggremtec@gmail.com">aggremtec@gmail.com</a>.
       </p>
+      <RodapeLegal />
     </main>
   );
 }

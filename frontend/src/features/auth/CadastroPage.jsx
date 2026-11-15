@@ -46,7 +46,10 @@ export function CadastroPage() {
   const location = useLocation();
 
   const [etapa, setEtapa] = useState(0);
-  const [role, setRole] = useState("cliente");
+  // "Sou advogado" (rodapé da Home) chega com ?perfil=advogado e já abre marcado.
+  const [role, setRole] = useState(() =>
+    new URLSearchParams(location.search).get("perfil") === "advogado" ? "advogado" : "cliente",
+  );
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");

@@ -36,7 +36,7 @@ const FAQ = [
   {
     pergunta: "Como funciona a triagem por IA?",
     resposta:
-      "Você descreve seu problema com suas próprias palavras. A IA identifica a área e o assunto do caso e sugere advogados que atendem esse assunto. Hoje a Nocturis atende questões cíveis e trabalhistas, além de multas de trânsito e benefícios do INSS.",
+      "Você descreve seu problema com suas próprias palavras. A IA identifica a área e o assunto do caso e sugere advogados que atendem esse assunto. Hoje a Nocturis atende casos cíveis e trabalhistas.",
   },
   {
     pergunta: "Meus dados estão seguros?",
@@ -275,12 +275,13 @@ export function HomePage() {
       <section className="home-hero">
         <LinhasFundo />
         <div className="home-container">
+          <a className="home-pular" href="#conteudo">Pular para o conteúdo</a>
           <nav className="home-nav" aria-label="Principal">
             <Link to="/" className="home-nav__brand" aria-label="Nocturis, início">
               <Logo className="home-nav__logo" />
             </Link>
             <div className="home-nav__links">
-              <a href="#servicos">Serviços</a>
+              <a href="#servicos">Como funciona</a>
               <a href="#advogados">Advogados</a>
               <a href="#sobre">Sobre</a>
               <a href="#perguntas">Perguntas</a>
@@ -297,7 +298,7 @@ export function HomePage() {
           </nav>
 
           <div className="home-hero__grid">
-            <div className="home-hero__copy">
+            <div className="home-hero__copy" id="conteudo" tabIndex={-1}>
               <h1 className="home-hero__title">Encontre o advogado certo para o seu caso.</h1>
               <span className="home-hero__rule" aria-hidden="true" />
               <p className="home-hero__lead">
@@ -306,9 +307,14 @@ export function HomePage() {
               </p>
               <div className="home-hero__actions">
                 <Link to={destinoConta} className="home-btn home-btn--gold">
-                  {user ? "Ir para o meu painel" : "Criar conta"}
+                  {user ? "Ir para o meu painel" : "Começar minha triagem grátis"}
                 </Link>
               </div>
+              {!user && (
+                <p className="home-hero__nota">
+                  Leva uns 2 minutos. Pedimos uma conta para guardar o resultado e o seu pedido de contato.
+                </p>
+              )}
             </div>
 
             <figure className="home-hero__photo">
@@ -326,13 +332,16 @@ export function HomePage() {
               <img src={FOTOS.servicos} alt="" width="450" height="310" loading="lazy" />
             </figure>
             <div className="home-services__copy">
-              <p className="home-eyebrow">Como funciona</p>
+              <p className="home-eyebrow">Triagem gratuita</p>
               <h2 id="servicos-titulo" className="home-title">
+                Como funciona
+              </h2>
+              <p className="home-services__texto">
                 Você não precisa saber nada de Direito para começar. Em menos de dois minutos você
                 descobre a área do seu problema e já vê com quem falar.
-              </h2>
+              </p>
               <Link to={destinoConta} className="home-btn home-btn--gold home-btn--sm">
-                Fazer minha triagem
+                Começar minha triagem grátis
               </Link>
             </div>
           </div>
@@ -363,6 +372,9 @@ export function HomePage() {
                     <li key={item}>{item}</li>
                   ))}
                 </ul>
+                <Link to={destinoConta} className="home-service__link" aria-label={`Começar triagem sobre ${s.titulo}`}>
+                  Começar triagem →
+                </Link>
               </li>
             ))}
           </ul>
@@ -399,8 +411,8 @@ export function HomePage() {
               <path d="M0 5q7.5-5 15 0t15 0 15 0 15 0 15 0 15 0 15 0 15 0" />
             </svg>
             <p>
-              Só aparece quem tem a OAB conferida pela Nocturis. Os perfis abaixo são de
-              demonstração do projeto: você vê a área, a cidade e o currículo antes de decidir com quem falar.
+              Perfis reais só aparecem depois que a Nocturis confere a OAB. Nesta versão do projeto,
+              a maioria dos perfis abaixo é fictícia e aparece marcada como "Perfil de demonstração".
             </p>
           </div>
 
@@ -555,7 +567,7 @@ export function HomePage() {
             <ul className="home-footer__list">
               <li><Link to="/cadastro">Criar conta</Link></li>
               <li><Link to="/login">Entrar</Link></li>
-              <li><Link to="/cadastro">Sou advogado</Link></li>
+              <li><Link to="/cadastro?perfil=advogado">Sou advogado</Link></li>
               <li><Link to="/termos">Termos de uso</Link></li>
               <li><Link to="/privacidade">Política de privacidade</Link></li>
             </ul>

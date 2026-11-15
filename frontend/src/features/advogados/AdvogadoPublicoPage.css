@@ -196,3 +196,11 @@ main.perfil-adv {
 .contato__caso strong {
   font-size: 16px;
 }
+
+/* No computador a barra fica no fim da página, em vez de grudar embaixo e cobrir o currículo
+   durante a leitura. No celular continua grudada, acima da barra de navegação. */
+@media (min-width: 800px) {
+  .perfil-adv__barra {
+    position: static;
+  }
+}

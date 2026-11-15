@@ -147,7 +147,7 @@ export function AdvogadoPublicoPage() {
       {!user && (
         <div className="perfil-adv__barra">
           <span>
-            <strong>Quer falar com este advogado?</strong>
+            <strong>Quer falar com este profissional?</strong>
             <span>Crie sua conta grátis e conte seu caso.</span>
           </span>
           <Link to="/cadastro" className="button button--primary">
