@@ -37,6 +37,15 @@ export function criarFakeFirebase() {
       async set(dados) {
         colecao(nome)[id] = { ...dados };
       },
+      // Como no Firestore: falha se o documento já existe (código 6, ALREADY_EXISTS).
+      async create(dados) {
+        if (colecao(nome)[id] !== undefined) {
+          const erro = new Error("6 ALREADY_EXISTS: documento já existe");
+          erro.code = 6;
+          throw erro;
+        }
+        colecao(nome)[id] = { ...dados };
+      },
       async update(parcial) {
         const col = colecao(nome);
         const atual = { ...(col[id] || {}) };
@@ -99,11 +108,29 @@ export function criarFakeFirebase() {
     batch() {
       const pendentes = [];
       return {
+        set: (ref, dados) => pendentes.push(() => ref.set(dados)),
+        create: (ref, dados) => pendentes.push(() => ref.create(dados)),
+        update: (ref, dados) => pendentes.push(() => ref.update(dados)),
         delete: (ref) => pendentes.push(() => ref.delete()),
         async commit() {
           for (const operacao of pendentes) await operacao();
         },
       };
+    },
+    // Transação simplificada: os testes rodam em sequência, então basta ler e aplicar as
+    // escritas no fim (o suficiente pra exercitar o caminho do código).
+    async runTransaction(fn) {
+      const pendentes = [];
+      const tx = {
+        get: (alvo) => alvo.get(),
+        set: (ref, dados) => pendentes.push(() => ref.set(dados)),
+        create: (ref, dados) => pendentes.push(() => ref.create(dados)),
+        update: (ref, dados) => pendentes.push(() => ref.update(dados)),
+        delete: (ref) => pendentes.push(() => ref.delete()),
+      };
+      const resultado = await fn(tx);
+      for (const operacao of pendentes) await operacao();
+      return resultado;
     },
     // Acesso direto pros testes semearem dados sem passar pela API.
     _seed(nome, id, dados) {

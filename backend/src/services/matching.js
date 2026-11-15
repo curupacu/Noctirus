@@ -90,11 +90,28 @@ export async function buscarAdvogadosCompativeis({
   return advogados;
 }
 
-// O que qualquer pessoa pode ver de um advogado. WhatsApp/e-mail só chegam ao cliente
-// depois que o advogado aceita o pedido de contato (RF010); histórico e autoria das
-// decisões da OAB são assunto do admin e do próprio advogado.
+// O que qualquer pessoa pode ver de um advogado: lista de campos PERMITIDOS (antes era uma
+// lista de campos proibidos, e todo campo novo no documento virava público sem ninguém notar).
+// WhatsApp/e-mail só chegam ao cliente depois que o advogado aceita o pedido (RF010);
+// histórico e autoria das decisões da OAB são assunto do admin e do próprio advogado.
+const CAMPOS_PUBLICOS = [
+  "uid",
+  "nome",
+  "foto",
+  "oab",
+  "areasAtuacao",
+  "especialidades",
+  "localizacao",
+  "bio",
+  "situacaoOab",
+  "demonstracao",
+  "mesmaCidade",
+  "especialidadesCompativeis",
+];
+
 export function perfilPublico(advogado) {
-  // eslint-disable-next-line no-unused-vars
-  const { contatos, historicoOab, situacaoOabPor, vezesSugerido, ...publico } = advogado;
+  const publico = Object.fromEntries(CAMPOS_PUBLICOS.filter((c) => advogado[c] !== undefined).map((c) => [c, advogado[c]]));
+  // Perfil de demonstração não mostra número de OAB (é inventado e pode coincidir com o de alguém).
+  if (publico.demonstracao) delete publico.oab;
   return publico;
 }

@@ -117,8 +117,7 @@ export function TriagemPage() {
         area,
         categorias: ordenados,
         etapa2: detalhes.trim() ? { detalhes: detalhes.trim() } : {},
-        origem: classificacao?.origem === "ia" ? "ia" : "regras",
-        ...(classificacao?.justificativa ? { justificativa: classificacao.justificativa.slice(0, 600) } : {}),
+        ...(classificacao?.rascunhoId ? { rascunhoId: classificacao.rascunhoId } : {}),
       });
       navigate(`/triagem/${resultado.id}`, { state: { resultado } });
     } catch (err) {

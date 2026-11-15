@@ -328,7 +328,7 @@ function clienteGroq() {
 }
 
 // Prompt compartilhado pelas duas IAs (Gemini é a principal, Groq é o fallback antes das
-// regras — ver RNF003 e o histórico de cota do Gemini no CLAUDE.md). Cada provedor pede o
+// regras — ver RNF003). Cada provedor pede o
 // JSON de um jeito diferente (responseSchema vs. JSON mode), mas a instrução é a mesma.
 function construirPromptTriagem({ descricao, areaFixa }) {
   const instrucaoArea = areaFixa
@@ -428,11 +428,15 @@ async function classificarPorGroq({ descricao, areaFixa }) {
   return { ...interpretarRespostaIA(dados, areaFixa), origem: "ia", provedor: "groq" };
 }
 
+// Desiste da IA depois de `ms` e limpa o timer quando ela responde antes (antes o
+// setTimeout ficava pendurado). A chamada à IA em si não é cancelada: o SDK não aceita sinal
+// de cancelamento em todas as versões, então a resposta tardia só é ignorada.
 function comTimeout(promessa, ms) {
-  return Promise.race([
-    promessa,
-    new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), ms)),
-  ]);
+  let timer;
+  const limite = new Promise((_, reject) => {
+    timer = setTimeout(() => reject(new Error("timeout")), ms);
+  });
+  return Promise.race([promessa, limite]).finally(() => clearTimeout(timer));
 }
 
 async function classificarPorGroqOuRegras({ descricao, areaFixa }) {

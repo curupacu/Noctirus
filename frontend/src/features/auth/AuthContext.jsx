@@ -1,4 +1,3 @@
-import * as Sentry from "@sentry/react";
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
@@ -19,46 +18,13 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
-  // Diagnóstico do bug de sessão sumindo sozinha no mobile (achado do usuário, 29/08) —
-  // distingue logout pedido de verdade de o Firebase reportar "sem sessão" sozinho, e avisa
-  // o Sentry. O painel que mostrava isso na tela de login saiu em outubro/2026; remover essa
-  // ref e o Sentry.captureMessage quando o Sentry parar de registrar o aviso.
-  const logoutExplicito = useRef(false);
   // Conta que estava logada antes: se mudar sem passar por "sair", a memória das telas
   // também é apagada (ver useCarregar).
   const ultimoUid = useRef(null);
 
   useEffect(() => {
-    // Limpa o registro que o painel de diagnóstico (já removido) lia.
-    try {
-      localStorage.removeItem("nocturis-diag-sessao");
-    } catch {
-      // sem localStorage (aba privada etc.) — nada a limpar
-    }
-  }, []);
-
-  useEffect(() => {
     return onAuthStateChanged(auth, async (firebaseUser) => {
       if (!firebaseUser) {
-        if (!logoutExplicito.current) {
-          try {
-            const dbs = await indexedDB.databases();
-            const diagnostico = {
-              quando: new Date().toISOString(),
-              indexedDbNomes: dbs.map((d) => d.name),
-              temFirebaseDb: dbs.some((d) => d.name?.includes("firebaseLocalStorageDb")),
-              userAgent: navigator.userAgent,
-              standalone: window.matchMedia("(display-mode: standalone)").matches,
-            };
-            Sentry.captureMessage("diagnostico-sessao: onAuthStateChanged sem usuário", {
-              level: "warning",
-              extra: diagnostico,
-            });
-          } catch (err) {
-            console.error("Falha no diagnóstico de sessão", err);
-          }
-        }
-        logoutExplicito.current = false;
         // Sem sessão: nada do que foi carregado pra conta anterior pode aparecer pra próxima.
         limparMemoria();
         setUser(null);
@@ -120,7 +86,6 @@ export function AuthProvider({ children }) {
   }
 
   async function logout() {
-    logoutExplicito.current = true;
     await signOut(auth);
   }
 

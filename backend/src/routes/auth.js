@@ -29,8 +29,8 @@ const schemaCompletarCadastro = z.object({
   areasAtuacao: z.array(z.enum(AREAS_VALIDAS)).optional().default([]),
   localizacao: schemaLocalizacao,
   whatsapp: z.string().trim().max(20).optional().default(""),
-  especialidades: z.array(z.string()).optional().default([]),
-  bio: z.string().optional().default(""),
+  especialidades: z.array(z.string().max(60)).max(40).optional().default([]),
+  bio: z.string().max(600).optional().default(""),
 });
 
 authRouter.post(
@@ -42,64 +42,64 @@ authRouter.post(
     const { role, nome, telefone, oab, areasAtuacao, localizacao, whatsapp, especialidades, bio } =
       req.body;
 
-    const usuarioExistente = await db.collection("users").doc(uid).get();
-    if (usuarioExistente.exists) {
-      return res.status(409).json({ erro: "Cadastro já foi concluído para este usuário" });
-    }
-
     if (role === "advogado") {
       const erroFormato = validarFormatoOab(oab || {});
       if (erroFormato) {
         return res.status(400).json({ erro: erroFormato });
       }
-      if (await oabJaCadastrada(oab)) {
-        return res.status(409).json({ erro: "Essa OAB já está cadastrada" });
-      }
     }
+
+    // Tudo numa transação: o cadastro só existe inteiro (users + advogados + currículo) ou não
+    // existe, e duas chamadas simultâneas (duplo clique, ou dois cadastros com a mesma OAB) não
+    // passam as duas pelas checagens. O papel no token só é gravado depois que o banco confirmou.
+    const agora = new Date().toISOString();
+    const conflito = await db.runTransaction(async (tx) => {
+      const userRef = db.collection("users").doc(uid);
+      if ((await tx.get(userRef)).exists) return "Cadastro já foi concluído para este usuário";
+      if (role === "advogado" && (await oabJaCadastrada(oab, null, tx))) return "Essa OAB já está cadastrada";
+
+      tx.create(userRef, {
+        role,
+        nome,
+        email,
+        telefone,
+        // Cliente guarda a localização no próprio cadastro; a do advogado fica no doc de
+        // "advogados", que é o que a busca e o perfil público leem.
+        ...(role === "cliente" ? { localizacao } : {}),
+        status: "ativo",
+        createdAt: agora,
+        consentimentoPrivacidadeEm: agora,
+      });
+
+      if (role === "advogado") {
+        tx.set(db.collection("advogados").doc(uid), {
+          oab: { numero: String(oab.numero), uf: String(oab.uf).toUpperCase() },
+          areasAtuacao,
+          // Subcategorias específicas (mesma taxonomia da triagem) — opcional, ajuda o
+          // cliente a entender se o advogado atende o assunto específico do caso dele.
+          especialidades: especialidades.filter((e) => TODAS_CATEGORIAS.includes(e)),
+          localizacao,
+          contatos: { whatsapp, email },
+          // Frase curta pra se apresentar, opcional e com limite pra não virar textão.
+          bio: bio.trim().slice(0, 240),
+          situacaoOab: "em_analise",
+          situacaoOabMotivo: null,
+          situacaoOabAtualizadaEm: agora,
+          situacaoOabPor: null,
+          historicoOab: [{ situacao: "em_analise", motivo: null, em: agora, por: uid }],
+        });
+        tx.set(db.collection("curriculos").doc(uid), {
+          formacao: [],
+          especializacoes: [],
+          cursos: [],
+          experiencias: [],
+        });
+      }
+      return null;
+    });
+    if (conflito) return res.status(409).json({ erro: conflito });
 
     await auth.setCustomUserClaims(uid, { role });
-
-    await db.collection("users").doc(uid).set({
-      role,
-      nome,
-      email,
-      telefone,
-      // Cliente guarda a localização no próprio cadastro; a do advogado fica no doc de
-      // "advogados", que é o que a busca e o perfil público leem.
-      ...(role === "cliente" ? { localizacao } : {}),
-      status: "ativo",
-      createdAt: new Date().toISOString(),
-      consentimentoPrivacidadeEm: new Date().toISOString(),
-    });
-
-    if (role === "advogado") {
-      await db.collection("advogados").doc(uid).set({
-        oab: { numero: String(oab.numero), uf: String(oab.uf).toUpperCase() },
-        areasAtuacao,
-        // Subcategorias específicas (mesma taxonomia da triagem) — opcional, ajuda o
-        // cliente a entender se o advogado atende o assunto específico do caso dele.
-        especialidades: especialidades.filter((e) => TODAS_CATEGORIAS.includes(e)),
-        localizacao,
-        contatos: { whatsapp, email },
-        // Frase curta em texto livre pra se apresentar (achado da auditoria de UX,
-        // 29/07): o perfil só tinha dados estruturados, nada que soasse como a pessoa
-        // falando. Opcional, capado pra não virar um textão na listagem.
-        bio: bio.trim().slice(0, 240),
-        situacaoOab: "em_analise",
-        situacaoOabMotivo: null,
-        situacaoOabAtualizadaEm: new Date().toISOString(),
-        situacaoOabPor: null,
-        historicoOab: [
-          { situacao: "em_analise", motivo: null, em: new Date().toISOString(), por: uid },
-        ],
-      });
-      await db.collection("curriculos").doc(uid).set({
-        formacao: [],
-        especializacoes: [],
-        cursos: [],
-        experiencias: [],
-      });
-    }
 
     res.status(201).json({ role });
   },

@@ -63,16 +63,16 @@ const schemaEtapa1 = z
 // A área vem do cliente porque ele pode corrigir a que a IA sugeriu na etapa 1 (ou escolher,
 // quando a IA não conseguiu identificar) — a etapa 2 só faz sentido com uma área definida.
 // Etapa 2 (redesenho de 13/10/2026): o cliente confirma as especialidades em chips — vêm
-// sugeridas pela IA na etapa 1 — e pode acrescentar um detalhe opcional. `origem` e
-// `justificativa` são os da classificação da etapa 1, só pra exibir no resultado.
+// sugeridas pela IA na etapa 1 — e pode acrescentar um detalhe opcional. A origem
+// (IA/regras) e a justificativa vêm do rascunho que o próprio servidor gravou na etapa 1
+// (`rascunhoId`), nunca do navegador: antes vinham no corpo e dava pra forjar "origem: ia".
 const schemaClassificar = z
   .object({
     etapa1: respostasTexto,
     area: z.enum(AREAS_VALIDAS, { message: "Escolha a área do seu caso" }),
     categorias: z.array(z.string()).min(1, "Marque pelo menos um assunto").max(10),
     etapa2: respostasTexto,
-    origem: z.enum(["ia", "regras"]).optional().default("regras"),
-    justificativa: z.string().max(600).optional(),
+    rascunhoId: z.string().max(128).optional(),
   })
   .superRefine((dados, ctx) => {
     validarRespostas(PERGUNTAS_ETAPA1, dados.etapa1, ctx, "etapa1");
@@ -99,8 +99,9 @@ triagemRouter.get("/triagem/perguntas", (_req, res) => {
   });
 });
 
-// Etapa 1 (RF006): identifica a área a partir das respostas comuns. Não grava nada — a
-// triagem só é salva no fim da etapa 2, com tudo junto.
+// Etapa 1 (RF006): identifica a área a partir das respostas comuns. A triagem só é salva no
+// fim da etapa 2; aqui fica só um rascunho com o resultado da classificação, que a etapa 2
+// usa pra saber se foi a IA ou as regras (e que é apagado nela).
 triagemRouter.post(
   "/triagem/area",
   verificarToken,
@@ -112,8 +113,17 @@ triagemRouter.post(
     const resultado = await classificar({ descricao });
     const area = resultado.areaClassificada;
 
+    const rascunho = await db.collection("triagensRascunho").add({
+      clienteId: req.user.uid,
+      area,
+      origem: resultado.origem,
+      justificativa: resultado.justificativa || null,
+      createdAt: new Date().toISOString(),
+    });
+
     // Já devolve as especialidades sugeridas pra etapa 2 vir com os chips marcados.
     res.json({
+      rascunhoId: rascunho.id,
       area,
       categorias: area === "indefinido" ? [] : resultado.categorias || [],
       origem: resultado.origem,
@@ -133,7 +143,23 @@ triagemRouter.post(
   limiteTriagem,
   validarBody(schemaClassificar),
   async (req, res) => {
-    const { area, categorias, origem, justificativa } = req.body;
+    const { area, categorias, rascunhoId } = req.body;
+
+    // Se o cliente manteve a área da etapa 1, vale a origem gravada pelo servidor; se trocou
+    // (ou não há rascunho), quem decidiu a área foi ele.
+    let origem = "cliente";
+    let justificativa = null;
+    if (rascunhoId) {
+      const rascunhoRef = db.collection("triagensRascunho").doc(rascunhoId);
+      const rascunho = await rascunhoRef.get();
+      if (rascunho.exists && rascunho.data().clienteId === req.user.uid) {
+        if (rascunho.data().area === area) {
+          origem = rascunho.data().origem;
+          justificativa = rascunho.data().justificativa;
+        }
+        await rascunhoRef.delete();
+      }
+    }
     const etapa1 = somenteDasPerguntas(PERGUNTAS_ETAPA1, req.body.etapa1);
     const etapa2 = somenteDasPerguntas(PERGUNTAS_ETAPA2[area], req.body.etapa2);
     const descricao = [

@@ -10,6 +10,7 @@ const cell = vi.hoisted(() => ({ fake: null }));
 vi.mock("../lib/firebase-admin.js", () => ({
   db: {
     collection: (...args) => cell.fake.db.collection(...args),
+    runTransaction: (...args) => cell.fake.db.runTransaction(...args),
     batch: (...args) => cell.fake.db.batch(...args),
   },
   auth: {

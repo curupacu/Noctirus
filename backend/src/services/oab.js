@@ -33,12 +33,15 @@ export function validarFormatoOab({ numero, uf }) {
   return null;
 }
 
-export async function oabJaCadastrada({ numero, uf }, uidParaIgnorar = null) {
-  const snapshot = await db
+// `tx` (opcional): faz a consulta dentro de uma transação, pra dois cadastros simultâneos com
+// a mesma OAB não passarem os dois pela checagem (o Firestore refaz a transação se a consulta
+// mudar antes de gravar).
+export async function oabJaCadastrada({ numero, uf }, uidParaIgnorar = null, tx = null) {
+  const consulta = db
     .collection("advogados")
     .where("oab.numero", "==", String(numero))
-    .where("oab.uf", "==", String(uf).toUpperCase())
-    .get();
+    .where("oab.uf", "==", String(uf).toUpperCase());
+  const snapshot = tx ? await tx.get(consulta) : await consulta.get();
 
   return snapshot.docs.some((doc) => doc.id !== uidParaIgnorar);
 }

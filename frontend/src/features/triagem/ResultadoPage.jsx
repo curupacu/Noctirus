@@ -126,7 +126,7 @@ export function ResultadoPage() {
         <img className="destaque__foto" src={FOTO_DESTAQUE} alt="" loading="lazy" />
         <div className="destaque__corpo">
           <span className="destaque__etiqueta">
-            {area} · {resultado.origem === "ia" ? "identificado por IA" : "identificado por regras"}
+            {area} · {resultado.origem === "ia" ? "identificado por IA" : resultado.origem === "cliente" ? "escolhido por você" : "identificado por regras"}
           </span>
           <h2 className="destaque__titulo">{tituloDestaque}</h2>
           <p className="destaque__texto">{textoDestaque}</p>

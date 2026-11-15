@@ -40,8 +40,9 @@ direciona — quem avalia o caso é o advogado.
   login com Google.
 - **Triagem por IA em duas etapas** (RF005–RF007): Gemini → Groq como segunda opinião →
   classificação por regras se as duas falharem (a triagem nunca trava). Taxonomia de 33
-  especialidades (17 cíveis, 16 trabalhistas). Avaliada com 20 casos reais: 20/20 área e 20/20
-  especialidade (08/10/2026).
+  especialidades (17 cíveis, 16 trabalhistas). Avaliada com 20 casos (08/10/2026): 20/20 na área.
+  A amostra é pequena e as palavras-chave das regras foram ajustadas com esses mesmos casos,
+  então o número tende a ser otimista; na etapa 2 quem confirma a especialidade é o cliente.
 - **Resultado filtrado pela região do cliente** (RF008): só advogados do estado dele, a cidade
   dele primeiro, depois quem atende o assunto do caso.
 - **Validação de OAB pelo admin** (RF011): fila por situação, motivo obrigatório pra recusar ou
@@ -59,7 +60,7 @@ direciona — quem avalia o caso é o advogado.
 - LGPD: política de privacidade, consentimento no cadastro, "Meus dados" pra baixar ou apagar
   os próprios dados.
 - PWA (instala no celular), SEO (meta tags, JSON-LD, sitemap), Sentry e Google Analytics.
-- **174 testes automatizados** (Vitest + Supertest) rodando no GitHub Actions — resumo em
+- **197 testes automatizados** (191 no backend e 6 no frontend) (Vitest + Supertest) rodando no GitHub Actions — resumo em
   [`docs/TESTES.md`](docs/TESTES.md).
 
 Recursos que **saíram** depois da banca de outubro/2026: denúncias, suspensão/remoção de

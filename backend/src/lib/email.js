@@ -24,7 +24,7 @@ export async function enviarEmail({ to, subject, html }) {
     await resend.emails.send({ from: REMETENTE, to, subject, html });
     return { enviado: true };
   } catch (erro) {
-    // Nunca derruba a rota que chamou isso (ex.: envio de mensagem no chat) — notificação
+    // Nunca derruba a rota que chamou isso (ex.: aviso de pedido de contato) — notificação
     // é um "nice to have", não pode impedir a ação principal do usuário.
     console.error("email: falha ao enviar:", erro.message || erro);
     return { enviado: false };

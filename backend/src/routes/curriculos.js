@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import { db } from "../lib/firebase-admin.js";
-import { requireRole, verificarToken } from "../middlewares/auth.js";
+import { requireRole, tentarVerificarToken, verificarToken } from "../middlewares/auth.js";
 import { validarBody } from "../middlewares/validar.js";
 
 export const curriculosRouter = Router();
@@ -19,9 +19,16 @@ const schemaCurriculo = z.object({
   experiencias: listaDeLinhas,
 });
 
-curriculosRouter.get("/curriculos/:uid", async (req, res) => {
-  const doc = await db.collection("curriculos").doc(req.params.uid).get();
-  if (!doc.exists) {
+// Mesma regra do perfil (RF009): currículo só é público se a OAB do advogado foi aprovada;
+// o próprio advogado e o admin veem sempre.
+curriculosRouter.get("/curriculos/:uid", tentarVerificarToken, async (req, res) => {
+  const { uid } = req.params;
+  const [doc, advogado] = await Promise.all([
+    db.collection("curriculos").doc(uid).get(),
+    db.collection("advogados").doc(uid).get(),
+  ]);
+  const podeVerSemAprovacao = req.user && (req.user.uid === uid || req.user.role === "admin");
+  if (!doc.exists || (advogado.data()?.situacaoOab !== "aprovado" && !podeVerSemAprovacao)) {
     return res.status(404).json({ erro: "Currículo não encontrado" });
   }
   res.json({ uid: doc.id, ...doc.data() });

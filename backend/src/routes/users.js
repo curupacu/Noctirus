@@ -106,10 +106,6 @@ usersRouter.post(
   },
 );
 
-// Direito de acesso/portabilidade (LGPD, art. 18) — o titular baixa tudo que a Nocturis
-// tem sobre ele sem precisar pedir pro admin. Junta o próprio cadastro com tudo que
-// referencia o uid nas outras coleções (como cliente e/ou como advogado, dependendo do
-// papel), igual o admin já enxerga espalhado em telas diferentes, só que num lugar só.
 // Aparelho que aceitou receber avisos no celular (ver services/push.js). Guarda os 5 mais
 // recentes: a mesma pessoa pode usar celular e computador, e token velho morre sozinho.
 const schemaTokenPush = z.object({ token: z.string().trim().min(20).max(4096) });
@@ -123,6 +119,10 @@ usersRouter.post("/users/me/avisos-celular", verificarToken, validarBody(schemaT
   res.json({ ok: true });
 });
 
+// Direito de acesso/portabilidade (LGPD, art. 18) — o titular baixa tudo que a Nocturis
+// tem sobre ele sem precisar pedir pro admin. Junta o próprio cadastro com tudo que
+// referencia o uid nas outras coleções (como cliente e/ou como advogado, dependendo do
+// papel), igual o admin já enxerga espalhado em telas diferentes, só que num lugar só.
 usersRouter.get("/users/me/dados", verificarToken, async (req, res) => {
   const { uid, role } = req.user;
 
@@ -165,25 +165,40 @@ usersRouter.get("/users/me/dados", verificarToken, async (req, res) => {
 
 // Direito de eliminação (LGPD, art. 18, VI) — o próprio titular apaga a conta, sem
 // depender de um admin. Sai da Auth e do Firestore: users, as triagens do cliente (o relato
-// do caso é o dado mais sensível que ele deixa aqui) e advogados/curriculos, se for o caso.
-// Não apaga os pedidos de contato — são também registro do advogado (quadro de casos) e
-// apagar destruiria o histórico do outro lado; ver docs/historico/ROADMAP-julho-2026.md pra
-// anonimização completa como item de LGPD mais robusto.
+// do caso é o dado mais sensível que ele deixa aqui), as notificações dele e
+// advogados/curriculos, se for o caso. Os pedidos de contato ficam, porque são também o
+// histórico do outro lado (quadro de casos do advogado), mas ficam ANONIMIZADOS: sai o
+// relato copiado e sai o vínculo com quem apagou a conta.
 usersRouter.delete("/users/me", verificarToken, async (req, res) => {
   const { uid, role } = req.user;
 
-  const refs = [db.collection("users").doc(uid)];
+  const exclusoes = [db.collection("users").doc(uid)];
   if (role === "advogado") {
-    refs.push(db.collection("advogados").doc(uid), db.collection("curriculos").doc(uid));
+    exclusoes.push(db.collection("advogados").doc(uid), db.collection("curriculos").doc(uid));
   }
-  const triagens = await db.collection("triagens").where("clienteId", "==", uid).get();
-  triagens.docs.forEach((doc) => refs.push(db.collection("triagens").doc(doc.id)));
+  const [triagens, notificacoes, pedidosCliente, pedidosAdvogado] = await Promise.all([
+    db.collection("triagens").where("clienteId", "==", uid).get(),
+    db.collection("notificacoes").where("destinatarioId", "==", uid).get(),
+    db.collection("solicitacoes").where("clienteId", "==", uid).get(),
+    db.collection("solicitacoes").where("advogadoId", "==", uid).get(),
+  ]);
+  triagens.docs.forEach((doc) => exclusoes.push(db.collection("triagens").doc(doc.id)));
+  notificacoes.docs.forEach((doc) => exclusoes.push(db.collection("notificacoes").doc(doc.id)));
+
+  const anonimizacoes = [
+    ...pedidosCliente.docs.map((doc) => [doc.id, { clienteId: null, descricao: "", triagemId: null, contaRemovida: "cliente" }]),
+    ...pedidosAdvogado.docs.map((doc) => [doc.id, { advogadoId: null, anotacoes: "", contaRemovida: "advogado" }]),
+  ];
 
   // Lote do Firestore aceita até 500 operações — fatia por garantia.
-  for (let i = 0; i < refs.length; i += 400) {
-    const batch = db.batch();
-    refs.slice(i, i + 400).forEach((ref) => batch.delete(ref));
-    await batch.commit();
+  const operacoes = [
+    ...exclusoes.map((ref) => (lote) => lote.delete(ref)),
+    ...anonimizacoes.map(([id, campos]) => (lote) => lote.update(db.collection("solicitacoes").doc(id), campos)),
+  ];
+  for (let i = 0; i < operacoes.length; i += 400) {
+    const lote = db.batch();
+    operacoes.slice(i, i + 400).forEach((aplicar) => aplicar(lote));
+    await lote.commit();
   }
   await ignorarSeUsuarioNaoExisteNaAuth(auth.deleteUser(uid));
 

@@ -5,6 +5,7 @@ const cell = vi.hoisted(() => ({ fake: null }));
 vi.mock("../lib/firebase-admin.js", () => ({
   db: {
     collection: (...args) => cell.fake.db.collection(...args),
+    runTransaction: (...args) => cell.fake.db.runTransaction(...args),
     batch: (...args) => cell.fake.db.batch(...args),
   },
   auth: {
@@ -155,12 +156,13 @@ describe("POST /triagem/classificar (etapa 2)", () => {
   });
 
   it("grava a triagem com as especialidades que o cliente confirmou, na ordem dele", async () => {
+    cell.fake.db._seed("triagensRascunho", "r1", { clienteId: "c1", area: "trabalhista", origem: "ia", justificativa: null });
     const resposta = await enviar({
       etapa1: ETAPA1,
       area: "trabalhista",
       categorias: CATEGORIAS_TRABALHISTA,
       etapa2: { ...ETAPA2_TRABALHISTA, extra: "x" },
-      origem: "ia",
+      rascunhoId: "r1",
     });
 
     expect(resposta.status).toBe(201);
@@ -318,5 +320,18 @@ describe("GET /triagem/:id", () => {
     const resposta = await request(app).get("/triagem/t1").set("Authorization", `Bearer ${token}`);
     expect(resposta.status).toBe(200);
     expect(resposta.body.advogados).toBeDefined();
+  });
+});
+
+describe("origem da triagem vem do servidor", () => {
+  it("sem rascunho (ou com área trocada) a origem é do cliente, mesmo se o corpo disser 'ia'", async () => {
+    cell.fake.db._seed("triagensRascunho", "r2", { clienteId: "c1", area: "civel", origem: "ia", justificativa: "x" });
+    const resposta = await request(app)
+      .post("/triagem/classificar")
+      .set("Authorization", `Bearer ${cell.fake.criarToken({ uid: "c1", role: "cliente" })}`)
+      .send({ etapa1: ETAPA1, area: "trabalhista", categorias: CATEGORIAS_TRABALHISTA, etapa2: ETAPA2_TRABALHISTA, rascunhoId: "r2", origem: "ia" });
+    expect(resposta.status).toBe(201);
+    expect(resposta.body.origem).toBe("cliente");
+    expect((await cell.fake.db.collection("triagensRascunho").doc("r2").get()).exists).toBe(false);
   });
 });

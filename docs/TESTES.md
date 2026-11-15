@@ -6,7 +6,7 @@ sem precisar de nenhuma credencial real do Firebase ou do Gemini pra rodar.
 
 ## Números (19/08)
 
-- **174 testes**, em **12 arquivos**, 100% passando (outubro/2026, depois dos Sprints 0–6).
+- **191 testes no backend**, em **14 arquivos**, e **6 no frontend**, 100% passando (novembro/2026).
 - Framework: [Vitest](https://vitest.dev/) (`backend/package.json`).
 - Rodar: `npm test` na raiz (delega pro backend) ou `npm test` dentro de `backend/`.
 - Tempo total: ~8s.
@@ -65,8 +65,10 @@ Nenhum teste toca Firebase ou Gemini de verdade:
 
 ## O que não está coberto
 
-- **Frontend** não tem testes automatizados (só `npm run lint` + `npm run build` no CI,
-  sem testes de componente/E2E).
+- **Frontend** só tem testes das funções utilitárias (`src/lib/utilitarios.test.js`): ainda
+  não há testes de componente nem ponta a ponta (E2E).
+- **Regras do Firestore** (`database/firestore.rules`) não têm teste automatizado: o caminho
+  seria o emulador do Firebase com `@firebase/rules-unit-testing`.
 - **Qualidade da classificação por IA** (Gemini/Groq de verdade) não é medida pela suíte do
   Vitest — é o papel do `backend/scripts/avaliar-triagem.js` (resultado mais recente: 100% de
   acerto de área e categoria em 20 casos reais, tanto via Gemini quanto forçando o caminho do

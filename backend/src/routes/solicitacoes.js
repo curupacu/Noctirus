@@ -91,24 +91,6 @@ solicitacoesRouter.post(
       return res.status(404).json({ erro: "Triagem não encontrada" });
     }
 
-    // Um pedido em aberto (ou já aceito) por cliente+advogado: evita mandar o mesmo pedido
-    // várias vezes. Depois de uma recusa, pode pedir de novo.
-    const existentes = await db
-      .collection("solicitacoes")
-      .where("clienteId", "==", clienteId)
-      .where("advogadoId", "==", advogadoId)
-      .get();
-    const emAberto = existentes.docs.find((d) => ["pendente", "aceita"].includes(d.data().situacao));
-    if (emAberto) {
-      return res.status(409).json({
-        erro:
-          emAberto.data().situacao === "pendente"
-            ? "Você já pediu contato a este advogado. Aguarde a resposta"
-            : "Este advogado já aceitou seu pedido",
-        id: emAberto.id,
-      });
-    }
-
     const triagem = triagemDoc.data();
     const agora = new Date().toISOString();
     // Cópia do que o cliente autorizou mandar — o advogado lê isso no pedido, mesmo que a
@@ -129,7 +111,29 @@ solicitacoesRouter.post(
       anotacoes: "",
       arquivado: false,
     };
-    const ref = await db.collection("solicitacoes").add(solicitacao);
+
+    // Um pedido em aberto (ou já aceito) por cliente+advogado: evita mandar o mesmo pedido
+    // várias vezes. Depois de uma recusa, pode pedir de novo. A checagem e a gravação ficam
+    // na mesma transação, pra um duplo clique não criar dois pedidos.
+    const ref = db.collection("solicitacoes").doc();
+    const emAberto = await db.runTransaction(async (tx) => {
+      const existentes = await tx.get(
+        db.collection("solicitacoes").where("clienteId", "==", clienteId).where("advogadoId", "==", advogadoId),
+      );
+      const aberto = existentes.docs.find((d) => ["pendente", "aceita"].includes(d.data().situacao));
+      if (aberto) return aberto;
+      tx.set(ref, solicitacao);
+      return null;
+    });
+    if (emAberto) {
+      return res.status(409).json({
+        erro:
+          emAberto.data().situacao === "pendente"
+            ? "Você já pediu contato a este advogado. Aguarde a resposta"
+            : "Este advogado já aceitou seu pedido",
+        id: emAberto.id,
+      });
+    }
 
     await avisar({
       destinatarioId: advogadoId,
@@ -157,10 +161,10 @@ solicitacoesRouter.get("/solicitacoes/minhas", verificarToken, requireRole("clie
   const lista = await Promise.all(
     snapshot.docs.map(async (doc) => {
       const s = doc.data();
-      const [advogadoDoc, usuarioDoc] = await Promise.all([
-        db.collection("advogados").doc(s.advogadoId).get(),
-        db.collection("users").doc(s.advogadoId).get(),
-      ]);
+      // advogadoId vazio = o advogado apagou a conta (pedido anonimizado).
+      const [advogadoDoc, usuarioDoc] = s.advogadoId
+        ? await Promise.all([db.collection("advogados").doc(s.advogadoId).get(), db.collection("users").doc(s.advogadoId).get()])
+        : [{ exists: false }, { exists: false }];
       const advogado = advogadoDoc.exists ? advogadoDoc.data() : {};
       return {
         id: doc.id,
@@ -195,7 +199,8 @@ solicitacoesRouter.get("/solicitacoes/recebidas", verificarToken, requireRole("a
     docs.map(async (doc) => {
       const s = doc.data();
       const aceita = s.situacao === "aceita";
-      const clienteNome = aceita ? (await db.collection("users").doc(s.clienteId).get()).data()?.nome || null : null;
+      // clienteId vazio = o cliente apagou a conta (pedido anonimizado).
+      const clienteNome = aceita && s.clienteId ? (await db.collection("users").doc(s.clienteId).get()).data()?.nome || null : null;
       return {
         id: doc.id,
         area: s.area,
@@ -243,12 +248,14 @@ solicitacoesRouter.patch(
       }
     }
     const situacao = aceitou ? "aceita" : "recusada";
-    // Aceitar já coloca o caso em andamento no quadro; recusado sai do quadro.
-    await ref.update({
-      situacao,
-      respondidaEm: new Date().toISOString(),
-      etapaCaso: aceitou ? "em_andamento" : null,
+    // Aceitar já coloca o caso em andamento no quadro; recusado sai do quadro. Relê a situação
+    // dentro da transação: dois cliques ao mesmo tempo não respondem o pedido duas vezes.
+    const jaRespondido = await db.runTransaction(async (tx) => {
+      if ((await tx.get(ref)).data()?.situacao !== "pendente") return true;
+      tx.update(ref, { situacao, respondidaEm: new Date().toISOString(), etapaCaso: aceitou ? "em_andamento" : null });
+      return false;
     });
+    if (jaRespondido) return res.status(409).json({ erro: "Este pedido já foi respondido" });
 
     const advogadoNome = (await db.collection("users").doc(req.user.uid).get()).data()?.nome || "O advogado";
     await avisar({

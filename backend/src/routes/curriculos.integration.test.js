@@ -5,6 +5,7 @@ const cell = vi.hoisted(() => ({ fake: null }));
 vi.mock("../lib/firebase-admin.js", () => ({
   db: {
     collection: (...args) => cell.fake.db.collection(...args),
+    runTransaction: (...args) => cell.fake.db.runTransaction(...args),
     batch: (...args) => cell.fake.db.batch(...args),
   },
   auth: {
@@ -32,9 +33,16 @@ describe("GET /curriculos/:uid", () => {
 
   it("retorna o currículo público, sem precisar de token", async () => {
     cell.fake.db._seed("curriculos", "a1", { formacao: ["Direito - USP"], cursos: [] });
+    cell.fake.db._seed("advogados", "a1", { situacaoOab: "aprovado" });
     const resposta = await request(app).get("/curriculos/a1");
     expect(resposta.status).toBe(200);
     expect(resposta.body.formacao).toEqual(["Direito - USP"]);
+  });
+
+  it("esconde o currículo de quem ainda não teve a OAB aprovada (RF009)", async () => {
+    cell.fake.db._seed("curriculos", "a2", { formacao: ["Direito"], cursos: [] });
+    cell.fake.db._seed("advogados", "a2", { situacaoOab: "em_analise" });
+    expect((await request(app).get("/curriculos/a2")).status).toBe(404);
   });
 });
 

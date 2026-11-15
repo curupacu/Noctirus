@@ -6,6 +6,7 @@ const enviarEmailMock = vi.hoisted(() => vi.fn().mockResolvedValue({ enviado: tr
 vi.mock("../lib/firebase-admin.js", () => ({
   db: {
     collection: (...args) => cell.fake.db.collection(...args),
+    runTransaction: (...args) => cell.fake.db.runTransaction(...args),
     batch: (...args) => cell.fake.db.batch(...args),
   },
   auth: {
@@ -330,5 +331,14 @@ describe("advogado com a OAB fora de aprovado", () => {
     const recebidas = await request(app).get("/solicitacoes/recebidas").set("Authorization", `Bearer ${token("a1", "advogado")}`);
     expect(recebidas.body).toHaveLength(0);
     expect((await responder(body.id, "recusar")).status).toBe(200);
+  });
+});
+
+describe("POST /tarefas/lembretes", () => {
+  it("fica fechada sem a chave certa (e sem a variável configurada)", async () => {
+    expect((await request(app).post("/tarefas/lembretes")).status).toBe(403);
+    vi.stubEnv("TAREFAS_CHAVE", "segredo-de-teste");
+    expect((await request(app).post("/tarefas/lembretes").set("x-tarefa-chave", "errada")).status).toBe(403);
+    vi.unstubAllEnvs();
   });
 });

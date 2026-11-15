@@ -4,7 +4,7 @@ import { enviarPush } from "./push.js";
 // Notificação em tempo real (sininho) — o frontend escuta essa coleção direto com
 // onSnapshot (ver lib/useNotificacoes.js), sem precisar dar refresh ou consultar a API.
 // Só o backend escreve aqui (ver firestore.rules); nunca pode derrubar a ação principal
-// (enviar mensagem) se falhar — por isso quem chama envolve isso num
+// (como responder um pedido) se falhar — por isso quem chama envolve isso num
 // try/catch próprio.
 export async function criarNotificacao({ destinatarioId, tipo, texto, link }) {
   await db.collection("notificacoes").add({
