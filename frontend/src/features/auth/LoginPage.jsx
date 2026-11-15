@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { BotaoGoogle } from "../../components/BotaoGoogle/BotaoGoogle";
 import { Button } from "../../components/Button/Button";
 import { Input } from "../../components/Input/Input";
@@ -12,6 +12,8 @@ export function LoginPage() {
   useTitulo("Entrar");
   const { login, loginComGoogle } = useAuth();
   const navigate = useNavigate();
+  // Veio de uma tela que exige conta (ex.: /triagem): explica e volta pra lá depois.
+  const voltarPara = useLocation().state?.voltarPara;
 
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -24,7 +26,7 @@ export function LoginPage() {
     setEnviando(true);
     try {
       const roleLogado = await login(email, senha);
-      navigate(rotaInicial(roleLogado));
+      navigate(voltarPara || rotaInicial(roleLogado));
     } catch {
       setErro("E-mail ou senha inválidos");
     } finally {
@@ -41,7 +43,7 @@ export function LoginPage() {
     try {
       const { role: roleLogado } = await loginComGoogle();
       if (roleLogado) {
-        navigate(rotaInicial(roleLogado));
+        navigate(voltarPara || rotaInicial(roleLogado));
       } else {
         navigate("/cadastro", { state: { viaGoogle: true } });
       }
@@ -55,8 +57,16 @@ export function LoginPage() {
   return (
     <EntradaLayout voltar="/" rotuloVoltar="Voltar para o início">
       <LogoEntrada />
-      <h1 className="entrada__titulo">Que bom te ver de novo</h1>
-      <p className="entrada__sub">Entre para acompanhar sua triagem e seus pedidos de contato.</p>
+      <h1 className="entrada__titulo">{voltarPara ? "Entre para continuar" : "Que bom te ver de novo"}</h1>
+      <p className="entrada__sub">
+        {voltarPara ? (
+          <>
+            Essa parte precisa de uma conta. Entre, ou <Link to="/cadastro">crie uma conta grátis</Link>.
+          </>
+        ) : (
+          "Entre para acompanhar sua triagem e seus pedidos de contato."
+        )}
+      </p>
 
       <BotaoGoogle onClick={entrarComGoogle} disabled={enviando}>
         Continuar com Google

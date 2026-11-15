@@ -9,10 +9,11 @@ import { validarBody } from "../middlewares/validar.js";
 import { buscarAdvogadosCompativeis, perfilPublico } from "../services/matching.js";
 import { avisarAdvogadoSobreOab } from "../services/avisosOab.js";
 import {
-  oabJaCadastrada,
-  podeMudarSituacao,
   SITUACOES_COM_MOTIVO,
   SITUACOES_OAB,
+  normalizarNumeroOab,
+  oabJaCadastrada,
+  podeMudarSituacao,
   validarFormatoOab,
 } from "../services/oab.js";
 import { AREAS_VALIDAS, TODAS_CATEGORIAS } from "../services/triagem.js";
@@ -99,12 +100,12 @@ advogadosRouter.get("/advogados/:uid", tentarVerificarToken, async (req, res) =>
 
 const schemaEditarAdvogado = z.object({
   areasAtuacao: z.array(z.enum(AREAS_VALIDAS)).optional(),
-  especialidades: z.array(z.string()).optional(),
+  especialidades: z.array(z.string().max(60)).max(40).optional(),
   localizacao: schemaLocalizacao.optional(),
   // Só aceito quando a OAB foi recusada: o advogado corrige e o cadastro volta pra análise.
   oab: z.object({ numero: z.unknown(), uf: z.unknown() }).optional(),
   whatsapp: z.string().trim().max(20).optional(),
-  bio: z.string().max(1000).optional(),
+  bio: z.string().trim().max(240, "A apresentação pode ter até 240 caracteres").optional(),
 });
 
 advogadosRouter.put(
@@ -132,7 +133,7 @@ advogadosRouter.put(
         return res.status(409).json({ erro: "Essa OAB já está cadastrada" });
       }
       const agora = new Date().toISOString();
-      campos.oab = { numero: String(oab.numero), uf: String(oab.uf).toUpperCase() };
+      campos.oab = { numero: normalizarNumeroOab(oab.numero), uf: String(oab.uf).toUpperCase() };
       campos.situacaoOab = "em_analise";
       campos.situacaoOabMotivo = null;
       campos.situacaoOabAtualizadaEm = agora;
@@ -148,7 +149,7 @@ advogadosRouter.put(
     }
     if (localizacao !== undefined) campos.localizacao = localizacao;
     if (whatsapp !== undefined) campos["contatos.whatsapp"] = whatsapp;
-    if (bio !== undefined) campos.bio = bio.trim().slice(0, 240);
+    if (bio !== undefined) campos.bio = bio;
 
     if (Object.keys(campos).length === 0) {
       return res.status(400).json({ erro: "Nenhum campo para atualizar" });

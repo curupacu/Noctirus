@@ -180,8 +180,8 @@ export function ContatoAdvogadoPage() {
             </div>
           )}
           {(trocando || !escolhida) && triagensValidas.length > 0 && (
-            <div className="input-group">
-              <label className="input-label">Qual caso você quer levar para esse advogado?</label>
+            <fieldset className="input-group">
+              <legend className="input-label">Qual caso você quer levar para esse advogado?</legend>
               <div className="choice-grid">
                 {triagensValidas.slice(0, 5).map((t) => (
                   <ChoiceCard
@@ -198,7 +198,7 @@ export function ContatoAdvogadoPage() {
                   />
                 ))}
               </div>
-            </div>
+            </fieldset>
           )}
 
           {escolhida && (

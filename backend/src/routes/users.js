@@ -176,13 +176,15 @@ usersRouter.delete("/users/me", verificarToken, async (req, res) => {
   if (role === "advogado") {
     exclusoes.push(db.collection("advogados").doc(uid), db.collection("curriculos").doc(uid));
   }
-  const [triagens, notificacoes, pedidosCliente, pedidosAdvogado] = await Promise.all([
+  const [triagens, rascunhos, notificacoes, pedidosCliente, pedidosAdvogado] = await Promise.all([
     db.collection("triagens").where("clienteId", "==", uid).get(),
+    db.collection("triagensRascunho").where("clienteId", "==", uid).get(),
     db.collection("notificacoes").where("destinatarioId", "==", uid).get(),
     db.collection("solicitacoes").where("clienteId", "==", uid).get(),
     db.collection("solicitacoes").where("advogadoId", "==", uid).get(),
   ]);
   triagens.docs.forEach((doc) => exclusoes.push(db.collection("triagens").doc(doc.id)));
+  rascunhos.docs.forEach((doc) => exclusoes.push(db.collection("triagensRascunho").doc(doc.id)));
   notificacoes.docs.forEach((doc) => exclusoes.push(db.collection("notificacoes").doc(doc.id)));
 
   const anonimizacoes = [

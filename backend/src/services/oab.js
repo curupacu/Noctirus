@@ -23,6 +23,11 @@ export function podeMudarSituacao(de, para) {
   return (TRANSICOES_OAB[de || "em_analise"] || []).includes(para);
 }
 
+// "01234" e "1234" são a mesma inscrição: guarda e compara sem zeros à esquerda.
+export function normalizarNumeroOab(numero) {
+  return String(numero).trim().replace(/^0+(?=\d)/, "");
+}
+
 export function validarFormatoOab({ numero, uf }) {
   if (!numero || !/^\d{4,7}$/.test(String(numero))) {
     return "Número da OAB inválido (esperado 4 a 7 dígitos)";
@@ -39,7 +44,7 @@ export function validarFormatoOab({ numero, uf }) {
 export async function oabJaCadastrada({ numero, uf }, uidParaIgnorar = null, tx = null) {
   const consulta = db
     .collection("advogados")
-    .where("oab.numero", "==", String(numero))
+    .where("oab.numero", "==", normalizarNumeroOab(numero))
     .where("oab.uf", "==", String(uf).toUpperCase());
   const snapshot = tx ? await tx.get(consulta) : await consulta.get();
 

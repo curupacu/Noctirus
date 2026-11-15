@@ -776,17 +776,13 @@ main.home {
     margin-bottom: 20px;
   }
 
+  /* quebra em linhas em vez de rolar: antes o último item aparecia cortado ("Pergunta…") */
   .home-nav__links {
     order: 3;
+    flex-wrap: wrap;
     width: 100%;
     margin-left: 0;
-    gap: 22px;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .home-nav__links::-webkit-scrollbar {
-    display: none;
+    gap: 0 20px;
   }
 
   .home-nav__links a {
@@ -1035,4 +1031,11 @@ main.home {
 
 .home-hero__copy:focus {
   outline: none;
+}
+
+/* celular bem estreito: a foto do topo sai, pra "Como funciona" aparecer logo */
+@media (max-width: 480px) {
+  .home-hero__photo {
+    display: none;
+  }
 }

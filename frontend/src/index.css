@@ -951,3 +951,15 @@ html[data-contraste="alto"] {
   --color-text-muted: #3b281c;
   --border: #a07a58;
 }
+
+/* fieldset usado como grupo de opções (rádios/chips) sem a borda padrão do navegador */
+fieldset.input-group {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+fieldset.input-group > legend {
+  padding: 0;
+}

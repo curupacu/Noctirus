@@ -43,14 +43,12 @@ service cloud.firestore {
       allow write: if false;
     }
 
-    // Pedido de contato (RF010/RF013/RF014): só o backend cria e responde (precisa validar
-    // autorização, aprovação da OAB e duplicidade); o cliente e o advogado do pedido leem.
+    // Pedido de contato (RF010/RF013/RF014): só o backend cria, responde e lê. Fechado pro
+    // cliente porque o documento também guarda as anotações privadas do advogado (que o
+    // backend nunca devolve pro cliente) e porque advogado com OAB revogada não pode ler
+    // pedidos pendentes. O site não lê essa coleção direto.
     match /solicitacoes/{id} {
-      allow read: if request.auth != null &&
-        (request.auth.uid == resource.data.clienteId ||
-         request.auth.uid == resource.data.advogadoId ||
-         papel() == "admin");
-      allow write: if false;
+      allow read, write: if false;
     }
 
     // Notificação em tempo real (sininho) — só o backend cria (ver routes/solicitacoes.js

@@ -2,6 +2,9 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import * as Sentry from '@sentry/react'
 import './components/Input/Input.css'
+// Estilo base de .button global: telas que usam <Link className="button ..."> sem importar o
+// componente Button ficavam com o botão sem fundo (achado da avaliação de 11/2026).
+import './components/Button/Button.css'
 import './index.css'
 import App from './App.jsx'
 import { acordarServidor } from './lib/api'

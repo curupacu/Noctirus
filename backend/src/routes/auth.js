@@ -7,7 +7,7 @@ import { templateAviso } from "../lib/emailTemplates.js";
 import { verificarToken } from "../middlewares/auth.js";
 import { limiteRecuperarSenha } from "../middlewares/rateLimit.js";
 import { validarBody } from "../middlewares/validar.js";
-import { oabJaCadastrada, validarFormatoOab } from "../services/oab.js";
+import { normalizarNumeroOab, oabJaCadastrada, validarFormatoOab } from "../services/oab.js";
 import { AREAS_VALIDAS, TODAS_CATEGORIAS } from "../services/triagem.js";
 
 export const authRouter = Router();
@@ -30,7 +30,7 @@ const schemaCompletarCadastro = z.object({
   localizacao: schemaLocalizacao,
   whatsapp: z.string().trim().max(20).optional().default(""),
   especialidades: z.array(z.string().max(60)).max(40).optional().default([]),
-  bio: z.string().max(600).optional().default(""),
+  bio: z.string().trim().max(240, "A apresentação pode ter até 240 caracteres").optional().default(""),
 });
 
 authRouter.post(
@@ -73,7 +73,7 @@ authRouter.post(
 
       if (role === "advogado") {
         tx.set(db.collection("advogados").doc(uid), {
-          oab: { numero: String(oab.numero), uf: String(oab.uf).toUpperCase() },
+          oab: { numero: normalizarNumeroOab(oab.numero), uf: String(oab.uf).toUpperCase() },
           areasAtuacao,
           // Subcategorias específicas (mesma taxonomia da triagem) — opcional, ajuda o
           // cliente a entender se o advogado atende o assunto específico do caso dele.
@@ -81,7 +81,7 @@ authRouter.post(
           localizacao,
           contatos: { whatsapp, email },
           // Frase curta pra se apresentar, opcional e com limite pra não virar textão.
-          bio: bio.trim().slice(0, 240),
+          bio,
           situacaoOab: "em_analise",
           situacaoOabMotivo: null,
           situacaoOabAtualizadaEm: agora,
