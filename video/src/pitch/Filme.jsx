@@ -357,6 +357,9 @@ function Trilha({ inicio: INICIO, duracao, musicaFim, triste }) {
 
 // [arquivo, quadro no filme, volume, duração]
 const efeitos = (INICIO) => [
+  // ambiente de escritório (ar-condicionado e teclado ao longe, gerado no ElevenLabs, sem
+  // vozes) baixinho até o piano entrar, pra demissão não ficar em silêncio absoluto
+  ["pitch/som-ambiente.wav", INICIO.demissao, 1, s(9.8)],
   ["sfx/aviso.wav", INICIO.advogado + s(ADV.triste[1] - ADV.triste[0]) + 4, 0.8, 45], // notificação
   ...MENSAGENS.map((_, i) => ["sfx/pop.wav", INICIO.conversa + 30 + i * PASSO_MSG, 0.35, 20]),
 ];
