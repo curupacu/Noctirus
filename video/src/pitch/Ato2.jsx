@@ -1,5 +1,5 @@
 import { Audio, Video } from "@remotion/media";
-import { AbsoluteFill, Img, Easing, interpolate, Sequence, staticFile, useCurrentFrame } from "remotion";
+import { AbsoluteFill, Easing, interpolate, Sequence, staticFile, useCurrentFrame } from "remotion";
 
 // Rascunho do Ato 2 do pitch com as gravações do grupo (02/11/2026): sofá, rolando o feed,
 // o Reels da Nocturis em tela cheia, os olhos arregalando e a triagem. Os arquivos em
@@ -77,46 +77,13 @@ const TRIAGEM = [
 const TOQUE = { de: 47.5, ate: 49.05, velocidade: 1, momento: 48.9 };
 const TOQUE_DUR = (TOQUE.ate - TOQUE.de) / TOQUE.velocidade;
 
-// Versão simples (sem o motion da Nocturis): no lugar do Reels, prints do site com um zoom lento.
-// `origem` aponta pra parte do print que importa.
-const PRINTS = [
-  { arquivo: "print1.png", origem: "38% 30%", zoom: [1.05, 1.18] }, // página inicial
-  { arquivo: "print2.png", origem: "50% 28%", zoom: [1.35, 1.5] }, // "O que aconteceu?" com o caso escrito
-  { arquivo: "print3.png", origem: "50% 35%", zoom: [1.3, 1.45] }, // "Confere se é isso"
-  { arquivo: "print4.png", origem: "50% 42%", zoom: [1.3, 1.45] }, // os mais compatíveis
-  { arquivo: "print5.png", origem: "50% 50%", zoom: [1.3, 1.45] }, // perfil do advogado com "Pedir contato"
-];
-const DUR_PRINT = 3.2;
-
-function Prints() {
-  const f = useCurrentFrame();
-  const dur = s(DUR_PRINT);
-  return (
-    <AbsoluteFill style={{ background: "#fbf8f2" }}>
-      {PRINTS.map(({ arquivo, origem, zoom }, i) => {
-        if (f < i * dur || f >= (i + 1) * dur) return null;
-        const escala = interpolate(f - i * dur, [0, dur], zoom, C);
-        return (
-          <AbsoluteFill key={arquivo} style={{ scale: `${escala}`, transformOrigin: origem }}>
-            <Img src={staticFile(`pitch/prints/${arquivo}`)} style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "50% 0%" }} />
-          </AbsoluteFill>
-        );
-      })}
-    </AbsoluteFill>
-  );
-}
-
-// Monta o Ato 2 completo (com o Reels) ou simples (com os prints).
+// Monta o Ato 2 (sofá, Reels, olhos e triagem).
 // `el` é função: o JSX só é criado na hora de desenhar o quadro.
-function montar(simples) {
+function montar() {
   const blocos = [
     { dur: 3.2, el: () => <Take arquivo="sofa.mp4" de={0.3} ate={3.5} brilho={1.45} zoom={[1, 1.03]} volume={1} /> },
-    simples
-      ? { dur: 2.0, el: () => <Take arquivo="perfil.mp4" de={20.5} ate={22.5} brilho={2.1} zoom={[1.05, 1.1]} /> } // o rosto iluminado pelo celular
-      : { dur: ROLANDO[1] - ROLANDO[0], el: () => <Take arquivo="rolando.mp4" de={ROLANDO[0]} ate={ROLANDO[1]} brilho={1.5} zoom={[1, 1.08]} /> },
-    simples
-      ? { dur: PRINTS.length * DUR_PRINT, el: () => <Prints /> }
-      : {
+    { dur: ROLANDO[1] - ROLANDO[0], el: () => <Take arquivo="rolando.mp4" de={ROLANDO[0]} ate={ROLANDO[1]} brilho={1.5} zoom={[1, 1.08]} /> },
+    {
           dur: REELS_DUR,
           el: () => (
             <>
@@ -147,17 +114,17 @@ function montar(simples) {
   return { blocos, inicios, duracao, musicaFim: MUSICA_DE + (duracao - inicios[2]) / FPS };
 }
 
-// A música do Reels (sem os efeitos) toca do Reels (ou dos prints) até o fim do Ato 2, e o
+// A música do Reels (sem os efeitos) toca do Reels até o fim do Ato 2, e o
 // filme inteiro continua a trilha do ponto em que o Ato 2 parou.
 const MUSICA_DE = REELS_DE + 40 / 30;
-export const ATO2 = { completo: montar(false), simples: montar(true) };
-export const DURACAO_ATO2 = ATO2.completo.duracao;
-export const MUSICA_FIM_ATO2 = ATO2.completo.musicaFim;
+export const ATO2 = montar();
+export const DURACAO_ATO2 = ATO2.duracao;
+export const MUSICA_FIM_ATO2 = ATO2.musicaFim;
 
 // `sozinho`: rascunho avulso (a música some no fim). No filme inteiro a música segue.
-export function Ato2({ sozinho = true, simples = false }) {
+export function Ato2({ sozinho = true }) {
   const f = useCurrentFrame();
-  const { blocos: BLOCOS, inicios: INICIOS, duracao: DURACAO_ATO2 } = ATO2[simples ? "simples" : "completo"];
+  const { blocos: BLOCOS, inicios: INICIOS } = ATO2;
   const toque = INICIOS[INICIOS.length - 1] + s((TOQUE.momento - TOQUE.de) / TOQUE.velocidade);
   // o corte final é seco: só um instante de preto no último quadro
   const escuro = interpolate(f, [DURACAO_ATO2 - 4, DURACAO_ATO2], [0, 1], C);
@@ -169,9 +136,9 @@ export function Ato2({ sozinho = true, simples = false }) {
         </Sequence>
       ))}
       {/* o Reels começa saindo baixinho do celular, antes de ir pra tela cheia */}
-      {!simples && <Sequence from={INICIOS[1] + s(ROLANDO_REELS - ROLANDO[0])} durationInFrames={s(ROLANDO[1] - ROLANDO_REELS) + 6}>
+      <Sequence from={INICIOS[1] + s(ROLANDO_REELS - ROLANDO[0])} durationInFrames={s(ROLANDO[1] - ROLANDO_REELS) + 6}>
         <Audio src={staticFile("pitch/musica-celular.wav")} volume={(q) => 0.8 * interpolate(q, [0, 4, s(ROLANDO[1] - ROLANDO_REELS) - 2, s(ROLANDO[1] - ROLANDO_REELS) + 6], [0, 1, 1, 0], C)} />
-      </Sequence>}
+      </Sequence>
       {/* a música do Reels segue como trilha depois dele (L-cut) */}
       <Sequence from={INICIOS[2]}>
         <Audio

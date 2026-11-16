@@ -296,13 +296,12 @@ function Maos() {
 
 // ---------- Montagem ----------
 const DUR_VINHETA = 215; // um pouco mais longa que a original, pra voz em inglês terminar
-// Completo (com o Reels) ou simples (com prints do site no lugar do Reels).
-function montarFilme(simples) {
-  const ato2 = ATO2[simples ? "simples" : "completo"];
+function montarFilme() {
+  const ato2 = ATO2;
   const partes = [
     { id: "demissao", dur: DUR_DEMISSAO, Comp: Demissao },
     { id: "casa", dur: DUR_CASA, Comp: Casa },
-    { id: "ato2", dur: ato2.duracao, Comp: () => <Ato2 sozinho={false} simples={simples} /> },
+    { id: "ato2", dur: ato2.duracao, Comp: () => <Ato2 sozinho={false} /> },
     { id: "advogado", dur: DUR_ADV, Comp: Advogado },
     { id: "conversa", dur: DUR_CONVERSA, Comp: Conversa },
     { id: "maos", dur: DUR_MAOS, Comp: Maos },
@@ -310,13 +309,17 @@ function montarFilme(simples) {
   ];
   const inicio = Object.fromEntries(partes.map((p, i) => [p.id, partes.slice(0, i).reduce((t, q) => t + q.dur, 0)]));
   const duracao = partes.reduce((t, p) => t + p.dur, 0);
-  // a música triste some enquanto ele pega o celular e acaba quando o Reels (ou os prints) começa
+  // a música triste some enquanto ele pega o celular e acaba quando o Reels começa
   const triste = { some: inicio.ato2 + ato2.inicios[1], fim: inicio.ato2 + ato2.inicios[2] };
-  return { partes, inicio, duracao, musicaFim: ato2.musicaFim, triste };
+  // textos explicativos: a pergunta antes do Reels e a resposta logo depois dele
+  const textos = [
+    { texto: "Você precisa de um advogado?", de: inicio.ato2 + 8, dur: s(3.6) },
+    { texto: "A Nocturis está aqui para te ajudar.", de: inicio.ato2 + ato2.inicios[3] + 4, dur: s(3.4) },
+  ];
+  return { partes, inicio, duracao, musicaFim: ato2.musicaFim, triste, textos };
 }
-const FILME = { completo: montarFilme(false), simples: montarFilme(true) };
-export const DURACAO_FILME = FILME.completo.duracao;
-export const DURACAO_FILME_SIMPLES = FILME.simples.duracao;
+const FILME = montarFilme();
+export const DURACAO_FILME = FILME.duracao;
 
 function Trilha({ inicio: INICIO, duracao, musicaFim, triste }) {
   // a música do Reels continua do ponto em que o Ato 2 parou; fica quase muda enquanto o
@@ -341,6 +344,7 @@ function Trilha({ inicio: INICIO, duracao, musicaFim, triste }) {
       <Sequence from={entraTriste} durationInFrames={triste.fim - entraTriste}>
         <Audio
           src={staticFile("pitch/triste-silent-descent.mp3")}
+          trimBefore={s(0.6)} // pula o silêncio do começo da faixa
           volume={(q) => interpolate(q + entraTriste, [entraTriste, entraTriste + 15, triste.some, triste.fim], [0, 0.75, 0.75, 0], C)}
         />
       </Sequence>
@@ -353,20 +357,50 @@ function Trilha({ inicio: INICIO, duracao, musicaFim, triste }) {
 
 // [arquivo, quadro no filme, volume, duração]
 const efeitos = (INICIO) => [
-  // ambiente do escritório (o trecho antes de o chefe entrar, repetido) até o piano entrar: o
+  // ambiente do escritório (1,5 s de som de sala repetido, sem o ruído que subia) até o piano: o
   // take tem palavrão, então a voz do chefe nunca aparece
   ["pitch/som-ambiente.wav", INICIO.demissao, 1, s(9.6)],
   ["sfx/aviso.wav", INICIO.advogado + s(ADV.triste[1] - ADV.triste[0]) + 4, 0.8, 45], // notificação
   ...MENSAGENS.map((_, i) => ["sfx/pop.wav", INICIO.conversa + 30 + i * PASSO_MSG, 0.35, 20]),
 ];
 
-export function Filme({ simples = false }) {
-  const filme = FILME[simples ? "simples" : "completo"];
+// Frase curta no terço de baixo da tela, com uma faixa escura atrás pra ler em qualquer cena.
+function TextoNaTela({ texto }) {
+  const f = useCurrentFrame();
+  const { durationInFrames } = useVideoConfig();
+  const op = interpolate(f, [0, 10, durationInFrames - 10, durationInFrames], [0, 1, 1, 0], C);
+  return (
+    <AbsoluteFill style={{ justifyContent: "flex-end", alignItems: "center", paddingBottom: 110, opacity: op }}>
+      <AbsoluteFill style={{ background: "linear-gradient(to top, rgba(18,12,8,0.75), rgba(18,12,8,0) 45%)" }} />
+      <div
+        style={{
+          position: "relative",
+          fontFamily: SERIF,
+          fontSize: 66,
+          color: COR.cremeClaro,
+          textAlign: "center",
+          textShadow: "0 3px 18px rgba(0,0,0,0.6)",
+          translate: `0 ${(1 - op) * 16}px`,
+        }}
+      >
+        {texto}
+      </div>
+    </AbsoluteFill>
+  );
+}
+
+export function Filme() {
+  const filme = FILME;
   return (
     <AbsoluteFill style={{ background: "black" }}>
       {filme.partes.map(({ id, dur, Comp }) => (
         <Sequence key={id} from={filme.inicio[id]} durationInFrames={dur}>
           <Comp />
+        </Sequence>
+      ))}
+      {filme.textos.map(({ texto, de, dur }) => (
+        <Sequence key={texto} from={de} durationInFrames={dur}>
+          <TextoNaTela texto={texto} />
         </Sequence>
       ))}
       <Trilha {...filme} />
