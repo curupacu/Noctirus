@@ -357,9 +357,6 @@ function Trilha({ inicio: INICIO, duracao, musicaFim, triste }) {
 
 // [arquivo, quadro no filme, volume, duração]
 const efeitos = (INICIO) => [
-  // ambiente do escritório (1,5 s de som de sala repetido, sem o ruído que subia) até o piano: o
-  // take tem palavrão, então a voz do chefe nunca aparece
-  ["pitch/som-ambiente.wav", INICIO.demissao, 1, s(9.6)],
   ["sfx/aviso.wav", INICIO.advogado + s(ADV.triste[1] - ADV.triste[0]) + 4, 0.8, 45], // notificação
   ...MENSAGENS.map((_, i) => ["sfx/pop.wav", INICIO.conversa + 30 + i * PASSO_MSG, 0.35, 20]),
 ];
